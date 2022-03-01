@@ -6,7 +6,7 @@
   <link href="http://zjn-astonishe.github.io/atom.xml" rel="self"/>
   
   <link href="http://zjn-astonishe.github.io/"/>
-  <updated>2022-03-01T16:44:10.483Z</updated>
+  <updated>2022-03-01T16:46:10.215Z</updated>
   <id>http://zjn-astonishe.github.io/</id>
   
   <author>
@@ -21,14 +21,14 @@
     <link href="http://zjn-astonishe.github.io/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/"/>
     <id>http://zjn-astonishe.github.io/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</id>
     <published>2022-03-01T16:43:23.000Z</published>
-    <updated>2022-03-01T16:44:10.483Z</updated>
+    <updated>2022-03-01T16:46:10.215Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="进程、线程-1"><a href="#进程、线程-1" class="headerlink" title="进程、线程 1"></a>进程、线程 1</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2>]]></content>
+    <content type="html"><![CDATA[<h1 id="进程、线程-2"><a href="#进程、线程-2" class="headerlink" title="进程、线程 2"></a>进程、线程 2</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2>]]></content>
     
     
       
       
-    <summary type="html">&lt;h1 id=&quot;进程、线程-1&quot;&gt;&lt;a href=&quot;#进程、线程-1&quot; class=&quot;headerlink&quot; title=&quot;进程、线程 1&quot;&gt;&lt;/a&gt;进程、线程 1&lt;/h1&gt;&lt;h2 id=&quot;并发、同步、异步、互斥、阻塞、非阻塞的理解&quot;&gt;&lt;a href=&quot;#并发、同步、异步、互斥、</summary>
+    <summary type="html">&lt;h1 id=&quot;进程、线程-2&quot;&gt;&lt;a href=&quot;#进程、线程-2&quot; class=&quot;headerlink&quot; title=&quot;进程、线程 2&quot;&gt;&lt;/a&gt;进程、线程 2&lt;/h1&gt;&lt;h2 id=&quot;并发、同步、异步、互斥、阻塞、非阻塞的理解&quot;&gt;&lt;a href=&quot;#并发、同步、异步、互斥、</summary>
       
     
     

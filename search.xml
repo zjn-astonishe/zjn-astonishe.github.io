@@ -23,6 +23,17 @@
       </tags>
   </entry>
   <entry>
+    <title>进程、线程 2</title>
+    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
+    <content><![CDATA[<h1 id="进程、线程-2"><a href="#进程、线程-2" class="headerlink" title="进程、线程 2"></a>进程、线程 2</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2>]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Hello World</title>
     <url>/2022/02/25/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -194,17 +205,6 @@
 <li>分配给线程的调用栈大小决定</li>
 </ul>
 ]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>进程、线程 2</title>
-    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
-    <content><![CDATA[<h1 id="进程、线程-1"><a href="#进程、线程-1" class="headerlink" title="进程、线程 1"></a>进程、线程 1</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2>]]></content>
       <categories>
         <category>操作系统</category>
       </categories>
