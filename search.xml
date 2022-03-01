@@ -23,9 +23,29 @@
       </tags>
   </entry>
   <entry>
+    <title>Hello World</title>
+    <url>/2022/02/25/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>进程、线程</title>
-    <url>/2022/02/28/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="进程线程的基本概念"><a href="#进程线程的基本概念" class="headerlink" title="进程线程的基本概念"></a>进程线程的基本概念</h2><h3 id="什么是进程、线程-彼此有什么区别"><a href="#什么是进程、线程-彼此有什么区别" class="headerlink" title="什么是进程、线程(彼此有什么区别)"></a>什么是进程、线程(彼此有什么区别)</h3><ul>
+    <url>/2022/02/28/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%201/</url>
+    <content><![CDATA[<h1 id="进程、线程-1"><a href="#进程、线程-1" class="headerlink" title="进程、线程 1"></a>进程、线程 1</h1><h2 id="进程线程的基本概念"><a href="#进程线程的基本概念" class="headerlink" title="进程线程的基本概念"></a>进程线程的基本概念</h2><h3 id="什么是进程、线程-彼此有什么区别"><a href="#什么是进程、线程-彼此有什么区别" class="headerlink" title="什么是进程、线程(彼此有什么区别)"></a>什么是进程、线程(彼此有什么区别)</h3><ul>
 <li>进程是<strong>资源(CPU、内存等)分配</strong>的基本单位，线程是<strong>CPU调度</strong>的基本单位(<strong>程序执行的最小单位</strong>)。<ul>
 <li>程序运行时，系统会给程序创建一个进程，并分配给予地址空间和其他资源，然后把进程加入到就绪队列中等待CPU执行。</li>
 <li>线程是进程的一个执行流，实际上进程不能用来运行代码，真正运行代码的是进程里的线程。</li>
@@ -75,48 +95,121 @@
 </li>
 <li>从增加数量上限来看<ul>
 <li>进程数量可以通过增加CPU数量的方式来增加</li>
-<li>线程数量由进程的空间资源和线程本身栈大小确定，无法通过增加CPU数量增加<h3 id="进程和线程的取舍"><a href="#进程和线程的取舍" class="headerlink" title="进程和线程的取舍"></a>进程和线程的取舍</h3></li>
+<li>线程数量由进程的空间资源和线程本身栈大小确定，无法通过增加CPU数量增加</li>
 </ul>
 </li>
+</ul>
+<h3 id="进程和线程的取舍"><a href="#进程和线程的取舍" class="headerlink" title="进程和线程的取舍"></a>进程和线程的取舍</h3><ul>
 <li>创建和销毁较频繁的情况使用线程，因为创建和销毁进程的花销较大</li>
 <li>需要大量数据传送的情况使用线程，多线程切换速度快，且不需要跨进程边界</li>
 <li>并行操作使用线程(为实现并行的手段)</li>
-<li>安全稳定的需求使用进程，快速频繁的需求选用线程<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3></li>
+<li>安全稳定的需求使用进程，快速频繁的需求选用线程</li>
+</ul>
+<h3 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h3><ul>
 <li>有一类子进程是不需要复制父进程的内存和数据的，单纯为了方便调用外部程序而创建</li>
 <li>一个播放器框架<blockquote>
 <p>主线程main函数创建子进程player执行播放视频的代码——调用外部播放器播放视频，创建子线程check监测播放器按钮情况，而main函数执行while(1)死循环。当用户按下播放器的某些按钮如：上一部、下一部时，子线程check会通知主线程main函数，让其再次创建子进程player调用外部播放器播放视频</p>
 </blockquote>
 </li>
 </ul>
-<h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
-<li><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2></li>
+<h3 id="多进程、多线程同步-通讯-的方法"><a href="#多进程、多线程同步-通讯-的方法" class="headerlink" title="多进程、多线程同步(通讯)的方法"></a>多进程、多线程同步(通讯)的方法</h3><ul>
+<li>进程间的通讯<ul>
+<li>管道/命名、无名管道：<ul>
+<li>一个管道实际上就是个<strong>只存在于内存中</strong>的文件，对这个文件的操作要通过两个已经打开的文件进行(管道两端)。但是，管道是一个特殊的文件，即它不属于某一种文件系统，而是一种独立的文件系统，有其自己的数据结构。两个进程结束的时候，管道也会自动消失。</li>
+<li>无名管道主要用于父进程与子进程之间，或者两个兄弟进程之间。Linux系统中可以通过系统调用建立起一个单向的通信管道，且这种关系只能由父进程来建立。因此，每个管道都是单向的，当需要双向通信的时候就需要建立起两个管道。管道两端的进程都将该管道看作是一个文件，一个进程负责往管道中写内容，一个进程负责从管道中读取。这种传输遵循先入先出(FIFO)的规则。</li>
+<li>命名管道是为了解决无名管道只能用于近亲进程之间通信的缺陷而设计。建立在实际的磁盘戒指或是文件系统中会有自己名字的文件(<strong>不是只在内存</strong>)。任何进程任何时间通过文件名或者路径名都可以与该文件建立联系。<ul>
+<li>引入新的文件类型——FIFO文件(遵循先进先出的原则)。命名管道一旦建立，之后读写以及关闭操作都与普通管道完全相同。虽然FIFO文件的inode节点在磁盘上，但是仅仅是节点，文件数据还是存在于内存缓冲页面，和无名管道相同。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>信号 <ul>
+<li>进程间传递的消息，软中断</li>
+</ul>
+</li>
+<li>共享内存</li>
+<li>消息队列</li>
+<li>信号量<ul>
+<li>用于同步</li>
+</ul>
+</li>
+<li>socket</li>
+</ul>
+</li>
+<li>线程间的通信<ul>
+<li>信号量<ul>
+<li>用于同步，保证程序按照正确的顺序运行</li>
+</ul>
+</li>
+<li>读写锁</li>
+<li>条件变量</li>
+<li>互斥锁<ul>
+<li>用于互斥，即保证同一资源不能被同时访问</li>
+</ul>
+</li>
+<li>自旋锁</li>
+</ul>
+</li>
+<li>临界区指的是访问公共资源的程序片段，不是通信方式</li>
+</ul>
+<h3 id="进程的空间模型"><a href="#进程的空间模型" class="headerlink" title="进程的空间模型"></a>进程的空间模型</h3><ul>
+<li>32位系统中，当系统运行一个程序，就会创建一个进程，系统会为其分配<strong>4G的虚拟地址空间</strong>，其中<strong>0-3G是用户空间</strong>，<strong>3-4G是内核空间</strong>，内核空间是受保护的，用户不能对该空间进行读写操作，否则可能出现段错误。其中栈空间的数据地址增加是往下的(新的数据地址值反而更小)，堆空间的地址增加是往上的。</li>
+<li>空间模型分析<ul>
+<li>栈区<ul>
+<li>由编译器自动分配和释放，存放函数的参数值(形参)、局部变量等，其操作方式类似数据结构的栈，先进后出。</li>
+<li>栈的空间有限，堆是很大的自由存储区，程序在编译期对变量和函数分配内存都在栈上进行，程序运行过程中函数调用参数的传递也是在栈上进行</li>
+</ul>
+</li>
+<li>堆区<ul>
+<li>一般由程序员分配和释放，若程序员不释放，可能会造成内存泄漏，程序结束的时候可能会被操作系统回收，分配方式类似链表，但不是数据结构中的堆。</li>
+</ul>
+</li>
+<li>全局区(静态区)<ul>
+<li>全局变量和静态变量的存储是放在一块的，初始化的全局变量和静态变量在区域<code>.data</code>，未初始化的全局变量和未初始化的静态变量存储在相邻的区域<code>.bss</code>，程序结束后由系统释放。</li>
+</ul>
+</li>
+<li>文字常量区<ul>
+<li>常量字符串存储位置，程序结束后由系统释放。</li>
+</ul>
+</li>
+<li>程序代码区(text)<ul>
+<li>存放函数体的二进制代码。</li>
+</ul>
+</li>
+<li>.rodata数据段用于<code>存放C中的字符串</code>和<code>#define定义的常量</code><br><img src="https://github.com/zjn-astonishe/image/blob/main/%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B/Linux%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%E6%A8%A1%E5%9E%8B.png?raw=true" alt="img"></li>
+</ul>
+</li>
+<li>64位操作系统下的虚拟内存空间大小：<ul>
+<li>地址空间一般是$2^{48}$(256TB)，因为$2^{64}$太大，过大的空间只会造成资源的浪费。<ul>
+<li>40位标识物理地址(可以找到存储对应物理地址的位置)</li>
+<li><code>0x0000000000000000</code>~<code>0x00007fffffffffff</code>表示用户空间</li>
+<li><code>0xFFFF800000000000</code>~<code>0xFFFFFFFFFFFFFFFF</code>表示内核空间</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="进程创建线程数量的决定因素"><a href="#进程创建线程数量的决定因素" class="headerlink" title="进程创建线程数量的决定因素"></a>进程创建线程数量的决定因素</h3><ul>
+<li>虚拟内存的大小</li>
+<li>分配给线程的调用栈大小决定</li>
 </ul>
 ]]></content>
       <categories>
         <category>操作系统</category>
       </categories>
       <tags>
-        <tag>操作系统</tag>
+        <tag>进程、线程</tag>
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2022/02/25/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
+    <title>进程、线程 2</title>
+    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
+    <content><![CDATA[<h1 id="进程、线程-1"><a href="#进程、线程-1" class="headerlink" title="进程、线程 1"></a>进程、线程 1</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2>]]></content>
       <categories>
-        <category>test</category>
+        <category>操作系统</category>
       </categories>
       <tags>
-        <tag>test</tag>
+        <tag>进程、线程</tag>
       </tags>
   </entry>
 </search>
