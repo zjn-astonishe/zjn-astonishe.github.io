@@ -23,40 +23,9 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 2</title>
-    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
-    <content><![CDATA[<h1 id="进程、线程-2"><a href="#进程、线程-2" class="headerlink" title="进程、线程 2"></a>进程、线程 2</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2>]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2022/02/25/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-      <categories>
-        <category>test</category>
-      </categories>
-      <tags>
-        <tag>test</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>进程、线程</title>
+    <title>进程、线程 1</title>
     <url>/2022/02/28/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%201/</url>
-    <content><![CDATA[<h1 id="进程、线程-1"><a href="#进程、线程-1" class="headerlink" title="进程、线程 1"></a>进程、线程 1</h1><h2 id="进程线程的基本概念"><a href="#进程线程的基本概念" class="headerlink" title="进程线程的基本概念"></a>进程线程的基本概念</h2><h3 id="什么是进程、线程-彼此有什么区别"><a href="#什么是进程、线程-彼此有什么区别" class="headerlink" title="什么是进程、线程(彼此有什么区别)"></a>什么是进程、线程(彼此有什么区别)</h3><ul>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="进程线程的基本概念"><a href="#进程线程的基本概念" class="headerlink" title="进程线程的基本概念"></a>进程线程的基本概念</h2><h3 id="什么是进程、线程-彼此有什么区别"><a href="#什么是进程、线程-彼此有什么区别" class="headerlink" title="什么是进程、线程(彼此有什么区别)"></a>什么是进程、线程(彼此有什么区别)</h3><ul>
 <li>进程是<strong>资源(CPU、内存等)分配</strong>的基本单位，线程是<strong>CPU调度</strong>的基本单位(<strong>程序执行的最小单位</strong>)。<ul>
 <li>程序运行时，系统会给程序创建一个进程，并分配给予地址空间和其他资源，然后把进程加入到就绪队列中等待CPU执行。</li>
 <li>线程是进程的一个执行流，实际上进程不能用来运行代码，真正运行代码的是进程里的线程。</li>
@@ -210,6 +179,37 @@
       </categories>
       <tags>
         <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>进程、线程 2</title>
+    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞的理解"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的理解" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的理解"></a>并发、同步、异步、互斥、阻塞、非阻塞的理解</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><h3 id="线程的同步与互斥"><a href="#线程的同步与互斥" class="headerlink" title="线程的同步与互斥"></a>线程的同步与互斥</h3><h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2>]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2022/02/25/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
       </tags>
   </entry>
 </search>
