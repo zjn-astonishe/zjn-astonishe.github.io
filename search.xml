@@ -23,6 +23,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Hello World</title>
+    <url>/2022/02/25/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>进程、线程 1</title>
     <url>/2022/02/28/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%201/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="进程线程的基本概念"><a href="#进程线程的基本概念" class="headerlink" title="进程线程的基本概念"></a>进程线程的基本概念</h2><h3 id="什么是进程、线程-彼此有什么区别"><a href="#什么是进程、线程-彼此有什么区别" class="headerlink" title="什么是进程、线程(彼此有什么区别)"></a>什么是进程、线程(彼此有什么区别)</h3><ul>
@@ -321,24 +341,24 @@
 <li><code>vmstat</code>是一个Linux常用的系统性能分析工具，可以用来分析CPU上下文切换和中断的次数。<ul>
 <li><code>vmstat</code>工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数。</li>
 <li>输出参数<ul>
-<li>cs(context switch)：每秒上下文切换的次数。</li>
-<li>in(interrupt)：每秒中断的次数。<ul>
+<li><code>cs</code>(context switch)：每秒上下文切换的次数。</li>
+<li><code>in</code>(interrupt)：每秒中断的次数。<ul>
 <li>可以使用<code>cat</code>命令查看<code>/proc/interrupts</code>读取中断详细情况。</li>
 </ul>
 </li>
-<li>r(Running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU的进程。</li>
-<li>b(Blocked)：处于不可中断睡眠状态的进程数。</li>
+<li><code>r</code>(Running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU的进程。</li>
+<li><code>b</code>(Blocked)：处于不可中断睡眠状态的进程数。</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>要想查看每个进程的详细情况就需要使用<code>pidstat</code>，加上<code>-w</code>选项就可以查看进程上下文切换的情况:<ul>
 <li>输出参数<ul>
-<li>cswch(voluntary context switches)：表示每秒<strong>自愿上下文切换</strong>的次数。<ul>
+<li><code>cswch</code>(voluntary context switches)：表示每秒<strong>自愿上下文切换</strong>的次数。<ul>
 <li>自愿上下文切换：进程无法获取所需的资源，导致的上下文切换，例如IO、内存等资源不足时，就会发生自愿上下文切换。</li>
 </ul>
 </li>
-<li>nvcswch(non voluntary context switches)：表示每秒<strong>非自愿上下文切换</strong>的次数。<ul>
+<li><code>nvcswch</code>(non voluntary context switches)：表示每秒<strong>非自愿上下文切换</strong>的次数。<ul>
 <li>非自愿上下文切换：进程由于时间片已到等时间，被系统强制调度，进而发生的上下文切换，例如大量的进程都在争抢CPU时，就容易发生非自愿上下文切换。</li>
 </ul>
 </li>
@@ -358,26 +378,6 @@
       </categories>
       <tags>
         <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Hello World</title>
-    <url>/2022/02/25/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-      <categories>
-        <category>test</category>
-      </categories>
-      <tags>
-        <tag>test</tag>
       </tags>
   </entry>
 </search>
