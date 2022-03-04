@@ -87,10 +87,11 @@ class Create_newMD:
                 # 标题不能含特殊符号，否则博客js报错：Syntax error, unrecognized expression
                 input_title = input("\n" + "文章标题:").strip()
                 if input_title != "":
-                    title = "title: " + input_title.replace("(","（").replace(")","）").replace(",","，").\
+                    out_title = input_title.replace("(","（").replace(")","）").replace(",","，").\
                     replace("[","【").replace("]","】").replace("/","_").replace("%","_").replace("#","_").\
                     replace("<", "《").replace(">", "》").replace("&", "_").replace("'", '"').replace("`", "_"). \
                     replace("^", "_").replace("@", "_").replace("$", "_").replace("!", "！").replace("?", "？").replace(";", "；")
+                    title = "title: " + out_title
                     # 结尾不能是英文冒号
                     if title[-1] == ":":
                         title = title.rsplit(":",1)[0] + "："
@@ -155,6 +156,7 @@ class Create_newMD:
             self.contentlist.append(tag)
             self.contentlist.append(mathjax)
             self.contentlist.append("---")
+            self.contentlist.append("\n# " + out_title)
             
             char_list = ['*','|',':','?','/','<','>','"','\\']
             while True:
