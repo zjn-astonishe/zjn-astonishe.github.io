@@ -130,16 +130,23 @@
   </entry>
   
   <entry>
-    <title>CC2530协议栈剖析</title>
-    <link href="http://zjn-astonishe.github.io/2022/02/27/2022-02-27-CC2530%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%89%96%E6%9E%90/"/>
-    <id>http://zjn-astonishe.github.io/2022/02/27/2022-02-27-CC2530%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%89%96%E6%9E%90/</id>
+    <title>Zigbee协议栈理论剖析</title>
+    <link href="http://zjn-astonishe.github.io/2022/02/27/2022-02-27-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%89%96%E6%9E%90/"/>
+    <id>http://zjn-astonishe.github.io/2022/02/27/2022-02-27-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%89%96%E6%9E%90/</id>
     <published>2022-02-27T13:05:20.000Z</published>
-    <updated>2022-03-03T02:32:30.442Z</updated>
+    <updated>2022-03-04T10:25:55.816Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Zigbee协议栈理论剖析"><a href="#Zigbee协议栈理论剖析" class="headerlink" title="Zigbee协议栈理论剖析"></a>Zigbee协议栈理论剖析</h1><h2 id="Zigbee协议栈简介"><a href="#Zigbee协议栈简介" class="headerlink" title="Zigbee协议栈简介"></a>Zigbee协议栈简介</h2><h3 id="协议和协议栈"><a href="#协议和协议栈" class="headerlink" title="协议和协议栈"></a>协议和协议栈</h3><ul><li>协议是一系列的通信标准，通信双方需要共同按照这一标准进行正常的数据发射和接收。</li><li>协议栈是协议的具体实现形式，即协议和用户之间的一个接口。开发人员通过协议栈使用协议，进而实现无线数据收发。</li></ul><h3 id="Zigbee协议栈架构"><a href="#Zigbee协议栈架构" class="headerlink" title="Zigbee协议栈架构"></a>Zigbee协议栈架构</h3><p><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/Zigbee%E6%97%A0%E7%BA%BF%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE%E5%B1%82.png?raw=true" alt="Zigbee无线网络协议层"></p><ul><li>Zigbee协议分为两部分：<ul><li>IEEE802.15.4定义了PHY(物理层)和MAC(介质访问层)技术规范。</li><li>Zigbee联盟定义了NWK(网络层)、APS(应用程序支持子层)、APL(应用层)技术规范。</li></ul></li><li>Zigbee协议栈就是将各个层定义的协议都集合在一起，以函数的形式实现，并给用户提供API(应用层)，用户可以直接调用。</li></ul><h3 id="Z-stack"><a href="#Z-stack" class="headerlink" title="Z-stack"></a>Z-stack</h3><ul><li>Z-stack是挪威半导体公司Chipcon(目前已经被TI公司收购)推出其CC2430(现在基本使用的是CC2530)开发平台时，推出的一款业界领先的商业级协议栈软件。</li><li>由于这个软件协议栈软件的出现，用户可以很容易开发出具体的应用程序(常说的掌握10个函数就能使用Zigbee通讯)。</li><li>使用瑞典公司IAR开发的IAR Embedded Workbench for MCS-51作为集成开发环境。</li><li>Chipcon公司为自己设计的Z-Stack协议栈中提供了一个名为操作系统抽象层OSAL的协议栈调度程序。<ul><li>对于用户来说，除了能够看到OSAL调度程序外，其他任何协议栈操作的具体实现细节都被封装在库代码中。</li><li>用户在进行具体的应用开发时，只能够通过调用API接口进行，而无权知道Zigbee协议栈实现的具体细节。只需要知道应用层的数据是使用哪些函数，通过什么方式把数据发送出去或者把数据接收过来的。</li></ul></li></ul><h3 id="Z-stack体系架构深度剖析"><a href="#Z-stack体系架构深度剖析" class="headerlink" title="Z-stack体系架构深度剖析"></a>Z-stack体系架构深度剖析</h3><ul><li>Z-stack的体系结构由称为层的各模块组成。每一层为上层提供特定的服务：<ul><li>由数据服务实体提供数据传输服务</li><li>由管理实体提供所有的其他管理服务。</li></ul></li><li>每个服务实体通过相应的服务接入点(SAP)为其上层提供了一个接口，每个服务接入点通过服务原语来完成所以对应的功能。<br><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/Z-stack%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png?raw=true" alt="Z-stack体系结构"></li><li>Z-stack根据IEEE802.15.4和Zigbee标准分为：<ul><li>物理层(PHY)：物理层定义了物理无线信道和MAC子层之间的接口，提供物理层数据服务和物理层管理服务，物理层内容：<ul><li>Zigbee的激活</li><li>当前信道的能量检测</li><li>接收链路服务质量信息</li><li>Zigbee信道接入方式</li><li>信道频率选择</li><li>数据传输和接收</li></ul></li><li>介质接入控制子层(MAC)：MAC层负责处理所有的物理无线信道访问，并产生网络信号、同步信号；支持PAN连接和分离，提供两个对等MAC实体之间可靠的链路。MAC层功能：<ul><li>网络协调器产生信标</li><li>与信标同步</li><li>支持PAN(个域网)链路的建立和断开</li><li>为设备安全性提供支持</li><li>信道接入方式采用免冲突载波检测多址接入(CSMA-CA)机制</li><li>处理和维护保护时隙(GTS)机制</li><li>在两个对等的MAC实体之间提供一个可靠的通信链路</li></ul></li><li>网络层(NWK)：Z-stack的核心部分。网络层主要实现节点加入或离开网络、接收或抛弃其他节点、路由查找及传送数据等功能。网络层功能：<ul><li>网络发现</li><li>网络形成</li><li>允许设备连接</li><li>路由器初始化</li><li>设备同网络连接</li><li>直接将设备同网络连接</li><li>断开网络连接</li><li>重新复位设备</li><li>接收机同步</li><li>信息库维护</li></ul></li><li>应用层(APL)：提供一些必要函数以及为网络层提供合适的服务接口，定义自己的应用对象。<ul><li>应用层框架包括<ul><li>应用支持层(APS)<ul><li>主要功能是：维持绑定表、在绑定的设备之间传送信息</li></ul></li><li>Zigbee设备对象(ZDO)<ul><li>主要功能是：定义设备在网络中的角色(协调器还是终端)、发起和响应绑定请求、在网络设备之间建立安全机制、发现网络中的设备并决定提供何种应用服务。</li></ul></li><li>制造商所定义的应用对象。<ul><li>应用程序框架(AF)：运行在Zigbee协议栈上的应用程序实际上就是厂商自定义的应用对象，并且遵循规范(profile)运行在端点1~240上。在Zigbee应用中，提供键值对(KVP)或报文(MSG)两种标准服务类型。</li></ul></li></ul></li></ul></li></ul></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Zigbee协议栈理论剖析&quot;&gt;&lt;a href=&quot;#Zigbee协议栈理论剖析&quot; class=&quot;headerlink&quot; title=&quot;Zigbee协议栈理论剖析&quot;&gt;&lt;/a&gt;Zigbee协议栈理论剖析&lt;/h1&gt;&lt;h2 id=&quot;Zigbee协议栈简介&quot;&gt;&lt;a href=</summary>
+      
     
     
     
-    
-    <category term="ZigBee开发—提高篇" scheme="http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91%E2%80%94%E6%8F%90%E9%AB%98%E7%AF%87/"/>
+    <category term="ZigBee开发" scheme="http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91/"/>
     
     
     <category term="ZigBee" scheme="http://zjn-astonishe.github.io/tags/ZigBee/"/>
