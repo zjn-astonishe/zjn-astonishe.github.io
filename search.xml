@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Zigbee协议栈</title>
+    <title>Zigbee协议栈 1</title>
     <url>/2022/02/27/2022-02-27-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%89%96%E6%9E%90/</url>
     <content><![CDATA[<h1 id="Zigbee协议栈"><a href="#Zigbee协议栈" class="headerlink" title="Zigbee协议栈"></a>Zigbee协议栈</h1><h2 id="Zigbee协议栈简介"><a href="#Zigbee协议栈简介" class="headerlink" title="Zigbee协议栈简介"></a>Zigbee协议栈简介</h2><h3 id="协议和协议栈"><a href="#协议和协议栈" class="headerlink" title="协议和协议栈"></a>协议和协议栈</h3><ul>
 <li>协议是一系列的通信标准，通信双方需要共同按照这一标准进行正常的数据发射和接收。</li>
@@ -355,81 +355,6 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 3</title>
-    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞"><a href="#并发、同步、异步、互斥、阻塞、非阻塞" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞"></a>并发、同步、异步、互斥、阻塞、非阻塞</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
-<li>并发<ul>
-<li>在操作系统中，同个处理机上有多个程序同时运行。</li>
-</ul>
-</li>
-<li>同步、异步<ul>
-<li>同步：顺序执行，执行完一个再执行下一个，需要等待、协调运行。</li>
-<li>异步：异步和同步是相对的，异步就是彼此独立，在等待某事件的过程中继续做自己的事，不需要等待这一事件完成后再工作。<ul>
-<li>线程是实现异步的一个方式。可以在主线程创建一个新线程来做某件事，此时主线程不需要等待子线程做完而是可以做其他事情。</li>
-<li>异步和多线程并不是一个同等关系，异步是最终目的，多线程只是实现异步的一种手段。</li>
-</ul>
-</li>
-<li>同步和异步是对应的，是线程之间的关系。两个线程要么同步要么异步。</li>
-</ul>
-</li>
-<li>阻塞、非阻塞<ul>
-<li>当进程在访问数据时，根据IO操作的就绪状态不同而采取不同的处理方式。比如主程序调用一个函数要读取一个文件的内容：<ul>
-<li>阻塞方式下主程序会等到函数读取完再继续往下执行。</li>
-<li>非阻塞方式下读取函数会立刻返回一个状态值给主程序，主程序不等待文件读取完就继续往下执行。</li>
-<li>要注意的是阻塞和非阻塞说明的是IO和CPU之间的关系，即CPU是否等待IO。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>一般有以下4类IO模型，考虑发送方发出请求要接收方读取某文件内容为例：<ul>
-<li>同步阻塞IO<ul>
-<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，直到获取读取结果再响应发送方，等待期间不可做其他操作(阻塞)。</li>
-</ul>
-</li>
-<li>同步非阻塞IO<ul>
-<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，就立即返回，接受方继续去做其他事情。此时并未响应发送方，发送方一直等待。直到IO操作(读取文件)完成后，接收方获得读取结果响应发送方，接收方才可以进入下一次请求过程(非阻塞)。</li>
-</ul>
-</li>
-<li>异步阻塞IO(理论存在，实际不用)<ul>
-<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，就一直等到返回结果后，才响应发送方，期间不能进行其他操作。</li>
-</ul>
-</li>
-<li>异步非阻塞IO(效率最高)<ul>
-<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，也不等待，而是马上返回去做其他事情。当IO操作(读取文件)完成以后，将完成状态和结果通知接收方，接收方再响应发送方。</li>
-<li>阻塞和非阻塞是对同一个线程的某个时刻来说的。此时，线程要么阻塞，要么非阻塞。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>阻塞是使用同步机制的结果，非阻塞是使用异步机制的结果。</li>
-</ul>
-<h3 id="线程的同步和互斥"><a href="#线程的同步和互斥" class="headerlink" title="线程的同步和互斥"></a>线程的同步和互斥</h3><ul>
-<li>线程互斥<ul>
-<li>当有若干个线程同时访问同一块资源时，规定同一时间只有一个线程可以得到访问权，其他线程需要等待占用资源者释放该资源才可以申请访问。</li>
-<li>互斥无法限制访问者对资源的访问顺序，即访问是无序的。</li>
-</ul>
-</li>
-<li>线程同步：<ul>
-<li>在互斥的基础上(大多数情况，除非允许同一时间多个访问者访问同一资源)，通过其它机制实现访问者对资源的有序访问，实现每个线程之间按预定的先后次序进行运行，协同、协助、互相配合。</li>
-</ul>
-</li>
-</ul>
-<h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><ul>
-<li>同步是过程，阻塞是状态<ul>
-<li>当多个线程访问同一资源时，规定同一时间只有一个线程可进行访问，所以后访问的线程将被阻塞，等待先访问的线程访问完。</li>
-</ul>
-</li>
-<li>线程同步不一定发生阻塞。只有当访问同一资源出现互相等待和互相唤醒才会发生阻塞。而阻塞了一定是同步，多线程用阻塞实现同步。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>进程、线程 2</title>
     <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="CPU上下文"><a href="#CPU上下文" class="headerlink" title="CPU上下文"></a>CPU上下文</h2><h3 id="特权模式切换"><a href="#特权模式切换" class="headerlink" title="特权模式切换"></a>特权模式切换</h3><ul>
@@ -522,127 +447,71 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 4</title>
-    <url>/2022/03/03/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
-<li>孤儿进程<ul>
-<li>当父进程退出后，子进程还在运行，那么这些子进程就是孤儿进程。</li>
-<li>孤儿进程将被init进程所收养，并由init进程对它们完成状态收集工作。</li>
+    <title>进程、线程 3</title>
+    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞"><a href="#并发、同步、异步、互斥、阻塞、非阻塞" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞"></a>并发、同步、异步、互斥、阻塞、非阻塞</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
+<li>并发<ul>
+<li>在操作系统中，同个处理机上有多个程序同时运行。</li>
 </ul>
 </li>
-<li>僵尸进程<ul>
-<li>当子进程推出后，父进程却并未接收到结束子进程的信息(调用waitpid获取子进程的状态信息)，那么子进程仍停留在系统中，即僵尸进程。</li>
+<li>同步、异步<ul>
+<li>同步：顺序执行，执行完一个再执行下一个，需要等待、协调运行。</li>
+<li>异步：异步和同步是相对的，异步就是彼此独立，在等待某事件的过程中继续做自己的事，不需要等待这一事件完成后再工作。<ul>
+<li>线程是实现异步的一个方式。可以在主线程创建一个新线程来做某件事，此时主线程不需要等待子线程做完而是可以做其他事情。</li>
+<li>异步和多线程并不是一个同等关系，异步是最终目的，多线程只是实现异步的一种手段。</li>
 </ul>
 </li>
-<li>守护进程<ul>
-<li>在后台运行不受终端控制的进程(输入、输出)。网络服务大部分是守护进程。</li>
+<li>同步和异步是对应的，是线程之间的关系。两个线程要么同步要么异步。</li>
 </ul>
 </li>
-</ul>
-<h3 id="如何创建守护进程"><a href="#如何创建守护进程" class="headerlink" title="如何创建守护进程"></a>如何创建守护进程</h3><ul>
-<li>创建子进程，父进程退出<ul>
-<li>因为守护进程是在后台运行不受终端控制的进程。父进程退出后控制台就以为该程序结束了，就可以让子进程在后台进行自己的任务，同时用户仍然可以在控制台输入指令，从而在形式上做到与控制台脱离。</li>
-</ul>
-</li>
-<li>在子进程中创建新的会话(脱离控制终端)<ul>
-<li>使用系统函数<code>setsid()</code>创建一个新的会话，并担任该会话组的组长，摆脱原会话的控制，进而摆脱原进程的控制，最后达到摆脱控制台控制的目的。<ul>
-<li><code>setsid()</code>函数参数缺省时为关闭根目录，关闭文件描述符。</li>
+<li>阻塞、非阻塞<ul>
+<li>当进程在访问数据时，根据IO操作的就绪状态不同而采取不同的处理方式。比如主程序调用一个函数要读取一个文件的内容：<ul>
+<li>阻塞方式下主程序会等到函数读取完再继续往下执行。</li>
+<li>非阻塞方式下读取函数会立刻返回一个状态值给主程序，主程序不等待文件读取完就继续往下执行。</li>
+<li>要注意的是阻塞和非阻塞说明的是IO和CPU之间的关系，即CPU是否等待IO。</li>
 </ul>
 </li>
 </ul>
 </li>
-<li>改变当前目录为根目录<ul>
-<li>子进程会继承父进程的目录信息，但进程运行时对当前目录下的文件系统不能卸载，会造成很多隐藏麻烦。</li>
+<li>一般有以下4类IO模型，考虑发送方发出请求要接收方读取某文件内容为例：<ul>
+<li>同步阻塞IO<ul>
+<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，直到获取读取结果再响应发送方，等待期间不可做其他操作(阻塞)。</li>
 </ul>
 </li>
-<li>重设文件权限掩码，关闭文件描述符<ul>
-<li>子进程还会继承父进程的文件权限掩码，即屏蔽掉文件权限中的对应位。此时子进程需将其重置为0，即在此时要有大的权限，从而提高该守护进程的灵活程度。最后，关闭从父进程继承的已经打开的文件描述符，如不进行关闭，将造成浪费资源以及子进程所有文件系统无法卸载等错误。</li>
+<li>同步非阻塞IO<ul>
+<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，就立即返回，接受方继续去做其他事情。此时并未响应发送方，发送方一直等待。直到IO操作(读取文件)完成后，接收方获得读取结果响应发送方，接收方才可以进入下一次请求过程(非阻塞)。</li>
 </ul>
 </li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">pid_t</span> pid;</span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 第一次fork的作用在shell终端里造成一个程序已经运行完毕的假象。</span></span><br><span class="line"><span class="comment">     * 同时创建新会话的进程不能是进程组组长，所以父进程是进程组组长是不能创建新会话的，需要子进程中执行。</span></span><br><span class="line"><span class="comment">     * 所以到这里子进程便成为了一个新会话组的组长。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    pid = fork();   <span class="comment">// 成功则父进程获得子进程PID，子进程获得0。</span></span><br><span class="line">    <span class="built_in">If</span>(pid &lt; <span class="number">0</span>)  <span class="comment">//创建子进程失败。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">perror</span>(<span class="string">&quot;fail to fork&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)&#123; <span class="comment">//父进程退出。</span></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;   <span class="comment">//进入子进程。</span></span><br><span class="line">        <span class="built_in">setsid</span>();  <span class="comment">//创建新会话。</span></span><br><span class="line">        <span class="built_in">umask</span>(<span class="number">0</span>); <span class="comment">//重置文件权限掩码。</span></span><br><span class="line">        <span class="comment">/** </span></span><br><span class="line"><span class="comment">         * 第二次fork可以保证不会因为错误操作重新打开终端。</span></span><br><span class="line"><span class="comment">         * 因为只有会话组组长可以打开一个终端，再第二次fork后的子进程就不是会话组组长，就不会无意中打开终端了。</span></span><br><span class="line"><span class="comment">         * 但此部分非必须。</span></span><br><span class="line"><span class="comment">        **/</span></span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span>(pid != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">chdir</span>(<span class="string">&quot;/&quot;</span>);  <span class="comment">//设置当前目录为根目录。</span></span><br><span class="line">        <span class="type">int</span> maxfd = <span class="built_in">getdtablesize</span>();    <span class="comment">// 获得打开的文件描述符。</span></span><br><span class="line">        <span class="keyword">while</span>(maxfd--)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">close</span>(maxfd);  <span class="comment">//关闭文件描述符。</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">syslog</span>(LOG_INFO,<span class="string">&quot;im deamon\n&quot;</span>);</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="正确处理孤儿进程、僵尸进程的方法"><a href="#正确处理孤儿进程、僵尸进程的方法" class="headerlink" title="正确处理孤儿进程、僵尸进程的方法"></a>正确处理孤儿进程、僵尸进程的方法</h3><ul>
-<li>孤儿进程的处理<ul>
-<li>孤儿进程也就是没有父进程的进程，它由进程号为1的init进程负责处理。当有孤儿进程需要处理的时候，系统就把孤儿进程的父进程设置为init，而init进程会循环地运行<code>wait()</code>来获取它子进程的状态。</li>
+<li>异步阻塞IO(理论存在，实际不用)<ul>
+<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，就一直等到返回结果后，才响应发送方，期间不能进行其他操作。</li>
 </ul>
 </li>
-<li>僵尸进程的处理<ul>
-<li>如果父进程一直调用<code>wait()/waitpid()</code>函数接收子进程，那么子进程就一直保存在系统里，占用系统资源。</li>
-<li>如果僵尸进程太多，就会导致系统空间饱满，无法创建新的进程，严重影响系统工作。</li>
-<li>系统规定，子进程退出后，父进程会自动收到<code>SIGCHLD</code>信号，在父进程里重置<code>signal</code>函数。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span>* <span class="title">handler</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> status;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * handler函数里不能使用wait（）函数，</span></span><br><span class="line"><span class="comment">     * 比如同一时间有5个子进程都要结束了，均向父进程发送SIGCHLD信号，但父进程此时就在处理其中一个，在处理结束前，收到的其他SIGCHLD信号会忽略，导致漏掉部分子进程没有处理结束。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">waitpid</span>(<span class="number">-1</span>, &amp;status, WNOHANG) &gt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child is die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">signal</span>(SIGCHLD, handler);   <span class="comment">// 设置函数handler来处理SIGCHLD信号。</span></span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)  <span class="comment">//父进程循环等待。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="number">0</span> == pid)&#123;   <span class="comment">//子进程说自己die后就结束生命周期，之后父进程就收到SIGCHLD。</span></span><br><span class="line">                          <span class="comment">//信号调用handler函数接收结束子进程，打印child is die。</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;i am child, i die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="waitpid-和wait-函数"><a href="#waitpid-和wait-函数" class="headerlink" title="waitpid()和wait()函数"></a>waitpid()和wait()函数</h3><ul>
-<li><code>pid_t waitpid(pid_t pid,int *status,int options)</code>函数<ul>
-<li>参数<ul>
-<li><code>pid</code><ul>
-<li>从参数的名字pid和类型pid_t中就可以看出，需要的是一个<strong>进程ID</strong>。但当pid取不同的值时，在这里有不同的意义。</li>
-<li><strong>pid&gt;0</strong>时，指<strong>等待进程ID等于pid的子进程</strong>，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去。</li>
-<li><strong>pid=-1</strong>时，<strong>等待任何一个子进程退出</strong>，没有任何限制，此时waitpid和wait的作用一模一样。 　　</li>
-<li><strong>pid=0</strong>时，<strong>等待同一个进程组中的任何子进程</strong>，如果子进程已经加入了别的进程组，waitpid不会对它做任何理睬。</li>
-<li><strong>pid&lt;-1</strong>时，<strong>等待一个指定进程组中的任何子进程</strong>，这个<strong>进程组的ID等于pid的绝对值</strong>。 　　</li>
-</ul>
-</li>
-<li><code>status</code><ul>
-<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
-</ul>
-</li>
-<li><code>options</code><ul>
-<li>提供了一些额外的选项来控制waitpid，目前在Linux中只支持<code>WNOHANG</code>和<code>WUNTRACED</code>两个选项，这是两个常数，可以用”|”运算符把它们连接起来使用，不想使用则设置为0。<ul>
-<li>如果使用了WNOHANG参数调用waitpid，即使没有子进程退出，它也会立即返回，不会像wait那样永远等下去，即不需要阻塞。</li>
+<li>异步非阻塞IO(效率最高)<ul>
+<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，也不等待，而是马上返回去做其他事情。当IO操作(读取文件)完成以后，将完成状态和结果通知接收方，接收方再响应发送方。</li>
+<li>阻塞和非阻塞是对同一个线程的某个时刻来说的。此时，线程要么阻塞，要么非阻塞。</li>
 </ul>
 </li>
 </ul>
 </li>
+<li>阻塞是使用同步机制的结果，非阻塞是使用异步机制的结果。</li>
+</ul>
+<h3 id="线程的同步和互斥"><a href="#线程的同步和互斥" class="headerlink" title="线程的同步和互斥"></a>线程的同步和互斥</h3><ul>
+<li>线程互斥<ul>
+<li>当有若干个线程同时访问同一块资源时，规定同一时间只有一个线程可以得到访问权，其他线程需要等待占用资源者释放该资源才可以申请访问。</li>
+<li>互斥无法限制访问者对资源的访问顺序，即访问是无序的。</li>
 </ul>
 </li>
-<li>返回值<ul>
-<li>当正常返回的时候，waitpid返回收集到的<strong>子进程的进程ID</strong>；</li>
-<li>如果设置了选项WNOHANG，而调用中waitpid发现没有已退出的子进程可收集，则<strong>返回0</strong>； 　　 　　</li>
-<li>如果调用中出错，则<strong>返回-1</strong>，这时errno会被设置成相应的值以指示错误所在；当pid所指示的子进程不存在，或此进程存在，但不是调用进程的子进程，waitpid就会出错返回，这时errno被设置为ECHILD </li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>pid_t wait(int *status)</code>函数<ul>
-<li>进程一旦调用了wait，就立即阻塞自己，由wait自动分析是否当前进程的某个子进程已经退出，<ul>
-<li>如果让它找到了这样一个已经变成僵尸的子进程，wait就会收集这个子进程的信息，并把它彻底销毁后返回；</li>
-<li>如果没有找到这样一个子进程，wait就会一直阻塞在这里，直到有一个出现为止。</li>
-</ul>
-</li>
-<li>参数<ul>
-<li><code>status</code><ul>
-<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
+<li>线程同步：<ul>
+<li>在互斥的基础上(大多数情况，除非允许同一时间多个访问者访问同一资源)，通过其它机制实现访问者对资源的有序访问，实现每个线程之间按预定的先后次序进行运行，协同、协助、互相配合。</li>
 </ul>
 </li>
 </ul>
-</li>
-<li>返回值<ul>
-<li>如果成功，wait会返回被收集的<strong>子进程的进程ID</strong>。</li>
-<li>如果调用进程没有子进程，调用就会失败，此时<strong>wait返回-1</strong>，同时<strong>errno被置为ECHILD</strong>。</li>
+<h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><ul>
+<li>同步是过程，阻塞是状态<ul>
+<li>当多个线程访问同一资源时，规定同一时间只有一个线程可进行访问，所以后访问的线程将被阻塞，等待先访问的线程访问完。</li>
 </ul>
 </li>
-</ul>
-</li>
-<li>waitpid提供了wait函数不能实现的3个功能:<ol>
-<li>waitpid等待<strong>特定</strong>的子进程, 而wait则返回<strong>任一</strong>终止状态的子进程;</li>
-<li>waitpid提供了一个wait的<strong>非阻塞版本</strong>; </li>
-<li>waitpid支持<strong>作业控制</strong>(以WUNTRACED选项). 用于检查wait和waitpid两个函数返回终止状态的宏: 这两个函数返回的子进程状态都保存在status指针中, 用以下3个宏可以检查该状态:<ul>
-<li>WIFEXITED(status): 若为正常终止, 则为真，此时可执行WEXITSTATUS(status): 取子进程传送给exit或_exit参数的低8位。</li>
-<li>WIFSIGNALED(status): 若为异常终止, 则为真，此时可执行 WTERMSIG(status): 取使子进程终止的信号编号。</li>
-<li>WIFSTOPPED(status): 若为当前暂停子进程, 则为真，此时可执行 WSTOPSIG(status): 取使子进程暂停的信号编号。</li>
-</ul>
-</li>
-</ol>
-</li>
-<li>如果在父进程用wait()和waitpid()会使父进程挂起，解决的办法：<ul>
-<li>可以用signal函数为SIGCHLD安装handler。在子进程结束后，父进程会收到该信号，可以在handler中调用wait回收。</li>
-<li>如果父进程不关心子进程什么时候结束，那么可以用<code>signal(SIGCLD, SIG_IGN)</code>或<code>signal(SIGCHLD, SIG_IGN)</code>通知内核，自己对子进程的结束不感兴趣，那么子进程结束后，内核会回收，并不再给父进程发送信号。</li>
-<li>fork两次，父进程fork一个子进程，然后继续工作，子进程fork一个孙进程后退出，那么孙进程被init接管，孙进程结束后，init会回收。不过子进程的回收还要自己做，子进程回收后父进程才挂起。 </li>
-</ul>
-</li>
+<li>线程同步不一定发生阻塞。只有当访问同一资源出现互相等待和互相唤醒才会发生阻塞。而阻塞了一定是同步，多线程用阻塞实现同步。</li>
 </ul>
 ]]></content>
       <categories>
@@ -653,27 +522,7 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2022/02/25/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
-      <categories>
-        <category>test</category>
-      </categories>
-      <tags>
-        <tag>test</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Zigbee协议栈</title>
+    <title>Zigbee协议栈 2</title>
     <url>/2022/03/04/2022-03-04-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h1 id="Zigbee协议栈"><a href="#Zigbee协议栈" class="headerlink" title="Zigbee协议栈"></a>Zigbee协议栈</h1><h2 id="Zigbee协议栈项目结构分析"><a href="#Zigbee协议栈项目结构分析" class="headerlink" title="Zigbee协议栈项目结构分析"></a>Zigbee协议栈项目结构分析</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/Z-stack%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true" alt="Z-stack文件目录"></p>
 <ul>
@@ -894,6 +743,157 @@
       </categories>
       <tags>
         <tag>ZigBee</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>进程、线程 4</title>
+    <url>/2022/03/03/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li>孤儿进程<ul>
+<li>当父进程退出后，子进程还在运行，那么这些子进程就是孤儿进程。</li>
+<li>孤儿进程将被init进程所收养，并由init进程对它们完成状态收集工作。</li>
+</ul>
+</li>
+<li>僵尸进程<ul>
+<li>当子进程推出后，父进程却并未接收到结束子进程的信息(调用waitpid获取子进程的状态信息)，那么子进程仍停留在系统中，即僵尸进程。</li>
+</ul>
+</li>
+<li>守护进程<ul>
+<li>在后台运行不受终端控制的进程(输入、输出)。网络服务大部分是守护进程。</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何创建守护进程"><a href="#如何创建守护进程" class="headerlink" title="如何创建守护进程"></a>如何创建守护进程</h3><ul>
+<li>创建子进程，父进程退出<ul>
+<li>因为守护进程是在后台运行不受终端控制的进程。父进程退出后控制台就以为该程序结束了，就可以让子进程在后台进行自己的任务，同时用户仍然可以在控制台输入指令，从而在形式上做到与控制台脱离。</li>
+</ul>
+</li>
+<li>在子进程中创建新的会话(脱离控制终端)<ul>
+<li>使用系统函数<code>setsid()</code>创建一个新的会话，并担任该会话组的组长，摆脱原会话的控制，进而摆脱原进程的控制，最后达到摆脱控制台控制的目的。<ul>
+<li><code>setsid()</code>函数参数缺省时为关闭根目录，关闭文件描述符。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>改变当前目录为根目录<ul>
+<li>子进程会继承父进程的目录信息，但进程运行时对当前目录下的文件系统不能卸载，会造成很多隐藏麻烦。</li>
+</ul>
+</li>
+<li>重设文件权限掩码，关闭文件描述符<ul>
+<li>子进程还会继承父进程的文件权限掩码，即屏蔽掉文件权限中的对应位。此时子进程需将其重置为0，即在此时要有大的权限，从而提高该守护进程的灵活程度。最后，关闭从父进程继承的已经打开的文件描述符，如不进行关闭，将造成浪费资源以及子进程所有文件系统无法卸载等错误。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">pid_t</span> pid;</span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 第一次fork的作用在shell终端里造成一个程序已经运行完毕的假象。</span></span><br><span class="line"><span class="comment">     * 同时创建新会话的进程不能是进程组组长，所以父进程是进程组组长是不能创建新会话的，需要子进程中执行。</span></span><br><span class="line"><span class="comment">     * 所以到这里子进程便成为了一个新会话组的组长。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    pid = fork();   <span class="comment">// 成功则父进程获得子进程PID，子进程获得0。</span></span><br><span class="line">    <span class="built_in">If</span>(pid &lt; <span class="number">0</span>)  <span class="comment">//创建子进程失败。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">perror</span>(<span class="string">&quot;fail to fork&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)&#123; <span class="comment">//父进程退出。</span></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;   <span class="comment">//进入子进程。</span></span><br><span class="line">        <span class="built_in">setsid</span>();  <span class="comment">//创建新会话。</span></span><br><span class="line">        <span class="built_in">umask</span>(<span class="number">0</span>); <span class="comment">//重置文件权限掩码。</span></span><br><span class="line">        <span class="comment">/** </span></span><br><span class="line"><span class="comment">         * 第二次fork可以保证不会因为错误操作重新打开终端。</span></span><br><span class="line"><span class="comment">         * 因为只有会话组组长可以打开一个终端，再第二次fork后的子进程就不是会话组组长，就不会无意中打开终端了。</span></span><br><span class="line"><span class="comment">         * 但此部分非必须。</span></span><br><span class="line"><span class="comment">        **/</span></span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span>(pid != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">chdir</span>(<span class="string">&quot;/&quot;</span>);  <span class="comment">//设置当前目录为根目录。</span></span><br><span class="line">        <span class="type">int</span> maxfd = <span class="built_in">getdtablesize</span>();    <span class="comment">// 获得打开的文件描述符。</span></span><br><span class="line">        <span class="keyword">while</span>(maxfd--)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">close</span>(maxfd);  <span class="comment">//关闭文件描述符。</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">syslog</span>(LOG_INFO,<span class="string">&quot;im deamon\n&quot;</span>);</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="正确处理孤儿进程、僵尸进程的方法"><a href="#正确处理孤儿进程、僵尸进程的方法" class="headerlink" title="正确处理孤儿进程、僵尸进程的方法"></a>正确处理孤儿进程、僵尸进程的方法</h3><ul>
+<li>孤儿进程的处理<ul>
+<li>孤儿进程也就是没有父进程的进程，它由进程号为1的init进程负责处理。当有孤儿进程需要处理的时候，系统就把孤儿进程的父进程设置为init，而init进程会循环地运行<code>wait()</code>来获取它子进程的状态。</li>
+</ul>
+</li>
+<li>僵尸进程的处理<ul>
+<li>如果父进程一直调用<code>wait()/waitpid()</code>函数接收子进程，那么子进程就一直保存在系统里，占用系统资源。</li>
+<li>如果僵尸进程太多，就会导致系统空间饱满，无法创建新的进程，严重影响系统工作。</li>
+<li>系统规定，子进程退出后，父进程会自动收到<code>SIGCHLD</code>信号，在父进程里重置<code>signal</code>函数。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span>* <span class="title">handler</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> status;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * handler函数里不能使用wait（）函数，</span></span><br><span class="line"><span class="comment">     * 比如同一时间有5个子进程都要结束了，均向父进程发送SIGCHLD信号，但父进程此时就在处理其中一个，在处理结束前，收到的其他SIGCHLD信号会忽略，导致漏掉部分子进程没有处理结束。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">waitpid</span>(<span class="number">-1</span>, &amp;status, WNOHANG) &gt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child is die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">signal</span>(SIGCHLD, handler);   <span class="comment">// 设置函数handler来处理SIGCHLD信号。</span></span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)  <span class="comment">//父进程循环等待。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="number">0</span> == pid)&#123;   <span class="comment">//子进程说自己die后就结束生命周期，之后父进程就收到SIGCHLD。</span></span><br><span class="line">                          <span class="comment">//信号调用handler函数接收结束子进程，打印child is die。</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;i am child, i die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="waitpid-和wait-函数"><a href="#waitpid-和wait-函数" class="headerlink" title="waitpid()和wait()函数"></a>waitpid()和wait()函数</h3><ul>
+<li><code>pid_t waitpid(pid_t pid,int *status,int options)</code>函数<ul>
+<li>参数<ul>
+<li><code>pid</code><ul>
+<li>从参数的名字pid和类型pid_t中就可以看出，需要的是一个<strong>进程ID</strong>。但当pid取不同的值时，在这里有不同的意义。</li>
+<li><strong>pid&gt;0</strong>时，指<strong>等待进程ID等于pid的子进程</strong>，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去。</li>
+<li><strong>pid=-1</strong>时，<strong>等待任何一个子进程退出</strong>，没有任何限制，此时waitpid和wait的作用一模一样。 　　</li>
+<li><strong>pid=0</strong>时，<strong>等待同一个进程组中的任何子进程</strong>，如果子进程已经加入了别的进程组，waitpid不会对它做任何理睬。</li>
+<li><strong>pid&lt;-1</strong>时，<strong>等待一个指定进程组中的任何子进程</strong>，这个<strong>进程组的ID等于pid的绝对值</strong>。 　　</li>
+</ul>
+</li>
+<li><code>status</code><ul>
+<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
+</ul>
+</li>
+<li><code>options</code><ul>
+<li>提供了一些额外的选项来控制waitpid，目前在Linux中只支持<code>WNOHANG</code>和<code>WUNTRACED</code>两个选项，这是两个常数，可以用”|”运算符把它们连接起来使用，不想使用则设置为0。<ul>
+<li>如果使用了WNOHANG参数调用waitpid，即使没有子进程退出，它也会立即返回，不会像wait那样永远等下去，即不需要阻塞。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回值<ul>
+<li>当正常返回的时候，waitpid返回收集到的<strong>子进程的进程ID</strong>；</li>
+<li>如果设置了选项WNOHANG，而调用中waitpid发现没有已退出的子进程可收集，则<strong>返回0</strong>； 　　 　　</li>
+<li>如果调用中出错，则<strong>返回-1</strong>，这时errno会被设置成相应的值以指示错误所在；当pid所指示的子进程不存在，或此进程存在，但不是调用进程的子进程，waitpid就会出错返回，这时errno被设置为ECHILD </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>pid_t wait(int *status)</code>函数<ul>
+<li>进程一旦调用了wait，就立即阻塞自己，由wait自动分析是否当前进程的某个子进程已经退出，<ul>
+<li>如果让它找到了这样一个已经变成僵尸的子进程，wait就会收集这个子进程的信息，并把它彻底销毁后返回；</li>
+<li>如果没有找到这样一个子进程，wait就会一直阻塞在这里，直到有一个出现为止。</li>
+</ul>
+</li>
+<li>参数<ul>
+<li><code>status</code><ul>
+<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回值<ul>
+<li>如果成功，wait会返回被收集的<strong>子进程的进程ID</strong>。</li>
+<li>如果调用进程没有子进程，调用就会失败，此时<strong>wait返回-1</strong>，同时<strong>errno被置为ECHILD</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>waitpid提供了wait函数不能实现的3个功能:<ol>
+<li>waitpid等待<strong>特定</strong>的子进程, 而wait则返回<strong>任一</strong>终止状态的子进程;</li>
+<li>waitpid提供了一个wait的<strong>非阻塞版本</strong>; </li>
+<li>waitpid支持<strong>作业控制</strong>(以WUNTRACED选项). 用于检查wait和waitpid两个函数返回终止状态的宏: 这两个函数返回的子进程状态都保存在status指针中, 用以下3个宏可以检查该状态:<ul>
+<li>WIFEXITED(status): 若为正常终止, 则为真，此时可执行WEXITSTATUS(status): 取子进程传送给exit或_exit参数的低8位。</li>
+<li>WIFSIGNALED(status): 若为异常终止, 则为真，此时可执行 WTERMSIG(status): 取使子进程终止的信号编号。</li>
+<li>WIFSTOPPED(status): 若为当前暂停子进程, 则为真，此时可执行 WSTOPSIG(status): 取使子进程暂停的信号编号。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>如果在父进程用wait()和waitpid()会使父进程挂起，解决的办法：<ul>
+<li>可以用signal函数为SIGCHLD安装handler。在子进程结束后，父进程会收到该信号，可以在handler中调用wait回收。</li>
+<li>如果父进程不关心子进程什么时候结束，那么可以用<code>signal(SIGCLD, SIG_IGN)</code>或<code>signal(SIGCHLD, SIG_IGN)</code>通知内核，自己对子进程的结束不感兴趣，那么子进程结束后，内核会回收，并不再给父进程发送信号。</li>
+<li>fork两次，父进程fork一个子进程，然后继续工作，子进程fork一个孙进程后退出，那么孙进程被init接管，孙进程结束后，init会回收。不过子进程的回收还要自己做，子进程回收后父进程才挂起。 </li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Hello World</title>
+    <url>/2022/02/25/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
       </tags>
   </entry>
 </search>
