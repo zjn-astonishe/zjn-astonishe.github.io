@@ -355,6 +355,137 @@
       </tags>
   </entry>
   <entry>
+    <title>进程、线程 4</title>
+    <url>/2022/03/03/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
+<li>孤儿进程<ul>
+<li>当父进程退出后，子进程还在运行，那么这些子进程就是孤儿进程。</li>
+<li>孤儿进程将被init进程所收养，并由init进程对它们完成状态收集工作。</li>
+</ul>
+</li>
+<li>僵尸进程<ul>
+<li>当子进程推出后，父进程却并未接收到结束子进程的信息(调用waitpid获取子进程的状态信息)，那么子进程仍停留在系统中，即僵尸进程。</li>
+</ul>
+</li>
+<li>守护进程<ul>
+<li>在后台运行不受终端控制的进程(输入、输出)。网络服务大部分是守护进程。</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何创建守护进程"><a href="#如何创建守护进程" class="headerlink" title="如何创建守护进程"></a>如何创建守护进程</h3><ul>
+<li>创建子进程，父进程退出<ul>
+<li>因为守护进程是在后台运行不受终端控制的进程。父进程退出后控制台就以为该程序结束了，就可以让子进程在后台进行自己的任务，同时用户仍然可以在控制台输入指令，从而在形式上做到与控制台脱离。</li>
+</ul>
+</li>
+<li>在子进程中创建新的会话(脱离控制终端)<ul>
+<li>使用系统函数<code>setsid()</code>创建一个新的会话，并担任该会话组的组长，摆脱原会话的控制，进而摆脱原进程的控制，最后达到摆脱控制台控制的目的。<ul>
+<li><code>setsid()</code>函数参数缺省时为关闭根目录，关闭文件描述符。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>改变当前目录为根目录<ul>
+<li>子进程会继承父进程的目录信息，但进程运行时对当前目录下的文件系统不能卸载，会造成很多隐藏麻烦。</li>
+</ul>
+</li>
+<li>重设文件权限掩码，关闭文件描述符<ul>
+<li>子进程还会继承父进程的文件权限掩码，即屏蔽掉文件权限中的对应位。此时子进程需将其重置为0，即在此时要有大的权限，从而提高该守护进程的灵活程度。最后，关闭从父进程继承的已经打开的文件描述符，如不进行关闭，将造成浪费资源以及子进程所有文件系统无法卸载等错误。</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">pid_t</span> pid;</span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 第一次fork的作用在shell终端里造成一个程序已经运行完毕的假象。</span></span><br><span class="line"><span class="comment">     * 同时创建新会话的进程不能是进程组组长，所以父进程是进程组组长是不能创建新会话的，需要子进程中执行。</span></span><br><span class="line"><span class="comment">     * 所以到这里子进程便成为了一个新会话组的组长。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    pid = fork();   <span class="comment">// 成功则父进程获得子进程PID，子进程获得0。</span></span><br><span class="line">    <span class="built_in">If</span>(pid &lt; <span class="number">0</span>)  <span class="comment">//创建子进程失败。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">perror</span>(<span class="string">&quot;fail to fork&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)&#123; <span class="comment">//父进程退出。</span></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;   <span class="comment">//进入子进程。</span></span><br><span class="line">        <span class="built_in">setsid</span>();  <span class="comment">//创建新会话。</span></span><br><span class="line">        <span class="built_in">umask</span>(<span class="number">0</span>); <span class="comment">//重置文件权限掩码。</span></span><br><span class="line">        <span class="comment">/** </span></span><br><span class="line"><span class="comment">         * 第二次fork可以保证不会因为错误操作重新打开终端。</span></span><br><span class="line"><span class="comment">         * 因为只有会话组组长可以打开一个终端，再第二次fork后的子进程就不是会话组组长，就不会无意中打开终端了。</span></span><br><span class="line"><span class="comment">         * 但此部分非必须。</span></span><br><span class="line"><span class="comment">        **/</span></span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span>(pid != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">chdir</span>(<span class="string">&quot;/&quot;</span>);  <span class="comment">//设置当前目录为根目录。</span></span><br><span class="line">        <span class="type">int</span> maxfd = <span class="built_in">getdtablesize</span>();    <span class="comment">// 获得打开的文件描述符。</span></span><br><span class="line">        <span class="keyword">while</span>(maxfd--)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">close</span>(maxfd);  <span class="comment">//关闭文件描述符。</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">syslog</span>(LOG_INFO,<span class="string">&quot;im deamon\n&quot;</span>);</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="正确处理孤儿进程、僵尸进程的方法"><a href="#正确处理孤儿进程、僵尸进程的方法" class="headerlink" title="正确处理孤儿进程、僵尸进程的方法"></a>正确处理孤儿进程、僵尸进程的方法</h3><ul>
+<li>孤儿进程的处理<ul>
+<li>孤儿进程也就是没有父进程的进程，它由进程号为1的init进程负责处理。当有孤儿进程需要处理的时候，系统就把孤儿进程的父进程设置为init，而init进程会循环地运行<code>wait()</code>来获取它子进程的状态。</li>
+</ul>
+</li>
+<li>僵尸进程的处理<ul>
+<li>如果父进程一直调用<code>wait()/waitpid()</code>函数接收子进程，那么子进程就一直保存在系统里，占用系统资源。</li>
+<li>如果僵尸进程太多，就会导致系统空间饱满，无法创建新的进程，严重影响系统工作。</li>
+<li>系统规定，子进程退出后，父进程会自动收到<code>SIGCHLD</code>信号，在父进程里重置<code>signal</code>函数。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span>* <span class="title">handler</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> status;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * handler函数里不能使用wait（）函数，</span></span><br><span class="line"><span class="comment">     * 比如同一时间有5个子进程都要结束了，均向父进程发送SIGCHLD信号，但父进程此时就在处理其中一个，在处理结束前，收到的其他SIGCHLD信号会忽略，导致漏掉部分子进程没有处理结束。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">waitpid</span>(<span class="number">-1</span>, &amp;status, WNOHANG) &gt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child is die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">signal</span>(SIGCHLD, handler);   <span class="comment">// 设置函数handler来处理SIGCHLD信号。</span></span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)  <span class="comment">//父进程循环等待。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="number">0</span> == pid)&#123;   <span class="comment">//子进程说自己die后就结束生命周期，之后父进程就收到SIGCHLD。</span></span><br><span class="line">                          <span class="comment">//信号调用handler函数接收结束子进程，打印child is die。</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;i am child, i die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="waitpid-和wait-函数"><a href="#waitpid-和wait-函数" class="headerlink" title="waitpid()和wait()函数"></a>waitpid()和wait()函数</h3><ul>
+<li><code>pid_t waitpid(pid_t pid,int *status,int options)</code>函数<ul>
+<li>参数<ul>
+<li><code>pid</code><ul>
+<li>从参数的名字pid和类型pid_t中就可以看出，需要的是一个<strong>进程ID</strong>。但当pid取不同的值时，在这里有不同的意义。</li>
+<li><strong>pid&gt;0</strong>时，指<strong>等待进程ID等于pid的子进程</strong>，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去。</li>
+<li><strong>pid=-1</strong>时，<strong>等待任何一个子进程退出</strong>，没有任何限制，此时waitpid和wait的作用一模一样。 　　</li>
+<li><strong>pid=0</strong>时，<strong>等待同一个进程组中的任何子进程</strong>，如果子进程已经加入了别的进程组，waitpid不会对它做任何理睬。</li>
+<li><strong>pid&lt;-1</strong>时，<strong>等待一个指定进程组中的任何子进程</strong>，这个<strong>进程组的ID等于pid的绝对值</strong>。 　　</li>
+</ul>
+</li>
+<li><code>status</code><ul>
+<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
+</ul>
+</li>
+<li><code>options</code><ul>
+<li>提供了一些额外的选项来控制waitpid，目前在Linux中只支持<code>WNOHANG</code>和<code>WUNTRACED</code>两个选项，这是两个常数，可以用”|”运算符把它们连接起来使用，不想使用则设置为0。<ul>
+<li>如果使用了WNOHANG参数调用waitpid，即使没有子进程退出，它也会立即返回，不会像wait那样永远等下去，即不需要阻塞。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回值<ul>
+<li>当正常返回的时候，waitpid返回收集到的<strong>子进程的进程ID</strong>；</li>
+<li>如果设置了选项WNOHANG，而调用中waitpid发现没有已退出的子进程可收集，则<strong>返回0</strong>； 　　 　　</li>
+<li>如果调用中出错，则<strong>返回-1</strong>，这时errno会被设置成相应的值以指示错误所在；当pid所指示的子进程不存在，或此进程存在，但不是调用进程的子进程，waitpid就会出错返回，这时errno被设置为ECHILD </li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>pid_t wait(int *status)</code>函数<ul>
+<li>进程一旦调用了wait，就立即阻塞自己，由wait自动分析是否当前进程的某个子进程已经退出，<ul>
+<li>如果让它找到了这样一个已经变成僵尸的子进程，wait就会收集这个子进程的信息，并把它彻底销毁后返回；</li>
+<li>如果没有找到这样一个子进程，wait就会一直阻塞在这里，直到有一个出现为止。</li>
+</ul>
+</li>
+<li>参数<ul>
+<li><code>status</code><ul>
+<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>返回值<ul>
+<li>如果成功，wait会返回被收集的<strong>子进程的进程ID</strong>。</li>
+<li>如果调用进程没有子进程，调用就会失败，此时<strong>wait返回-1</strong>，同时<strong>errno被置为ECHILD</strong>。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>waitpid提供了wait函数不能实现的3个功能:<ol>
+<li>waitpid等待<strong>特定</strong>的子进程, 而wait则返回<strong>任一</strong>终止状态的子进程;</li>
+<li>waitpid提供了一个wait的<strong>非阻塞版本</strong>; </li>
+<li>waitpid支持<strong>作业控制</strong>(以WUNTRACED选项). 用于检查wait和waitpid两个函数返回终止状态的宏: 这两个函数返回的子进程状态都保存在status指针中, 用以下3个宏可以检查该状态:<ul>
+<li>WIFEXITED(status): 若为正常终止, 则为真，此时可执行WEXITSTATUS(status): 取子进程传送给exit或_exit参数的低8位。</li>
+<li>WIFSIGNALED(status): 若为异常终止, 则为真，此时可执行 WTERMSIG(status): 取使子进程终止的信号编号。</li>
+<li>WIFSTOPPED(status): 若为当前暂停子进程, 则为真，此时可执行 WSTOPSIG(status): 取使子进程暂停的信号编号。</li>
+</ul>
+</li>
+</ol>
+</li>
+<li>如果在父进程用wait()和waitpid()会使父进程挂起，解决的办法：<ul>
+<li>可以用signal函数为SIGCHLD安装handler。在子进程结束后，父进程会收到该信号，可以在handler中调用wait回收。</li>
+<li>如果父进程不关心子进程什么时候结束，那么可以用<code>signal(SIGCLD, SIG_IGN)</code>或<code>signal(SIGCHLD, SIG_IGN)</code>通知内核，自己对子进程的结束不感兴趣，那么子进程结束后，内核会回收，并不再给父进程发送信号。</li>
+<li>fork两次，父进程fork一个子进程，然后继续工作，子进程fork一个孙进程后退出，那么孙进程被init接管，孙进程结束后，init会回收。不过子进程的回收还要自己做，子进程回收后父进程才挂起。 </li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>进程、线程 2</title>
     <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="CPU上下文"><a href="#CPU上下文" class="headerlink" title="CPU上下文"></a>CPU上下文</h2><h3 id="特权模式切换"><a href="#特权模式切换" class="headerlink" title="特权模式切换"></a>特权模式切换</h3><ul>
@@ -522,134 +653,14 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 4</title>
-    <url>/2022/03/03/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
-<li>孤儿进程<ul>
-<li>当父进程退出后，子进程还在运行，那么这些子进程就是孤儿进程。</li>
-<li>孤儿进程将被init进程所收养，并由init进程对它们完成状态收集工作。</li>
-</ul>
-</li>
-<li>僵尸进程<ul>
-<li>当子进程推出后，父进程却并未接收到结束子进程的信息(调用waitpid获取子进程的状态信息)，那么子进程仍停留在系统中，即僵尸进程。</li>
-</ul>
-</li>
-<li>守护进程<ul>
-<li>在后台运行不受终端控制的进程(输入、输出)。网络服务大部分是守护进程。</li>
-</ul>
-</li>
-</ul>
-<h3 id="如何创建守护进程"><a href="#如何创建守护进程" class="headerlink" title="如何创建守护进程"></a>如何创建守护进程</h3><ul>
-<li>创建子进程，父进程退出<ul>
-<li>因为守护进程是在后台运行不受终端控制的进程。父进程退出后控制台就以为该程序结束了，就可以让子进程在后台进行自己的任务，同时用户仍然可以在控制台输入指令，从而在形式上做到与控制台脱离。</li>
-</ul>
-</li>
-<li>在子进程中创建新的会话(脱离控制终端)<ul>
-<li>使用系统函数<code>setsid()</code>创建一个新的会话，并担任该会话组的组长，摆脱原会话的控制，进而摆脱原进程的控制，最后达到摆脱控制台控制的目的。<ul>
-<li><code>setsid()</code>函数参数缺省时为关闭根目录，关闭文件描述符。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>改变当前目录为根目录<ul>
-<li>子进程会继承父进程的目录信息，但进程运行时对当前目录下的文件系统不能卸载，会造成很多隐藏麻烦。</li>
-</ul>
-</li>
-<li>重设文件权限掩码，关闭文件描述符<ul>
-<li>子进程还会继承父进程的文件权限掩码，即屏蔽掉文件权限中的对应位。此时子进程需将其重置为0，即在此时要有大的权限，从而提高该守护进程的灵活程度。最后，关闭从父进程继承的已经打开的文件描述符，如不进行关闭，将造成浪费资源以及子进程所有文件系统无法卸载等错误。</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">const</span> <span class="type">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">pid_t</span> pid;</span><br><span class="line">    <span class="comment">/** </span></span><br><span class="line"><span class="comment">     * 第一次fork的作用在shell终端里造成一个程序已经运行完毕的假象。</span></span><br><span class="line"><span class="comment">     * 同时创建新会话的进程不能是进程组组长，所以父进程是进程组组长是不能创建新会话的，需要子进程中执行。</span></span><br><span class="line"><span class="comment">     * 所以到这里子进程便成为了一个新会话组的组长。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    pid = fork();   <span class="comment">// 成功则父进程获得子进程PID，子进程获得0。</span></span><br><span class="line">    <span class="built_in">If</span>(pid &lt; <span class="number">0</span>)  <span class="comment">//创建子进程失败。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">perror</span>(<span class="string">&quot;fail to fork&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)&#123; <span class="comment">//父进程退出。</span></span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;   <span class="comment">//进入子进程。</span></span><br><span class="line">        <span class="built_in">setsid</span>();  <span class="comment">//创建新会话。</span></span><br><span class="line">        <span class="built_in">umask</span>(<span class="number">0</span>); <span class="comment">//重置文件权限掩码。</span></span><br><span class="line">        <span class="comment">/** </span></span><br><span class="line"><span class="comment">         * 第二次fork可以保证不会因为错误操作重新打开终端。</span></span><br><span class="line"><span class="comment">         * 因为只有会话组组长可以打开一个终端，再第二次fork后的子进程就不是会话组组长，就不会无意中打开终端了。</span></span><br><span class="line"><span class="comment">         * 但此部分非必须。</span></span><br><span class="line"><span class="comment">        **/</span></span><br><span class="line">        pid = fork();</span><br><span class="line">        <span class="keyword">if</span>(pid != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">chdir</span>(<span class="string">&quot;/&quot;</span>);  <span class="comment">//设置当前目录为根目录。</span></span><br><span class="line">        <span class="type">int</span> maxfd = <span class="built_in">getdtablesize</span>();    <span class="comment">// 获得打开的文件描述符。</span></span><br><span class="line">        <span class="keyword">while</span>(maxfd--)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">close</span>(maxfd);  <span class="comment">//关闭文件描述符。</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">syslog</span>(LOG_INFO,<span class="string">&quot;im deamon\n&quot;</span>);</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="正确处理孤儿进程、僵尸进程的方法"><a href="#正确处理孤儿进程、僵尸进程的方法" class="headerlink" title="正确处理孤儿进程、僵尸进程的方法"></a>正确处理孤儿进程、僵尸进程的方法</h3><ul>
-<li>孤儿进程的处理<ul>
-<li>孤儿进程也就是没有父进程的进程，它由进程号为1的init进程负责处理。当有孤儿进程需要处理的时候，系统就把孤儿进程的父进程设置为init，而init进程会循环地运行<code>wait()</code>来获取它子进程的状态。</li>
-</ul>
-</li>
-<li>僵尸进程的处理<ul>
-<li>如果父进程一直调用<code>wait()/waitpid()</code>函数接收子进程，那么子进程就一直保存在系统里，占用系统资源。</li>
-<li>如果僵尸进程太多，就会导致系统空间饱满，无法创建新的进程，严重影响系统工作。</li>
-<li>系统规定，子进程退出后，父进程会自动收到<code>SIGCHLD</code>信号，在父进程里重置<code>signal</code>函数。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span>* <span class="title">handler</span><span class="params">(<span class="type">int</span> sig)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> status;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * handler函数里不能使用wait（）函数，</span></span><br><span class="line"><span class="comment">     * 比如同一时间有5个子进程都要结束了，均向父进程发送SIGCHLD信号，但父进程此时就在处理其中一个，在处理结束前，收到的其他SIGCHLD信号会忽略，导致漏掉部分子进程没有处理结束。</span></span><br><span class="line"><span class="comment">    **/</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">waitpid</span>(<span class="number">-1</span>, &amp;status, WNOHANG) &gt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;child is die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">signal</span>(SIGCHLD, handler);   <span class="comment">// 设置函数handler来处理SIGCHLD信号。</span></span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span>(pid &gt; <span class="number">0</span>)  <span class="comment">//父进程循环等待。</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">sleep</span>(<span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="number">0</span> == pid)&#123;   <span class="comment">//子进程说自己die后就结束生命周期，之后父进程就收到SIGCHLD。</span></span><br><span class="line">                          <span class="comment">//信号调用handler函数接收结束子进程，打印child is die。</span></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;i am child, i die\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="waitpid-和wait-函数"><a href="#waitpid-和wait-函数" class="headerlink" title="waitpid()和wait()函数"></a>waitpid()和wait()函数</h3><ul>
-<li><code>pid_t waitpid(pid_t pid,int *status,int options)</code>函数<ul>
-<li>参数<ul>
-<li><code>pid</code><ul>
-<li>从参数的名字pid和类型pid_t中就可以看出，需要的是一个<strong>进程ID</strong>。但当pid取不同的值时，在这里有不同的意义。</li>
-<li><strong>pid&gt;0</strong>时，指<strong>等待进程ID等于pid的子进程</strong>，不管其它已经有多少子进程运行结束退出了，只要指定的子进程还没有结束,waitpid就会一直等下去。</li>
-<li><strong>pid=-1</strong>时，<strong>等待任何一个子进程退出</strong>，没有任何限制，此时waitpid和wait的作用一模一样。 　　</li>
-<li><strong>pid=0</strong>时，<strong>等待同一个进程组中的任何子进程</strong>，如果子进程已经加入了别的进程组，waitpid不会对它做任何理睬。</li>
-<li><strong>pid&lt;-1</strong>时，<strong>等待一个指定进程组中的任何子进程</strong>，这个<strong>进程组的ID等于pid的绝对值</strong>。 　　</li>
-</ul>
-</li>
-<li><code>status</code><ul>
-<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
-</ul>
-</li>
-<li><code>options</code><ul>
-<li>提供了一些额外的选项来控制waitpid，目前在Linux中只支持<code>WNOHANG</code>和<code>WUNTRACED</code>两个选项，这是两个常数，可以用”|”运算符把它们连接起来使用，不想使用则设置为0。<ul>
-<li>如果使用了WNOHANG参数调用waitpid，即使没有子进程退出，它也会立即返回，不会像wait那样永远等下去，即不需要阻塞。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>返回值<ul>
-<li>当正常返回的时候，waitpid返回收集到的<strong>子进程的进程ID</strong>；</li>
-<li>如果设置了选项WNOHANG，而调用中waitpid发现没有已退出的子进程可收集，则<strong>返回0</strong>； 　　 　　</li>
-<li>如果调用中出错，则<strong>返回-1</strong>，这时errno会被设置成相应的值以指示错误所在；当pid所指示的子进程不存在，或此进程存在，但不是调用进程的子进程，waitpid就会出错返回，这时errno被设置为ECHILD </li>
-</ul>
-</li>
-</ul>
-</li>
-<li><code>pid_t wait(int *status)</code>函数<ul>
-<li>进程一旦调用了wait，就立即阻塞自己，由wait自动分析是否当前进程的某个子进程已经退出，<ul>
-<li>如果让它找到了这样一个已经变成僵尸的子进程，wait就会收集这个子进程的信息，并把它彻底销毁后返回；</li>
-<li>如果没有找到这样一个子进程，wait就会一直阻塞在这里，直到有一个出现为止。</li>
-</ul>
-</li>
-<li>参数<ul>
-<li><code>status</code><ul>
-<li>用来保存被收集进程退出时的一些状态，它是一个指向int类型的指针。但如果对这个子进程是如何死掉的毫不在意，只想把这个僵尸进程消灭掉(绝大多数情况)，就可以<strong>设定这个参数为NULL</strong>。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>返回值<ul>
-<li>如果成功，wait会返回被收集的<strong>子进程的进程ID</strong>。</li>
-<li>如果调用进程没有子进程，调用就会失败，此时<strong>wait返回-1</strong>，同时<strong>errno被置为ECHILD</strong>。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>waitpid提供了wait函数不能实现的3个功能:<ol>
-<li>waitpid等待<strong>特定</strong>的子进程, 而wait则返回<strong>任一</strong>终止状态的子进程;</li>
-<li>waitpid提供了一个wait的<strong>非阻塞版本</strong>; </li>
-<li>waitpid支持<strong>作业控制</strong>(以WUNTRACED选项). 用于检查wait和waitpid两个函数返回终止状态的宏: 这两个函数返回的子进程状态都保存在status指针中, 用以下3个宏可以检查该状态:<ul>
-<li>WIFEXITED(status): 若为正常终止, 则为真，此时可执行WEXITSTATUS(status): 取子进程传送给exit或_exit参数的低8位。</li>
-<li>WIFSIGNALED(status): 若为异常终止, 则为真，此时可执行 WTERMSIG(status): 取使子进程终止的信号编号。</li>
-<li>WIFSTOPPED(status): 若为当前暂停子进程, 则为真，此时可执行 WSTOPSIG(status): 取使子进程暂停的信号编号。</li>
-</ul>
-</li>
-</ol>
-</li>
-<li>如果在父进程用wait()和waitpid()会使父进程挂起，解决的办法：<ul>
-<li>可以用signal函数为SIGCHLD安装handler。在子进程结束后，父进程会收到该信号，可以在handler中调用wait回收。</li>
-<li>如果父进程不关心子进程什么时候结束，那么可以用<code>signal(SIGCLD, SIG_IGN)</code>或<code>signal(SIGCHLD, SIG_IGN)</code>通知内核，自己对子进程的结束不感兴趣，那么子进程结束后，内核会回收，并不再给父进程发送信号。</li>
-<li>fork两次，父进程fork一个子进程，然后继续工作，子进程fork一个孙进程后退出，那么孙进程被init接管，孙进程结束后，init会回收。不过子进程的回收还要自己做，子进程回收后父进程才挂起。 </li>
-</ul>
-</li>
-</ul>
-]]></content>
+    <title>Zigbee协议栈 3</title>
+    <url>/2022/03/12/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</url>
+    <content><![CDATA[<h1 id="Zigbee协议栈-3"><a href="#Zigbee协议栈-3" class="headerlink" title="Zigbee协议栈 3"></a>Zigbee协议栈 3</h1>]]></content>
       <categories>
-        <category>操作系统</category>
+        <category>ZigBee开发</category>
       </categories>
       <tags>
-        <tag>进程、线程</tag>
+        <tag>ZigBee</tag>
       </tags>
   </entry>
   <entry>
@@ -675,7 +686,7 @@
   <entry>
     <title>Zigbee协议栈 2</title>
     <url>/2022/03/04/2022-03-04-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<h1 id="Zigbee协议栈"><a href="#Zigbee协议栈" class="headerlink" title="Zigbee协议栈"></a>Zigbee协议栈</h1><h2 id="Zigbee协议栈项目结构分析"><a href="#Zigbee协议栈项目结构分析" class="headerlink" title="Zigbee协议栈项目结构分析"></a>Zigbee协议栈项目结构分析</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/Z-stack%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true" alt="Z-stack文件目录"></p>
+    <content><![CDATA[<h1 id="Zigbee协议栈"><a href="#Zigbee协议栈" class="headerlink" title="Zigbee协议栈"></a>Zigbee协议栈</h1><h2 id="Zigbee协议栈构成"><a href="#Zigbee协议栈构成" class="headerlink" title="Zigbee协议栈构成"></a>Zigbee协议栈构成</h2><h3 id="Zigbee协议栈项目结构分析"><a href="#Zigbee协议栈项目结构分析" class="headerlink" title="Zigbee协议栈项目结构分析"></a>Zigbee协议栈项目结构分析</h3><p><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/Z-stack%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true" alt="Z-stack文件目录"></p>
 <ul>
 <li>Components：库文件夹</li>
 <li>Documents：TI开发文档，协议栈的API</li>
@@ -878,12 +889,73 @@
 </li>
 <li>绑定(binding)<ul>
 <li>在Zigbee协议中定义的一种特殊操作。能够通过使用ClusterID为不同节点上的独立端点建立一个逻辑上的连接。</li>
-<li>要实现绑定操作，端点必须向协调器发送绑定请求，协调器在有限的时间间隔内接收到两个端点的绑定请求后，便通过建立端点之间的绑定表在这两个不同的端点之间搭建一个逻辑链路。<br><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/%E7%BB%91%E5%AE%9A.png?raw=true" alt="绑定"><blockquote>
+<li>要实现绑定操作，端点必须向协调器发送绑定请求，协调器在有限的时间间隔内接收到两个端点的绑定请求后，便通过建立端点之间的绑定表在这两个不同的端点之间搭建一个逻辑链路。绑定后的两个端点之间的信息传送属于间接传送。其中一个端点首先会将信息发送到Zigbee的协调器，Zigbee协调器在接收到消息后通过查找绑定表，将消息发送到与这个端点相绑定的所有端点中，从而实现绑定端点之间的通信。<br><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/%E7%BB%91%E5%AE%9A.png?raw=true" alt="绑定"><blockquote>
 <p>图中Zigbee网络中的两个节点Z1和Z2。</p>
 <p>其中Z1节点中包含两个独立端点——EP3和EP21，分别表示开关1和开关2。</p>
 <p>Z2节点中有EP5、EP7、EP8、EP17四个端点，分别表示从1到4四盏灯。</p>
 <p>在网络中，通过建立Zigbee绑定操作，将EP3和EP5、EP7、EP8进行绑定，将EP21和EP17进行绑定。开关1就可以同时控制电灯1、2、3，开关2便可以控制电灯4。利用绑定操作，还可以更改开关和电灯之间的绑定关系，从而形成不同的控制关系。</p>
 </blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h3><ul>
+<li>路由对应用层来说是完全透明的。应用程序只需简单的向下发送去往任何设备的数据到栈中，栈会负责寻找路径，即应用程序不知道操作是在一个多跳的网络当中的。</li>
+<li>路由还能自愈Zigbee网络，如果某个无线连接断开，路由功能会自动寻找一条新的路径避开那个断开的网络连接。极大的提高了网络的可靠性。</li>
+<li><p>协议栈规范(Stack Profile)</p>
+<ul>
+<li>Zigbee联盟制定，在同一个网络中的设备必须符合同一个协议栈规范(同一个网络中所有设备的协议栈规范必须一致)。</li>
+<li>所有的设备只要遵循该规范，即使在不同厂商买的不同设备同样可以形成网络；但是不遵循规范，即使相同的设备也不能组成网络(该产品具有特殊性，被称为”关闭的网络”，更改后的规范称为”特定网络”规范。</li>
+<li>协议栈规范的ID号可以通过查询设备发送的beacon帧获得。在设备加入网络之前，首先需要确认协议栈规范的ID。”特定网络”规范ID号为0，Zigbee协议栈规范ID号为1，Zigbee PRO协议栈规范ID号为2。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Controls various stack parameter settings</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> NETWORK_SPECIFIC      0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HOME_CONTROLS         1</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> ZIGBEEPRO_PROFILE     2</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GENERIC_STAR          3</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> GENERIC_TREE          4</span></span><br><span class="line"><span class="comment">// STACK_PROFILE_ID表示的是协议栈规范的ID</span></span><br><span class="line"><span class="meta">#<span class="keyword">if</span> defined ( ZIGBEEPRO )</span></span><br><span class="line">  <span class="meta">#<span class="keyword">define</span> STACK_PROFILE_ID      ZIGBEEPRO_PROFILE</span></span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line">  <span class="meta">#<span class="keyword">define</span> STACK_PROFILE_ID      HOME_CONTROLS</span></span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>路由协议</p>
+<ul>
+<li>Zigbee执行基于AODV专用网络的路由协议。当路由器从自身的应用程序或者别的设备收到单点发送的数据包：<ul>
+<li>如果目标节点是相邻路由的一个，则数据包直接被传送给目标设备，</li>
+<li>否则将检索路由器自身的路由表，获得与所要传送的数据包的目标地址相符合的记录。<ul>
+<li>如果存在与目标地址相符合的活动路由记录，则数据包将发送到存储在记录中的下一级地址中去。</li>
+<li>如果没有发现任何相关的路由记录，则路由器发起路径寻找，数据包存储在缓冲区中直到寻找结束。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Zigbee终端节点不执行任何路由功能，终端节点要向任何一个设备传送数据包，只需要简单的将数据向上发送刚给父设备，由父设备以终端节点的名义执行路由。同样，任何一个设备要给终端节点发送数据，发起路由寻找，终端节点的父亲节点都以终端节点的名义来回应。</li>
+<li>Zigbee地址分配方案使得对于任何一个目标设备，根据它的地址都可以得到一条路径。</li>
+<li>在Z-stack中，如果万一正常的路径寻找过程不能启动(缺少路由表空间)，那么Z-stack拥有自动回退机制。</li>
+<li>在Z-stack中，执行的路由已经优化了路由表的记录。通常，每一个目标设备都需要要一条路由表记录。但是，通过把一定父亲节点记录与其所有子节点的记录合并，既可以优化路径，又可以不丧失任何功能。</li>
+<li>Zigbee路由器，包括协调器执行下面的路由函数<ul>
+<li>路径发现<ul>
+<li>网络设备凭借网络相互协作发现和建立路径的一个过程。</li>
+<li>路由发现可以由任意一个路由设备发起，并且对于某个特定的目标设备一直执行。</li>
+<li>路由发现机制寻找源地址和目标地址之间的所有路径，并且试图选择可能的最好的路径。</li>
+</ul>
+</li>
+<li>路由选择<ul>
+<li>路由选择即选择出可能的最小成本的路径。</li>
+<li>每个节点通常持有跟它所有临界点的连接成本(link cost)。通常衡量连接成本的典型函数是接收到的信号的强度。沿着路径，求出所有连接的连接成本总和，便可以得到整个路径的”路径成本”。</li>
+<li>路由算法试图寻找到拥有最小路径成本的路径。路径通过一系列的请求和回复数据包被发现。源设备通过向它所有的临界节点广播一个路由请求数据包，来请求一个目标地址的路径。当一个节点接收到<code>RREQ</code>数据包，会在为数据包更新连接成本后，依次广播转发<code>RREQ</code>数据包。这个过程一直持续到<code>RREQ</code>数据包到达目标设备。通过不同的路由器，许多<code>RREQ</code>数据包都将到达目标设备，说明从源设备到目标设备存在多条路径，目标设备会选择最好的<code>RREQ</code>数据包(最小路径成本)，然后发回一个路径答复<code>RREP</code>数据包给源设备。<code>RREP</code>数据包是一个单点发送数据包，沿着中间节点的相反路径传送直到到达原来发送请求的节点为止。一旦一条路径被创建，数据包就可以发送了。</li>
+<li>当一个节点与下一级相邻节点失去连接(发送数据没有收到<code>MAC ACK</code>)，该节点会向所有等待接收它的<code>RREQ</code>数据包的节点发送一个<code>REER</code>数据包，将路径设为无效。</li>
+<li>各个节点根据收到的<code>REEQ</code>、<code>REEP</code>、<code>REER</code>数据包更新路由表。</li>
+</ul>
+</li>
+<li>路径保持维护<ul>
+<li>网状网提供路径维护和网络自愈功能。中间节点沿着连接跟踪传送失败。</li>
+<li>如果一个连接被认定是坏链，<ul>
+<li>那么上游节点将针对所有使用这条连接的路径启动路径修复，节点发起重新发现直到下一次数据包到达该节点，标志路径修复完成。</li>
+<li>如果不能够启动路径发现或者由于某种原因失败，节点则向数据包的源节点发送路径错误包(REER)，负责启动新路径的发现。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>路径期满<ul>
+<li>路由表为已经建立连接路径的节点维护路径记录。</li>
+<li>如果在一定的时间周期内，没有数据通过沿着这条路径发送，这条路径将被表示为期满。期满的路径一直保留到所占用的空间要被使用为止。</li>
+<li>在配置文件<code>f8wConfig.cfg</code>文件中配置自动路径期满时间。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* in seconds; set to 0 to turn off route expiry */</span></span><br><span class="line"><span class="comment">// 单位为秒，如果设置为0，则表示关闭自动期满功能。</span></span><br><span class="line">-DROUTE_EXPIRY_TIME=<span class="number">30</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
 </li>
 </ul>
 </li>
