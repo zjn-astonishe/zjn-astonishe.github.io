@@ -107,81 +107,6 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 3</title>
-    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞"><a href="#并发、同步、异步、互斥、阻塞、非阻塞" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞"></a>并发、同步、异步、互斥、阻塞、非阻塞</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
-<li>并发<ul>
-<li>在操作系统中，同个处理机上有多个程序同时运行。</li>
-</ul>
-</li>
-<li>同步、异步<ul>
-<li>同步：顺序执行，执行完一个再执行下一个，需要等待、协调运行。</li>
-<li>异步：异步和同步是相对的，异步就是彼此独立，在等待某事件的过程中继续做自己的事，不需要等待这一事件完成后再工作。<ul>
-<li>线程是实现异步的一个方式。可以在主线程创建一个新线程来做某件事，此时主线程不需要等待子线程做完而是可以做其他事情。</li>
-<li>异步和多线程并不是一个同等关系，异步是最终目的，多线程只是实现异步的一种手段。</li>
-</ul>
-</li>
-<li>同步和异步是对应的，是线程之间的关系。两个线程要么同步要么异步。</li>
-</ul>
-</li>
-<li>阻塞、非阻塞<ul>
-<li>当进程在访问数据时，根据IO操作的就绪状态不同而采取不同的处理方式。比如主程序调用一个函数要读取一个文件的内容：<ul>
-<li>阻塞方式下主程序会等到函数读取完再继续往下执行。</li>
-<li>非阻塞方式下读取函数会立刻返回一个状态值给主程序，主程序不等待文件读取完就继续往下执行。</li>
-<li>要注意的是阻塞和非阻塞说明的是IO和CPU之间的关系，即CPU是否等待IO。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>一般有以下4类IO模型，考虑发送方发出请求要接收方读取某文件内容为例：<ul>
-<li>同步阻塞IO<ul>
-<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，直到获取读取结果再响应发送方，等待期间不可做其他操作(阻塞)。</li>
-</ul>
-</li>
-<li>同步非阻塞IO<ul>
-<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，就立即返回，接受方继续去做其他事情。此时并未响应发送方，发送方一直等待。直到IO操作(读取文件)完成后，接收方获得读取结果响应发送方，接收方才可以进入下一次请求过程(非阻塞)。</li>
-</ul>
-</li>
-<li>异步阻塞IO(理论存在，实际不用)<ul>
-<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，就一直等到返回结果后，才响应发送方，期间不能进行其他操作。</li>
-</ul>
-</li>
-<li>异步非阻塞IO(效率最高)<ul>
-<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，也不等待，而是马上返回去做其他事情。当IO操作(读取文件)完成以后，将完成状态和结果通知接收方，接收方再响应发送方。</li>
-<li>阻塞和非阻塞是对同一个线程的某个时刻来说的。此时，线程要么阻塞，要么非阻塞。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>阻塞是使用同步机制的结果，非阻塞是使用异步机制的结果。</li>
-</ul>
-<h3 id="线程的同步和互斥"><a href="#线程的同步和互斥" class="headerlink" title="线程的同步和互斥"></a>线程的同步和互斥</h3><ul>
-<li>线程互斥<ul>
-<li>当有若干个线程同时访问同一块资源时，规定同一时间只有一个线程可以得到访问权，其他线程需要等待占用资源者释放该资源才可以申请访问。</li>
-<li>互斥无法限制访问者对资源的访问顺序，即访问是无序的。</li>
-</ul>
-</li>
-<li>线程同步：<ul>
-<li>在互斥的基础上(大多数情况，除非允许同一时间多个访问者访问同一资源)，通过其它机制实现访问者对资源的有序访问，实现每个线程之间按预定的先后次序进行运行，协同、协助、互相配合。</li>
-</ul>
-</li>
-</ul>
-<h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><ul>
-<li>同步是过程，阻塞是状态<ul>
-<li>当多个线程访问同一资源时，规定同一时间只有一个线程可进行访问，所以后访问的线程将被阻塞，等待先访问的线程访问完。</li>
-</ul>
-</li>
-<li>线程同步不一定发生阻塞。只有当访问同一资源出现互相等待和互相唤醒才会发生阻塞。而阻塞了一定是同步，多线程用阻塞实现同步。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>进程、线程 1</title>
     <url>/2022/02/28/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%201/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="进程线程的基本概念"><a href="#进程线程的基本概念" class="headerlink" title="进程线程的基本概念"></a>进程线程的基本概念</h2><h3 id="什么是进程、线程-彼此有什么区别"><a href="#什么是进程、线程-彼此有什么区别" class="headerlink" title="什么是进程、线程(彼此有什么区别)"></a>什么是进程、线程(彼此有什么区别)</h3><ul>
@@ -373,7 +298,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B(%E7%BA%BF%E7%A8%8B" alt="进程(线程)的一生">%E7%9A%84%E4%B8%80%E7%94%9F.png?raw=true)</p>
+<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B/%E8%BF%9B%E7%A8%8B%E7%9A%84%E4%B8%80%E7%94%9F.png?raw=true" alt="进程(线程)的一生"></p>
 <blockquote>
 <p>父进程调用fork()函数创建子进程，此时子进程处于创建态，系统将为进程分配地址和资源，</p>
 <p>然后将其加入就绪队列，子进程进入就绪态。</p>
@@ -522,6 +447,81 @@
       </tags>
   </entry>
   <entry>
+    <title>进程、线程 3</title>
+    <url>/2022/03/02/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞"><a href="#并发、同步、异步、互斥、阻塞、非阻塞" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞"></a>并发、同步、异步、互斥、阻塞、非阻塞</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
+<li>并发<ul>
+<li>在操作系统中，同个处理机上有多个程序同时运行。</li>
+</ul>
+</li>
+<li>同步、异步<ul>
+<li>同步：顺序执行，执行完一个再执行下一个，需要等待、协调运行。</li>
+<li>异步：异步和同步是相对的，异步就是彼此独立，在等待某事件的过程中继续做自己的事，不需要等待这一事件完成后再工作。<ul>
+<li>线程是实现异步的一个方式。可以在主线程创建一个新线程来做某件事，此时主线程不需要等待子线程做完而是可以做其他事情。</li>
+<li>异步和多线程并不是一个同等关系，异步是最终目的，多线程只是实现异步的一种手段。</li>
+</ul>
+</li>
+<li>同步和异步是对应的，是线程之间的关系。两个线程要么同步要么异步。</li>
+</ul>
+</li>
+<li>阻塞、非阻塞<ul>
+<li>当进程在访问数据时，根据IO操作的就绪状态不同而采取不同的处理方式。比如主程序调用一个函数要读取一个文件的内容：<ul>
+<li>阻塞方式下主程序会等到函数读取完再继续往下执行。</li>
+<li>非阻塞方式下读取函数会立刻返回一个状态值给主程序，主程序不等待文件读取完就继续往下执行。</li>
+<li>要注意的是阻塞和非阻塞说明的是IO和CPU之间的关系，即CPU是否等待IO。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>一般有以下4类IO模型，考虑发送方发出请求要接收方读取某文件内容为例：<ul>
+<li>同步阻塞IO<ul>
+<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，直到获取读取结果再响应发送方，等待期间不可做其他操作(阻塞)。</li>
+</ul>
+</li>
+<li>同步非阻塞IO<ul>
+<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，就立即返回，接受方继续去做其他事情。此时并未响应发送方，发送方一直等待。直到IO操作(读取文件)完成后，接收方获得读取结果响应发送方，接收方才可以进入下一次请求过程(非阻塞)。</li>
+</ul>
+</li>
+<li>异步阻塞IO(理论存在，实际不用)<ul>
+<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，就一直等到返回结果后，才响应发送方，期间不能进行其他操作。</li>
+</ul>
+</li>
+<li>异步非阻塞IO(效率最高)<ul>
+<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，也不等待，而是马上返回去做其他事情。当IO操作(读取文件)完成以后，将完成状态和结果通知接收方，接收方再响应发送方。</li>
+<li>阻塞和非阻塞是对同一个线程的某个时刻来说的。此时，线程要么阻塞，要么非阻塞。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>阻塞是使用同步机制的结果，非阻塞是使用异步机制的结果。</li>
+</ul>
+<h3 id="线程的同步和互斥"><a href="#线程的同步和互斥" class="headerlink" title="线程的同步和互斥"></a>线程的同步和互斥</h3><ul>
+<li>线程互斥<ul>
+<li>当有若干个线程同时访问同一块资源时，规定同一时间只有一个线程可以得到访问权，其他线程需要等待占用资源者释放该资源才可以申请访问。</li>
+<li>互斥无法限制访问者对资源的访问顺序，即访问是无序的。</li>
+</ul>
+</li>
+<li>线程同步：<ul>
+<li>在互斥的基础上(大多数情况，除非允许同一时间多个访问者访问同一资源)，通过其它机制实现访问者对资源的有序访问，实现每个线程之间按预定的先后次序进行运行，协同、协助、互相配合。</li>
+</ul>
+</li>
+</ul>
+<h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><ul>
+<li>同步是过程，阻塞是状态<ul>
+<li>当多个线程访问同一资源时，规定同一时间只有一个线程可进行访问，所以后访问的线程将被阻塞，等待先访问的线程访问完。</li>
+</ul>
+</li>
+<li>线程同步不一定发生阻塞。只有当访问同一资源出现互相等待和互相唤醒才会发生阻塞。而阻塞了一定是同步，多线程用阻塞实现同步。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>进程、线程 4</title>
     <url>/2022/03/03/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
@@ -650,6 +650,133 @@
       </categories>
       <tags>
         <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>C_C++基础知识 1</title>
+    <url>/2022/03/12/2022-03-12-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%201/</url>
+    <content><![CDATA[<h1 id="C-C-基础知识-1"><a href="#C-C-基础知识-1" class="headerlink" title="C_C++基础知识 1"></a>C_C++基础知识 1</h1><h2 id="C和C-中某些概念的异同"><a href="#C和C-中某些概念的异同" class="headerlink" title="C和C++中某些概念的异同"></a>C和C++中某些概念的异同</h2><h3 id="new和malloc的区别"><a href="#new和malloc的区别" class="headerlink" title="new和malloc的区别"></a>new和malloc的区别</h3><ul>
+<li><code>new</code>、<code>delete</code>是C++独有的<strong>操作符</strong>，而<code>malloc</code>和<code>free</code>是C/C++中的标准库函数。<ul>
+<li>使用new创建对象在分配内存的时候会调用对象的构造函数，同时完成对对象的初始化(delete在回收内存的时候也会调用对象的析构函数)。malloc和free是库函数，不在编译器控制范围之内(外部链接)，所以不能够自动调用构造函数和析构函数。<ul>
+<li>malloc只是单纯为变量分配内存，free也只是释放变量内存。</li>
+</ul>
+</li>
+<li>C++允许重载new/delete操作符，而malloc和delte是函数，不能重载。<blockquote>
+<p>允许重载的是operator new和operator delete，通过malloc和free来实现的。只用来分配所要求的空间，不调用相关对象的构造函数。</p>
+<p>当无法满足所要求分配的空间时，如果有new_handler，则调用new_handler，否则执行bad_alloc异常或者返回0。</p>
+<p>重载时，返回类型必须时void*，第一个形参类型必须为分配空间的大小(字节)，类型size_t，后面可以带有其他形参。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>new返回的是指定类型的指针，malloc返回的是<code>void*</code>类型(需要强行将其转换为实际类型的指针)。</li>
+<li>malloc需要指定好要申请的内存的大小。</li>
+<li>new内存分配失败的时候，会抛出<code>bad_alloc</code>异常，malloc分配内存失败返回NULL。</li>
+<li>内存区域<ul>
+<li>凡是通过new操作符进行内存申请得到的内存都属于自由存储区(C++基于new操作符的一个抽象概念)。new操作符从自由存储区上为对象动态分配内存空间。</li>
+<li>堆是操作系统的术语，是操作系统所维护的一块特殊内存，用于程序的内存动态分配。malloc函数从堆上动态分配内存。</li>
+</ul>
+</li>
+</ul>
+<h4 id="malloc的底层实现"><a href="#malloc的底层实现" class="headerlink" title="malloc的底层实现"></a>malloc的底层实现</h4><blockquote>
+<p><img src="https://github.com/zjn-astonishe/image/blob/main/C%E3%80%81C++/Linux%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%E6%A8%A1%E5%9E%8B.png?raw=true" alt="Linux内核空间模型"></p>
+<p>Linux维护着一个名为<code>program break</code>的指针，它指向堆空间的某个地址，从堆的起始地址到该指针之间的地址空间为映射好的，可供进程访问。</p>
+<p>而从该指针往上，是未映射的地址空间，访问这段空间会导致程序报错。用malloc进行内存分配就是从该指针往上进行的。</p>
+<p><img src="https://github.com/zjn-astonishe/image/blob/main/C%E3%80%81C++/%E5%A0%86%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6.png?raw=true" alt="堆内部机制"></p>
+<p>malloc函数的实质是有一个将可用内存块连接的空闲链表。调用malloc()函数的时候，沿着空闲链表寻找足以满足用户请求的内存块。然后，将该内存块一分为二：一块与用户申请大小相等，传给用户使用；另一块为剩余内存，返回连接到空闲链表。</p>
+<p>如果用户申请一个大的内存片段，空闲链表上没有可以满足用户要求的片段的时候，malloc函数会请求延时，并开始将空闲链表上的内存片段进行整理合并，直到有符合用户要求的内存片段为止。</p>
+</blockquote>
+<h4 id="在1G内存的计算机中能否运行malloc-1-2G-？"><a href="#在1G内存的计算机中能否运行malloc-1-2G-？" class="headerlink" title="在1G内存的计算机中能否运行malloc(1.2G)？"></a>在1G内存的计算机中能否运行malloc(1.2G)？</h4><ul>
+<li>有可能申请到1.2G内存。</li>
+<li>应用程序通过malloc函数可以向程序的虚拟空间申请一块虚拟地址空间，与物理内存没有直接关系，得到的是在虚拟地址空间中的地址，之后程序运行所提供的物理内存是由操作系统完成的。</li>
+<li>当前Windows环境可申请的最大空间超过1.9G，具体数值会受到操作系统版本、程序本身的大小、用到的动态/共享库数量、大小、程序栈数量、大小等的影响，甚至每次运行的结果都可能存在差异(有些操作系统使用了随即地址分布技术，使进程的堆空间变小)。</li>
+<li>$1.2=1.2*2^{30}$Byte，数值在malloc函数参数类型的范围内。因此是可能能申请到的。</li>
+<li>即malloc函数调用申请超过机器物理内存大小的内存块是有可能成功的(存储时以硬盘空间作为虚拟内存)。</li>
+</ul>
+<h3 id="指针和引用的异同"><a href="#指针和引用的异同" class="headerlink" title="指针和引用的异同"></a>指针和引用的异同</h3><h4 id="相同"><a href="#相同" class="headerlink" title="相同"></a>相同</h4><ul>
+<li>指针和引用都是地址概念。</li>
+<li>从内存分配上看，指针和引用都占用内存。<ul>
+<li>程序为指针变量分配内存区域(32位系统即地址可能为32位的值，指针变量存储的是指向某变量的地址，大约要32位的空间，即4个字节)</li>
+<li>引用本质是指针常量，所以占用的大小也是4个字节(除非编译器进行优化)所指向的对象是不能改变的，但指向对象的值是可以改变的。‘</li>
+</ul>
+</li>
+</ul>
+<h4 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h4><ul>
+<li>指针是一个实体，引用只是别名。</li>
+<li>指针的自增是指向内存地址的增加，引用的自增是引用的值的增加。</li>
+<li>引用使用时不需要解引用(*)，指针使用时需要。</li>
+<li>引用只能在定义时被初始化一次，之后不可变。指针可变。</li>
+<li>引用不能为空，指针可以为空。</li>
+<li>引用没有const，指针有const<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cost修饰的是指针变量a，即指针指向的整型值可以改变，但是指针指向地址不能变。指针常量</span></span><br><span class="line"><span class="type">int</span>* <span class="type">const</span> a;   <span class="comment">//从后往前看，const修饰的是p，所以指针p本身不可变</span></span><br><span class="line"><span class="comment">//cost修饰的是整型数*a，即指针可以改变指向地址，但不能改变指向位置的对应值。常量指针</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span>* a;   <span class="comment">//从后往前看，const修饰的是*p，所以指针p指向的数值不可变</span></span><br><span class="line"><span class="comment">// 没有int&amp; const a</span></span><br><span class="line"><span class="type">double</span> r;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> &amp;a = r; <span class="comment">//正确 性质1：不可通过常量引用a来改变r</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> &amp;a = <span class="number">10</span>;<span class="comment">//正确 性质2：常量引用可以直接引用具体数值</span></span><br></pre></td></tr></table></figure></li>
+<li>没有指向引用的指针，但是有指针的引用<ul>
+<li>没有指向引用的指针，因为指针是本质上是指向某一块内存空间的，而引用只是一个变量的别名，本身是没有地址的，如果要创建一个指针指向某个引用，那么其实指向的是这个引用所引用的对象<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 指向引用的指针实际指向引用所引用的对象</span></span><br><span class="line"><span class="type">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> &amp;ri = v; <span class="comment">//整型变量v的引用</span></span><br><span class="line"><span class="type">int</span> *p = &amp;ri; <span class="comment">//指针p其实指向的是变量v</span></span><br><span class="line"><span class="comment">// 指针的引用</span></span><br><span class="line"><span class="type">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> *p = &amp;v;</span><br><span class="line"><span class="type">int</span> *&amp;rp = p;  <span class="comment">// 定义了一个指向指针p的引用rp，即rp作为指针p的别名。</span></span><br><span class="line">cout &lt;&lt; *rp &lt;&lt; endl; <span class="comment">// 即相当于输出*p。</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><code>sizeof()</code>得到的引用的大小是所指向变量(对象)的大小，而得到的指针的大小是其本身大小(32位4字节)。</li>
+</ul>
+<h4 id="指针与引用相互转换"><a href="#指针与引用相互转换" class="headerlink" title="指针与引用相互转换"></a>指针与引用相互转换</h4><ul>
+<li>指针转引用<ul>
+<li>指针用解引用<code>*</code>可转换成对象，可以用在引用参数当中。</li>
+</ul>
+</li>
+<li>引用转指针<ul>
+<li>引用类型的对象用取地址<code>&amp;</code>就能获得指针。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(<span class="type">int</span> &amp;va)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">2022</span>;</span><br><span class="line">	<span class="type">int</span> &amp;b = a;</span><br><span class="line">	<span class="type">int</span> *pA = &amp;b;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;*pA: &quot;</span> &lt;&lt; *pA &lt;&lt; endl;</span><br><span class="line">	<span class="built_in">func</span>(*pA);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(<span class="type">int</span> &amp;va)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;va: &quot;</span> &lt;&lt; va &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="struct和class的区别"><a href="#struct和class的区别" class="headerlink" title="struct和class的区别"></a>struct和class的区别</h3><ul>
+<li>在C++中struct和class意义基本是一样的。</li>
+<li>struct里面默认的访问控制是public，而class中的默认访问控制是private。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:         <span class="comment">// 必须加public，不然默认是private</span></span><br><span class="line">	<span class="type">int</span> a;</span><br><span class="line">	<span class="built_in">A</span>(<span class="type">int</span> a)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;a = a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">A <span class="title">a1</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	cout &lt;&lt; a1.a &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Hello, world!&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="const常量和-define的区别"><a href="#const常量和-define的区别" class="headerlink" title="const常量和#define的区别"></a>const常量和#define的区别</h3><ul>
+<li>从定义常量是否有类型来看<ul>
+<li><h1 id="define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。-define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。"><a href="#define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。-define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。" class="headerlink" title="define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。#define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。"></a>define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。#define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。</h1></li>
+<li>const定义的常量是有类型的，编译时会进行类型检查，存放在内存的静态区域中，在编译时确定其值。在程序运行过程中，</li>
+</ul>
+</li>
+<li>从消耗的内存大小来看<ul>
+<li>const变量只有一个拷贝，而#define所定义的宏变量却有多个拷贝，所以宏定义在程序运行过程中所消耗的内存要比const大得多。</li>
+</ul>
+</li>
+<li>从是否可以用指针变量去指向来看<ul>
+<li>用#define定义的常量是不可以用指针变量去指向的</li>
+<li>用const定义的常量是可以用指针去指向常量地址的。</li>
+</ul>
+</li>
+<li>从是否可以定义函数来看<ul>
+<li>用#define可以定义一些简单的函数(宏替换只是替换，不做计算和表达式求解)</li>
+<li>用const是不可以定义函数的。</li>
+</ul>
+</li>
+<li>从作用范围来看<ul>
+<li><h1 id="define宏定义的作用范围仅限于当前文件。"><a href="#define宏定义的作用范围仅限于当前文件。" class="headerlink" title="define宏定义的作用范围仅限于当前文件。"></a>define宏定义的作用范围仅限于当前文件。</h1></li>
+<li>默认状态下，const常量只在文件内有效，当多个文件中出现同名的const变量时，等同于在不同文件中分别定义了独立的变量。<ul>
+<li>如果想在多个文件之间共享const常量，必须在变量定义之前添加extern关键字。(在声明和定义时都要加)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>C/C++</category>
+      </categories>
+      <tags>
+        <tag>C/C++面经</tag>
+        <tag>C/C++基础知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Zigbee协议栈 3</title>
+    <url>/2022/03/12/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</url>
+    <content><![CDATA[<h1 id="Zigbee协议栈-3"><a href="#Zigbee协议栈-3" class="headerlink" title="Zigbee协议栈 3"></a>Zigbee协议栈 3</h1>]]></content>
+      <categories>
+        <category>ZigBee开发</category>
+      </categories>
+      <tags>
+        <tag>ZigBee</tag>
       </tags>
   </entry>
   <entry>
@@ -938,130 +1065,23 @@
       </tags>
   </entry>
   <entry>
-    <title>C_C++基础知识 1</title>
-    <url>/2022/03/12/2022-03-12-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%201/</url>
-    <content><![CDATA[<h1 id="C-C-基础知识-1"><a href="#C-C-基础知识-1" class="headerlink" title="C_C++基础知识 1"></a>C_C++基础知识 1</h1><h2 id="C和C-中某些概念的异同"><a href="#C和C-中某些概念的异同" class="headerlink" title="C和C++中某些概念的异同"></a>C和C++中某些概念的异同</h2><h3 id="new和malloc的区别"><a href="#new和malloc的区别" class="headerlink" title="new和malloc的区别"></a>new和malloc的区别</h3><ul>
-<li><code>new</code>、<code>delete</code>是C++独有的<strong>操作符</strong>，而<code>malloc</code>和<code>free</code>是C/C++中的标准库函数。<ul>
-<li>使用new创建对象在分配内存的时候会调用对象的构造函数，同时完成对对象的初始化(delete在回收内存的时候也会调用对象的析构函数)。malloc和free是库函数，不在编译器控制范围之内(外部链接)，所以不能够自动调用构造函数和析构函数。<ul>
-<li>malloc只是单纯为变量分配内存，free也只是释放变量内存。</li>
-</ul>
-</li>
-<li>C++允许重载new/delete操作符，而malloc和delte是函数，不能重载。<blockquote>
-<p>允许重载的是operator new和operator delete，通过malloc和free来实现的。只用来分配所要求的空间，不调用相关对象的构造函数。</p>
-<p>当无法满足所要求分配的空间时，如果有new_handler，则调用new_handler，否则执行bad_alloc异常或者返回0。</p>
-<p>重载时，返回类型必须时void*，第一个形参类型必须为分配空间的大小(字节)，类型size_t，后面可以带有其他形参。</p>
-</blockquote>
-</li>
-</ul>
-</li>
-<li>new返回的是指定类型的指针，malloc返回的是<code>void*</code>类型(需要强行将其转换为实际类型的指针)。</li>
-<li>malloc需要指定好要申请的内存的大小。</li>
-<li>new内存分配失败的时候，会抛出<code>bad_alloc</code>异常，malloc分配内存失败返回NULL。</li>
-<li>内存区域<ul>
-<li>凡是通过new操作符进行内存申请得到的内存都属于自由存储区(C++基于new操作符的一个抽象概念)。new操作符从自由存储区上为对象动态分配内存空间。</li>
-<li>堆是操作系统的术语，是操作系统所维护的一块特殊内存，用于程序的内存动态分配。malloc函数从堆上动态分配内存。</li>
-</ul>
-</li>
-</ul>
-<h4 id="malloc的底层实现"><a href="#malloc的底层实现" class="headerlink" title="malloc的底层实现"></a>malloc的底层实现</h4><blockquote>
-<p><img src="https://github.com/zjn-astonishe/image/blob/main/C%E3%80%81C++/Linux%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4%E6%A8%A1%E5%9E%8B.png?raw=true" alt="Linux内核空间模型"></p>
-<p>Linux维护着一个名为<code>program break</code>的指针，它指向堆空间的某个地址，从堆的起始地址到该指针之间的地址空间为映射好的，可供进程访问。</p>
-<p>而从该指针往上，是未映射的地址空间，访问这段空间会导致程序报错。用malloc进行内存分配就是从该指针往上进行的。</p>
-<p><img src="https://github.com/zjn-astonishe/image/blob/main/C%E3%80%81C++/%E5%A0%86%E5%86%85%E9%83%A8%E6%9C%BA%E5%88%B6.png?raw=true" alt="堆内部机制"></p>
-<p>malloc函数的实质是有一个将可用内存块连接的空闲链表。调用malloc()函数的时候，沿着空闲链表寻找足以满足用户请求的内存块。然后，将该内存块一分为二：一块与用户申请大小相等，传给用户使用；另一块为剩余内存，返回连接到空闲链表。</p>
-<p>如果用户申请一个大的内存片段，空闲链表上没有可以满足用户要求的片段的时候，malloc函数会请求延时，并开始将空闲链表上的内存片段进行整理合并，直到有符合用户要求的内存片段为止。</p>
-</blockquote>
-<h4 id="在1G内存的计算机中能否运行malloc-1-2G-？"><a href="#在1G内存的计算机中能否运行malloc-1-2G-？" class="headerlink" title="在1G内存的计算机中能否运行malloc(1.2G)？"></a>在1G内存的计算机中能否运行malloc(1.2G)？</h4><ul>
-<li>有可能申请到1.2G内存。</li>
-<li>应用程序通过malloc函数可以向程序的虚拟空间申请一块虚拟地址空间，与物理内存没有直接关系，得到的是在虚拟地址空间中的地址，之后程序运行所提供的物理内存是由操作系统完成的。</li>
-<li>当前Windows环境可申请的最大空间超过1.9G，具体数值会受到操作系统版本、程序本身的大小、用到的动态/共享库数量、大小、程序栈数量、大小等的影响，甚至每次运行的结果都可能存在差异(有些操作系统使用了随即地址分布技术，使进程的堆空间变小)。</li>
-<li>$1.2=1.2*2^{30}$Byte，数值在malloc函数参数类型的范围内。因此是可能能申请到的。</li>
-<li>即malloc函数调用申请超过机器物理内存大小的内存块是有可能成功的(存储时以硬盘空间作为虚拟内存)。</li>
-</ul>
-<h3 id="指针和引用的异同"><a href="#指针和引用的异同" class="headerlink" title="指针和引用的异同"></a>指针和引用的异同</h3><h4 id="相同"><a href="#相同" class="headerlink" title="相同"></a>相同</h4><ul>
-<li>指针和引用都是地址概念。</li>
-<li>从内存分配上看，指针和引用都占用内存。<ul>
-<li>程序为指针变量分配内存区域(32位系统即地址可能为32位的值，指针变量存储的是指向某变量的地址，大约要32位的空间，即4个字节)</li>
-<li>引用本质是指针常量，所以占用的大小也是4个字节(除非编译器进行优化)所指向的对象是不能改变的，但指向对象的值是可以改变的。‘</li>
-</ul>
-</li>
-</ul>
-<h4 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h4><ul>
-<li>指针是一个实体，引用只是别名。</li>
-<li>指针的自增是指向内存地址的增加，引用的自增是引用的值的增加。</li>
-<li>引用使用时不需要解引用(*)，指针使用时需要。</li>
-<li>引用只能在定义时被初始化一次，之后不可变。指针可变。</li>
-<li>引用不能为空，指针可以为空。</li>
-<li>引用没有const，指针有const<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//cost修饰的是指针变量a，即指针指向的整型值可以改变，但是指针指向地址不能变。指针常量</span></span><br><span class="line"><span class="type">int</span>* <span class="type">const</span> a;   <span class="comment">//从后往前看，const修饰的是p，所以指针p本身不可变</span></span><br><span class="line"><span class="comment">//cost修饰的是整型数*a，即指针可以改变指向地址，但不能改变指向位置的对应值。常量指针</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span>* a;   <span class="comment">//从后往前看，const修饰的是*p，所以指针p指向的数值不可变</span></span><br><span class="line"><span class="comment">// 没有int&amp; const a</span></span><br><span class="line"><span class="type">double</span> r;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> &amp;a = r; <span class="comment">//正确 性质1：不可通过常量引用a来改变r</span></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> &amp;a = <span class="number">10</span>;<span class="comment">//正确 性质2：常量引用可以直接引用具体数值</span></span><br></pre></td></tr></table></figure></li>
-<li>没有指向引用的指针，但是有指针的引用<ul>
-<li>没有指向引用的指针，因为指针是本质上是指向某一块内存空间的，而引用只是一个变量的别名，本身是没有地址的，如果要创建一个指针指向某个引用，那么其实指向的是这个引用所引用的对象<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 指向引用的指针实际指向引用所引用的对象</span></span><br><span class="line"><span class="type">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> &amp;ri = v; <span class="comment">//整型变量v的引用</span></span><br><span class="line"><span class="type">int</span> *p = &amp;ri; <span class="comment">//指针p其实指向的是变量v</span></span><br><span class="line"><span class="comment">// 指针的引用</span></span><br><span class="line"><span class="type">int</span> v = <span class="number">1</span>;</span><br><span class="line"><span class="type">int</span> *p = &amp;v;</span><br><span class="line"><span class="type">int</span> *&amp;rp = p;  <span class="comment">// 定义了一个指向指针p的引用rp，即rp作为指针p的别名。</span></span><br><span class="line">cout &lt;&lt; *rp &lt;&lt; endl; <span class="comment">// 即相当于输出*p。</span></span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li><code>sizeof()</code>得到的引用的大小是所指向变量(对象)的大小，而得到的指针的大小是其本身大小(32位4字节)。</li>
-</ul>
-<h4 id="指针与引用相互转换"><a href="#指针与引用相互转换" class="headerlink" title="指针与引用相互转换"></a>指针与引用相互转换</h4><ul>
-<li>指针转引用<ul>
-<li>指针用解引用<code>*</code>可转换成对象，可以用在引用参数当中。</li>
-</ul>
-</li>
-<li>引用转指针<ul>
-<li>引用类型的对象用取地址<code>&amp;</code>就能获得指针。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(<span class="type">int</span> &amp;va)</span></span>;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">2022</span>;</span><br><span class="line">	<span class="type">int</span> &amp;b = a;</span><br><span class="line">	<span class="type">int</span> *pA = &amp;b;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;*pA: &quot;</span> &lt;&lt; *pA &lt;&lt; endl;</span><br><span class="line">	<span class="built_in">func</span>(*pA);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">func</span><span class="params">(<span class="type">int</span> &amp;va)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;va: &quot;</span> &lt;&lt; va &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="struct和class的区别"><a href="#struct和class的区别" class="headerlink" title="struct和class的区别"></a>struct和class的区别</h3><ul>
-<li>在C++中struct和class意义基本是一样的。</li>
-<li>struct里面默认的访问控制是public，而class中的默认访问控制是private。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:         <span class="comment">// 必须加public，不然默认是private</span></span><br><span class="line">	<span class="type">int</span> a;</span><br><span class="line">	<span class="built_in">A</span>(<span class="type">int</span> a)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">this</span>-&gt;a = a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="function">A <span class="title">a1</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">	cout &lt;&lt; a1.a &lt;&lt; endl;</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;Hello, world!&quot;</span> &lt;&lt; endl;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h3 id="const常量和-define的区别"><a href="#const常量和-define的区别" class="headerlink" title="const常量和#define的区别"></a>const常量和#define的区别</h3><ul>
-<li>从定义常量是否有类型来看<ul>
-<li><h1 id="define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。-define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。"><a href="#define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。-define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。" class="headerlink" title="define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。#define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。"></a>define定义的常量是没有类型的，所给出的是一个立即数，编译器只是把所定义的常量值与所定义的常量名字联系起来。#define定义的宏变量在预处理阶段就进行替换，在程序中使用到该常量的地方都要进行拷贝替换。所以如果不进行类型安全检查，可能会产生意想不到的错误。</h1></li>
-<li>const定义的常量是有类型的，编译时会进行类型检查，存放在内存的静态区域中，在编译时确定其值。在程序运行过程中，</li>
-</ul>
-</li>
-<li>从消耗的内存大小来看<ul>
-<li>const变量只有一个拷贝，而#define所定义的宏变量却有多个拷贝，所以宏定义在程序运行过程中所消耗的内存要比const大得多。</li>
-</ul>
-</li>
-<li>从是否可以用指针变量去指向来看<ul>
-<li>用#define定义的常量是不可以用指针变量去指向的</li>
-<li>用const定义的常量是可以用指针去指向常量地址的。</li>
-</ul>
-</li>
-<li>从是否可以定义函数来看<ul>
-<li>用#define可以定义一些简单的函数(宏替换只是替换，不做计算和表达式求解)</li>
-<li>用const是不可以定义函数的。</li>
-</ul>
-</li>
-<li>从作用范围来看<ul>
-<li><h1 id="define宏定义的作用范围仅限于当前文件。"><a href="#define宏定义的作用范围仅限于当前文件。" class="headerlink" title="define宏定义的作用范围仅限于当前文件。"></a>define宏定义的作用范围仅限于当前文件。</h1></li>
-<li>默认状态下，const常量只在文件内有效，当多个文件中出现同名的const变量时，等同于在不同文件中分别定义了独立的变量。<ul>
-<li>如果想在多个文件之间共享const常量，必须在变量定义之前添加extern关键字。(在声明和定义时都要加)</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+    <title>Hello World</title>
+    <url>/2022/02/25/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
       <categories>
-        <category>C/C++</category>
+        <category>test</category>
       </categories>
       <tags>
-        <tag>C/C++面经</tag>
-        <tag>C/C++基础知识</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Zigbee协议栈 3</title>
-    <url>/2022/03/12/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</url>
-    <content><![CDATA[<h1 id="Zigbee协议栈-3"><a href="#Zigbee协议栈-3" class="headerlink" title="Zigbee协议栈 3"></a>Zigbee协议栈 3</h1>]]></content>
-      <categories>
-        <category>ZigBee开发</category>
-      </categories>
-      <tags>
-        <tag>ZigBee</tag>
+        <tag>test</tag>
       </tags>
   </entry>
   <entry>
@@ -1126,8 +1146,8 @@
 </ul>
 </li>
 </ul>
-<h3 id="函数参数压栈顺序，关于stdcall和cdecl调用方式的理解"><a href="#函数参数压栈顺序，关于stdcall和cdecl调用方式的理解" class="headerlink" title="函数参数压栈顺序，关于stdcall和cdecl调用方式的理解"></a>函数参数压栈顺序，关于<strong>stdcall和</strong>cdecl调用方式的理解</h3><ul>
-<li><strong>stdcall和</strong>cdecl都是函数调用约定关键字。</li>
+<h3 id="函数参数压栈顺序，关于-stdcall和-cdecl调用方式的理解"><a href="#函数参数压栈顺序，关于-stdcall和-cdecl调用方式的理解" class="headerlink" title="函数参数压栈顺序，关于__stdcall和__cdecl调用方式的理解"></a>函数参数压栈顺序，关于<code>__stdcall</code>和<code>__cdecl</code>调用方式的理解</h3><ul>
+<li><code>__stdcall</code>和<code>__cdecl</code>都是函数调用约定关键字。</li>
 <li>__stdcall：StandardCall的缩写，是C++的标准调用方式，参数由右向左压入堆栈，由调用者负责把参数压入栈，最后由被调用者负责清除栈的内容。</li>
 <li>__cdecl：C Declaration的缩写，表明C语言默认的函数调用方式，参数也是由右向左压入堆栈，由调用者负责把参数压入栈，最后也由调用者负责清除栈的内容。且支持多输入不同数量的参数(printf)。<ul>
 <li>因为被调用者不知道有多少参入被压入堆栈，所以无法清楚栈中的内容。</li>
@@ -1266,7 +1286,24 @@
 </ul>
 </li>
 <li>向下转型(Downcasting)<ul>
-<li>向下转型是有风险的，dynamic_cast 会借助 RTTI 信息进行检测，确定安全的才能转换成功，否则就转换失败。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class A&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_a;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>: <span class="keyword">public</span> A&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class B&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_b;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>: <span class="keyword">public</span> B&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class C&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_c;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">D</span>: <span class="keyword">public</span> C&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class D&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_d;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    A *pa = <span class="keyword">new</span> <span class="built_in">A</span>();</span><br><span class="line">    B *pb;</span><br><span class="line">    C *pc;    </span><br><span class="line">    <span class="comment">//情况①</span></span><br><span class="line">    pb = <span class="built_in">dynamic_cast</span>&lt;B*&gt;(pa);  <span class="comment">//向下转型失败</span></span><br><span class="line">    <span class="keyword">if</span>(pb == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pb -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    pc = <span class="built_in">dynamic_cast</span>&lt;C*&gt;(pa);  <span class="comment">//向下转型失败</span></span><br><span class="line">    <span class="keyword">if</span>(pc == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pc -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;   </span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;-------------------------&quot;</span>&lt;&lt;endl;   </span><br><span class="line">    <span class="comment">//情况②</span></span><br><span class="line">    pa = <span class="keyword">new</span> <span class="built_in">D</span>();  <span class="comment">//向上转型都是允许的</span></span><br><span class="line">    pb = <span class="built_in">dynamic_cast</span>&lt;B*&gt;(pa);  <span class="comment">//向下转型成功</span></span><br><span class="line">    <span class="keyword">if</span>(pb == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pb -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    pc = <span class="built_in">dynamic_cast</span>&lt;C*&gt;(pa);  <span class="comment">//向下转型成功</span></span><br><span class="line">    <span class="keyword">if</span>(pc == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pc -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>向下转型是有风险的，dynamic_cast 会借助 RTTI 信息进行检测，确定安全的才能转换成功，否则就转换失败。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 代码中类的继承顺序为：A --&gt; B --&gt; C --&gt; D。</span></span><br><span class="line"><span class="comment"> * pa 是A*类型的指针，当 pa 指向 A 类型的对象时，向下转型失败，pa 不能转换为B*或C*类型。</span></span><br><span class="line"><span class="comment"> * 当 pa 指向 D 类型的对象时，向下转型成功，pa 可以转换为B*或C*类型。 </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class A&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_a;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>: <span class="keyword">public</span> A&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class B&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_b;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>: <span class="keyword">public</span> B&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class C&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_c;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">D</span>: <span class="keyword">public</span> C&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span> <span class="type">const</span> </span>&#123; cout&lt;&lt;<span class="string">&quot;Class D&quot;</span>&lt;&lt;endl; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="type">int</span> m_d;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    A *pa = <span class="keyword">new</span> <span class="built_in">A</span>();</span><br><span class="line">    B *pb;</span><br><span class="line">    C *pc;    </span><br><span class="line">    <span class="comment">//情况①</span></span><br><span class="line">    pb = <span class="built_in">dynamic_cast</span>&lt;B*&gt;(pa);  <span class="comment">//向下转型失败</span></span><br><span class="line">    <span class="keyword">if</span>(pb == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pb -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    pc = <span class="built_in">dynamic_cast</span>&lt;C*&gt;(pa);  <span class="comment">//向下转型失败</span></span><br><span class="line">    <span class="keyword">if</span>(pc == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pc -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;   </span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;-------------------------&quot;</span>&lt;&lt;endl;   </span><br><span class="line">    <span class="comment">//情况②</span></span><br><span class="line">    pa = <span class="keyword">new</span> <span class="built_in">D</span>();  <span class="comment">//向上转型都是允许的</span></span><br><span class="line">    pb = <span class="built_in">dynamic_cast</span>&lt;B*&gt;(pa);  <span class="comment">//向下转型成功</span></span><br><span class="line">    <span class="keyword">if</span>(pb == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to B*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pb -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    pc = <span class="built_in">dynamic_cast</span>&lt;C*&gt;(pa);  <span class="comment">//向下转型成功</span></span><br><span class="line">    <span class="keyword">if</span>(pc == <span class="literal">NULL</span>)&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting failed: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        cout&lt;&lt;<span class="string">&quot;Downcasting successfully: A* to C*&quot;</span>&lt;&lt;endl;</span><br><span class="line">        pc -&gt; <span class="built_in">func</span>();</span><br><span class="line">    &#125;    </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>每个类都会在内存中保存一份类型信息，编译器会将存在继承关系的类的类型信息使用指针“连接”起来，从而形成一个继承链（Inheritance Chain），也就是如下图所示的样子：</p>
+<p><img src="https://github.com/zjn-astonishe/image/blob/main/C%E3%80%81C++/%E7%B1%BB%E7%9A%84%E7%BB%A7%E6%89%BF%E9%93%BE.png?raw=true" alt="类的继承链"></p>
+<p>当使用dynamic_cast对指针进行类型转换时，程序会先找到该指针指向的对象，再根据对象找到当前类(指针指向的对象所属的类)的类型信息，并从此节点开始沿着继承链向上遍历，如果找到了要转化的目标类型，那么说明这种转换是安全的，就能够转换成功，如果没有找到要转换的目标类型，那么说明这种转换存在较大的风险，就不能转换。</p>
+<p>对于代码中的情况①，pa指向A类对象，根据该对象找到的就是A的类型信息，当程序从这个节点开始向上遍历时，发现A的上方没有要转换的B类型或C类型(实际上 A 的上方没有任何类型了)，所以就转换败了。对于情况②，pa指向D 类对象，根据该对象找到的就是D的类型信息，程序从这个节点向上遍历的过程中，发现了C类型和B类型，所以就转换成功了。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>总起来说，dynamic_cast会在程序运行过程中遍历继承链，<ul>
+<li>如果途中遇到了要转换的目标类型，那么就能够转换成功，</li>
+<li>如果直到继承链的顶点(最顶层的基类)还没有遇到要转换的目标类型，那么就转换失败。</li>
+<li>对于同一个指针，它指向的对象不同，会导致遍历继承链的起点不一样，途中能够匹配到的类型也不一样，所以相同的类型转换产生了不同的结果。</li>
+</ul>
+</li>
+<li>从表面上看起来dynamic_cast确实能够向下转型，但是从本质上讲dynamic_cast 还是只允许向上转型，因为它只会向上遍历继承链。<ul>
+<li>造成这种假象的根本原因在于，派生类对象可以用任何一个基类的指针指向它，这样做始终是安全的。dynamic_cast只是让不同的基类指针指向同一个派生类对象罢了。</li>
 </ul>
 </li>
 </ul>
@@ -1280,23 +1317,15 @@
       </tags>
   </entry>
   <entry>
-    <title>Hello World</title>
-    <url>/2022/02/25/hello-world/</url>
-    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
-]]></content>
+    <title>继承和多态</title>
+    <url>/2022/03/15/2022-03-15-%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/</url>
+    <content><![CDATA[<h1 id="继承和多态"><a href="#继承和多态" class="headerlink" title="继承和多态"></a>继承和多态</h1>]]></content>
       <categories>
-        <category>test</category>
+        <category>C/C++</category>
       </categories>
       <tags>
-        <tag>test</tag>
+        <tag>C/C++面经</tag>
+        <tag>继承和多态</tag>
       </tags>
   </entry>
 </search>
