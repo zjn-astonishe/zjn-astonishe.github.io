@@ -6,7 +6,7 @@
   <link href="http://zjn-astonishe.github.io/atom.xml" rel="self"/>
   
   <link href="http://zjn-astonishe.github.io/"/>
-  <updated>2022-03-15T11:47:52.670Z</updated>
+  <updated>2022-03-16T07:01:18.838Z</updated>
   <id>http://zjn-astonishe.github.io/</id>
   
   <author>
@@ -17,18 +17,18 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>继承和多态</title>
-    <link href="http://zjn-astonishe.github.io/2022/03/15/2022-03-15-%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/"/>
-    <id>http://zjn-astonishe.github.io/2022/03/15/2022-03-15-%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/</id>
+    <title>C++面向对象 1</title>
+    <link href="http://zjn-astonishe.github.io/2022/03/15/2022-03-15-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%201/"/>
+    <id>http://zjn-astonishe.github.io/2022/03/15/2022-03-15-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%201/</id>
     <published>2022-03-15T11:47:22.000Z</published>
-    <updated>2022-03-15T11:47:52.670Z</updated>
+    <updated>2022-03-16T07:01:18.838Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="继承和多态"><a href="#继承和多态" class="headerlink" title="继承和多态"></a>继承和多态</h1>]]></content>
+    <content type="html"><![CDATA[<h1 id="C-面向对象-1"><a href="#C-面向对象-1" class="headerlink" title="C++面向对象 1"></a>C++面向对象 1</h1><h2 id="继承和多态"><a href="#继承和多态" class="headerlink" title="继承和多态"></a>继承和多态</h2><ul><li>C++支持多重继承，所以会出现重复作为基类的情况。例如:<br><img src="https://github.com/zjn-astonishe/image/blob/main/C%E3%80%81C++/%E8%8F%B1%E5%BD%A2%E7%BB%A7%E6%89%BF.png?raw=true" alt="菱形继承"></li><li>为了节省内存空间，可以将DeriverdA、DeriverdB对Base的继承定义为虚拟继承，而A就成了虚拟基类。  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DeriverdA</span>:<span class="keyword">public</span> <span class="keyword">virtual</span> Base; <span class="comment">//虚继承</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DeriverdB</span>:<span class="keyword">public</span> <span class="keyword">virtual</span> Base; <span class="comment">//虚继承</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">D</span>:<span class="keyword">public</span> DeriverdA,DeriverdB;  <span class="comment">//普通继承</span></span><br></pre></td></tr></table></figure></li><li>虚拟继承在一般的应用中很少用到，所以也往往被忽视，这也主要是因为在C++中，多重继承是不推荐的，也并不常用，而一旦离开了多重继承，虚拟继承就完全失去了存在的必要因为这样只会降低效率和占用更多的空间。</li><li>不要轻易使用虚拟继承，更不要在虚继承的基础上进行类型转换。<ul><li>因为虚拟继承会破坏继承体系，不能按照平常的继承体系进行类型转换。</li></ul></li></ul><h3 id="多态的类，内存布局是怎么样的"><a href="#多态的类，内存布局是怎么样的" class="headerlink" title="多态的类，内存布局是怎么样的"></a>多态的类，内存布局是怎么样的</h3><ul><li>虚继承<ul><li>如果是虚继承，那么就会为这个类创建一个虚表指针，占用4个字节。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span>  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="type">int</span> a;  </span><br><span class="line">&#125;; <span class="comment">//sizeof(A)=4，因为a是整形，占用4字节</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> : <span class="keyword">virtual</span> <span class="keyword">public</span> A &#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="type">int</span> b;  </span><br><span class="line">&#125;;<span class="comment">//sizeof(B)=4(A副本)+4(虚表指针占用4字节)+4(变量b占用4字节)=12  </span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span> : <span class="keyword">virtual</span> <span class="keyword">public</span> B &#123;       </span><br><span class="line">&#125;;<span class="comment">//sizeof(c)= 12(B副本)+4(虚表指针) = 16，如果这里改为直接继承，那么sizeof(c)=12，因为此时就没有虚表指针了</span></span><br></pre></td></tr></table></figure></li></ul></li><li>多重继承</li><li>普通继承</li><li></li></ul>]]></content>
     
     
       
       
-    <summary type="html">&lt;h1 id=&quot;继承和多态&quot;&gt;&lt;a href=&quot;#继承和多态&quot; class=&quot;headerlink&quot; title=&quot;继承和多态&quot;&gt;&lt;/a&gt;继承和多态&lt;/h1&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;C-面向对象-1&quot;&gt;&lt;a href=&quot;#C-面向对象-1&quot; class=&quot;headerlink&quot; title=&quot;C++面向对象 1&quot;&gt;&lt;/a&gt;C++面向对象 1&lt;/h1&gt;&lt;h2 id=&quot;继承和多态&quot;&gt;&lt;a href=&quot;#继承和多态&quot; class=&quot;headerli</summary>
       
     
     
