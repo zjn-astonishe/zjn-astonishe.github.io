@@ -1,40 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Linux设备驱动概述</title>
-    <url>/2022/08/08/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
-    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
-<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
-<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
-<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
-<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
-<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
-<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
-<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。</p>
-<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>驱动设计的硬件基础</title>
-    <url>/2022/08/08/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>硬件</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Hello World</title>
     <url>/2022/02/25/hello-world/</url>
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
@@ -578,6 +544,313 @@
       <tags>
         <tag>C/C++面经</tag>
         <tag>面向对象</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux网络基础(一)</title>
+    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="Linux网络基础-一"><a href="#Linux网络基础-一" class="headerlink" title="Linux网络基础(一)"></a>Linux网络基础(一)</h1><h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><p>Socket又称套接字，是一个通信链的句柄，位于应用层和传输层之间，用于唯一标识网络中某一台主机上的某一个进程。它通常由主机的IP地址和端口号拼接而成。</p>
+<h2 id="Linux的socket相关函数"><a href="#Linux的socket相关函数" class="headerlink" title="Linux的socket相关函数"></a>Linux的socket相关函数</h2><h3 id="socket库"><a href="#socket库" class="headerlink" title="socket库"></a>socket库</h3><p>与Windows提供了 <code>&lt;winsock2.h&gt;</code>库方便开发者进行socket编程相同，Linux为开发者提供了 <code>&lt;sys/socket.h&gt;</code>库。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span> <span class="comment">// Linux提供的socket库</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span> <span class="comment">// 保存不同协议的地址结构体，如socketaddr_in</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span>  <span class="comment">// 地址格式转换函数</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="socket的创建"><a href="#socket的创建" class="headerlink" title="socket的创建"></a>socket的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> domain, <span class="type">int</span> type, <span class="type">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>domain: 用于确定通信的特性，包括地址的格式</code><ul>
+<li><code>AF_INET</code> : IPV4因特网域</li>
+<li><code>AF_INET6</code>: IPV6因特网域</li>
+<li><code>AF_UNIX</code> : UNIX域</li>
+<li><code>AF_UPSPEC</code>: 未指定</li>
+</ul>
+</li>
+<li><code>type</code><ul>
+<li><code>SOCK_DGRAM</code> : 固定长度的、无连接的、不可靠的报文传输(UDP)</li>
+<li><code>SOCK_STREAM</code>: 有序的、可靠的、双向的、面向连接的字节流(TCP)</li>
+<li><code>SOCK_SEQPACKET</code>: 固定长度的、有序的、可靠的、面向连接的报文传递</li>
+<li><code>SOCK_RAW</code>: IP协议的数据报接口</li>
+</ul>
+</li>
+<li><code>protocol</code><ul>
+<li>通常为0，表示为给定的 <code>domain</code>和 <code>type</code>选择默认协议。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>创建成功，返回文件描述符(套接字)</li>
+<li>创建失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h3 id="地址格式"><a href="#地址格式" class="headerlink" title="地址格式"></a>地址格式</h3><p>不同的通信协议会有不同的套接字地址结构。为使不同格式地址能够传入套接字函数，地址会被强制转换成一个通用的地址结构<code>sockaddr</code></p>
+<p><code>sockaddr_in</code>是Internet环境下的套接字地址形式，主要用于socket定义和赋值；</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr_in for IPV4 16 bytes */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">in_addr</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">int</span> s_addr;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> &#123;</span><br><span class="line">  <span class="type">sa_family_t</span> sin_family; <span class="comment">/* 地址族 */</span>    <span class="comment">//2字节</span></span><br><span class="line">  in_port  sin_port; <span class="comment">/* 目的端口号 */</span>  <span class="comment">//2字节</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr; <span class="comment">/* IP地址*/</span>  <span class="comment">// 4 字节</span></span><br><span class="line">  <span class="comment">/* Pad to size of `struct sockaddr&#x27;. */</span>  </span><br><span class="line">  <span class="type">unsigned</span> <span class="type">char</span>  sin_zero[<span class="number">8</span>];<span class="comment">/*填充字节*/</span> <span class="comment">//8 字节 需要清零</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>定义socket的各类地址形式最终转换成<code>sockaddr</code>类型作为函数参数传输。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr 16 bytes*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span> &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sa_family;  <span class="comment">//地址族   AF_XXXX    2字节</span></span><br><span class="line"> <span class="type">char</span>        sa_data[<span class="number">14</span>]; <span class="comment">//可变长度地址 包含IP地址、port 14 字节</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="将socket与地址关联-服务器"><a href="#将socket与地址关联-服务器" class="headerlink" title="将socket与地址关联(服务器)"></a>将socket与地址关联(服务器)</h3><p>创建socket后还需将socket和地址进行关联，所以调用<code>bind()</code>函数将地址指向的<code>sockaddr</code>结构体中描述的一些属性与socket套接字绑定(也叫命名)。然后就可以通过socket读取和使用，当然也可通过该socket发送数据到指定目的。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bind</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、IP地址、port的sockaddr_in结构体，传参时被强制转换为sockaddr。</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<p>对于服务器，<code>bind</code>是必须要做的事情。服务器启动的时候需要绑定指定的端口来提供服务(以便客户向指定的端口发送请求)。一般来说，会将参数中的IP地址赋值为<code>INADDR_ANY</code>，即无论发送到系统中的哪个IP地址(多网卡情况)的请求都采用被绑定的socket处理，无需指定固定IP。</p>
+<p>对于客户端来说，一般不需要主动进行<code>bind</code>，交给操作系统分配可用端口。</p>
+<blockquote>
+<p>公认端口:从0到1023。<br>小于256的端口作为保留端口。<br>注册端口:端口号从1024到49151。实际上，机器通常从1024起分配动态端口。<br>动态和/或私有端口:从49152到65535。理论上，不应为服务分配这些端口。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> sock_fd = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">// IPV4 tcp socket</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_INET;                              <span class="comment">// IPV4 需要与socket中的指定一致</span></span><br><span class="line">addr.sin_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.51.122&quot;</span>);            <span class="comment">// 点分十进制转三十二位字节序</span></span><br><span class="line">addr.sin_port = <span class="number">5050</span>;                                   <span class="comment">//大于1024</span></span><br><span class="line"><span class="built_in">bind</span>(sock_fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="built_in">sizeof</span>(addr));   <span class="comment">// 关联绑定</span></span><br></pre></td></tr></table></figure>
+<h3 id="网络连接"><a href="#网络连接" class="headerlink" title="网络连接"></a>网络连接</h3><p>面向连接的网络服务(TCP)在开始交换数据之前，需要在请求服务的进程套接字(客户端)和提供服务的套接字(服务器)之间建立一个连接(TCP是三次握手)。</p>
+<h4 id="连接请求connect-客户端"><a href="#连接请求connect-客户端" class="headerlink" title="连接请求connect(客户端)"></a>连接请求connect(客户端)</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="type">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 返回值：成功返回0， 失败返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、服务器IP地址、服务器port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果sockfd参数中无法获知服务器IP地址和服务器的端口号，则绑定一个默认地址，即客户端本机的IP。</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<p>在客户端尝试连接服务器的过程中，可能会出现连接失败的情况。这很可能是由一些瞬时错误引起的，如果一个服务器运行在一个负载很重的系统上，就很有可能发生这种错误。</p>
+<p>通常采用指数补偿算法解决瞬时错误。当调用的connect失败后，进程会休眠一小段时间，然后进行第二次尝试。如果第二次的尝试依然失败，则休眠时间指数级增加，以此类推进行循环，直到最大休眠延时达到2分钟左右。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MAXSLEEP 128  <span class="comment">// 最大休眠时间</span></span></span><br><span class="line"><span class="comment">/* 指数补偿算法 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect_try</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> strcut sockaddr *addr, <span class="type">socklen_t</span> addrlen)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> num_sec;</span><br><span class="line">  <span class="keyword">for</span>(num_sec = <span class="number">1</span>; numsec &lt;= MAXSLEEP; numsec &lt;&lt;= <span class="number">1</span>)  <span class="comment">// 休眠时间指数级增长</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">connect</span>(sockfd, addr, addrlen) == <span class="number">0</span>)</span><br><span class="line">      <span class="comment">// 成功连接</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (num_sec &lt;= MAXSLEEP/<span class="number">2</span>)  <span class="comment">// 休眠，然后再次重连</span></span><br><span class="line">      <span class="built_in">sleep</span>(num_sec);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;  <span class="comment">//超时， 返回 -1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="监听连接请求listen-服务器"><a href="#监听连接请求listen-服务器" class="headerlink" title="监听连接请求listen(服务器)"></a>监听连接请求listen(服务器)</h4><p>服务器调用<code>listen</code>函数来宣告它正在接收连接请求。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">listen</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> backlog)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>backlog</code>: accept应答之前，允许在进入队列中等待的连接数目，最大值128。连接队列缓存的容量</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h4 id="处理客户端的连接请求accept-服务器"><a href="#处理客户端的连接请求accept-服务器" class="headerlink" title="处理客户端的连接请求accept(服务器)"></a>处理客户端的连接请求accept(服务器)</h4><p>服务器调用<code>accept</code>来建立套接字连接，处理单个连接请求。如果服务器调用accept后没有收到连接请求，则服务器会阻塞直到新的请求到来。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> sockfd, <span class="keyword">struct</span> sockaddr *addr, <span class="type">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: 正在监听端口的socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、客户端IP地址、客户端port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果服务器不关心，可以设置为NULL</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回与客户端连接的套接字，该套接字域客户端连接</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h3 id="网络连接的关闭和socket的关闭"><a href="#网络连接的关闭和socket的关闭" class="headerlink" title="网络连接的关闭和socket的关闭"></a>网络连接的关闭和socket的关闭</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">shutdown</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> how)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>how</code>: 关闭方式<ul>
+<li><code>SHUT_RD</code>: 关闭读端</li>
+<li><code>SHUT_WR</code>: 关闭写端</li>
+<li><code>SHUT_RDWR</code>: 关闭读写</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">closesocket</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>close和shutdown的区别<br>shutdown不管引用计数，关闭的是连接而不是套接字，调用后套接字依然存在，直到调用close将套接字清除。并且，它需要等待输出缓冲区中的数据传输完毕再发送FIN包关闭连接。<br>close是把socket描述符的引用计数-1，仅在引用计数为0时关闭套接字。使用后套接字描述符将从内存中清除，之后也不能再被使用。如果调用后会关闭套接字，它将不管输出缓冲区是否还有数据，直接将套接字描述符从内存清除。</p>
+</blockquote>
+<h3 id="大小端转换"><a href="#大小端转换" class="headerlink" title="大小端转换"></a>大小端转换</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl</span><span class="params">(<span class="type">uint32_t</span> hostlong)</span></span>;  <span class="comment">//返回值：以网络字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htons</span><span class="params">(<span class="type">uint16_t</span> hostshort)</span></span>; <span class="comment">//返回值：以网络字节序表示的16位整数</span></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">ntohl</span><span class="params">(<span class="type">uint32_t</span> netlong)</span></span>;   <span class="comment">//返回值：以主机字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">ntohs</span><span class="params">(<span class="type">uint16_t</span> netshort)</span></span>;  <span class="comment">//返回值：以主机字节序表示的16位整数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl32</span><span class="params">(<span class="type">uint32_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint32_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0x000000FF</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">24</span>) &amp; <span class="number">0xFF000000</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0x00FF0000</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x0000FF00</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htonl16</span><span class="params">(<span class="type">uint16_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint16_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0xFF00</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x00FF</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="IP地址转换"><a href="#IP地址转换" class="headerlink" title="IP地址转换"></a>IP地址转换</h3><h4 id="点分十进制转32位网络字节序"><a href="#点分十进制转32位网络字节序" class="headerlink" title="点分十进制转32位网络字节序"></a>点分十进制转32位网络字节序</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">in_addr_t</span> <span class="title">inet_addr</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp)</span></span>;  <span class="comment">//cp 点分十进制地址</span></span><br><span class="line"><span class="comment">//返回网络字节序的32位地址</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_aton</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp, <span class="keyword">struct</span> in_addr *inp)</span></span>; <span class="comment">// cp 点分十进制地址; inp 转换结果空间的首地址，即存放转换结果的变量的地址</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_pton</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">char</span> *src, <span class="type">void</span> *dst)</span></span>;  <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                        cp 点分十进制地址; </span></span><br><span class="line"><span class="comment">                                                        inp 存放转换结果的缓冲区, 如果是IPV4需要4字节, IPV6需要16字节</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br></pre></td></tr></table></figure>
+<h4 id="32位网络字节序转点分十进制"><a href="#32位网络字节序转点分十进制" class="headerlink" title="32位网络字节序转点分十进制"></a>32位网络字节序转点分十进制</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">char</span> *<span class="title">inet_ntoa</span><span class="params">(<span class="keyword">struct</span> in_addr in)</span></span>;</span><br><span class="line"><span class="comment">//返回 点分十进制地址字符串的地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span> *<span class="title">inet_ntop</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">void</span> *src,</span></span></span><br><span class="line"><span class="params"><span class="function">                      <span class="type">char</span> *dst, <span class="type">socklen_t</span> size)</span></span>; <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                      src 32位网络字节序的二进制IP地址;</span></span><br><span class="line"><span class="comment">                                                      dst 保存点分十进制字符串的缓冲区;</span></span><br><span class="line"><span class="comment">                                                      size dst缓冲区的大小，两个常量INET_ADDRSRTRLEN(IPV4)、INET6_ADDRSTRLEN(IPV6)</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//返回值，成功，返回地址字符串指针，失败返回 NULL</span></span><br></pre></td></tr></table></figure>
+<h2 id="基于TCP-IP协议网络编程模型"><a href="#基于TCP-IP协议网络编程模型" class="headerlink" title="基于TCP/IP协议网络编程模型"></a>基于TCP/IP协议网络编程模型</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B.png?raw=true" alt="基于TCP/IP协议网络编程模型"></p>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>TCP并发服务器的思想是每一个客户机的请求并不由服务器直接处理，二十由服务器创建一个子进程(子线程)来处理。</p>
+<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/TCP%E5%A4%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A8%A1%E5%9E%8B.png?raw=true" alt="TCP多进程/多线程服务器模型"></p>
+<ul>
+<li>TCP多进程服务器模型<ul>
+<li>优点<ul>
+<li>安全、进程之间相互隔离，一个进程崩溃不会导致整个服务器崩溃。</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>占用资源较大</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>TCP多线程服务器模型<ul>
+<li>优点<ul>
+<li>占用资源较少</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>不安全，因为线程之间是共享进程的资源，一个线程崩溃会导致服务器整个进程崩溃</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>网络编程</category>
+      </categories>
+      <tags>
+        <tag>Linux网络编程</tag>
+        <tag>Socket</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux网络编程导引</title>
+    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
+    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>网络编程</category>
+      </categories>
+      <tags>
+        <tag>Linux网络编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux设备驱动概述</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
+<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
+<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
+<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
+<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
+<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
+<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
+<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。对外呈现为操作系统的API，不再直接提供接口。</p>
+<p>虽然操作系统能够帮助一个复杂的软件系统处理多个并发的任务，还提供内存管理机制。但对于设备驱动来说，操作系统纯粹是为了给上层应用提供便利，使得应用程序可以使用统一的系统调用接口来访问各种设备。</p>
+<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2><h3 id="设备的分类和特点"><a href="#设备的分类和特点" class="headerlink" title="设备的分类和特点"></a>设备的分类和特点</h3><p>驱动针对的对象不是CPU内核，而是存储器和外设(包括CPU内部集成的存储器和外设)。主要分为3个基础大类：</p>
+<ul>
+<li>字符设备<ul>
+<li>必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标</li>
+</ul>
+</li>
+<li>块设备<ul>
+<li>可以按任意顺序进行访问的设备，以块为单位进行操作，如硬盘、eMMC</li>
+</ul>
+</li>
+<li>网络设备<ul>
+<li>面向数据包的接收和发送设计，内核与网络设备的通信主要依靠套接字接口。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Linux设备驱动与整个软硬件系统的关系"><a href="#Linux设备驱动与整个软硬件系统的关系" class="headerlink" title="Linux设备驱动与整个软硬件系统的关系"></a>Linux设备驱动与整个软硬件系统的关系</h3><p>除网络设备外，字符设备和块设备都被映射到Linux文件系统的文件和目录。应用程序可以使用Linux的系统调用接口( <code>open()</code> 、 <code>write()</code> 、 <code>read()</code> 、 <code>close()</code> )或C语言的文件操作库函数( <code>fopen()</code> 、 <code>fwrite()</code> 、 <code>fread()</code> 、 <code>fclose()</code> )。</p>
+<p>其中，块设备可以由两种访问方法：</p>
+<ul>
+<li>类似<code>dd</code>命令对应的原始块设备(<code>/dev/sdb1</code>)</li>
+<li>在块设备上建立FAT、EXT4、BTRFS等文件系统，然后通过文件路径进行访问。</li>
+</ul>
+<p><img src="" alt="Linux设备驱动与整个软硬件系统的关系"></p>
+<h3 id="Linux设备驱动的重点、难点"><a href="#Linux设备驱动的重点、难点" class="headerlink" title="Linux设备驱动的重点、难点"></a>Linux设备驱动的重点、难点</h3><ul>
+<li>硬件基础<ul>
+<li>懂得SRAM、Flash、SDRAM、磁盘的读写方式</li>
+<li>UART、I2C、USB等设备的接口</li>
+<li>轮询、中断、DMA的原理</li>
+<li>PCI总线的工作方式</li>
+<li>CPU内存管理单元MMU</li>
+</ul>
+</li>
+<li>C语言基础<ul>
+<li>结构体</li>
+<li>指针</li>
+<li>函数指针</li>
+<li>内存动态申请和释放</li>
+</ul>
+</li>
+<li>Linux内核基础<ul>
+<li>驱动与内核的接口</li>
+</ul>
+</li>
+<li>多任务并发控制和同步基础<ul>
+<li>自旋锁</li>
+<li>互斥</li>
+<li>信号量</li>
+<li>等待队列</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>驱动设计的硬件基础</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简单样例分析：LED驱动</title>
+    <url>/2022/08/09/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-09-%E7%AE%80%E5%8D%95%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90%EF%BC%9ALED%E9%A9%B1%E5%8A%A8/</url>
+    <content><![CDATA[<h1 id="简单样例分析：LED驱动"><a href="#简单样例分析：LED驱动" class="headerlink" title="简单样例分析：LED驱动"></a>简单样例分析：LED驱动</h1><h2 id="裸机的LED驱动"><a href="#裸机的LED驱动" class="headerlink" title="裸机的LED驱动"></a>裸机的LED驱动</h2><h2 id="Linux下的LED驱动"><a href="#Linux下的LED驱动" class="headerlink" title="Linux下的LED驱动"></a>Linux下的LED驱动</h2>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+        <tag>样例分析</tag>
       </tags>
   </entry>
   <entry>
@@ -1233,17 +1506,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Zigbee协议栈 3</title>
-    <url>/2022/03/12/ZigBee/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</url>
-    <content><![CDATA[<h1 id="Zigbee协议栈-3"><a href="#Zigbee协议栈-3" class="headerlink" title="Zigbee协议栈 3"></a>Zigbee协议栈 3</h1>]]></content>
-      <categories>
-        <category>ZigBee开发</category>
-      </categories>
-      <tags>
-        <tag>ZigBee</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Zigbee协议栈 2</title>
     <url>/2022/03/04/ZigBee/2022-03-04-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</url>
     <content><![CDATA[<h1 id="Zigbee协议栈"><a href="#Zigbee协议栈" class="headerlink" title="Zigbee协议栈"></a>Zigbee协议栈</h1><h2 id="Zigbee协议栈构成"><a href="#Zigbee协议栈构成" class="headerlink" title="Zigbee协议栈构成"></a>Zigbee协议栈构成</h2><h3 id="Zigbee协议栈项目结构分析"><a href="#Zigbee协议栈项目结构分析" class="headerlink" title="Zigbee协议栈项目结构分析"></a>Zigbee协议栈项目结构分析</h3><p><img src="https://github.com/zjn-astonishe/image/blob/main/Zigbee/Z-stack%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95.png?raw=true" alt="Z-stack文件目录"></p>
@@ -1521,6 +1783,17 @@
 </li>
 </ul>
 ]]></content>
+      <categories>
+        <category>ZigBee开发</category>
+      </categories>
+      <tags>
+        <tag>ZigBee</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Zigbee协议栈 3</title>
+    <url>/2022/03/12/ZigBee/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</url>
+    <content><![CDATA[<h1 id="Zigbee协议栈-3"><a href="#Zigbee协议栈-3" class="headerlink" title="Zigbee协议栈 3"></a>Zigbee协议栈 3</h1>]]></content>
       <categories>
         <category>ZigBee开发</category>
       </categories>
@@ -2084,214 +2357,6 @@
       <tags>
         <tag>剑指Offer</tag>
         <tag>基础知识</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux网络基础(一)</title>
-    <url>/2022/08/04/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="Linux网络基础-一"><a href="#Linux网络基础-一" class="headerlink" title="Linux网络基础(一)"></a>Linux网络基础(一)</h1><h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><p>Socket又称套接字，是一个通信链的句柄，位于应用层和传输层之间，用于唯一标识网络中某一台主机上的某一个进程。它通常由主机的IP地址和端口号拼接而成。</p>
-<h2 id="Linux的socket相关函数"><a href="#Linux的socket相关函数" class="headerlink" title="Linux的socket相关函数"></a>Linux的socket相关函数</h2><h3 id="socket库"><a href="#socket库" class="headerlink" title="socket库"></a>socket库</h3><p>与Windows提供了 <code>&lt;winsock2.h&gt;</code>库方便开发者进行socket编程相同，Linux为开发者提供了 <code>&lt;sys/socket.h&gt;</code>库。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span> <span class="comment">// Linux提供的socket库</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span> <span class="comment">// 保存不同协议的地址结构体，如socketaddr_in</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span>  <span class="comment">// 地址格式转换函数</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="socket的创建"><a href="#socket的创建" class="headerlink" title="socket的创建"></a>socket的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> domain, <span class="type">int</span> type, <span class="type">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>domain: 用于确定通信的特性，包括地址的格式</code><ul>
-<li><code>AF_INET</code> : IPV4因特网域</li>
-<li><code>AF_INET6</code>: IPV6因特网域</li>
-<li><code>AF_UNIX</code> : UNIX域</li>
-<li><code>AF_UPSPEC</code>: 未指定</li>
-</ul>
-</li>
-<li><code>type</code><ul>
-<li><code>SOCK_DGRAM</code> : 固定长度的、无连接的、不可靠的报文传输(UDP)</li>
-<li><code>SOCK_STREAM</code>: 有序的、可靠的、双向的、面向连接的字节流(TCP)</li>
-<li><code>SOCK_SEQPACKET</code>: 固定长度的、有序的、可靠的、面向连接的报文传递</li>
-<li><code>SOCK_RAW</code>: IP协议的数据报接口</li>
-</ul>
-</li>
-<li><code>protocol</code><ul>
-<li>通常为0，表示为给定的 <code>domain</code>和 <code>type</code>选择默认协议。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>创建成功，返回文件描述符(套接字)</li>
-<li>创建失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h3 id="地址格式"><a href="#地址格式" class="headerlink" title="地址格式"></a>地址格式</h3><p>不同的通信协议会有不同的套接字地址结构。为使不同格式地址能够传入套接字函数，地址会被强制转换成一个通用的地址结构<code>sockaddr</code></p>
-<p><code>sockaddr_in</code>是Internet环境下的套接字地址形式，主要用于socket定义和赋值；</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr_in for IPV4 16 bytes */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">in_addr</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">int</span> s_addr;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> &#123;</span><br><span class="line">  <span class="type">sa_family_t</span> sin_family; <span class="comment">/* 地址族 */</span>    <span class="comment">//2字节</span></span><br><span class="line">  in_port  sin_port; <span class="comment">/* 目的端口号 */</span>  <span class="comment">//2字节</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr; <span class="comment">/* IP地址*/</span>  <span class="comment">// 4 字节</span></span><br><span class="line">  <span class="comment">/* Pad to size of `struct sockaddr&#x27;. */</span>  </span><br><span class="line">  <span class="type">unsigned</span> <span class="type">char</span>  sin_zero[<span class="number">8</span>];<span class="comment">/*填充字节*/</span> <span class="comment">//8 字节 需要清零</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>定义socket的各类地址形式最终转换成<code>sockaddr</code>类型作为函数参数传输。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr 16 bytes*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span> &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sa_family;  <span class="comment">//地址族   AF_XXXX    2字节</span></span><br><span class="line"> <span class="type">char</span>        sa_data[<span class="number">14</span>]; <span class="comment">//可变长度地址 包含IP地址、port 14 字节</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="将socket与地址关联-服务器"><a href="#将socket与地址关联-服务器" class="headerlink" title="将socket与地址关联(服务器)"></a>将socket与地址关联(服务器)</h3><p>创建socket后还需将socket和地址进行关联，所以调用<code>bind()</code>函数将地址指向的<code>sockaddr</code>结构体中描述的一些属性与socket套接字绑定(也叫命名)。然后就可以通过socket读取和使用，当然也可通过该socket发送数据到指定目的。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bind</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、IP地址、port的sockaddr_in结构体，传参时被强制转换为sockaddr。</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<p>对于服务器，<code>bind</code>是必须要做的事情。服务器启动的时候需要绑定指定的端口来提供服务(以便客户向指定的端口发送请求)。一般来说，会将参数中的IP地址赋值为<code>INADDR_ANY</code>，即无论发送到系统中的哪个IP地址(多网卡情况)的请求都采用被绑定的socket处理，无需指定固定IP。</p>
-<p>对于客户端来说，一般不需要主动进行<code>bind</code>，交给操作系统分配可用端口。</p>
-<blockquote>
-<p>公认端口:从0到1023。<br>小于256的端口作为保留端口。<br>注册端口:端口号从1024到49151。实际上，机器通常从1024起分配动态端口。<br>动态和/或私有端口:从49152到65535。理论上，不应为服务分配这些端口。</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> sock_fd = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">// IPV4 tcp socket</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_INET;                              <span class="comment">// IPV4 需要与socket中的指定一致</span></span><br><span class="line">addr.sin_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.51.122&quot;</span>);            <span class="comment">// 点分十进制转三十二位字节序</span></span><br><span class="line">addr.sin_port = <span class="number">5050</span>;                                   <span class="comment">//大于1024</span></span><br><span class="line"><span class="built_in">bind</span>(sock_fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="built_in">sizeof</span>(addr));   <span class="comment">// 关联绑定</span></span><br></pre></td></tr></table></figure>
-<h3 id="网络连接"><a href="#网络连接" class="headerlink" title="网络连接"></a>网络连接</h3><p>面向连接的网络服务(TCP)在开始交换数据之前，需要在请求服务的进程套接字(客户端)和提供服务的套接字(服务器)之间建立一个连接(TCP是三次握手)。</p>
-<h4 id="连接请求connect-客户端"><a href="#连接请求connect-客户端" class="headerlink" title="连接请求connect(客户端)"></a>连接请求connect(客户端)</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="type">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 返回值：成功返回0， 失败返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、服务器IP地址、服务器port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果sockfd参数中无法获知服务器IP地址和服务器的端口号，则绑定一个默认地址，即客户端本机的IP。</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<p>在客户端尝试连接服务器的过程中，可能会出现连接失败的情况。这很可能是由一些瞬时错误引起的，如果一个服务器运行在一个负载很重的系统上，就很有可能发生这种错误。</p>
-<p>通常采用指数补偿算法解决瞬时错误。当调用的connect失败后，进程会休眠一小段时间，然后进行第二次尝试。如果第二次的尝试依然失败，则休眠时间指数级增加，以此类推进行循环，直到最大休眠延时达到2分钟左右。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MAXSLEEP 128  <span class="comment">// 最大休眠时间</span></span></span><br><span class="line"><span class="comment">/* 指数补偿算法 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect_try</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> strcut sockaddr *addr, <span class="type">socklen_t</span> addrlen)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> num_sec;</span><br><span class="line">  <span class="keyword">for</span>(num_sec = <span class="number">1</span>; numsec &lt;= MAXSLEEP; numsec &lt;&lt;= <span class="number">1</span>)  <span class="comment">// 休眠时间指数级增长</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">connect</span>(sockfd, addr, addrlen) == <span class="number">0</span>)</span><br><span class="line">      <span class="comment">// 成功连接</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (num_sec &lt;= MAXSLEEP/<span class="number">2</span>)  <span class="comment">// 休眠，然后再次重连</span></span><br><span class="line">      <span class="built_in">sleep</span>(num_sec);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;  <span class="comment">//超时， 返回 -1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="监听连接请求listen-服务器"><a href="#监听连接请求listen-服务器" class="headerlink" title="监听连接请求listen(服务器)"></a>监听连接请求listen(服务器)</h4><p>服务器调用<code>listen</code>函数来宣告它正在接收连接请求。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">listen</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> backlog)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>backlog</code>: accept应答之前，允许在进入队列中等待的连接数目，最大值128。连接队列缓存的容量</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h4 id="处理客户端的连接请求accept-服务器"><a href="#处理客户端的连接请求accept-服务器" class="headerlink" title="处理客户端的连接请求accept(服务器)"></a>处理客户端的连接请求accept(服务器)</h4><p>服务器调用<code>accept</code>来建立套接字连接，处理单个连接请求。如果服务器调用accept后没有收到连接请求，则服务器会阻塞直到新的请求到来。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> sockfd, <span class="keyword">struct</span> sockaddr *addr, <span class="type">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: 正在监听端口的socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、客户端IP地址、客户端port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果服务器不关心，可以设置为NULL</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回与客户端连接的套接字，该套接字域客户端连接</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h3 id="网络连接的关闭和socket的关闭"><a href="#网络连接的关闭和socket的关闭" class="headerlink" title="网络连接的关闭和socket的关闭"></a>网络连接的关闭和socket的关闭</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">shutdown</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> how)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>how</code>: 关闭方式<ul>
-<li><code>SHUT_RD</code>: 关闭读端</li>
-<li><code>SHUT_WR</code>: 关闭写端</li>
-<li><code>SHUT_RDWR</code>: 关闭读写</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">closesocket</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>close和shutdown的区别<br>shutdown不管引用计数，关闭的是连接而不是套接字，调用后套接字依然存在，直到调用close将套接字清除。并且，它需要等待输出缓冲区中的数据传输完毕再发送FIN包关闭连接。<br>close是把socket描述符的引用计数-1，仅在引用计数为0时关闭套接字。使用后套接字描述符将从内存中清除，之后也不能再被使用。如果调用后会关闭套接字，它将不管输出缓冲区是否还有数据，直接将套接字描述符从内存清除。</p>
-</blockquote>
-<h3 id="大小端转换"><a href="#大小端转换" class="headerlink" title="大小端转换"></a>大小端转换</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl</span><span class="params">(<span class="type">uint32_t</span> hostlong)</span></span>;  <span class="comment">//返回值：以网络字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htons</span><span class="params">(<span class="type">uint16_t</span> hostshort)</span></span>; <span class="comment">//返回值：以网络字节序表示的16位整数</span></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">ntohl</span><span class="params">(<span class="type">uint32_t</span> netlong)</span></span>;   <span class="comment">//返回值：以主机字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">ntohs</span><span class="params">(<span class="type">uint16_t</span> netshort)</span></span>;  <span class="comment">//返回值：以主机字节序表示的16位整数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl32</span><span class="params">(<span class="type">uint32_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint32_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0x000000FF</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">24</span>) &amp; <span class="number">0xFF000000</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0x00FF0000</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x0000FF00</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htonl16</span><span class="params">(<span class="type">uint16_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint16_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0xFF00</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x00FF</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="IP地址转换"><a href="#IP地址转换" class="headerlink" title="IP地址转换"></a>IP地址转换</h3><h4 id="点分十进制转32位网络字节序"><a href="#点分十进制转32位网络字节序" class="headerlink" title="点分十进制转32位网络字节序"></a>点分十进制转32位网络字节序</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">in_addr_t</span> <span class="title">inet_addr</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp)</span></span>;  <span class="comment">//cp 点分十进制地址</span></span><br><span class="line"><span class="comment">//返回网络字节序的32位地址</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_aton</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp, <span class="keyword">struct</span> in_addr *inp)</span></span>; <span class="comment">// cp 点分十进制地址; inp 转换结果空间的首地址，即存放转换结果的变量的地址</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_pton</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">char</span> *src, <span class="type">void</span> *dst)</span></span>;  <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                        cp 点分十进制地址; </span></span><br><span class="line"><span class="comment">                                                        inp 存放转换结果的缓冲区, 如果是IPV4需要4字节, IPV6需要16字节</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br></pre></td></tr></table></figure>
-<h4 id="32位网络字节序转点分十进制"><a href="#32位网络字节序转点分十进制" class="headerlink" title="32位网络字节序转点分十进制"></a>32位网络字节序转点分十进制</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">char</span> *<span class="title">inet_ntoa</span><span class="params">(<span class="keyword">struct</span> in_addr in)</span></span>;</span><br><span class="line"><span class="comment">//返回 点分十进制地址字符串的地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span> *<span class="title">inet_ntop</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">void</span> *src,</span></span></span><br><span class="line"><span class="params"><span class="function">                      <span class="type">char</span> *dst, <span class="type">socklen_t</span> size)</span></span>; <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                      src 32位网络字节序的二进制IP地址;</span></span><br><span class="line"><span class="comment">                                                      dst 保存点分十进制字符串的缓冲区;</span></span><br><span class="line"><span class="comment">                                                      size dst缓冲区的大小，两个常量INET_ADDRSRTRLEN(IPV4)、INET6_ADDRSTRLEN(IPV6)</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//返回值，成功，返回地址字符串指针，失败返回 NULL</span></span><br></pre></td></tr></table></figure>
-<h2 id="基于TCP-IP协议网络编程模型"><a href="#基于TCP-IP协议网络编程模型" class="headerlink" title="基于TCP/IP协议网络编程模型"></a>基于TCP/IP协议网络编程模型</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B.png?raw=true" alt="基于TCP/IP协议网络编程模型"></p>
-<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>TCP并发服务器的思想是每一个客户机的请求并不由服务器直接处理，二十由服务器创建一个子进程(子线程)来处理。</p>
-<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/TCP%E5%A4%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A8%A1%E5%9E%8B.png?raw=true" alt="TCP多进程/多线程服务器模型"></p>
-<ul>
-<li>TCP多进程服务器模型<ul>
-<li>优点<ul>
-<li>安全、进程之间相互隔离，一个进程崩溃不会导致整个服务器崩溃。</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>占用资源较大</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>TCP多线程服务器模型<ul>
-<li>优点<ul>
-<li>占用资源较少</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>不安全，因为线程之间是共享进程的资源，一个线程崩溃会导致服务器整个进程崩溃</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>Linux网络编程</tag>
-        <tag>Socket</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux网络编程导引</title>
-    <url>/2022/08/04/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
-    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>Linux网络编程</tag>
       </tags>
   </entry>
 </search>
