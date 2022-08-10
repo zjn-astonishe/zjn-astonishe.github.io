@@ -547,6 +547,18 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux网络编程导引</title>
+    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
+    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>网络编程</category>
+      </categories>
+      <tags>
+        <tag>Linux网络编程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux网络基础(一)</title>
     <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</url>
     <content><![CDATA[<h1 id="Linux网络基础-一"><a href="#Linux网络基础-一" class="headerlink" title="Linux网络基础(一)"></a>Linux网络基础(一)</h1><h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><p>Socket又称套接字，是一个通信链的句柄，位于应用层和传输层之间，用于唯一标识网络中某一台主机上的某一个进程。它通常由主机的IP地址和端口号拼接而成。</p>
@@ -743,115 +755,95 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux网络编程导引</title>
-    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
-    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>Linux网络编程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux设备驱动概述</title>
-    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
-    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
-<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
-<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
-<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
-<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
-<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
-<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
-<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。对外呈现为操作系统的API，不再直接提供接口。</p>
-<p>虽然操作系统能够帮助一个复杂的软件系统处理多个并发的任务，还提供内存管理机制。但对于设备驱动来说，操作系统纯粹是为了给上层应用提供便利，使得应用程序可以使用统一的系统调用接口来访问各种设备。</p>
-<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2><h3 id="设备的分类和特点"><a href="#设备的分类和特点" class="headerlink" title="设备的分类和特点"></a>设备的分类和特点</h3><p>驱动针对的对象不是CPU内核，而是存储器和外设(包括CPU内部集成的存储器和外设)。主要分为3个基础大类：</p>
-<ul>
-<li>字符设备<ul>
-<li>必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标</li>
-</ul>
+    <title>进程、线程 2</title>
+    <url>/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="CPU上下文"><a href="#CPU上下文" class="headerlink" title="CPU上下文"></a>CPU上下文</h2><h3 id="特权模式切换"><a href="#特权模式切换" class="headerlink" title="特权模式切换"></a>特权模式切换</h3><ul>
+<li>用户态和内核态的划分，引出上下文的概念。</li>
+<li>创建一个进程(如main函数)需要控制一个外部设备时(比如控制LED亮灭)，程序员编写在用户空间的代码通过<strong>系统调用</strong>(操作系统提供给用户空间的接口函数)进入内核空间，由内核继续代表进程运行于内核空间。</li>
+<li>在系统调用的过程中发生上下文切换：<ol>
+<li>CPU寄存器里面原来用户态的指令位置，需要先保存起来，接着运行内核态代码。</li>
+<li>CPU寄存器需要更新为内核态指令的位置，执行内核态代码。</li>
+</ol>
 </li>
-<li>块设备<ul>
-<li>可以按任意顺序进行访问的设备，以块为单位进行操作，如硬盘、eMMC</li>
+<li>系统调用结束后，CPU寄存器需要恢复原来保存的用户态，然后切换为用户空间。</li>
+<li>所以一次系统调用的过程，会发生两次的CPU上下文切换</li>
+<li>但是一般说系统调用是特权模式切换而不是上下文切换。因为没有涉及到虚拟内存等这些进程用户态的资源，也不会切换进程，属于进程之内的上下文切换。</li>
 </ul>
-</li>
-<li>网络设备<ul>
-<li>面向数据包的接收和发送设计，内核与网络设备的通信主要依靠套接字接口。</li>
-</ul>
+<h3 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h3><ul>
+<li>进程是由内核来管理和调度的，进程的切换只能发生在内核态。所以用户态和内核态的切换不属于进程上下文切换。</li>
+<li>进程的上下文包含了虚拟内存、栈、全局变量等用户空间的资源，还包含了内核堆栈、寄存器等内核空间的状态，所以进程的上下文切换要比系统调用更多一步——保存该进程的虚拟内存、栈等用户空间的资源。</li>
+<li>进程上下文切换一般需要几十纳秒到数微秒的CPU时间，当进程上下文切换次数比较多的情况下，将导致CPU耗费大量的时间在寄存器、内核栈即虚拟内存等资源的保存和恢复上。</li>
+<li>另外，Linux通过TLB快表来管理虚拟内存到物理内存的映射关系，当虚拟内存更新之后，需要刷新缓存，在这多处理系统上是很复杂的，因为多个处理器共享一个缓存。</li>
+<li>进程在被调度的时候需要切换上下文，可能是主动地，也有可能是被动的：<ol>
+<li>系统进程正常调度算法导致进程上下文切换。例如目前使用的<strong>时间片轮转算法</strong>，当一个进程的时间片耗尽之后，CPU会将进程调度切换到其他进程。</li>
+<li>进程在<strong>资源不足</strong>的时候，会被挂起。例如在等待IO或者内存不足的时候，会主动挂起，并且等待系统调度其他进程。</li>
+<li>当进程通过一些睡眠函数<strong>sleep()主动</strong>挂起的时候，也会重新调度。</li>
+<li>当有高优先级的进程运行时，当前进程也会被挂起。<strong>(抢占)</strong>。</li>
+<li>当发生<strong>硬件中断</strong>时，CPU上的进程会被中断挂起。</li>
+</ol>
 </li>
 </ul>
-<h3 id="Linux设备驱动与整个软硬件系统的关系"><a href="#Linux设备驱动与整个软硬件系统的关系" class="headerlink" title="Linux设备驱动与整个软硬件系统的关系"></a>Linux设备驱动与整个软硬件系统的关系</h3><p>除网络设备外，字符设备和块设备都被映射到Linux文件系统的文件和目录。应用程序可以使用Linux的系统调用接口( <code>open()</code> 、 <code>write()</code> 、 <code>read()</code> 、 <code>close()</code> )或C语言的文件操作库函数( <code>fopen()</code> 、 <code>fwrite()</code> 、 <code>fread()</code> 、 <code>fclose()</code> )。</p>
-<p>其中，块设备可以由两种访问方法：</p>
-<ul>
-<li>类似<code>dd</code>命令对应的原始块设备(<code>/dev/sdb1</code>)</li>
-<li>在块设备上建立FAT、EXT4、BTRFS等文件系统，然后通过文件路径进行访问。</li>
+<h3 id="线程上下文"><a href="#线程上下文" class="headerlink" title="线程上下文"></a>线程上下文</h3><ul>
+<li>线程上下文切换，分为两种情况：<ol>
+<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。</li>
+<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。所以同进程内的线程切换要比多进程内的线程切换消耗更少的资源。</li>
+</ol>
+</li>
 </ul>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%95%B4%E4%B8%AA%E8%BD%AF%E7%A1%AC%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="Linux设备驱动与整个软硬件系统的关系"></p>
-<h3 id="Linux设备驱动的重点、难点"><a href="#Linux设备驱动的重点、难点" class="headerlink" title="Linux设备驱动的重点、难点"></a>Linux设备驱动的重点、难点</h3><ul>
-<li>硬件基础<ul>
-<li>懂得SRAM、Flash、SDRAM、磁盘的读写方式</li>
-<li>UART、I2C、USB等设备的接口</li>
-<li>轮询、中断、DMA的原理</li>
-<li>PCI总线的工作方式</li>
-<li>CPU内存管理单元MMU</li>
+<h3 id="中断上下文"><a href="#中断上下文" class="headerlink" title="中断上下文"></a>中断上下文</h3><ul>
+<li>中断是为了快速响应硬件的事件——计算机停下当前的事情，去处理其他的事情，然后在回来继续执行之前的任务。</li>
+<li>例如在调用print函数的时候，其实汇编的底层会调用一条<strong>int 0x80</strong>的指令，便是调用0x80号中断。</li>
+<li>中断要先将当前进程的状态保存下来，这样中断结束后进程仍然可以从原来的状态恢复运行，中断上下文的切换并不涉及进程的用户态，所以当中断程序打断了正在处于用户态的进程，不需要保存和恢复这个进程的虚拟内存、全局变量等用户态资源，只需要保存和恢复这个进程的内核态中的资源包括CPU寄存器、内核堆栈等。</li>
+<li>对于同一个CPU来说，中断处理比进程拥有更高的优先级，所以中断上下文切换并不会与进程上下文切换同时发生，一般来说中断程序都执行比较快短小精悍，以便快速结束执行之前的任务。</li>
+<li>当中断上下文切换次数比较多的时候，会耗费大量的CPU时间。所以运行在中断上下文的代码不能做以下几件事：<ol>
+<li>睡眠或者放弃CPU，因为内核在进入中断之前会关闭进程调度，一旦睡眠或者放弃CPU，这时内核无法调度别的进程来执行，系统就会死掉。</li>
+<li>尝试获得信号量，如果或得不到信号量，代码就会睡眠，结果同上。</li>
+<li>执行耗时的任务，中断处理应该尽可能快，因为内核要相应大量服务和请求，中断上下文占用CPU时间太长会严重影响系统功能。</li>
+<li>访问用户空间的虚拟地址，中断上下文是和特定进程无关的，它是内核代表硬件运行在内核空间，所以在无法访问用户空间的虚拟地址。</li>
+</ol>
+</li>
+</ul>
+<h3 id="查看CPU上下文切换情况"><a href="#查看CPU上下文切换情况" class="headerlink" title="查看CPU上下文切换情况"></a>查看CPU上下文切换情况</h3><ul>
+<li><code>vmstat</code>是一个Linux常用的系统性能分析工具，可以用来分析CPU上下文切换和中断的次数。<ul>
+<li><code>vmstat</code>工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数。</li>
+<li>输出参数<ul>
+<li><code>cs</code>(context switch)：每秒上下文切换的次数。</li>
+<li><code>in</code>(interrupt)：每秒中断的次数。<ul>
+<li>可以使用<code>cat</code>命令查看<code>/proc/interrupts</code>读取中断详细情况。</li>
 </ul>
 </li>
-<li>C语言基础<ul>
-<li>结构体</li>
-<li>指针</li>
-<li>函数指针</li>
-<li>内存动态申请和释放</li>
+<li><code>r</code>(Running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU的进程。</li>
+<li><code>b</code>(Blocked)：处于不可中断睡眠状态的进程数。</li>
 </ul>
 </li>
-<li>Linux内核基础<ul>
-<li>驱动与内核的接口</li>
 </ul>
 </li>
-<li>多任务并发控制和同步基础<ul>
-<li>自旋锁</li>
-<li>互斥</li>
-<li>信号量</li>
-<li>等待队列</li>
+<li>要想查看每个进程的详细情况就需要使用<code>pidstat</code>，加上<code>-w</code>选项就可以查看进程上下文切换的情况:<ul>
+<li>输出参数<ul>
+<li><code>cswch</code>(voluntary context switches)：表示每秒<strong>自愿上下文切换</strong>的次数。<ul>
+<li>自愿上下文切换：进程无法获取所需的资源，导致的上下文切换，例如IO、内存等资源不足时，就会发生自愿上下文切换。</li>
 </ul>
 </li>
+<li><code>nvcswch</code>(non voluntary context switches)：表示每秒<strong>非自愿上下文切换</strong>的次数。<ul>
+<li>非自愿上下文切换：进程由于时间片已到等时间，被系统强制调度，进而发生的上下文切换，例如大量的进程都在争抢CPU时，就容易发生非自愿上下文切换。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="CPU上下文切换次数与性能的关系"><a href="#CPU上下文切换次数与性能的关系" class="headerlink" title="CPU上下文切换次数与性能的关系"></a>CPU上下文切换次数与性能的关系</h3><ul>
+<li>自愿上下文切换变多了，说明进程都在等待资源，有可能发生了I/O 等其他问题；</li>
+<li>非自愿上下文切换变多了，说明进程都在被强制调度，也就是都在争抢CPU，说明CPU的确成了瓶颈；</li>
+<li>中断次数变多了，说明CPU被中断处理程序占用，还需要通过查看/proc/interrupts文件查看中断调用详情再做判断。</li>
 </ul>
 ]]></content>
       <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
+        <category>操作系统</category>
       </categories>
       <tags>
-        <tag>Linux设备驱动</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>驱动设计的硬件基础</title>
-    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>硬件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>简单样例分析：LED驱动</title>
-    <url>/2022/08/09/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-09-%E7%AE%80%E5%8D%95%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90%EF%BC%9ALED%E9%A9%B1%E5%8A%A8/</url>
-    <content><![CDATA[<h1 id="简单样例分析：LED驱动"><a href="#简单样例分析：LED驱动" class="headerlink" title="简单样例分析：LED驱动"></a>简单样例分析：LED驱动</h1><h2 id="裸机的LED驱动"><a href="#裸机的LED驱动" class="headerlink" title="裸机的LED驱动"></a>裸机的LED驱动</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_ctrl *(volatile int *) (ToVirtual(GPIO_REG_CTRL))  <span class="comment">// ToVirtual(), 把物理地址映射为虚拟地址</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_data *(volatile int *) (ToVirtual(GPIO_REG_DATA))</span></span><br><span class="line"><span class="comment">//初始化LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightInit</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_ctrl |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*设置GPIO为输出*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//点亮LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOn</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出高电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//熄灭LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOff</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data &amp;= ~(<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出低电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Linux下的LED驱动"><a href="#Linux下的LED驱动" class="headerlink" title="Linux下的LED驱动"></a>Linux下的LED驱动</h2>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>硬件</tag>
-        <tag>样例分析</tag>
+        <tag>进程、线程</tag>
       </tags>
   </entry>
   <entry>
@@ -1103,98 +1095,6 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 2</title>
-    <url>/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="CPU上下文"><a href="#CPU上下文" class="headerlink" title="CPU上下文"></a>CPU上下文</h2><h3 id="特权模式切换"><a href="#特权模式切换" class="headerlink" title="特权模式切换"></a>特权模式切换</h3><ul>
-<li>用户态和内核态的划分，引出上下文的概念。</li>
-<li>创建一个进程(如main函数)需要控制一个外部设备时(比如控制LED亮灭)，程序员编写在用户空间的代码通过<strong>系统调用</strong>(操作系统提供给用户空间的接口函数)进入内核空间，由内核继续代表进程运行于内核空间。</li>
-<li>在系统调用的过程中发生上下文切换：<ol>
-<li>CPU寄存器里面原来用户态的指令位置，需要先保存起来，接着运行内核态代码。</li>
-<li>CPU寄存器需要更新为内核态指令的位置，执行内核态代码。</li>
-</ol>
-</li>
-<li>系统调用结束后，CPU寄存器需要恢复原来保存的用户态，然后切换为用户空间。</li>
-<li>所以一次系统调用的过程，会发生两次的CPU上下文切换</li>
-<li>但是一般说系统调用是特权模式切换而不是上下文切换。因为没有涉及到虚拟内存等这些进程用户态的资源，也不会切换进程，属于进程之内的上下文切换。</li>
-</ul>
-<h3 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h3><ul>
-<li>进程是由内核来管理和调度的，进程的切换只能发生在内核态。所以用户态和内核态的切换不属于进程上下文切换。</li>
-<li>进程的上下文包含了虚拟内存、栈、全局变量等用户空间的资源，还包含了内核堆栈、寄存器等内核空间的状态，所以进程的上下文切换要比系统调用更多一步——保存该进程的虚拟内存、栈等用户空间的资源。</li>
-<li>进程上下文切换一般需要几十纳秒到数微秒的CPU时间，当进程上下文切换次数比较多的情况下，将导致CPU耗费大量的时间在寄存器、内核栈即虚拟内存等资源的保存和恢复上。</li>
-<li>另外，Linux通过TLB快表来管理虚拟内存到物理内存的映射关系，当虚拟内存更新之后，需要刷新缓存，在这多处理系统上是很复杂的，因为多个处理器共享一个缓存。</li>
-<li>进程在被调度的时候需要切换上下文，可能是主动地，也有可能是被动的：<ol>
-<li>系统进程正常调度算法导致进程上下文切换。例如目前使用的<strong>时间片轮转算法</strong>，当一个进程的时间片耗尽之后，CPU会将进程调度切换到其他进程。</li>
-<li>进程在<strong>资源不足</strong>的时候，会被挂起。例如在等待IO或者内存不足的时候，会主动挂起，并且等待系统调度其他进程。</li>
-<li>当进程通过一些睡眠函数<strong>sleep()主动</strong>挂起的时候，也会重新调度。</li>
-<li>当有高优先级的进程运行时，当前进程也会被挂起。<strong>(抢占)</strong>。</li>
-<li>当发生<strong>硬件中断</strong>时，CPU上的进程会被中断挂起。</li>
-</ol>
-</li>
-</ul>
-<h3 id="线程上下文"><a href="#线程上下文" class="headerlink" title="线程上下文"></a>线程上下文</h3><ul>
-<li>线程上下文切换，分为两种情况：<ol>
-<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。</li>
-<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。所以同进程内的线程切换要比多进程内的线程切换消耗更少的资源。</li>
-</ol>
-</li>
-</ul>
-<h3 id="中断上下文"><a href="#中断上下文" class="headerlink" title="中断上下文"></a>中断上下文</h3><ul>
-<li>中断是为了快速响应硬件的事件——计算机停下当前的事情，去处理其他的事情，然后在回来继续执行之前的任务。</li>
-<li>例如在调用print函数的时候，其实汇编的底层会调用一条<strong>int 0x80</strong>的指令，便是调用0x80号中断。</li>
-<li>中断要先将当前进程的状态保存下来，这样中断结束后进程仍然可以从原来的状态恢复运行，中断上下文的切换并不涉及进程的用户态，所以当中断程序打断了正在处于用户态的进程，不需要保存和恢复这个进程的虚拟内存、全局变量等用户态资源，只需要保存和恢复这个进程的内核态中的资源包括CPU寄存器、内核堆栈等。</li>
-<li>对于同一个CPU来说，中断处理比进程拥有更高的优先级，所以中断上下文切换并不会与进程上下文切换同时发生，一般来说中断程序都执行比较快短小精悍，以便快速结束执行之前的任务。</li>
-<li>当中断上下文切换次数比较多的时候，会耗费大量的CPU时间。所以运行在中断上下文的代码不能做以下几件事：<ol>
-<li>睡眠或者放弃CPU，因为内核在进入中断之前会关闭进程调度，一旦睡眠或者放弃CPU，这时内核无法调度别的进程来执行，系统就会死掉。</li>
-<li>尝试获得信号量，如果或得不到信号量，代码就会睡眠，结果同上。</li>
-<li>执行耗时的任务，中断处理应该尽可能快，因为内核要相应大量服务和请求，中断上下文占用CPU时间太长会严重影响系统功能。</li>
-<li>访问用户空间的虚拟地址，中断上下文是和特定进程无关的，它是内核代表硬件运行在内核空间，所以在无法访问用户空间的虚拟地址。</li>
-</ol>
-</li>
-</ul>
-<h3 id="查看CPU上下文切换情况"><a href="#查看CPU上下文切换情况" class="headerlink" title="查看CPU上下文切换情况"></a>查看CPU上下文切换情况</h3><ul>
-<li><code>vmstat</code>是一个Linux常用的系统性能分析工具，可以用来分析CPU上下文切换和中断的次数。<ul>
-<li><code>vmstat</code>工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数。</li>
-<li>输出参数<ul>
-<li><code>cs</code>(context switch)：每秒上下文切换的次数。</li>
-<li><code>in</code>(interrupt)：每秒中断的次数。<ul>
-<li>可以使用<code>cat</code>命令查看<code>/proc/interrupts</code>读取中断详细情况。</li>
-</ul>
-</li>
-<li><code>r</code>(Running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU的进程。</li>
-<li><code>b</code>(Blocked)：处于不可中断睡眠状态的进程数。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>要想查看每个进程的详细情况就需要使用<code>pidstat</code>，加上<code>-w</code>选项就可以查看进程上下文切换的情况:<ul>
-<li>输出参数<ul>
-<li><code>cswch</code>(voluntary context switches)：表示每秒<strong>自愿上下文切换</strong>的次数。<ul>
-<li>自愿上下文切换：进程无法获取所需的资源，导致的上下文切换，例如IO、内存等资源不足时，就会发生自愿上下文切换。</li>
-</ul>
-</li>
-<li><code>nvcswch</code>(non voluntary context switches)：表示每秒<strong>非自愿上下文切换</strong>的次数。<ul>
-<li>非自愿上下文切换：进程由于时间片已到等时间，被系统强制调度，进而发生的上下文切换，例如大量的进程都在争抢CPU时，就容易发生非自愿上下文切换。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="CPU上下文切换次数与性能的关系"><a href="#CPU上下文切换次数与性能的关系" class="headerlink" title="CPU上下文切换次数与性能的关系"></a>CPU上下文切换次数与性能的关系</h3><ul>
-<li>自愿上下文切换变多了，说明进程都在等待资源，有可能发生了I/O 等其他问题；</li>
-<li>非自愿上下文切换变多了，说明进程都在被强制调度，也就是都在争抢CPU，说明CPU的确成了瓶颈；</li>
-<li>中断次数变多了，说明CPU被中断处理程序占用，还需要通过查看/proc/interrupts文件查看中断调用详情再做判断。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>进程、线程 3</title>
     <url>/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞"><a href="#并发、同步、异步、互斥、阻塞、非阻塞" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞"></a>并发、同步、异步、互斥、阻塞、非阻塞</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
@@ -1398,45 +1298,6 @@
       </categories>
       <tags>
         <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RK3568 Linux的I2C总线驱动分析</title>
-    <url>/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-RK3568%20Linux%E7%9A%84I2C%E6%80%BB%E7%BA%BF%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<h1 id="RK3568-Linux的I2C总线驱动分析"><a href="#RK3568-Linux的I2C总线驱动分析" class="headerlink" title="RK3568 Linux的I2C总线驱动分析"></a>RK3568 Linux的I2C总线驱动分析</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>根据I2C驱动的开发流程分析RK3568 Linux的I2C总线驱动。</p>
-<p>由《Linux设备驱动开发详解》一书第15章《Linux I2C核心、总线与设备驱动》可知，在Linux系统中，I2C驱动由3部分组成，即I2C核心，I2C总线驱动和I2C设备驱动。</p>
-<p>而RK3568作为被设备挂载的控制器(适配器)，其驱动程序—— <code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/drivers/i2c/busses/i2c-rk3x.c</code> ，应属于I2C总线驱动。</p>
-<h2 id="RK3568-I2C总线驱动概述"><a href="#RK3568-I2C总线驱动概述" class="headerlink" title="RK3568 I2C总线驱动概述"></a>RK3568 I2C总线驱动概述</h2><ul>
-<li>文件路径<ul>
-<li><code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/drivers/i2c/busses/i2c-rk3x.c</code></li>
-</ul>
-</li>
-<li>总线驱动：<code>rk3x_i2c_driver</code>：<ul>
-<li>probe方法：<code>rk3x_i2c_probe</code></li>
-<li>remove方法：<code>rk3x_i2c_remove</code></li>
-</ul>
-</li>
-<li>通信方法集合：<code>rk3x_i2c_algorithm</code><ul>
-<li>通信方法：<code>rk3x_i2c_xfer</code></li>
-<li>功能检测方法：<code>rk3x_i2c_func</code></li>
-</ul>
-</li>
-<li>驱动注册和卸载方法<ul>
-<li>注册方法：<code>rk3x_i2c_driver_init</code></li>
-<li>卸载方法：<code>rk3x_i2c_driver_exit</code></li>
-</ul>
-</li>
-</ul>
-<h2 id="RK3568-I2C总线驱动分析"><a href="#RK3568-I2C总线驱动分析" class="headerlink" title="RK3568 I2C总线驱动分析"></a>RK3568 I2C总线驱动分析</h2><h3 id="定义总线驱动"><a href="#定义总线驱动" class="headerlink" title="定义总线驱动"></a>定义总线驱动</h3><h3 id="定义algorithm通信方法"><a href="#定义algorithm通信方法" class="headerlink" title="定义algorithm通信方法"></a>定义algorithm通信方法</h3><h3 id="设备树的分配方法"><a href="#设备树的分配方法" class="headerlink" title="设备树的分配方法"></a>设备树的分配方法</h3><h3 id="注册平台驱动"><a href="#注册平台驱动" class="headerlink" title="注册平台驱动"></a>注册平台驱动</h3><h3 id="总线驱动函数"><a href="#总线驱动函数" class="headerlink" title="总线驱动函数"></a>总线驱动函数</h3><h4 id="初始化函数probe"><a href="#初始化函数probe" class="headerlink" title="初始化函数probe()"></a>初始化函数probe()</h4><h4 id="释放函数remove"><a href="#释放函数remove" class="headerlink" title="释放函数remove()"></a>释放函数remove()</h4><h4 id="通信方法函数xfer"><a href="#通信方法函数xfer" class="headerlink" title="通信方法函数xfer()"></a>通信方法函数xfer()</h4><h4 id="功能检测函数func"><a href="#功能检测函数func" class="headerlink" title="功能检测函数func()"></a>功能检测函数func()</h4><h4 id="总线驱动模块注册函数init"><a href="#总线驱动模块注册函数init" class="headerlink" title="总线驱动模块注册函数init()"></a>总线驱动模块注册函数init()</h4><h4 id="总线驱动模块卸载函数exit"><a href="#总线驱动模块卸载函数exit" class="headerlink" title="总线驱动模块卸载函数exit()"></a>总线驱动模块卸载函数exit()</h4>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>RK3568</category>
-        <category>I2C驱动</category>
-        <category>代码分析</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>RK3568</tag>
       </tags>
   </entry>
   <entry>
@@ -1839,6 +1700,74 @@
       </categories>
       <tags>
         <tag>ZigBee</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>驱动设计的硬件基础</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简单样例分析：LED驱动</title>
+    <url>/2022/08/09/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-09-%E7%AE%80%E5%8D%95%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90%EF%BC%9ALED%E9%A9%B1%E5%8A%A8/</url>
+    <content><![CDATA[<h1 id="简单样例分析：LED驱动"><a href="#简单样例分析：LED驱动" class="headerlink" title="简单样例分析：LED驱动"></a>简单样例分析：LED驱动</h1><h2 id="裸机的LED驱动"><a href="#裸机的LED驱动" class="headerlink" title="裸机的LED驱动"></a>裸机的LED驱动</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_ctrl *(volatile int *) (ToVirtual(GPIO_REG_CTRL))  <span class="comment">// ToVirtual(), 把物理地址映射为虚拟地址</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_data *(volatile int *) (ToVirtual(GPIO_REG_DATA))</span></span><br><span class="line"><span class="comment">//初始化LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightInit</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_ctrl |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*设置GPIO为输出*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//点亮LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOn</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出高电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//熄灭LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOff</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data &amp;= ~(<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出低电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Linux下的LED驱动"><a href="#Linux下的LED驱动" class="headerlink" title="Linux下的LED驱动"></a>Linux下的LED驱动</h2>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+        <tag>样例分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RK3568 Linux的I2C总线驱动分析</title>
+    <url>/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-RK3568%20Linux%E7%9A%84I2C%E6%80%BB%E7%BA%BF%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h1 id="RK3568-Linux的I2C总线驱动分析"><a href="#RK3568-Linux的I2C总线驱动分析" class="headerlink" title="RK3568 Linux的I2C总线驱动分析"></a>RK3568 Linux的I2C总线驱动分析</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>根据I2C驱动的开发流程分析RK3568 Linux的I2C总线驱动。</p>
+<p>由《Linux设备驱动开发详解》一书第15章《Linux I2C核心、总线与设备驱动》可知，在Linux系统中，I2C驱动由3部分组成，即I2C核心，I2C总线驱动和I2C设备驱动。</p>
+<p>而RK3568作为被设备挂载的控制器(适配器)，其驱动程序—— <code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/drivers/i2c/busses/i2c-rk3x.c</code> ，应属于I2C总线驱动。</p>
+<h2 id="RK3568-I2C总线驱动概述"><a href="#RK3568-I2C总线驱动概述" class="headerlink" title="RK3568 I2C总线驱动概述"></a>RK3568 I2C总线驱动概述</h2><ul>
+<li>文件路径<ul>
+<li><code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/drivers/i2c/busses/i2c-rk3x.c</code></li>
+</ul>
+</li>
+<li>总线驱动：<code>rk3x_i2c_driver</code>：<ul>
+<li>probe方法：<code>rk3x_i2c_probe</code></li>
+<li>remove方法：<code>rk3x_i2c_remove</code></li>
+</ul>
+</li>
+<li>通信方法集合：<code>rk3x_i2c_algorithm</code><ul>
+<li>通信方法：<code>rk3x_i2c_xfer</code></li>
+<li>功能检测方法：<code>rk3x_i2c_func</code></li>
+</ul>
+</li>
+<li>驱动注册和卸载方法<ul>
+<li>注册方法：<code>rk3x_i2c_driver_init</code></li>
+<li>卸载方法：<code>rk3x_i2c_driver_exit</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="RK3568-I2C总线驱动分析"><a href="#RK3568-I2C总线驱动分析" class="headerlink" title="RK3568 I2C总线驱动分析"></a>RK3568 I2C总线驱动分析</h2><h3 id="总线驱动定义"><a href="#总线驱动定义" class="headerlink" title="总线驱动定义"></a>总线驱动定义</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">struct</span> <span class="title class_">platform_driver</span> rk3x_i2c_driver = &#123;</span><br><span class="line">	.probe   = rk3x_i2c_probe,                      </span><br><span class="line">	.remove  = rk3x_i2c_remove,</span><br><span class="line">	.driver  = &#123;</span><br><span class="line">		.name  = <span class="string">&quot;rk3x-i2c&quot;</span>,</span><br><span class="line">		.of_match_table = rk3x_i2c_match,</span><br><span class="line">		.pm = &amp;rk3x_i2c_pm_ops,</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="algorithm通信方法定义"><a href="#algorithm通信方法定义" class="headerlink" title="algorithm通信方法定义"></a>algorithm通信方法定义</h3><h3 id="设备树的分配方法"><a href="#设备树的分配方法" class="headerlink" title="设备树的分配方法"></a>设备树的分配方法</h3><h3 id="注册平台驱动"><a href="#注册平台驱动" class="headerlink" title="注册平台驱动"></a>注册平台驱动</h3><h3 id="总线驱动函数"><a href="#总线驱动函数" class="headerlink" title="总线驱动函数"></a>总线驱动函数</h3><h4 id="初始化函数probe"><a href="#初始化函数probe" class="headerlink" title="初始化函数probe()"></a>初始化函数probe()</h4><h4 id="释放函数remove"><a href="#释放函数remove" class="headerlink" title="释放函数remove()"></a>释放函数remove()</h4><h4 id="通信方法函数xfer"><a href="#通信方法函数xfer" class="headerlink" title="通信方法函数xfer()"></a>通信方法函数xfer()</h4><h4 id="功能检测函数func"><a href="#功能检测函数func" class="headerlink" title="功能检测函数func()"></a>功能检测函数func()</h4><h4 id="总线驱动模块注册函数init"><a href="#总线驱动模块注册函数init" class="headerlink" title="总线驱动模块注册函数init()"></a>总线驱动模块注册函数init()</h4><h4 id="总线驱动模块卸载函数exit"><a href="#总线驱动模块卸载函数exit" class="headerlink" title="总线驱动模块卸载函数exit()"></a>总线驱动模块卸载函数exit()</h4>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>RK3568</category>
+        <category>I2C驱动</category>
+        <category>代码分析</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>RK3568</tag>
       </tags>
   </entry>
   <entry>
@@ -2254,6 +2183,78 @@
       </categories>
       <tags>
         <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux设备驱动概述</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
+<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
+<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
+<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
+<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
+<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
+<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
+<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。对外呈现为操作系统的API，不再直接提供接口。</p>
+<p>虽然操作系统能够帮助一个复杂的软件系统处理多个并发的任务，还提供内存管理机制。但对于设备驱动来说，操作系统纯粹是为了给上层应用提供便利，使得应用程序可以使用统一的系统调用接口来访问各种设备。</p>
+<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2><h3 id="设备的分类和特点"><a href="#设备的分类和特点" class="headerlink" title="设备的分类和特点"></a>设备的分类和特点</h3><p>驱动针对的对象不是CPU内核，而是存储器和外设(包括CPU内部集成的存储器和外设)。主要分为3个基础大类：</p>
+<ul>
+<li>字符设备<ul>
+<li>必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标</li>
+</ul>
+</li>
+<li>块设备<ul>
+<li>可以按任意顺序进行访问的设备，以块为单位进行操作，如硬盘、eMMC</li>
+</ul>
+</li>
+<li>网络设备<ul>
+<li>面向数据包的接收和发送设计，内核与网络设备的通信主要依靠套接字接口。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Linux设备驱动与整个软硬件系统的关系"><a href="#Linux设备驱动与整个软硬件系统的关系" class="headerlink" title="Linux设备驱动与整个软硬件系统的关系"></a>Linux设备驱动与整个软硬件系统的关系</h3><p>除网络设备外，字符设备和块设备都被映射到Linux文件系统的文件和目录。应用程序可以使用Linux的系统调用接口( <code>open()</code> 、 <code>write()</code> 、 <code>read()</code> 、 <code>close()</code> )或C语言的文件操作库函数( <code>fopen()</code> 、 <code>fwrite()</code> 、 <code>fread()</code> 、 <code>fclose()</code> )。</p>
+<p>其中，块设备可以由两种访问方法：</p>
+<ul>
+<li>类似<code>dd</code>命令对应的原始块设备(<code>/dev/sdb1</code>)</li>
+<li>在块设备上建立FAT、EXT4、BTRFS等文件系统，然后通过文件路径进行访问。</li>
+</ul>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%95%B4%E4%B8%AA%E8%BD%AF%E7%A1%AC%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="Linux设备驱动与整个软硬件系统的关系"></p>
+<h3 id="Linux设备驱动的重点、难点"><a href="#Linux设备驱动的重点、难点" class="headerlink" title="Linux设备驱动的重点、难点"></a>Linux设备驱动的重点、难点</h3><ul>
+<li>硬件基础<ul>
+<li>懂得SRAM、Flash、SDRAM、磁盘的读写方式</li>
+<li>UART、I2C、USB等设备的接口</li>
+<li>轮询、中断、DMA的原理</li>
+<li>PCI总线的工作方式</li>
+<li>CPU内存管理单元MMU</li>
+</ul>
+</li>
+<li>C语言基础<ul>
+<li>结构体</li>
+<li>指针</li>
+<li>函数指针</li>
+<li>内存动态申请和释放</li>
+</ul>
+</li>
+<li>Linux内核基础<ul>
+<li>驱动与内核的接口</li>
+</ul>
+</li>
+<li>多任务并发控制和同步基础<ul>
+<li>自旋锁</li>
+<li>互斥</li>
+<li>信号量</li>
+<li>等待队列</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
       </tags>
   </entry>
   <entry>
