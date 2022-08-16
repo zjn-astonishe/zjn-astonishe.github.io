@@ -193,7 +193,7 @@ class Create_newMD:
             self.contentlist.append(tag)
             self.contentlist.append(mathjax)
             self.contentlist.append("---")
-            self.contentlist.append("\n# " + out_title)
+            self.contentlist.append("\n")
 
             char_list = ['*', '|', ':', '?', '/', '<', '>', '"', '\\']
             while True:
