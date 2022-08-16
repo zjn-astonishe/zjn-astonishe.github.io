@@ -21,6 +21,106 @@
       </tags>
   </entry>
   <entry>
+    <title>Linux设备驱动概述</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
+<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
+<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
+<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
+<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
+<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
+<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
+<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。对外呈现为操作系统的API，不再直接提供接口。</p>
+<p>虽然操作系统能够帮助一个复杂的软件系统处理多个并发的任务，还提供内存管理机制。但对于设备驱动来说，操作系统纯粹是为了给上层应用提供便利，使得应用程序可以使用统一的系统调用接口来访问各种设备。</p>
+<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2><h3 id="设备的分类和特点"><a href="#设备的分类和特点" class="headerlink" title="设备的分类和特点"></a>设备的分类和特点</h3><p>驱动针对的对象不是CPU内核，而是存储器和外设(包括CPU内部集成的存储器和外设)。主要分为3个基础大类：</p>
+<ul>
+<li>字符设备<ul>
+<li>必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标</li>
+</ul>
+</li>
+<li>块设备<ul>
+<li>可以按任意顺序进行访问的设备，以块为单位进行操作，如硬盘、eMMC</li>
+</ul>
+</li>
+<li>网络设备<ul>
+<li>面向数据包的接收和发送设计，内核与网络设备的通信主要依靠套接字接口。</li>
+</ul>
+</li>
+</ul>
+<h3 id="Linux设备驱动与整个软硬件系统的关系"><a href="#Linux设备驱动与整个软硬件系统的关系" class="headerlink" title="Linux设备驱动与整个软硬件系统的关系"></a>Linux设备驱动与整个软硬件系统的关系</h3><p>除网络设备外，字符设备和块设备都被映射到Linux文件系统的文件和目录。应用程序可以使用Linux的系统调用接口( <code>open()</code> 、 <code>write()</code> 、 <code>read()</code> 、 <code>close()</code> )或C语言的文件操作库函数( <code>fopen()</code> 、 <code>fwrite()</code> 、 <code>fread()</code> 、 <code>fclose()</code> )。</p>
+<p>其中，块设备可以由两种访问方法：</p>
+<ul>
+<li>类似<code>dd</code>命令对应的原始块设备(<code>/dev/sdb1</code>)</li>
+<li>在块设备上建立FAT、EXT4、BTRFS等文件系统，然后通过文件路径进行访问。</li>
+</ul>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%95%B4%E4%B8%AA%E8%BD%AF%E7%A1%AC%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="Linux设备驱动与整个软硬件系统的关系"></p>
+<h3 id="Linux设备驱动的重点、难点"><a href="#Linux设备驱动的重点、难点" class="headerlink" title="Linux设备驱动的重点、难点"></a>Linux设备驱动的重点、难点</h3><ul>
+<li>硬件基础<ul>
+<li>懂得SRAM、Flash、SDRAM、磁盘的读写方式</li>
+<li>UART、I2C、USB等设备的接口</li>
+<li>轮询、中断、DMA的原理</li>
+<li>PCI总线的工作方式</li>
+<li>CPU内存管理单元MMU</li>
+</ul>
+</li>
+<li>C语言基础<ul>
+<li>结构体</li>
+<li>指针</li>
+<li>函数指针</li>
+<li>内存动态申请和释放</li>
+</ul>
+</li>
+<li>Linux内核基础<ul>
+<li>驱动与内核的接口</li>
+</ul>
+</li>
+<li>多任务并发控制和同步基础<ul>
+<li>自旋锁</li>
+<li>互斥</li>
+<li>信号量</li>
+<li>等待队列</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>驱动设计的硬件基础</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简单样例分析：LED驱动</title>
+    <url>/2022/08/09/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-09-%E7%AE%80%E5%8D%95%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90%EF%BC%9ALED%E9%A9%B1%E5%8A%A8/</url>
+    <content><![CDATA[<h1 id="简单样例分析：LED驱动"><a href="#简单样例分析：LED驱动" class="headerlink" title="简单样例分析：LED驱动"></a>简单样例分析：LED驱动</h1><h2 id="裸机的LED驱动"><a href="#裸机的LED驱动" class="headerlink" title="裸机的LED驱动"></a>裸机的LED驱动</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_ctrl *(volatile int *) (ToVirtual(GPIO_REG_CTRL))  <span class="comment">// ToVirtual(), 把物理地址映射为虚拟地址</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_data *(volatile int *) (ToVirtual(GPIO_REG_DATA))</span></span><br><span class="line"><span class="comment">//初始化LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightInit</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_ctrl |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*设置GPIO为输出*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//点亮LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOn</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出高电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//熄灭LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOff</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data &amp;= ~(<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出低电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Linux下的LED驱动"><a href="#Linux下的LED驱动" class="headerlink" title="Linux下的LED驱动"></a>Linux下的LED驱动</h2>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+        <tag>样例分析</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C_C++基础知识 1</title>
     <url>/2022/03/12/C%E3%80%81C++/2022-03-12-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%201/</url>
     <content><![CDATA[<h1 id="C-C-基础知识-1"><a href="#C-C-基础知识-1" class="headerlink" title="C_C++基础知识 1"></a>C_C++基础知识 1</h1><h2 id="C和C-中某些概念的异同"><a href="#C和C-中某些概念的异同" class="headerlink" title="C和C++中某些概念的异同"></a>C和C++中某些概念的异同</h2><h3 id="new和malloc的区别"><a href="#new和malloc的区别" class="headerlink" title="new和malloc的区别"></a>new和malloc的区别</h3><ul>
@@ -755,106 +855,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux设备驱动概述</title>
-    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
-    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
-<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
-<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
-<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
-<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
-<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
-<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
-<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。对外呈现为操作系统的API，不再直接提供接口。</p>
-<p>虽然操作系统能够帮助一个复杂的软件系统处理多个并发的任务，还提供内存管理机制。但对于设备驱动来说，操作系统纯粹是为了给上层应用提供便利，使得应用程序可以使用统一的系统调用接口来访问各种设备。</p>
-<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2><h3 id="设备的分类和特点"><a href="#设备的分类和特点" class="headerlink" title="设备的分类和特点"></a>设备的分类和特点</h3><p>驱动针对的对象不是CPU内核，而是存储器和外设(包括CPU内部集成的存储器和外设)。主要分为3个基础大类：</p>
-<ul>
-<li>字符设备<ul>
-<li>必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标</li>
-</ul>
-</li>
-<li>块设备<ul>
-<li>可以按任意顺序进行访问的设备，以块为单位进行操作，如硬盘、eMMC</li>
-</ul>
-</li>
-<li>网络设备<ul>
-<li>面向数据包的接收和发送设计，内核与网络设备的通信主要依靠套接字接口。</li>
-</ul>
-</li>
-</ul>
-<h3 id="Linux设备驱动与整个软硬件系统的关系"><a href="#Linux设备驱动与整个软硬件系统的关系" class="headerlink" title="Linux设备驱动与整个软硬件系统的关系"></a>Linux设备驱动与整个软硬件系统的关系</h3><p>除网络设备外，字符设备和块设备都被映射到Linux文件系统的文件和目录。应用程序可以使用Linux的系统调用接口( <code>open()</code> 、 <code>write()</code> 、 <code>read()</code> 、 <code>close()</code> )或C语言的文件操作库函数( <code>fopen()</code> 、 <code>fwrite()</code> 、 <code>fread()</code> 、 <code>fclose()</code> )。</p>
-<p>其中，块设备可以由两种访问方法：</p>
-<ul>
-<li>类似<code>dd</code>命令对应的原始块设备(<code>/dev/sdb1</code>)</li>
-<li>在块设备上建立FAT、EXT4、BTRFS等文件系统，然后通过文件路径进行访问。</li>
-</ul>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%95%B4%E4%B8%AA%E8%BD%AF%E7%A1%AC%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="Linux设备驱动与整个软硬件系统的关系"></p>
-<h3 id="Linux设备驱动的重点、难点"><a href="#Linux设备驱动的重点、难点" class="headerlink" title="Linux设备驱动的重点、难点"></a>Linux设备驱动的重点、难点</h3><ul>
-<li>硬件基础<ul>
-<li>懂得SRAM、Flash、SDRAM、磁盘的读写方式</li>
-<li>UART、I2C、USB等设备的接口</li>
-<li>轮询、中断、DMA的原理</li>
-<li>PCI总线的工作方式</li>
-<li>CPU内存管理单元MMU</li>
-</ul>
-</li>
-<li>C语言基础<ul>
-<li>结构体</li>
-<li>指针</li>
-<li>函数指针</li>
-<li>内存动态申请和释放</li>
-</ul>
-</li>
-<li>Linux内核基础<ul>
-<li>驱动与内核的接口</li>
-</ul>
-</li>
-<li>多任务并发控制和同步基础<ul>
-<li>自旋锁</li>
-<li>互斥</li>
-<li>信号量</li>
-<li>等待队列</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>驱动设计的硬件基础</title>
-    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>硬件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>简单样例分析：LED驱动</title>
-    <url>/2022/08/09/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-09-%E7%AE%80%E5%8D%95%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90%EF%BC%9ALED%E9%A9%B1%E5%8A%A8/</url>
-    <content><![CDATA[<h1 id="简单样例分析：LED驱动"><a href="#简单样例分析：LED驱动" class="headerlink" title="简单样例分析：LED驱动"></a>简单样例分析：LED驱动</h1><h2 id="裸机的LED驱动"><a href="#裸机的LED驱动" class="headerlink" title="裸机的LED驱动"></a>裸机的LED驱动</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_ctrl *(volatile int *) (ToVirtual(GPIO_REG_CTRL))  <span class="comment">// ToVirtual(), 把物理地址映射为虚拟地址</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_data *(volatile int *) (ToVirtual(GPIO_REG_DATA))</span></span><br><span class="line"><span class="comment">//初始化LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightInit</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_ctrl |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*设置GPIO为输出*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//点亮LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOn</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出高电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//熄灭LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOff</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data &amp;= ~(<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出低电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Linux下的LED驱动"><a href="#Linux下的LED驱动" class="headerlink" title="Linux下的LED驱动"></a>Linux下的LED驱动</h2>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>硬件</tag>
-        <tag>样例分析</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>进程、线程 1</title>
     <url>/2022/02/28/OS/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%201/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="进程线程的基本概念"><a href="#进程线程的基本概念" class="headerlink" title="进程线程的基本概念"></a>进程线程的基本概念</h2><h3 id="什么是进程、线程-彼此有什么区别"><a href="#什么是进程、线程-彼此有什么区别" class="headerlink" title="什么是进程、线程(彼此有什么区别)"></a>什么是进程、线程(彼此有什么区别)</h3><ul>
@@ -1405,20 +1405,19 @@
     <url>/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E9%A9%B1%E5%8A%A8/</url>
     <content><![CDATA[<h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>为了提高代码的重用性，解决驱动代码和设备信息耦合的问题，Linux提出了总线、设备、驱动模型。</p>
 <p>总线上管理着两个链表，分别管理设备和驱动。每当要向系统注册一个驱动或设备时，总线负责对新插入的驱动或设备进行匹配，根据匹配结果将新插入的驱动或设备添加到所对应的管理链表中。每当要从系统移除一个驱动或设备时，总线负责将其从所对应的管理链表中删除。</p>
-<p>由于并不是所有的设备都能够归属于常见的总线(USB、PCI、I2C、SPI), Linux为了保持设备驱动的统一性，提出了一条虚拟的、抽象出来的总线 <code>platform</code> 。下图展示了 <code>Platform</code> 平台设备驱动框架的总线、设备、驱动模型。</p>
+<p>由于并不是所有的设备都能够归属于常见的总线(USB、PCI、I2C、SPI), Linux为了保持设备驱动的统一性，提出了一条虚拟的、抽象出来的总线 <code>platform</code> 。下图展示了Platform平台设备驱动框架的总线、设备、驱动模型。</p>
 <p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/platform%E6%80%BB%E7%BA%BF%E3%80%81%E9%A9%B1%E5%8A%A8%E3%80%81%E8%AE%BE%E5%A4%87%E6%A8%A1%E5%9E%8B.png?raw=true" alt="platform总线、驱动、设备模型"></p>
 <h1 id="2-Linux内核里I2C驱动的体系结构"><a href="#2-Linux内核里I2C驱动的体系结构" class="headerlink" title="2. Linux内核里I2C驱动的体系结构"></a>2. Linux内核里I2C驱动的体系结构</h1><h2 id="2-1-组成部分"><a href="#2-1-组成部分" class="headerlink" title="2.1. 组成部分"></a>2.1. 组成部分</h2><p>《Linux设备驱动开发详解》一书第15章《Linux I2C核心、总线与设备驱动》将Linux的I2C体系结构分为核心、总线驱动和设备驱动三部分。</p>
 <h3 id="2-1-1-I2C核心"><a href="#2-1-1-I2C核心" class="headerlink" title="2.1.1. I2C核心"></a>2.1.1. I2C核心</h3><p>I2C核心提供了I2C总线驱动和I2C设备驱动注册和注销的方法，I2C通信方法中上层与具体适配器无关的代码，以及探测设备、检测设备地址的上层代码。</p>
-<h3 id="2-1-2-I2C总线驱动"><a href="#2-1-2-I2C总线驱动" class="headerlink" title="2.1.2. I2C总线驱动"></a>2.1.2. I2C总线驱动</h3><p>I2C总线驱动是对I2C硬件体系结构中适配器端的实现。主要包含I2C适配器的数据结构 <code>i2c_adapter</code> 、I2C适配器的Algorithm数据结构 <code>i2c_algorithm</code> 和控制I2C适配器产生通信信号的函数。</p>
-<h3 id="2-1-3-I2C设备驱动"><a href="#2-1-3-I2C设备驱动" class="headerlink" title="2.1.3. I2C设备驱动"></a>2.1.3. I2C设备驱动</h3><p>I2C设备驱动(客户驱动)是对I2C硬件体系结构中设备端的实现，一般挂载在I2C适配器上。主要包含数据结构 <code>i2c_driver</code> 和 <code>i2c_client</code> 。</p>
-<h2 id="2-2-体系结构"><a href="#2-2-体系结构" class="headerlink" title="2.2. 体系结构"></a>2.2. 体系结构</h2><p>下图展示了Linux内核里I2C驱动的体系结构。</p>
-<p>结合下图可知，I2C设备( <code>i2c_device</code> )通过设备驱动( <code>i2c_driver</code> )生成 <code>i2c_client</code> 挂载在I2C适配器( <code>i2c_adapter</code> )上，I2C适配器( <code>i2c_adapter</code> )则通过总线驱动( <code>platform_driver</code> )挂载在CPU虚拟出的 <code>platform</code> 总线上。</p>
+<h3 id="2-1-2-I2C总线驱动"><a href="#2-1-2-I2C总线驱动" class="headerlink" title="2.1.2. I2C总线驱动"></a>2.1.2. I2C总线驱动</h3><p>I2C总线驱动是对I2C硬件体系结构中适配器端的实现。主要包含I2C适配器的数据结构 <code>i2c_adapter</code> 、I2C适配器的通信方法(与设备之间)数据结构 <code>i2c_algorithm</code> 和控制I2C适配器产生通信信号的函数。</p>
+<h3 id="2-1-3-I2C设备驱动"><a href="#2-1-3-I2C设备驱动" class="headerlink" title="2.1.3. I2C设备驱动"></a>2.1.3. I2C设备驱动</h3><p>I2C设备驱动(客户驱动)是对I2C硬件体系结构中设备端的实现。一般挂载在I2C适配器上。主要包含数据结构 <code>i2c_driver</code> 和 <code>i2c_client</code> 。</p>
+<h2 id="2-2-体系结构"><a href="#2-2-体系结构" class="headerlink" title="2.2. 体系结构"></a>2.2. 体系结构</h2><p>下图展示了Linux内核里I2C驱动的体系结构。CPU的每个I2C接口都配有一个I2C总线控制器(硬件)，负责控制所对应的一条I2C总线。I2C控制器可通过挂载在其他总线上被CPU控制，也可以直接集成在CPU内部。 <code>i2c_adapter</code> 是在软件上抽象出来的I2C总线控制器(适配器)，与硬件一一对应。</p>
+<p>每个I2C设备( <code>i2c_device</code> )在软件上抽象成 <code>i2c_client</code> ，通过设备驱动( <code>i2c_driver</code> )挂载到 <code>i2c_adapter</code> 控制的I2C总线上， <code>i2c_adapter</code> 则通过根据控制逻辑实现的 <code>i2c_algorithm</code> 与 <code>i2c_client</code> 进行通信。</p>
 <p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E5%86%85%E6%A0%B8%E9%87%8CI2C%E9%A9%B1%E5%8A%A8%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png?raw=true" alt="Linux内核里I2C驱动的体系结构"></p>
-<p>Linux的总线、设备和驱动模型实际是一个树形结构，每个节点既是设备所挂载的总线，同时也是挂载在上一层总线的设备。</p>
-<p>因此，可以将Linux内核里的I2C驱动划分为总线驱动和设备驱动两个部分实现：</p>
+<h1 id="RK3568-Linux的I2C驱动"><a href="#RK3568-Linux的I2C驱动" class="headerlink" title="RK3568 Linux的I2C驱动"></a>RK3568 Linux的I2C驱动</h1><p>RK平台的I2C总线控制器并非直接集成在内部，而是挂载到platform总线上，所以可以将RK3568 Linux的I2C驱动划分为两个部分实现：</p>
 <ul>
-<li>总线驱动以<code>platform</code>驱动为模板。</li>
-<li>设备驱动以<code>I2C</code>驱动为模板。</li>
+<li>采用platform驱动框架为I2C适配器设计驱动，以挂载到platform总线。</li>
+<li>采用I2C驱动框架为设备设计驱动，以挂载到I2C总线。</li>
 </ul>
 <p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/I2C%E4%B8%BB%E6%9C%BA%E5%92%8C%E5%A4%96%E8%AE%BE%E7%9C%BC%E9%87%8C%E7%9A%84Linux%E4%B8%96%E7%95%8C.png?raw=true" alt="Linux内核里I2C驱动的设计框架"></p>
 ]]></content>
