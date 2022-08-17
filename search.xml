@@ -21,103 +21,211 @@
       </tags>
   </entry>
   <entry>
-    <title>Linux设备驱动概述</title>
-    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
-    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
-<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
-<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
-<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
-<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
-<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
-<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
-<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。对外呈现为操作系统的API，不再直接提供接口。</p>
-<p>虽然操作系统能够帮助一个复杂的软件系统处理多个并发的任务，还提供内存管理机制。但对于设备驱动来说，操作系统纯粹是为了给上层应用提供便利，使得应用程序可以使用统一的系统调用接口来访问各种设备。</p>
-<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2><h3 id="设备的分类和特点"><a href="#设备的分类和特点" class="headerlink" title="设备的分类和特点"></a>设备的分类和特点</h3><p>驱动针对的对象不是CPU内核，而是存储器和外设(包括CPU内部集成的存储器和外设)。主要分为3个基础大类：</p>
+    <title>Linux网络编程导引</title>
+    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
+    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>网络编程</category>
+      </categories>
+      <tags>
+        <tag>Linux网络编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux网络基础(一)</title>
+    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="Linux网络基础-一"><a href="#Linux网络基础-一" class="headerlink" title="Linux网络基础(一)"></a>Linux网络基础(一)</h1><h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><p>Socket又称套接字，是一个通信链的句柄，位于应用层和传输层之间，用于唯一标识网络中某一台主机上的某一个进程。它通常由主机的IP地址和端口号拼接而成。</p>
+<h2 id="Linux的socket相关函数"><a href="#Linux的socket相关函数" class="headerlink" title="Linux的socket相关函数"></a>Linux的socket相关函数</h2><h3 id="socket库"><a href="#socket库" class="headerlink" title="socket库"></a>socket库</h3><p>与Windows提供了 <code>&lt;winsock2.h&gt;</code>库方便开发者进行socket编程相同，Linux为开发者提供了 <code>&lt;sys/socket.h&gt;</code>库。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span> <span class="comment">// Linux提供的socket库</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span> <span class="comment">// 保存不同协议的地址结构体，如socketaddr_in</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span>  <span class="comment">// 地址格式转换函数</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="socket的创建"><a href="#socket的创建" class="headerlink" title="socket的创建"></a>socket的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> domain, <span class="type">int</span> type, <span class="type">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
 <ul>
-<li>字符设备<ul>
-<li>必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标</li>
-</ul>
-</li>
-<li>块设备<ul>
-<li>可以按任意顺序进行访问的设备，以块为单位进行操作，如硬盘、eMMC</li>
-</ul>
-</li>
-<li>网络设备<ul>
-<li>面向数据包的接收和发送设计，内核与网络设备的通信主要依靠套接字接口。</li>
-</ul>
-</li>
-</ul>
-<h3 id="Linux设备驱动与整个软硬件系统的关系"><a href="#Linux设备驱动与整个软硬件系统的关系" class="headerlink" title="Linux设备驱动与整个软硬件系统的关系"></a>Linux设备驱动与整个软硬件系统的关系</h3><p>除网络设备外，字符设备和块设备都被映射到Linux文件系统的文件和目录。应用程序可以使用Linux的系统调用接口( <code>open()</code> 、 <code>write()</code> 、 <code>read()</code> 、 <code>close()</code> )或C语言的文件操作库函数( <code>fopen()</code> 、 <code>fwrite()</code> 、 <code>fread()</code> 、 <code>fclose()</code> )。</p>
-<p>其中，块设备可以由两种访问方法：</p>
+<li><p>参数</p>
 <ul>
-<li>类似<code>dd</code>命令对应的原始块设备(<code>/dev/sdb1</code>)</li>
-<li>在块设备上建立FAT、EXT4、BTRFS等文件系统，然后通过文件路径进行访问。</li>
-</ul>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%95%B4%E4%B8%AA%E8%BD%AF%E7%A1%AC%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="Linux设备驱动与整个软硬件系统的关系"></p>
-<h3 id="Linux设备驱动的重点、难点"><a href="#Linux设备驱动的重点、难点" class="headerlink" title="Linux设备驱动的重点、难点"></a>Linux设备驱动的重点、难点</h3><ul>
-<li>硬件基础<ul>
-<li>懂得SRAM、Flash、SDRAM、磁盘的读写方式</li>
-<li>UART、I2C、USB等设备的接口</li>
-<li>轮询、中断、DMA的原理</li>
-<li>PCI总线的工作方式</li>
-<li>CPU内存管理单元MMU</li>
+<li><code>domain: 用于确定通信的特性，包括地址的格式</code><ul>
+<li><code>AF_INET</code> : IPV4因特网域</li>
+<li><code>AF_INET6</code>: IPV6因特网域</li>
+<li><code>AF_UNIX</code> : UNIX域</li>
+<li><code>AF_UPSPEC</code>: 未指定</li>
 </ul>
 </li>
-<li>C语言基础<ul>
-<li>结构体</li>
-<li>指针</li>
-<li>函数指针</li>
-<li>内存动态申请和释放</li>
+<li><code>type</code><ul>
+<li><code>SOCK_DGRAM</code> : 固定长度的、无连接的、不可靠的报文传输(UDP)</li>
+<li><code>SOCK_STREAM</code>: 有序的、可靠的、双向的、面向连接的字节流(TCP)</li>
+<li><code>SOCK_SEQPACKET</code>: 固定长度的、有序的、可靠的、面向连接的报文传递</li>
+<li><code>SOCK_RAW</code>: IP协议的数据报接口</li>
 </ul>
 </li>
-<li>Linux内核基础<ul>
-<li>驱动与内核的接口</li>
+<li><code>protocol</code><ul>
+<li>通常为0，表示为给定的 <code>domain</code>和 <code>type</code>选择默认协议。</li>
 </ul>
 </li>
-<li>多任务并发控制和同步基础<ul>
-<li>自旋锁</li>
-<li>互斥</li>
-<li>信号量</li>
-<li>等待队列</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>创建成功，返回文件描述符(套接字)</li>
+<li>创建失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h3 id="地址格式"><a href="#地址格式" class="headerlink" title="地址格式"></a>地址格式</h3><p>不同的通信协议会有不同的套接字地址结构。为使不同格式地址能够传入套接字函数，地址会被强制转换成一个通用的地址结构<code>sockaddr</code></p>
+<p><code>sockaddr_in</code>是Internet环境下的套接字地址形式，主要用于socket定义和赋值；</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr_in for IPV4 16 bytes */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">in_addr</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">int</span> s_addr;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> &#123;</span><br><span class="line">  <span class="type">sa_family_t</span> sin_family; <span class="comment">/* 地址族 */</span>    <span class="comment">//2字节</span></span><br><span class="line">  in_port  sin_port; <span class="comment">/* 目的端口号 */</span>  <span class="comment">//2字节</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr; <span class="comment">/* IP地址*/</span>  <span class="comment">// 4 字节</span></span><br><span class="line">  <span class="comment">/* Pad to size of `struct sockaddr&#x27;. */</span>  </span><br><span class="line">  <span class="type">unsigned</span> <span class="type">char</span>  sin_zero[<span class="number">8</span>];<span class="comment">/*填充字节*/</span> <span class="comment">//8 字节 需要清零</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>定义socket的各类地址形式最终转换成<code>sockaddr</code>类型作为函数参数传输。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr 16 bytes*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span> &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sa_family;  <span class="comment">//地址族   AF_XXXX    2字节</span></span><br><span class="line"> <span class="type">char</span>        sa_data[<span class="number">14</span>]; <span class="comment">//可变长度地址 包含IP地址、port 14 字节</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="将socket与地址关联-服务器"><a href="#将socket与地址关联-服务器" class="headerlink" title="将socket与地址关联(服务器)"></a>将socket与地址关联(服务器)</h3><p>创建socket后还需将socket和地址进行关联，所以调用<code>bind()</code>函数将地址指向的<code>sockaddr</code>结构体中描述的一些属性与socket套接字绑定(也叫命名)。然后就可以通过socket读取和使用，当然也可通过该socket发送数据到指定目的。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bind</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、IP地址、port的sockaddr_in结构体，传参时被强制转换为sockaddr。</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<p>对于服务器，<code>bind</code>是必须要做的事情。服务器启动的时候需要绑定指定的端口来提供服务(以便客户向指定的端口发送请求)。一般来说，会将参数中的IP地址赋值为<code>INADDR_ANY</code>，即无论发送到系统中的哪个IP地址(多网卡情况)的请求都采用被绑定的socket处理，无需指定固定IP。</p>
+<p>对于客户端来说，一般不需要主动进行<code>bind</code>，交给操作系统分配可用端口。</p>
+<blockquote>
+<p>公认端口:从0到1023。<br>小于256的端口作为保留端口。<br>注册端口:端口号从1024到49151。实际上，机器通常从1024起分配动态端口。<br>动态和/或私有端口:从49152到65535。理论上，不应为服务分配这些端口。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> sock_fd = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">// IPV4 tcp socket</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_INET;                              <span class="comment">// IPV4 需要与socket中的指定一致</span></span><br><span class="line">addr.sin_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.51.122&quot;</span>);            <span class="comment">// 点分十进制转三十二位字节序</span></span><br><span class="line">addr.sin_port = <span class="number">5050</span>;                                   <span class="comment">//大于1024</span></span><br><span class="line"><span class="built_in">bind</span>(sock_fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="built_in">sizeof</span>(addr));   <span class="comment">// 关联绑定</span></span><br></pre></td></tr></table></figure>
+<h3 id="网络连接"><a href="#网络连接" class="headerlink" title="网络连接"></a>网络连接</h3><p>面向连接的网络服务(TCP)在开始交换数据之前，需要在请求服务的进程套接字(客户端)和提供服务的套接字(服务器)之间建立一个连接(TCP是三次握手)。</p>
+<h4 id="连接请求connect-客户端"><a href="#连接请求connect-客户端" class="headerlink" title="连接请求connect(客户端)"></a>连接请求connect(客户端)</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="type">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 返回值：成功返回0， 失败返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、服务器IP地址、服务器port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果sockfd参数中无法获知服务器IP地址和服务器的端口号，则绑定一个默认地址，即客户端本机的IP。</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<p>在客户端尝试连接服务器的过程中，可能会出现连接失败的情况。这很可能是由一些瞬时错误引起的，如果一个服务器运行在一个负载很重的系统上，就很有可能发生这种错误。</p>
+<p>通常采用指数补偿算法解决瞬时错误。当调用的connect失败后，进程会休眠一小段时间，然后进行第二次尝试。如果第二次的尝试依然失败，则休眠时间指数级增加，以此类推进行循环，直到最大休眠延时达到2分钟左右。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MAXSLEEP 128  <span class="comment">// 最大休眠时间</span></span></span><br><span class="line"><span class="comment">/* 指数补偿算法 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect_try</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> strcut sockaddr *addr, <span class="type">socklen_t</span> addrlen)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> num_sec;</span><br><span class="line">  <span class="keyword">for</span>(num_sec = <span class="number">1</span>; numsec &lt;= MAXSLEEP; numsec &lt;&lt;= <span class="number">1</span>)  <span class="comment">// 休眠时间指数级增长</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">connect</span>(sockfd, addr, addrlen) == <span class="number">0</span>)</span><br><span class="line">      <span class="comment">// 成功连接</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (num_sec &lt;= MAXSLEEP/<span class="number">2</span>)  <span class="comment">// 休眠，然后再次重连</span></span><br><span class="line">      <span class="built_in">sleep</span>(num_sec);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;  <span class="comment">//超时， 返回 -1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="监听连接请求listen-服务器"><a href="#监听连接请求listen-服务器" class="headerlink" title="监听连接请求listen(服务器)"></a>监听连接请求listen(服务器)</h4><p>服务器调用<code>listen</code>函数来宣告它正在接收连接请求。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">listen</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> backlog)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>backlog</code>: accept应答之前，允许在进入队列中等待的连接数目，最大值128。连接队列缓存的容量</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h4 id="处理客户端的连接请求accept-服务器"><a href="#处理客户端的连接请求accept-服务器" class="headerlink" title="处理客户端的连接请求accept(服务器)"></a>处理客户端的连接请求accept(服务器)</h4><p>服务器调用<code>accept</code>来建立套接字连接，处理单个连接请求。如果服务器调用accept后没有收到连接请求，则服务器会阻塞直到新的请求到来。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> sockfd, <span class="keyword">struct</span> sockaddr *addr, <span class="type">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: 正在监听端口的socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、客户端IP地址、客户端port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果服务器不关心，可以设置为NULL</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回与客户端连接的套接字，该套接字域客户端连接</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h3 id="网络连接的关闭和socket的关闭"><a href="#网络连接的关闭和socket的关闭" class="headerlink" title="网络连接的关闭和socket的关闭"></a>网络连接的关闭和socket的关闭</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">shutdown</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> how)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>how</code>: 关闭方式<ul>
+<li><code>SHUT_RD</code>: 关闭读端</li>
+<li><code>SHUT_WR</code>: 关闭写端</li>
+<li><code>SHUT_RDWR</code>: 关闭读写</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">closesocket</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>close和shutdown的区别<br>shutdown不管引用计数，关闭的是连接而不是套接字，调用后套接字依然存在，直到调用close将套接字清除。并且，它需要等待输出缓冲区中的数据传输完毕再发送FIN包关闭连接。<br>close是把socket描述符的引用计数-1，仅在引用计数为0时关闭套接字。使用后套接字描述符将从内存中清除，之后也不能再被使用。如果调用后会关闭套接字，它将不管输出缓冲区是否还有数据，直接将套接字描述符从内存清除。</p>
+</blockquote>
+<h3 id="大小端转换"><a href="#大小端转换" class="headerlink" title="大小端转换"></a>大小端转换</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl</span><span class="params">(<span class="type">uint32_t</span> hostlong)</span></span>;  <span class="comment">//返回值：以网络字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htons</span><span class="params">(<span class="type">uint16_t</span> hostshort)</span></span>; <span class="comment">//返回值：以网络字节序表示的16位整数</span></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">ntohl</span><span class="params">(<span class="type">uint32_t</span> netlong)</span></span>;   <span class="comment">//返回值：以主机字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">ntohs</span><span class="params">(<span class="type">uint16_t</span> netshort)</span></span>;  <span class="comment">//返回值：以主机字节序表示的16位整数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl32</span><span class="params">(<span class="type">uint32_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint32_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0x000000FF</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">24</span>) &amp; <span class="number">0xFF000000</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0x00FF0000</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x0000FF00</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htonl16</span><span class="params">(<span class="type">uint16_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint16_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0xFF00</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x00FF</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="IP地址转换"><a href="#IP地址转换" class="headerlink" title="IP地址转换"></a>IP地址转换</h3><h4 id="点分十进制转32位网络字节序"><a href="#点分十进制转32位网络字节序" class="headerlink" title="点分十进制转32位网络字节序"></a>点分十进制转32位网络字节序</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">in_addr_t</span> <span class="title">inet_addr</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp)</span></span>;  <span class="comment">//cp 点分十进制地址</span></span><br><span class="line"><span class="comment">//返回网络字节序的32位地址</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_aton</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp, <span class="keyword">struct</span> in_addr *inp)</span></span>; <span class="comment">// cp 点分十进制地址; inp 转换结果空间的首地址，即存放转换结果的变量的地址</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_pton</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">char</span> *src, <span class="type">void</span> *dst)</span></span>;  <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                        cp 点分十进制地址; </span></span><br><span class="line"><span class="comment">                                                        inp 存放转换结果的缓冲区, 如果是IPV4需要4字节, IPV6需要16字节</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br></pre></td></tr></table></figure>
+<h4 id="32位网络字节序转点分十进制"><a href="#32位网络字节序转点分十进制" class="headerlink" title="32位网络字节序转点分十进制"></a>32位网络字节序转点分十进制</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">char</span> *<span class="title">inet_ntoa</span><span class="params">(<span class="keyword">struct</span> in_addr in)</span></span>;</span><br><span class="line"><span class="comment">//返回 点分十进制地址字符串的地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span> *<span class="title">inet_ntop</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">void</span> *src,</span></span></span><br><span class="line"><span class="params"><span class="function">                      <span class="type">char</span> *dst, <span class="type">socklen_t</span> size)</span></span>; <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                      src 32位网络字节序的二进制IP地址;</span></span><br><span class="line"><span class="comment">                                                      dst 保存点分十进制字符串的缓冲区;</span></span><br><span class="line"><span class="comment">                                                      size dst缓冲区的大小，两个常量INET_ADDRSRTRLEN(IPV4)、INET6_ADDRSTRLEN(IPV6)</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//返回值，成功，返回地址字符串指针，失败返回 NULL</span></span><br></pre></td></tr></table></figure>
+<h2 id="基于TCP-IP协议网络编程模型"><a href="#基于TCP-IP协议网络编程模型" class="headerlink" title="基于TCP/IP协议网络编程模型"></a>基于TCP/IP协议网络编程模型</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B.png?raw=true" alt="基于TCP/IP协议网络编程模型"></p>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>TCP并发服务器的思想是每一个客户机的请求并不由服务器直接处理，二十由服务器创建一个子进程(子线程)来处理。</p>
+<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/TCP%E5%A4%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A8%A1%E5%9E%8B.png?raw=true" alt="TCP多进程/多线程服务器模型"></p>
+<ul>
+<li>TCP多进程服务器模型<ul>
+<li>优点<ul>
+<li>安全、进程之间相互隔离，一个进程崩溃不会导致整个服务器崩溃。</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>占用资源较大</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>TCP多线程服务器模型<ul>
+<li>优点<ul>
+<li>占用资源较少</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>不安全，因为线程之间是共享进程的资源，一个线程崩溃会导致服务器整个进程崩溃</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 ]]></content>
       <categories>
         <category>Linux</category>
-        <category>设备驱动</category>
+        <category>网络编程</category>
       </categories>
       <tags>
-        <tag>Linux设备驱动</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>驱动设计的硬件基础</title>
-    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>硬件</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>简单样例分析：LED驱动</title>
-    <url>/2022/08/09/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-09-%E7%AE%80%E5%8D%95%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90%EF%BC%9ALED%E9%A9%B1%E5%8A%A8/</url>
-    <content><![CDATA[<h1 id="简单样例分析：LED驱动"><a href="#简单样例分析：LED驱动" class="headerlink" title="简单样例分析：LED驱动"></a>简单样例分析：LED驱动</h1><h2 id="裸机的LED驱动"><a href="#裸机的LED驱动" class="headerlink" title="裸机的LED驱动"></a>裸机的LED驱动</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_ctrl *(volatile int *) (ToVirtual(GPIO_REG_CTRL))  <span class="comment">// ToVirtual(), 把物理地址映射为虚拟地址</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_data *(volatile int *) (ToVirtual(GPIO_REG_DATA))</span></span><br><span class="line"><span class="comment">//初始化LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightInit</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_ctrl |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*设置GPIO为输出*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//点亮LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOn</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出高电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//熄灭LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOff</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data &amp;= ~(<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出低电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="Linux下的LED驱动"><a href="#Linux下的LED驱动" class="headerlink" title="Linux下的LED驱动"></a>Linux下的LED驱动</h2>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>硬件</tag>
-        <tag>样例分析</tag>
+        <tag>Linux网络编程</tag>
+        <tag>Socket</tag>
       </tags>
   </entry>
   <entry>
@@ -647,78 +755,188 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 3</title>
-    <url>/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞"><a href="#并发、同步、异步、互斥、阻塞、非阻塞" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞"></a>并发、同步、异步、互斥、阻塞、非阻塞</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
-<li>并发<ul>
-<li>在操作系统中，同个处理机上有多个程序同时运行。</li>
+    <title>Linux设备驱动概述</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</url>
+    <content><![CDATA[<h1 id="Linux设备驱动概述"><a href="#Linux设备驱动概述" class="headerlink" title="Linux设备驱动概述"></a>Linux设备驱动概述</h1><h2 id="设备驱动的概念和作用"><a href="#设备驱动的概念和作用" class="headerlink" title="设备驱动的概念和作用"></a>设备驱动的概念和作用</h2><p>任何一个计算机系统的运转都是系统中软硬件共同努力的结果，硬件是底层基础，是所有软件得以运行的平台。代码最终会落实为硬件上的组合逻辑与时序逻辑，软件则实现了具体应用。</p>
+<p>为了尽可能快速地完成设计，软件和硬件不应该互相渗透。例如，应用软件在调用套接字发送和接收数据包的时候，不必关心网卡上的中断、寄存器、存储空间、I/O端口、片选以及其他任何硬件词汇。由设备驱动充当硬件和应用软件之间的纽带。对设备驱动最通俗的解释就是“驱使硬件设备行动”。驱动与底层硬件直接打交道，按照硬件设备的具体工作方式，读写设备的寄存器，完成设备的轮询、中断处理、DMA通信，进行物理内存向虚拟内存的映射等，最终让通信设备能收发数据，让显示设备能显示文字和画面，让存储设备能记录文件和数据。</p>
+<h2 id="操作系统与设备驱动"><a href="#操作系统与设备驱动" class="headerlink" title="操作系统与设备驱动"></a>操作系统与设备驱动</h2><p>在系统没有操作系统的情况下，工程师可以根据硬件设备的特点自行定义接口；</p>
+<p>而在由操作系统的情况下，驱动的架构则由相应的操作系统定义。</p>
+<h3 id="无操作系统时的设备驱动"><a href="#无操作系统时的设备驱动" class="headerlink" title="无操作系统时的设备驱动"></a>无操作系统时的设备驱动</h3><p>对于功能比较单一(不需要多任务调度、文件系统、内存管理等功能)，控制并不复杂的系统，用单任务架构完全可以良好地支持工作。<strong>在一个无限循环中夹杂着对设备中断的检测或者对设备的轮询是这种系统中软件的典型架构。</strong></p>
+<p>一般情况下，无操作系统时的每一种设备驱动都会定义一个软件模块，包含.h文件和.c文件，前者定义该设备驱动的数据结构并声明外部函数，后者进行驱动的具体实现。</p>
+<p>在没有操作系统的情况下，设备驱动的接口被直接提交给应用软件工程师，应用软件没有跨越任何层次就直接访问设备驱动的接口。驱动包含的接口函数也与硬件的功能直接吻合，没有任何附加功能。</p>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/%E6%97%A0%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E6%97%B6%E7%A1%AC%E4%BB%B6%E3%80%81%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%92%8C%E5%BA%94%E7%94%A8%E8%BD%AF%E4%BB%B6%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="无操作系统时硬件、设备驱动和应用软件的关系"></p>
+<h3 id="由操作系统时的设备驱动"><a href="#由操作系统时的设备驱动" class="headerlink" title="由操作系统时的设备驱动"></a>由操作系统时的设备驱动</h3><p>除了必要的硬件操作工作，还必须在所有设备的驱动中设计面向操作系统内核的接口，以确保将驱动融入操作系统内核。对外呈现为操作系统的API，不再直接提供接口。</p>
+<p>虽然操作系统能够帮助一个复杂的软件系统处理多个并发的任务，还提供内存管理机制。但对于设备驱动来说，操作系统纯粹是为了给上层应用提供便利，使得应用程序可以使用统一的系统调用接口来访问各种设备。</p>
+<h2 id="Linux设备驱动"><a href="#Linux设备驱动" class="headerlink" title="Linux设备驱动"></a>Linux设备驱动</h2><h3 id="设备的分类和特点"><a href="#设备的分类和特点" class="headerlink" title="设备的分类和特点"></a>设备的分类和特点</h3><p>驱动针对的对象不是CPU内核，而是存储器和外设(包括CPU内部集成的存储器和外设)。主要分为3个基础大类：</p>
+<ul>
+<li>字符设备<ul>
+<li>必须以串行顺序依次进行访问的设备，如触摸屏、磁带驱动器、鼠标</li>
 </ul>
 </li>
-<li>同步、异步<ul>
-<li>同步：顺序执行，执行完一个再执行下一个，需要等待、协调运行。</li>
-<li>异步：异步和同步是相对的，异步就是彼此独立，在等待某事件的过程中继续做自己的事，不需要等待这一事件完成后再工作。<ul>
-<li>线程是实现异步的一个方式。可以在主线程创建一个新线程来做某件事，此时主线程不需要等待子线程做完而是可以做其他事情。</li>
-<li>异步和多线程并不是一个同等关系，异步是最终目的，多线程只是实现异步的一种手段。</li>
+<li>块设备<ul>
+<li>可以按任意顺序进行访问的设备，以块为单位进行操作，如硬盘、eMMC</li>
 </ul>
 </li>
-<li>同步和异步是对应的，是线程之间的关系。两个线程要么同步要么异步。</li>
-</ul>
-</li>
-<li>阻塞、非阻塞<ul>
-<li>当进程在访问数据时，根据IO操作的就绪状态不同而采取不同的处理方式。比如主程序调用一个函数要读取一个文件的内容：<ul>
-<li>阻塞方式下主程序会等到函数读取完再继续往下执行。</li>
-<li>非阻塞方式下读取函数会立刻返回一个状态值给主程序，主程序不等待文件读取完就继续往下执行。</li>
-<li>要注意的是阻塞和非阻塞说明的是IO和CPU之间的关系，即CPU是否等待IO。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>一般有以下4类IO模型，考虑发送方发出请求要接收方读取某文件内容为例：<ul>
-<li>同步阻塞IO<ul>
-<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，直到获取读取结果再响应发送方，等待期间不可做其他操作(阻塞)。</li>
-</ul>
-</li>
-<li>同步非阻塞IO<ul>
-<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，就立即返回，接受方继续去做其他事情。此时并未响应发送方，发送方一直等待。直到IO操作(读取文件)完成后，接收方获得读取结果响应发送方，接收方才可以进入下一次请求过程(非阻塞)。</li>
-</ul>
-</li>
-<li>异步阻塞IO(理论存在，实际不用)<ul>
-<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，就一直等到返回结果后，才响应发送方，期间不能进行其他操作。</li>
-</ul>
-</li>
-<li>异步非阻塞IO(效率最高)<ul>
-<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，也不等待，而是马上返回去做其他事情。当IO操作(读取文件)完成以后，将完成状态和结果通知接收方，接收方再响应发送方。</li>
-<li>阻塞和非阻塞是对同一个线程的某个时刻来说的。此时，线程要么阻塞，要么非阻塞。</li>
+<li>网络设备<ul>
+<li>面向数据包的接收和发送设计，内核与网络设备的通信主要依靠套接字接口。</li>
 </ul>
 </li>
 </ul>
-</li>
-<li>阻塞是使用同步机制的结果，非阻塞是使用异步机制的结果。</li>
+<h3 id="Linux设备驱动与整个软硬件系统的关系"><a href="#Linux设备驱动与整个软硬件系统的关系" class="headerlink" title="Linux设备驱动与整个软硬件系统的关系"></a>Linux设备驱动与整个软硬件系统的关系</h3><p>除网络设备外，字符设备和块设备都被映射到Linux文件系统的文件和目录。应用程序可以使用Linux的系统调用接口( <code>open()</code> 、 <code>write()</code> 、 <code>read()</code> 、 <code>close()</code> )或C语言的文件操作库函数( <code>fopen()</code> 、 <code>fwrite()</code> 、 <code>fread()</code> 、 <code>fclose()</code> )。</p>
+<p>其中，块设备可以由两种访问方法：</p>
+<ul>
+<li>类似<code>dd</code>命令对应的原始块设备(<code>/dev/sdb1</code>)</li>
+<li>在块设备上建立FAT、EXT4、BTRFS等文件系统，然后通过文件路径进行访问。</li>
 </ul>
-<h3 id="线程的同步和互斥"><a href="#线程的同步和互斥" class="headerlink" title="线程的同步和互斥"></a>线程的同步和互斥</h3><ul>
-<li>线程互斥<ul>
-<li>当有若干个线程同时访问同一块资源时，规定同一时间只有一个线程可以得到访问权，其他线程需要等待占用资源者释放该资源才可以申请访问。</li>
-<li>互斥无法限制访问者对资源的访问顺序，即访问是无序的。</li>
-</ul>
-</li>
-<li>线程同步：<ul>
-<li>在互斥的基础上(大多数情况，除非允许同一时间多个访问者访问同一资源)，通过其它机制实现访问者对资源的有序访问，实现每个线程之间按预定的先后次序进行运行，协同、协助、互相配合。</li>
-</ul>
-</li>
-</ul>
-<h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><ul>
-<li>同步是过程，阻塞是状态<ul>
-<li>当多个线程访问同一资源时，规定同一时间只有一个线程可进行访问，所以后访问的线程将被阻塞，等待先访问的线程访问完。</li>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E4%B8%8E%E6%95%B4%E4%B8%AA%E8%BD%AF%E7%A1%AC%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB.png?raw=true" alt="Linux设备驱动与整个软硬件系统的关系"></p>
+<h3 id="Linux设备驱动的重点、难点"><a href="#Linux设备驱动的重点、难点" class="headerlink" title="Linux设备驱动的重点、难点"></a>Linux设备驱动的重点、难点</h3><ul>
+<li>硬件基础<ul>
+<li>懂得SRAM、Flash、SDRAM、磁盘的读写方式</li>
+<li>UART、I2C、USB等设备的接口</li>
+<li>轮询、中断、DMA的原理</li>
+<li>PCI总线的工作方式</li>
+<li>CPU内存管理单元MMU</li>
 </ul>
 </li>
-<li>线程同步不一定发生阻塞。只有当访问同一资源出现互相等待和互相唤醒才会发生阻塞。而阻塞了一定是同步，多线程用阻塞实现同步。</li>
+<li>C语言基础<ul>
+<li>结构体</li>
+<li>指针</li>
+<li>函数指针</li>
+<li>内存动态申请和释放</li>
+</ul>
+</li>
+<li>Linux内核基础<ul>
+<li>驱动与内核的接口</li>
+</ul>
+</li>
+<li>多任务并发控制和同步基础<ul>
+<li>自旋锁</li>
+<li>互斥</li>
+<li>信号量</li>
+<li>等待队列</li>
+</ul>
+</li>
 </ul>
 ]]></content>
       <categories>
-        <category>操作系统</category>
+        <category>Linux</category>
+        <category>设备驱动</category>
       </categories>
       <tags>
-        <tag>进程、线程</tag>
+        <tag>Linux设备驱动</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>驱动设计的硬件基础</title>
+    <url>/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-%E9%A9%B1%E5%8A%A8%E8%AE%BE%E8%AE%A1%E7%9A%84%E7%A1%AC%E4%BB%B6%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="驱动设计的硬件基础"><a href="#驱动设计的硬件基础" class="headerlink" title="驱动设计的硬件基础"></a>驱动设计的硬件基础</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>简单样例分析：LED驱动</title>
+    <url>/2022/08/09/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-09-%E7%AE%80%E5%8D%95%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90%EF%BC%9ALED%E9%A9%B1%E5%8A%A8/</url>
+    <content><![CDATA[<h1 id="简单样例分析：LED驱动"><a href="#简单样例分析：LED驱动" class="headerlink" title="简单样例分析：LED驱动"></a>简单样例分析：LED驱动</h1><h2 id="裸机的LED驱动"><a href="#裸机的LED驱动" class="headerlink" title="裸机的LED驱动"></a>裸机的LED驱动</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_ctrl *(volatile int *) (ToVirtual(GPIO_REG_CTRL))  <span class="comment">// ToVirtual(), 把物理地址映射为虚拟地址</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> reg_gpio_data *(volatile int *) (ToVirtual(GPIO_REG_DATA))</span></span><br><span class="line"><span class="comment">//初始化LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightInit</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_ctrl |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*设置GPIO为输出*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//点亮LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOn</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data |= (<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出高电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//熄灭LED</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">LightOff</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    reg_gpio_data &amp;= ~(<span class="number">1</span> &lt;&lt; n); <span class="comment">/*在GPIO上输出低电平*/</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Linux下的LED驱动"><a href="#Linux下的LED驱动" class="headerlink" title="Linux下的LED驱动"></a>Linux下的LED驱动</h2>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>硬件</tag>
+        <tag>样例分析</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RK3568 Linux的I2C驱动分析</title>
+    <url>/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E9%A9%B1%E5%8A%A8/</url>
+    <content><![CDATA[<h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>为了提高代码的重用性，解决驱动代码和设备信息耦合的问题，Linux提出了总线、设备、驱动模型。</p>
+<p>总线上管理着两个链表，分别管理设备和驱动。每当要向系统注册一个驱动或设备时，总线负责对新插入的驱动或设备进行匹配，根据匹配结果将新插入的驱动或设备添加到所对应的管理链表中。每当要从系统移除一个驱动或设备时，总线负责将其从所对应的管理链表中删除。</p>
+<p>由于并不是所有的设备都能够归属于常见的总线(USB、PCI、I2C、SPI), Linux为了保持设备驱动的统一性，提出了一条虚拟的、抽象出来的总线 <code>platform</code> 。下图展示了Platform平台设备驱动框架的总线、设备、驱动模型。</p>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/platform%E6%80%BB%E7%BA%BF%E3%80%81%E9%A9%B1%E5%8A%A8%E3%80%81%E8%AE%BE%E5%A4%87%E6%A8%A1%E5%9E%8B.png?raw=true" alt="platform总线、驱动、设备模型"></p>
+<h1 id="2-Linux内核里I2C驱动的体系结构"><a href="#2-Linux内核里I2C驱动的体系结构" class="headerlink" title="2. Linux内核里I2C驱动的体系结构"></a>2. Linux内核里I2C驱动的体系结构</h1><h2 id="2-1-组成部分"><a href="#2-1-组成部分" class="headerlink" title="2.1. 组成部分"></a>2.1. 组成部分</h2><p>《Linux设备驱动开发详解》一书第15章《Linux I2C核心、总线与设备驱动》将Linux的I2C体系结构分为核心、总线驱动和设备驱动三部分。</p>
+<h3 id="2-1-1-I2C核心"><a href="#2-1-1-I2C核心" class="headerlink" title="2.1.1. I2C核心"></a>2.1.1. I2C核心</h3><p>I2C核心提供了I2C总线驱动和I2C设备驱动注册和注销的方法，I2C通信方法中上层与具体适配器无关的代码，以及探测设备、检测设备地址的上层代码。</p>
+<h3 id="2-1-2-I2C总线驱动"><a href="#2-1-2-I2C总线驱动" class="headerlink" title="2.1.2. I2C总线驱动"></a>2.1.2. I2C总线驱动</h3><p>I2C总线驱动是对I2C硬件体系结构中适配器端的实现。主要包含I2C适配器的数据结构 <code>i2c_adapter</code> 、I2C适配器的通信方法(与设备之间)数据结构 <code>i2c_algorithm</code> 和控制I2C适配器产生通信信号的函数。</p>
+<h3 id="2-1-3-I2C设备驱动"><a href="#2-1-3-I2C设备驱动" class="headerlink" title="2.1.3. I2C设备驱动"></a>2.1.3. I2C设备驱动</h3><p>I2C设备驱动(客户驱动)是对I2C硬件体系结构中设备端的实现。一般挂载在I2C适配器上。主要包含数据结构 <code>i2c_driver</code> 和 <code>i2c_client</code> 。</p>
+<h2 id="2-2-体系结构"><a href="#2-2-体系结构" class="headerlink" title="2.2. 体系结构"></a>2.2. 体系结构</h2><p>下图展示了Linux内核里I2C驱动的体系结构。CPU的每个I2C接口都配有一个I2C总线控制器(硬件)，负责控制所对应的一条I2C总线。I2C控制器可通过挂载在其他总线上被CPU控制，也可以直接集成在CPU内部。 <code>i2c_adapter</code> 是在软件上抽象出来的I2C总线控制器(适配器)，与硬件一一对应。</p>
+<p>每个I2C设备( <code>i2c_device</code> )在软件上抽象成 <code>i2c_client</code> ，通过设备驱动( <code>i2c_driver</code> )挂载到 <code>i2c_adapter</code> 控制的I2C总线上， <code>i2c_adapter</code> 则通过根据控制逻辑实现的 <code>i2c_algorithm</code> 与 <code>i2c_client</code> 进行通信。</p>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E5%86%85%E6%A0%B8%E9%87%8CI2C%E9%A9%B1%E5%8A%A8%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png?raw=true" alt="Linux内核里I2C驱动的体系结构"></p>
+<h1 id="RK3568-Linux的I2C驱动"><a href="#RK3568-Linux的I2C驱动" class="headerlink" title="RK3568 Linux的I2C驱动"></a>RK3568 Linux的I2C驱动</h1><p>RK平台的I2C总线控制器并非直接集成在内部，而是挂载到platform总线上，所以可以将RK3568 Linux的I2C驱动划分为两个部分实现：</p>
+<ul>
+<li>采用platform驱动框架为I2C适配器设计驱动，以挂载到platform总线。</li>
+<li>采用I2C驱动框架为设备设计驱动，以挂载到I2C总线。</li>
+</ul>
+<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/I2C%E4%B8%BB%E6%9C%BA%E5%92%8C%E5%A4%96%E8%AE%BE%E7%9C%BC%E9%87%8C%E7%9A%84Linux%E4%B8%96%E7%95%8C.png?raw=true" alt="Linux内核里I2C驱动的设计框架"></p>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>I2C驱动</category>
+        <category>设备驱动</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>I2C</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>RK3568 Linux的I2C总线驱动分析</title>
+    <url>/2022/08/15/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-15-RK3568%20Linux%E7%9A%84I2C%E6%80%BB%E7%BA%BF%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h1 id="1-RK3568-I2C总线驱动概述"><a href="#1-RK3568-I2C总线驱动概述" class="headerlink" title="1. RK3568 I2C总线驱动概述"></a>1. RK3568 I2C总线驱动概述</h1><ul>
+<li>文件路径<ul>
+<li><code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/drivers/i2c/busses/i2c-rk3x.c</code></li>
+</ul>
+</li>
+<li>设备树文件<ul>
+<li><code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/arch/arm64/boot/dts/rockchip/rk3568.dtsi</code></li>
+</ul>
+</li>
+<li>总线驱动：<code>rk3x_i2c_driver</code>：<ul>
+<li>probe方法：<code>rk3x_i2c_probe</code></li>
+<li>remove方法：<code>rk3x_i2c_remove</code></li>
+<li>设备树匹配：<code>rk3x_i2c_match</code></li>
+</ul>
+</li>
+<li>通信方法集合：<code>rk3x_i2c_algorithm</code><ul>
+<li>通信方法：<code>rk3x_i2c_xfer</code></li>
+<li>功能检测方法：<code>rk3x_i2c_func</code></li>
+</ul>
+</li>
+<li>驱动注册和卸载方法<ul>
+<li><code>module_platform_driver</code><h1 id="2-总线驱动定义"><a href="#2-总线驱动定义" class="headerlink" title="2. 总线驱动定义"></a>2. 总线驱动定义</h1></li>
+</ul>
+</li>
+</ul>
+<p>因为RK平台的I2C总线控制器挂载在platform总线上，总线驱动采用platform驱动框架实现，所以填充 <code>platform_driver</code> 结构体以定义I2C总线驱动。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">struct</span> <span class="title class_">platform_driver</span> rk3x_i2c_driver = &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 当驱动注册完毕，并且匹配成功，则会自动调用该方法对硬件进行操作：</span></span><br><span class="line"><span class="comment">	 * a. 注册设备号，并且注册fops(为用户提供设备标示，同时提供文件操作io接口)</span></span><br><span class="line"><span class="comment">	 * b. 创建设备节点</span></span><br><span class="line"><span class="comment">	 * c. 初始化硬件的各项信息，如ioremap(io地址映射虚拟地址)</span></span><br><span class="line"><span class="comment">	 * d. 实现各种io功能接口</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	.probe   = rk3x_i2c_probe,      </span><br><span class="line"></span><br><span class="line">	.remove  = rk3x_i2c_remove,</span><br><span class="line">	.driver  = &#123;</span><br><span class="line">		.name  = <span class="string">&quot;rk3x-i2c&quot;</span>,                <span class="comment">// 用于驱动和设备匹配，确保驱动和设备一致，否则无法匹配成功</span></span><br><span class="line">		.of_match_table = rk3x_i2c_match,   <span class="comment">// 匹配表</span></span><br><span class="line">		.pm = &amp;rk3x_i2c_pm_ops,	            <span class="comment">// dev_pm_ops类型的结构体，用来赋值设备完成运行时的电源管理</span></span><br><span class="line">	&#125;,</span><br><span class="line"></span><br><span class="line">&#125;; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="3-algorithm通信方法定义"><a href="#3-algorithm通信方法定义" class="headerlink" title="3. algorithm通信方法定义"></a>3. algorithm通信方法定义</h1><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="keyword">struct</span> <span class="title class_">i2c_algorithm</span> rk3x_i2c_algorithm = &#123;</span><br><span class="line">	.master_xfer		= rk3x_i2c_xfer,             <span class="comment">// 通信方法</span></span><br><span class="line">	.master_xfer_atomic	= rk3x_i2c_xfer_polling,     <span class="comment">// 通信方法，仅使用于原子上下文</span></span><br><span class="line">	.functionality		= rk3x_i2c_func,             <span class="comment">// 检测通信方法支持的功能或协议</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h1 id="4-设备树的匹配方法"><a href="#4-设备树的匹配方法" class="headerlink" title="4. 设备树的匹配方法"></a>4. 设备树的匹配方法</h1><p>RK3568共有6个I2C控制器，分别为I2C0~I2C5，每个控制器对应不同的寄存器基地址(i2c0是0xfdd40000)， <code>.compatible</code> 属性都是 <code>rockchip, rk3399-i2c</code> ，即对应了同一个adapter驱动。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">i2c0: i2c@fdd40000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfdd40000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;pmucru CLK_I2C0&gt;, &lt;&amp;pmucru PCLK_I2C0&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">46</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c1: i2c@fe5a0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5a0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C1&gt;, &lt;&amp;cru PCLK_I2C1&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">47</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c1_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c2: i2c@fe5b0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5b0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C2&gt;, &lt;&amp;cru PCLK_I2C2&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">48</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c2m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c3: i2c@fe5c0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5c0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C3&gt;, &lt;&amp;cru PCLK_I2C3&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">49</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c3m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c4: i2c@fe5d0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5d0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C4&gt;, &lt;&amp;cru PCLK_I2C4&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">50</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c4m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c5: i2c@fe5e0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5e0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C5&gt;, &lt;&amp;cru PCLK_I2C5&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">51</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c5m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>将<code>rk3x_i2c_driver</code>作为一个<code>platform_driver</code>注册到内核，<code>rk3x_i2c_match</code>作为结构体中的参数实际是一个记录设备信息的结构体数组。系统启动后会比较DTS中的匹配属性与驱动匹配表中是否相符，如果相符则会进入<code>rk3x_i2c_probe</code>接口，完成驱动各项参数的初始化。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// rk3x_i2c_driver结构体中.driver的匹配表参数</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="keyword">struct</span> <span class="title class_">of_device_id</span> rk3x_i2c_match[] = &#123;</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rv1108-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rv1108_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rv1126-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rv1126_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3066-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3066_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3188-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3188_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3228-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3228_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3288-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3288_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>, <span class="comment">// 符合DTS中描述的匹配字符串</span></span><br><span class="line">		.data = &amp;rk3399_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;&#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param usb               设备名</span></span><br><span class="line"><span class="comment"> * @param skel_table        该设备加入到模块中时对应产生的设备搜索符号</span></span><br><span class="line"><span class="comment"> * @return 生成一个名为__mod_pci_device_table局部变量，这个变量指向第二个参数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="built_in">MODULE_DEVICE_TABLE</span>(of, rk3x_i2c_match); <span class="comment">// 两个功能，一是将设备加入到外设队列中，二是告诉程序阅读者该设备是热插拔设备或支持热插拔功能。</span></span><br></pre></td></tr></table></figure>
+<h1 id="5-总线驱动注册和卸载方法"><a href="#5-总线驱动注册和卸载方法" class="headerlink" title="5. 总线驱动注册和卸载方法"></a>5. 总线驱动注册和卸载方法</h1><p>为了提高代码的重用性，消除多余的样板文件。当module_init和module_exit都不做任何特殊操作时，调用宏定义函数 <code>module_platform_driver</code> 替换 <code>module_init</code> 和 <code>module_exit</code> (实际还要调用一次宏定义函数 <code>module_driver</code> 才能完成替换)。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * module_platform_driver() - Helper macro for drivers that don&#x27;t do</span></span><br><span class="line"><span class="comment"> * anything special in module init/exit.  </span></span><br><span class="line"><span class="comment"> * This eliminates a lot of boilerplate.  </span></span><br><span class="line"><span class="comment"> * Each module may only use this macro once, and</span></span><br><span class="line"><span class="comment"> * calling it replaces module_init() and module_exit()</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> module_platform_driver(__platform_driver) \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">	<span class="built_in">module_driver</span>(__platform_driver, platform_driver_register, \</span><br><span class="line">			platform_driver_unregister)</span><br><span class="line">			</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * module_driver() - Helper macro for drivers that don&#x27;t do anything</span></span><br><span class="line"><span class="comment"> * special in module init/exit. This eliminates a lot of boilerplate.</span></span><br><span class="line"><span class="comment"> * Each module may only use this macro once, and calling it replaces</span></span><br><span class="line"><span class="comment"> * module_init() and module_exit().</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @__driver: driver name</span></span><br><span class="line"><span class="comment"> * @__register: register function for this driver type</span></span><br><span class="line"><span class="comment"> * @__unregister: unregister function for this driver type</span></span><br><span class="line"><span class="comment"> * @...: Additional arguments to be passed to __register and __unregister.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Use this macro to construct bus specific macros for registering</span></span><br><span class="line"><span class="comment"> * drivers, and do not use it on its own.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> module_driver(__driver, __register, __unregister, ...) \</span></span><br><span class="line"><span class="meta"><span class="comment">// 注册方法，替代module_init</span></span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> __init __driver##_init(<span class="type">void</span>) \</span><br><span class="line">&#123; \</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> __register(&amp;(__driver) , ##__VA_ARGS__); \</span><br><span class="line"></span><br><span class="line">&#125; \</span><br><span class="line"><span class="built_in">module_init</span>(__driver##_init); \</span><br><span class="line"><span class="comment">// 卸载方法，替代module_exit</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __exit __driver##_exit(<span class="type">void</span>) \</span><br><span class="line">&#123; \</span><br><span class="line"></span><br><span class="line">	__unregister(&amp;(__driver) , ##__VA_ARGS__); \</span><br><span class="line"></span><br><span class="line">&#125; \</span><br><span class="line"><span class="built_in">module_exit</span>(__driver##_exit); </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="6-总线驱动函数"><a href="#6-总线驱动函数" class="headerlink" title="6. 总线驱动函数"></a>6. 总线驱动函数</h1><h2 id="6-1-初始化函数probe"><a href="#6-1-初始化函数probe" class="headerlink" title="6.1. 初始化函数probe()"></a>6.1. 初始化函数probe()</h2><p><code>platform_driver</code>在注册时会遍历<code>platform</code>总线上的<code>platform_device</code>，当条件(<code>.compatible</code>属性或<code>id_table</code>)匹配(通过得分机制，得分最高的最终会匹配成功)时，便会调用<code>rk3x_i2c_probe</code>函数。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param pdev: 即i2c_adapter，相当于是挂载在platform总线上的platform_device。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_probe</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">device_node</span> *np = pdev-&gt;dev.of_node;</span><br><span class="line">	<span class="type">const</span> <span class="keyword">struct</span> <span class="title class_">of_device_id</span> *match;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">rk3x_i2c</span> *i2c;	<span class="comment">// 声明一个rk3x_i2c的适配器结构体，是i2c_adapter的进一步封装，相当于面向对象中的继承</span></span><br><span class="line">	<span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line">	u32 value;</span><br><span class="line">	<span class="type">int</span> irq;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> clk_rate;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 采用devm_kzalloc与kzalloc相比，优点在于不用考虑释放问题，由内核完成内存回收工作</span></span><br><span class="line"><span class="comment">	 * devm_kzalloc — Resource-managed kzalloc</span></span><br><span class="line"><span class="comment">	 * @param pdev: 申请内存的目标设备</span></span><br><span class="line"><span class="comment">	 * @param gftp: 申请内存的类型标志，标识内存分配器将要采取的行为。其中GFP_KERNEL最常用，五内存可用时可引起休眠。</span></span><br><span class="line"><span class="comment">	 * @return: 成功返回首地址，失败返回NULL</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * 为适配器结构体申请内存，为后续实例化完成基础工作。</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	i2c = <span class="built_in">devm_kzalloc</span>(&amp;pdev-&gt;dev, <span class="built_in">sizeof</span>(<span class="keyword">struct</span> rk3x_i2c), GFP_KERNEL);</span><br><span class="line">	<span class="keyword">if</span> (!i2c)	<span class="comment">// 申请失败</span></span><br><span class="line">		<span class="keyword">return</span> -ENOMEM;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * 找到rk3x_i2c_match数组里与之匹配的那个struct of_device_id</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * i2c_adapter驱动会兼容多个RK平台(如rk3188/rk3288/rk3399等)的i2c控制器，</span></span><br><span class="line"><span class="comment">	 * 各个平台有些差异，差异性的信息可以通过.data这个成员指针保存起来，用到的时候再取出来</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	match = <span class="built_in">of_match_node</span>(rk3x_i2c_match, np);</span><br><span class="line">	i2c-&gt;soc_data = match-&gt;data;	<span class="comment">// 取出所匹配的i2c控制器的配置信息</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* use common interface to get I2C timing properties */</span></span><br><span class="line">	<span class="built_in">i2c_parse_fw_timings</span>(&amp;pdev-&gt;dev, &amp;i2c-&gt;t, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// i2c_adapter部分成员初始化</span></span><br><span class="line">	<span class="comment">// 名字</span></span><br><span class="line">	<span class="built_in">strlcpy</span>(i2c-&gt;adap.name, <span class="string">&quot;rk3x-i2c&quot;</span>, <span class="built_in">sizeof</span>(i2c-&gt;adap.name));</span><br><span class="line">	<span class="comment">// 拥有者</span></span><br><span class="line">	i2c-&gt;adap.owner = THIS_MODULE;</span><br><span class="line">	<span class="comment">// 通信方法</span></span><br><span class="line">	i2c-&gt;adap.algo = &amp;rk3x_i2c_algorithm;</span><br><span class="line">	i2c-&gt;adap.retries = <span class="number">3</span>;</span><br><span class="line">	i2c-&gt;adap.dev.of_node = np;</span><br><span class="line">	i2c-&gt;adap.algo_data = i2c;</span><br><span class="line">	i2c-&gt;adap.dev.parent = &amp;pdev-&gt;dev;</span><br><span class="line"></span><br><span class="line">	i2c-&gt;dev = &amp;pdev-&gt;dev;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">spin_lock_init</span>(&amp;i2c-&gt;lock);</span><br><span class="line">	<span class="comment">// 初始化等待队列头部，等待在进程调度中使用</span></span><br><span class="line">	<span class="built_in">init_waitqueue_head</span>(&amp;i2c-&gt;wait);</span><br><span class="line">	<span class="comment">// 通知链机制，在内核重启之前会调用回调函数rk3x_i2c_restart_notify</span></span><br><span class="line">	i2c-&gt;i2c_restart_nb.notifier_call = rk3x_i2c_restart_notify;</span><br><span class="line">	i2c-&gt;i2c_restart_nb.priority = <span class="number">128</span>;</span><br><span class="line">	ret = <span class="built_in">register_pre_restart_handler</span>(&amp;i2c-&gt;i2c_restart_nb);</span><br><span class="line">	<span class="keyword">if</span> (ret) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;failed to setup i2c restart handler.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 从dts中获取设备的物理基址</span></span><br><span class="line">	i2c-&gt;regs = <span class="built_in">devm_platform_ioremap_resource</span>(pdev, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">IS_ERR</span>(i2c-&gt;regs))</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">PTR_ERR</span>(i2c-&gt;regs);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Switch to new interface if the SoC also offers the old one.</span></span><br><span class="line"><span class="comment">	 * The control bit is located in the GRF register space.</span></span><br><span class="line"><span class="comment">	 * grf_offset: offset inside the grf regmap for setting the i2c type</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (i2c-&gt;soc_data-&gt;grf_offset &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">struct</span> <span class="title class_">regmap</span> *grf;</span><br><span class="line"></span><br><span class="line">		grf = <span class="built_in">syscon_regmap_lookup_by_phandle</span>(np, <span class="string">&quot;rockchip,grf&quot;</span>);</span><br><span class="line">		<span class="keyword">if</span> (!<span class="built_in">IS_ERR</span>(grf)) &#123;</span><br><span class="line">			<span class="type">int</span> bus_nr;</span><br><span class="line"></span><br><span class="line">			<span class="comment">/* Try to set the I2C adapter number from dt */</span></span><br><span class="line">			bus_nr = <span class="built_in">of_alias_get_id</span>(np, <span class="string">&quot;i2c&quot;</span>);</span><br><span class="line">			<span class="keyword">if</span> (bus_nr &lt; <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;rk3x-i2c needs i2cX alias&quot;</span>);</span><br><span class="line">				<span class="keyword">return</span> -EINVAL;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (i2c-&gt;soc_data == &amp;rv1108_soc_data &amp;&amp; bus_nr == <span class="number">2</span>)</span><br><span class="line">				<span class="comment">/* rv1108 i2c2 set grf offset-0x408, bit-10 */</span></span><br><span class="line">				value = <span class="built_in">BIT</span>(<span class="number">26</span>) | <span class="built_in">BIT</span>(<span class="number">10</span>);</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (i2c-&gt;soc_data == &amp;rv1126_soc_data &amp;&amp;</span><br><span class="line">				 bus_nr == <span class="number">2</span>)</span><br><span class="line">				<span class="comment">/* rv1126 i2c2 set pmugrf offset-0x118, bit-4 */</span></span><br><span class="line">				value = <span class="built_in">BIT</span>(<span class="number">20</span>) | <span class="built_in">BIT</span>(<span class="number">4</span>);</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				<span class="comment">/* rk3xxx 27+i: write mask, 11+i: value */</span></span><br><span class="line">				value = <span class="built_in">BIT</span>(<span class="number">27</span> + bus_nr) | <span class="built_in">BIT</span>(<span class="number">11</span> + bus_nr);</span><br><span class="line"></span><br><span class="line">			ret = <span class="built_in">regmap_write</span>(grf, i2c-&gt;soc_data-&gt;grf_offset,</span><br><span class="line">					   value);</span><br><span class="line">			<span class="keyword">if</span> (ret != <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="built_in">dev_err</span>(i2c-&gt;dev, <span class="string">&quot;Could not write to GRF: %d\n&quot;</span>,</span><br><span class="line">					ret);</span><br><span class="line">				<span class="keyword">return</span> ret;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* IRQ setup(中断设置) */</span></span><br><span class="line">	irq = <span class="built_in">platform_get_irq</span>(pdev, <span class="number">0</span>);	<span class="comment">// platform_device结构体中存储有所用到的中断号</span></span><br><span class="line">	<span class="keyword">if</span> (irq &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span> irq;</span><br><span class="line"></span><br><span class="line">	ret = <span class="built_in">devm_request_irq</span>(&amp;pdev-&gt;dev, irq, rk3x_i2c_irq,</span><br><span class="line">			       <span class="number">0</span>, <span class="built_in">dev_name</span>(&amp;pdev-&gt;dev), i2c);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;cannot request IRQ\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 存储用户主动申请的内存区域指针防止丢失</span></span><br><span class="line">	<span class="built_in">platform_set_drvdata</span>(pdev, i2c);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 平台时钟设置</span></span><br><span class="line">	<span class="keyword">if</span> (i2c-&gt;soc_data-&gt;calc_timings == rk3x_i2c_v0_calc_timings) &#123;</span><br><span class="line">		<span class="comment">/* Only one clock to use for bus clock and peripheral clock */</span></span><br><span class="line">		i2c-&gt;clk = <span class="built_in">devm_clk_get</span>(&amp;pdev-&gt;dev, <span class="literal">NULL</span>);</span><br><span class="line">		i2c-&gt;pclk = i2c-&gt;clk;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		i2c-&gt;clk = <span class="built_in">devm_clk_get</span>(&amp;pdev-&gt;dev, <span class="string">&quot;i2c&quot;</span>);</span><br><span class="line">		i2c-&gt;pclk = <span class="built_in">devm_clk_get</span>(&amp;pdev-&gt;dev, <span class="string">&quot;pclk&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">IS_ERR</span>(i2c-&gt;clk))</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">dev_err_probe</span>(&amp;pdev-&gt;dev, <span class="built_in">PTR_ERR</span>(i2c-&gt;clk),</span><br><span class="line">				     <span class="string">&quot;Can&#x27;t get bus clk\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">IS_ERR</span>(i2c-&gt;pclk))</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">dev_err_probe</span>(&amp;pdev-&gt;dev, <span class="built_in">PTR_ERR</span>(i2c-&gt;pclk),</span><br><span class="line">				     <span class="string">&quot;Can&#x27;t get periph clk\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	ret = <span class="built_in">clk_prepare</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;Can&#x27;t prepare bus clk: %d\n&quot;</span>, ret);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">	ret = <span class="built_in">clk_prepare</span>(i2c-&gt;pclk);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;Can&#x27;t prepare periph clock: %d\n&quot;</span>, ret);</span><br><span class="line">		<span class="keyword">goto</span> err_clk;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	i2c-&gt;clk_rate_nb.notifier_call = rk3x_i2c_clk_notifier_cb;</span><br><span class="line">	ret = <span class="built_in">clk_notifier_register</span>(i2c-&gt;clk, &amp;i2c-&gt;clk_rate_nb);</span><br><span class="line">	<span class="keyword">if</span> (ret != <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;Unable to register clock notifier\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> err_pclk;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	clk_rate = <span class="built_in">clk_get_rate</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="built_in">rk3x_i2c_adapt_div</span>(i2c, clk_rate);</span><br><span class="line"></span><br><span class="line">	ret = <span class="built_in">i2c_add_adapter</span>(&amp;i2c-&gt;adap);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)	<span class="comment">// 注册i2c_adapter失败</span></span><br><span class="line">		<span class="keyword">goto</span> err_clk_notifier;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">err_clk_notifier:</span><br><span class="line">	<span class="built_in">clk_notifier_unregister</span>(i2c-&gt;clk, &amp;i2c-&gt;clk_rate_nb);</span><br><span class="line">err_pclk:</span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;pclk);</span><br><span class="line">err_clk:</span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="6-2-释放函数remove"><a href="#6-2-释放函数remove" class="headerlink" title="6.2. 释放函数remove()"></a>6.2. 释放函数remove()</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_remove</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// 获得rk3x_i2c_probe中存储的主动申请的内存区域指针</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">rk3x_i2c</span> *i2c = <span class="built_in">platform_get_drvdata</span>(pdev);</span><br><span class="line">	<span class="comment">// 卸载i2c_adapter</span></span><br><span class="line">	<span class="built_in">i2c_del_adapter</span>(&amp;i2c-&gt;adap);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 注销时钟</span></span><br><span class="line">	<span class="built_in">clk_notifier_unregister</span>(i2c-&gt;clk, &amp;i2c-&gt;clk_rate_nb);</span><br><span class="line">	<span class="built_in">unregister_pre_restart_handler</span>(&amp;i2c-&gt;i2c_restart_nb); </span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;pclk);</span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;clk); </span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="6-3-通信方法函数xfer"><a href="#6-3-通信方法函数xfer" class="headerlink" title="6.3. 通信方法函数xfer()"></a>6.3. 通信方法函数xfer()</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_xfer</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap,</span></span></span><br><span class="line"><span class="params"><span class="function">			 <span class="keyword">struct</span> i2c_msg *msgs, <span class="type">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">rk3x_i2c_xfer_common</span>(adap, msgs, num, <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_xfer_polling</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap,</span></span></span><br><span class="line"><span class="params"><span class="function">				 <span class="keyword">struct</span> i2c_msg *msgs, <span class="type">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">rk3x_i2c_xfer_common</span>(adap, msgs, num, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_xfer_common</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap,</span></span></span><br><span class="line"><span class="params"><span class="function">				<span class="keyword">struct</span> i2c_msg *msgs, <span class="type">int</span> num, <span class="type">bool</span> polling)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">rk3x_i2c</span> *i2c = (<span class="keyword">struct</span> rk3x_i2c *)adap-&gt;algo_data;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> timeout, flags;</span><br><span class="line">	u32 val;</span><br><span class="line">	<span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (i2c-&gt;suspended)</span><br><span class="line">		<span class="keyword">return</span> -EACCES;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">spin_lock_irqsave</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">clk_enable</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="built_in">clk_enable</span>(i2c-&gt;pclk);</span><br><span class="line"></span><br><span class="line">	i2c-&gt;is_last_msg = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Process msgs. We can handle more than one message at once (see</span></span><br><span class="line"><span class="comment">	 * rk3x_i2c_setup()).</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; num; i += ret) &#123;</span><br><span class="line">		ret = <span class="built_in">rk3x_i2c_setup</span>(i2c, msgs + i, num - i);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="built_in">dev_err</span>(i2c-&gt;dev, <span class="string">&quot;rk3x_i2c_setup() failed\n&quot;</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (i + ret &gt;= num)</span><br><span class="line">			i2c-&gt;is_last_msg = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">		<span class="built_in">rk3x_i2c_start</span>(i2c);</span><br><span class="line"></span><br><span class="line">		<span class="built_in">spin_unlock_irqrestore</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!polling) &#123;</span><br><span class="line">			timeout = <span class="built_in">wait_event_timeout</span>(i2c-&gt;wait, !i2c-&gt;busy,</span><br><span class="line">						     <span class="built_in">msecs_to_jiffies</span>(WAIT_TIMEOUT));</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			timeout = <span class="built_in">rk3x_i2c_wait_xfer_poll</span>(i2c);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="built_in">spin_lock_irqsave</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (timeout == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="built_in">dev_err</span>(i2c-&gt;dev, <span class="string">&quot;timeout, ipd: 0x%02x, state: %d\n&quot;</span>,</span><br><span class="line">				<span class="built_in">i2c_readl</span>(i2c, REG_IPD), i2c-&gt;state);</span><br><span class="line"></span><br><span class="line">			<span class="comment">/* Force a STOP condition without interrupt */</span></span><br><span class="line">			<span class="built_in">rk3x_i2c_disable_irq</span>(i2c);</span><br><span class="line">			val = <span class="built_in">i2c_readl</span>(i2c, REG_CON) &amp; REG_CON_TUNING_MASK;</span><br><span class="line">			val |= REG_CON_EN | REG_CON_STOP;</span><br><span class="line">			<span class="built_in">i2c_writel</span>(i2c, val, REG_CON);</span><br><span class="line"></span><br><span class="line">			i2c-&gt;state = STATE_IDLE;</span><br><span class="line"></span><br><span class="line">			ret = -ETIMEDOUT;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (i2c-&gt;error) &#123;</span><br><span class="line">			ret = i2c-&gt;error;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">rk3x_i2c_disable_irq</span>(i2c);</span><br><span class="line">	<span class="built_in">rk3x_i2c_disable</span>(i2c);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">clk_disable</span>(i2c-&gt;pclk);</span><br><span class="line">	<span class="built_in">clk_disable</span>(i2c-&gt;clk);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">spin_unlock_irqrestore</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret &lt; <span class="number">0</span> ? ret : num;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="6-4-功能检测函数func"><a href="#6-4-功能检测函数func" class="headerlink" title="6.4. 功能检测函数func()"></a>6.4. 功能检测函数func()</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_I2C			0x00000001</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_EMUL		(I2C_FUNC_SMBUS_QUICK | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_BYTE | \</span><br><span class="line">					 I2C_FUNC_SMBUS_BYTE_DATA | \</span><br><span class="line">					 I2C_FUNC_SMBUS_WORD_DATA | \</span><br><span class="line">					 I2C_FUNC_SMBUS_PROC_CALL | \</span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_BLOCK_DATA | \</span><br><span class="line">					 I2C_FUNC_SMBUS_I2C_BLOCK | \</span><br><span class="line">					 I2C_FUNC_SMBUS_PEC)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_PROTOCOL_MANGLING	0x00000004 <span class="comment">/* I2C_M_IGNORE_NAK etc. */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_QUICK		0x00010000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_BYTE		(I2C_FUNC_SMBUS_READ_BYTE | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_BYTE)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_BYTE_DATA	(I2C_FUNC_SMBUS_READ_BYTE_DATA | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_BYTE_DATA)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WORD_DATA	(I2C_FUNC_SMBUS_READ_WORD_DATA | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_WORD_DATA)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_PROC_CALL	0x00800000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_BLOCK_DATA 0x02000000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_I2C_BLOCK	(I2C_FUNC_SMBUS_READ_I2C_BLOCK | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_I2C_BLOCK)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_PEC		0x00000008</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_BYTE	0x00020000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_BYTE	0x00040000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_BYTE_DATA	0x00080000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_BYTE_DATA	0x00100000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_WORD_DATA	0x00200000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_WORD_DATA	0x00400000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_I2C_BLOCK	0x04000000 <span class="comment">/* I2C-like block xfer  */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_I2C_BLOCK	0x08000000 <span class="comment">/* w/ 1-byte reg. addr. */</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> u32 <span class="title">rk3x_i2c_func</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_PROTOCOL_MANGLING;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>RK3568</category>
+        <category>I2C驱动</category>
+        <category>代码分析</category>
+      </categories>
+      <tags>
+        <tag>Linux设备驱动</tag>
+        <tag>RK3568</tag>
       </tags>
   </entry>
   <entry>
@@ -970,6 +1188,173 @@
       </tags>
   </entry>
   <entry>
+    <title>进程、线程 2</title>
+    <url>/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="CPU上下文"><a href="#CPU上下文" class="headerlink" title="CPU上下文"></a>CPU上下文</h2><h3 id="特权模式切换"><a href="#特权模式切换" class="headerlink" title="特权模式切换"></a>特权模式切换</h3><ul>
+<li>用户态和内核态的划分，引出上下文的概念。</li>
+<li>创建一个进程(如main函数)需要控制一个外部设备时(比如控制LED亮灭)，程序员编写在用户空间的代码通过<strong>系统调用</strong>(操作系统提供给用户空间的接口函数)进入内核空间，由内核继续代表进程运行于内核空间。</li>
+<li>在系统调用的过程中发生上下文切换：<ol>
+<li>CPU寄存器里面原来用户态的指令位置，需要先保存起来，接着运行内核态代码。</li>
+<li>CPU寄存器需要更新为内核态指令的位置，执行内核态代码。</li>
+</ol>
+</li>
+<li>系统调用结束后，CPU寄存器需要恢复原来保存的用户态，然后切换为用户空间。</li>
+<li>所以一次系统调用的过程，会发生两次的CPU上下文切换</li>
+<li>但是一般说系统调用是特权模式切换而不是上下文切换。因为没有涉及到虚拟内存等这些进程用户态的资源，也不会切换进程，属于进程之内的上下文切换。</li>
+</ul>
+<h3 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h3><ul>
+<li>进程是由内核来管理和调度的，进程的切换只能发生在内核态。所以用户态和内核态的切换不属于进程上下文切换。</li>
+<li>进程的上下文包含了虚拟内存、栈、全局变量等用户空间的资源，还包含了内核堆栈、寄存器等内核空间的状态，所以进程的上下文切换要比系统调用更多一步——保存该进程的虚拟内存、栈等用户空间的资源。</li>
+<li>进程上下文切换一般需要几十纳秒到数微秒的CPU时间，当进程上下文切换次数比较多的情况下，将导致CPU耗费大量的时间在寄存器、内核栈即虚拟内存等资源的保存和恢复上。</li>
+<li>另外，Linux通过TLB快表来管理虚拟内存到物理内存的映射关系，当虚拟内存更新之后，需要刷新缓存，在这多处理系统上是很复杂的，因为多个处理器共享一个缓存。</li>
+<li>进程在被调度的时候需要切换上下文，可能是主动地，也有可能是被动的：<ol>
+<li>系统进程正常调度算法导致进程上下文切换。例如目前使用的<strong>时间片轮转算法</strong>，当一个进程的时间片耗尽之后，CPU会将进程调度切换到其他进程。</li>
+<li>进程在<strong>资源不足</strong>的时候，会被挂起。例如在等待IO或者内存不足的时候，会主动挂起，并且等待系统调度其他进程。</li>
+<li>当进程通过一些睡眠函数<strong>sleep()主动</strong>挂起的时候，也会重新调度。</li>
+<li>当有高优先级的进程运行时，当前进程也会被挂起。<strong>(抢占)</strong>。</li>
+<li>当发生<strong>硬件中断</strong>时，CPU上的进程会被中断挂起。</li>
+</ol>
+</li>
+</ul>
+<h3 id="线程上下文"><a href="#线程上下文" class="headerlink" title="线程上下文"></a>线程上下文</h3><ul>
+<li>线程上下文切换，分为两种情况：<ol>
+<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。</li>
+<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。所以同进程内的线程切换要比多进程内的线程切换消耗更少的资源。</li>
+</ol>
+</li>
+</ul>
+<h3 id="中断上下文"><a href="#中断上下文" class="headerlink" title="中断上下文"></a>中断上下文</h3><ul>
+<li>中断是为了快速响应硬件的事件——计算机停下当前的事情，去处理其他的事情，然后在回来继续执行之前的任务。</li>
+<li>例如在调用print函数的时候，其实汇编的底层会调用一条<strong>int 0x80</strong>的指令，便是调用0x80号中断。</li>
+<li>中断要先将当前进程的状态保存下来，这样中断结束后进程仍然可以从原来的状态恢复运行，中断上下文的切换并不涉及进程的用户态，所以当中断程序打断了正在处于用户态的进程，不需要保存和恢复这个进程的虚拟内存、全局变量等用户态资源，只需要保存和恢复这个进程的内核态中的资源包括CPU寄存器、内核堆栈等。</li>
+<li>对于同一个CPU来说，中断处理比进程拥有更高的优先级，所以中断上下文切换并不会与进程上下文切换同时发生，一般来说中断程序都执行比较快短小精悍，以便快速结束执行之前的任务。</li>
+<li>当中断上下文切换次数比较多的时候，会耗费大量的CPU时间。所以运行在中断上下文的代码不能做以下几件事：<ol>
+<li>睡眠或者放弃CPU，因为内核在进入中断之前会关闭进程调度，一旦睡眠或者放弃CPU，这时内核无法调度别的进程来执行，系统就会死掉。</li>
+<li>尝试获得信号量，如果或得不到信号量，代码就会睡眠，结果同上。</li>
+<li>执行耗时的任务，中断处理应该尽可能快，因为内核要相应大量服务和请求，中断上下文占用CPU时间太长会严重影响系统功能。</li>
+<li>访问用户空间的虚拟地址，中断上下文是和特定进程无关的，它是内核代表硬件运行在内核空间，所以在无法访问用户空间的虚拟地址。</li>
+</ol>
+</li>
+</ul>
+<h3 id="查看CPU上下文切换情况"><a href="#查看CPU上下文切换情况" class="headerlink" title="查看CPU上下文切换情况"></a>查看CPU上下文切换情况</h3><ul>
+<li><code>vmstat</code>是一个Linux常用的系统性能分析工具，可以用来分析CPU上下文切换和中断的次数。<ul>
+<li><code>vmstat</code>工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数。</li>
+<li>输出参数<ul>
+<li><code>cs</code>(context switch)：每秒上下文切换的次数。</li>
+<li><code>in</code>(interrupt)：每秒中断的次数。<ul>
+<li>可以使用<code>cat</code>命令查看<code>/proc/interrupts</code>读取中断详细情况。</li>
+</ul>
+</li>
+<li><code>r</code>(Running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU的进程。</li>
+<li><code>b</code>(Blocked)：处于不可中断睡眠状态的进程数。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>要想查看每个进程的详细情况就需要使用<code>pidstat</code>，加上<code>-w</code>选项就可以查看进程上下文切换的情况:<ul>
+<li>输出参数<ul>
+<li><code>cswch</code>(voluntary context switches)：表示每秒<strong>自愿上下文切换</strong>的次数。<ul>
+<li>自愿上下文切换：进程无法获取所需的资源，导致的上下文切换，例如IO、内存等资源不足时，就会发生自愿上下文切换。</li>
+</ul>
+</li>
+<li><code>nvcswch</code>(non voluntary context switches)：表示每秒<strong>非自愿上下文切换</strong>的次数。<ul>
+<li>非自愿上下文切换：进程由于时间片已到等时间，被系统强制调度，进而发生的上下文切换，例如大量的进程都在争抢CPU时，就容易发生非自愿上下文切换。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="CPU上下文切换次数与性能的关系"><a href="#CPU上下文切换次数与性能的关系" class="headerlink" title="CPU上下文切换次数与性能的关系"></a>CPU上下文切换次数与性能的关系</h3><ul>
+<li>自愿上下文切换变多了，说明进程都在等待资源，有可能发生了I/O 等其他问题；</li>
+<li>非自愿上下文切换变多了，说明进程都在被强制调度，也就是都在争抢CPU，说明CPU的确成了瓶颈；</li>
+<li>中断次数变多了，说明CPU被中断处理程序占用，还需要通过查看/proc/interrupts文件查看中断调用详情再做判断。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>进程、线程 3</title>
+    <url>/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</url>
+    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="并发、同步、异步、互斥、阻塞、非阻塞"><a href="#并发、同步、异步、互斥、阻塞、非阻塞" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞"></a>并发、同步、异步、互斥、阻塞、非阻塞</h2><h3 id="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"><a href="#并发、同步、异步、互斥、阻塞、非阻塞的基本概念" class="headerlink" title="并发、同步、异步、互斥、阻塞、非阻塞的基本概念"></a>并发、同步、异步、互斥、阻塞、非阻塞的基本概念</h3><ul>
+<li>并发<ul>
+<li>在操作系统中，同个处理机上有多个程序同时运行。</li>
+</ul>
+</li>
+<li>同步、异步<ul>
+<li>同步：顺序执行，执行完一个再执行下一个，需要等待、协调运行。</li>
+<li>异步：异步和同步是相对的，异步就是彼此独立，在等待某事件的过程中继续做自己的事，不需要等待这一事件完成后再工作。<ul>
+<li>线程是实现异步的一个方式。可以在主线程创建一个新线程来做某件事，此时主线程不需要等待子线程做完而是可以做其他事情。</li>
+<li>异步和多线程并不是一个同等关系，异步是最终目的，多线程只是实现异步的一种手段。</li>
+</ul>
+</li>
+<li>同步和异步是对应的，是线程之间的关系。两个线程要么同步要么异步。</li>
+</ul>
+</li>
+<li>阻塞、非阻塞<ul>
+<li>当进程在访问数据时，根据IO操作的就绪状态不同而采取不同的处理方式。比如主程序调用一个函数要读取一个文件的内容：<ul>
+<li>阻塞方式下主程序会等到函数读取完再继续往下执行。</li>
+<li>非阻塞方式下读取函数会立刻返回一个状态值给主程序，主程序不等待文件读取完就继续往下执行。</li>
+<li>要注意的是阻塞和非阻塞说明的是IO和CPU之间的关系，即CPU是否等待IO。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>一般有以下4类IO模型，考虑发送方发出请求要接收方读取某文件内容为例：<ul>
+<li>同步阻塞IO<ul>
+<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，直到获取读取结果再响应发送方，等待期间不可做其他操作(阻塞)。</li>
+</ul>
+</li>
+<li>同步非阻塞IO<ul>
+<li>发送方发出请求后一直等待(同步)。接收方开始读取文件，如果不能马上得到读取结果就一直等待，就立即返回，接受方继续去做其他事情。此时并未响应发送方，发送方一直等待。直到IO操作(读取文件)完成后，接收方获得读取结果响应发送方，接收方才可以进入下一次请求过程(非阻塞)。</li>
+</ul>
+</li>
+<li>异步阻塞IO(理论存在，实际不用)<ul>
+<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，就一直等到返回结果后，才响应发送方，期间不能进行其他操作。</li>
+</ul>
+</li>
+<li>异步非阻塞IO(效率最高)<ul>
+<li>发送方发出请求后，不等待响应，继续其他工作(异步)。接收方读取文件如果不能马上得到结果，也不等待，而是马上返回去做其他事情。当IO操作(读取文件)完成以后，将完成状态和结果通知接收方，接收方再响应发送方。</li>
+<li>阻塞和非阻塞是对同一个线程的某个时刻来说的。此时，线程要么阻塞，要么非阻塞。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>阻塞是使用同步机制的结果，非阻塞是使用异步机制的结果。</li>
+</ul>
+<h3 id="线程的同步和互斥"><a href="#线程的同步和互斥" class="headerlink" title="线程的同步和互斥"></a>线程的同步和互斥</h3><ul>
+<li>线程互斥<ul>
+<li>当有若干个线程同时访问同一块资源时，规定同一时间只有一个线程可以得到访问权，其他线程需要等待占用资源者释放该资源才可以申请访问。</li>
+<li>互斥无法限制访问者对资源的访问顺序，即访问是无序的。</li>
+</ul>
+</li>
+<li>线程同步：<ul>
+<li>在互斥的基础上(大多数情况，除非允许同一时间多个访问者访问同一资源)，通过其它机制实现访问者对资源的有序访问，实现每个线程之间按预定的先后次序进行运行，协同、协助、互相配合。</li>
+</ul>
+</li>
+</ul>
+<h3 id="线程同步与阻塞的关系"><a href="#线程同步与阻塞的关系" class="headerlink" title="线程同步与阻塞的关系"></a>线程同步与阻塞的关系</h3><ul>
+<li>同步是过程，阻塞是状态<ul>
+<li>当多个线程访问同一资源时，规定同一时间只有一个线程可进行访问，所以后访问的线程将被阻塞，等待先访问的线程访问完。</li>
+</ul>
+</li>
+<li>线程同步不一定发生阻塞。只有当访问同一资源出现互相等待和互相唤醒才会发生阻塞。而阻塞了一定是同步，多线程用阻塞实现同步。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>操作系统</category>
+      </categories>
+      <tags>
+        <tag>进程、线程</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>进程、线程 4</title>
     <url>/2022/03/03/OS/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</url>
     <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="孤儿进程、僵尸进程、守护进程的概念"><a href="#孤儿进程、僵尸进程、守护进程的概念" class="headerlink" title="孤儿进程、僵尸进程、守护进程的概念"></a>孤儿进程、僵尸进程、守护进程的概念</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
@@ -1101,317 +1486,6 @@
       </tags>
   </entry>
   <entry>
-    <title>进程、线程 2</title>
-    <url>/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</url>
-    <content><![CDATA[<h1 id="进程、线程"><a href="#进程、线程" class="headerlink" title="进程、线程"></a>进程、线程</h1><h2 id="CPU上下文"><a href="#CPU上下文" class="headerlink" title="CPU上下文"></a>CPU上下文</h2><h3 id="特权模式切换"><a href="#特权模式切换" class="headerlink" title="特权模式切换"></a>特权模式切换</h3><ul>
-<li>用户态和内核态的划分，引出上下文的概念。</li>
-<li>创建一个进程(如main函数)需要控制一个外部设备时(比如控制LED亮灭)，程序员编写在用户空间的代码通过<strong>系统调用</strong>(操作系统提供给用户空间的接口函数)进入内核空间，由内核继续代表进程运行于内核空间。</li>
-<li>在系统调用的过程中发生上下文切换：<ol>
-<li>CPU寄存器里面原来用户态的指令位置，需要先保存起来，接着运行内核态代码。</li>
-<li>CPU寄存器需要更新为内核态指令的位置，执行内核态代码。</li>
-</ol>
-</li>
-<li>系统调用结束后，CPU寄存器需要恢复原来保存的用户态，然后切换为用户空间。</li>
-<li>所以一次系统调用的过程，会发生两次的CPU上下文切换</li>
-<li>但是一般说系统调用是特权模式切换而不是上下文切换。因为没有涉及到虚拟内存等这些进程用户态的资源，也不会切换进程，属于进程之内的上下文切换。</li>
-</ul>
-<h3 id="进程上下文"><a href="#进程上下文" class="headerlink" title="进程上下文"></a>进程上下文</h3><ul>
-<li>进程是由内核来管理和调度的，进程的切换只能发生在内核态。所以用户态和内核态的切换不属于进程上下文切换。</li>
-<li>进程的上下文包含了虚拟内存、栈、全局变量等用户空间的资源，还包含了内核堆栈、寄存器等内核空间的状态，所以进程的上下文切换要比系统调用更多一步——保存该进程的虚拟内存、栈等用户空间的资源。</li>
-<li>进程上下文切换一般需要几十纳秒到数微秒的CPU时间，当进程上下文切换次数比较多的情况下，将导致CPU耗费大量的时间在寄存器、内核栈即虚拟内存等资源的保存和恢复上。</li>
-<li>另外，Linux通过TLB快表来管理虚拟内存到物理内存的映射关系，当虚拟内存更新之后，需要刷新缓存，在这多处理系统上是很复杂的，因为多个处理器共享一个缓存。</li>
-<li>进程在被调度的时候需要切换上下文，可能是主动地，也有可能是被动的：<ol>
-<li>系统进程正常调度算法导致进程上下文切换。例如目前使用的<strong>时间片轮转算法</strong>，当一个进程的时间片耗尽之后，CPU会将进程调度切换到其他进程。</li>
-<li>进程在<strong>资源不足</strong>的时候，会被挂起。例如在等待IO或者内存不足的时候，会主动挂起，并且等待系统调度其他进程。</li>
-<li>当进程通过一些睡眠函数<strong>sleep()主动</strong>挂起的时候，也会重新调度。</li>
-<li>当有高优先级的进程运行时，当前进程也会被挂起。<strong>(抢占)</strong>。</li>
-<li>当发生<strong>硬件中断</strong>时，CPU上的进程会被中断挂起。</li>
-</ol>
-</li>
-</ul>
-<h3 id="线程上下文"><a href="#线程上下文" class="headerlink" title="线程上下文"></a>线程上下文</h3><ul>
-<li>线程上下文切换，分为两种情况：<ol>
-<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。</li>
-<li>前后两个线程属于不同进程，因为资源不共享，所以这时候的线程上下文切换和进程上下文切换是一致的。所以同进程内的线程切换要比多进程内的线程切换消耗更少的资源。</li>
-</ol>
-</li>
-</ul>
-<h3 id="中断上下文"><a href="#中断上下文" class="headerlink" title="中断上下文"></a>中断上下文</h3><ul>
-<li>中断是为了快速响应硬件的事件——计算机停下当前的事情，去处理其他的事情，然后在回来继续执行之前的任务。</li>
-<li>例如在调用print函数的时候，其实汇编的底层会调用一条<strong>int 0x80</strong>的指令，便是调用0x80号中断。</li>
-<li>中断要先将当前进程的状态保存下来，这样中断结束后进程仍然可以从原来的状态恢复运行，中断上下文的切换并不涉及进程的用户态，所以当中断程序打断了正在处于用户态的进程，不需要保存和恢复这个进程的虚拟内存、全局变量等用户态资源，只需要保存和恢复这个进程的内核态中的资源包括CPU寄存器、内核堆栈等。</li>
-<li>对于同一个CPU来说，中断处理比进程拥有更高的优先级，所以中断上下文切换并不会与进程上下文切换同时发生，一般来说中断程序都执行比较快短小精悍，以便快速结束执行之前的任务。</li>
-<li>当中断上下文切换次数比较多的时候，会耗费大量的CPU时间。所以运行在中断上下文的代码不能做以下几件事：<ol>
-<li>睡眠或者放弃CPU，因为内核在进入中断之前会关闭进程调度，一旦睡眠或者放弃CPU，这时内核无法调度别的进程来执行，系统就会死掉。</li>
-<li>尝试获得信号量，如果或得不到信号量，代码就会睡眠，结果同上。</li>
-<li>执行耗时的任务，中断处理应该尽可能快，因为内核要相应大量服务和请求，中断上下文占用CPU时间太长会严重影响系统功能。</li>
-<li>访问用户空间的虚拟地址，中断上下文是和特定进程无关的，它是内核代表硬件运行在内核空间，所以在无法访问用户空间的虚拟地址。</li>
-</ol>
-</li>
-</ul>
-<h3 id="查看CPU上下文切换情况"><a href="#查看CPU上下文切换情况" class="headerlink" title="查看CPU上下文切换情况"></a>查看CPU上下文切换情况</h3><ul>
-<li><code>vmstat</code>是一个Linux常用的系统性能分析工具，可以用来分析CPU上下文切换和中断的次数。<ul>
-<li><code>vmstat</code>工具的使用是通过两个数字参数来完成的，第一个参数是采样的时间间隔数，单位是秒，第二个参数是采样的次数。</li>
-<li>输出参数<ul>
-<li><code>cs</code>(context switch)：每秒上下文切换的次数。</li>
-<li><code>in</code>(interrupt)：每秒中断的次数。<ul>
-<li>可以使用<code>cat</code>命令查看<code>/proc/interrupts</code>读取中断详细情况。</li>
-</ul>
-</li>
-<li><code>r</code>(Running or Runnable)：就绪队列的长度，也就是正在运行和等待CPU的进程。</li>
-<li><code>b</code>(Blocked)：处于不可中断睡眠状态的进程数。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>要想查看每个进程的详细情况就需要使用<code>pidstat</code>，加上<code>-w</code>选项就可以查看进程上下文切换的情况:<ul>
-<li>输出参数<ul>
-<li><code>cswch</code>(voluntary context switches)：表示每秒<strong>自愿上下文切换</strong>的次数。<ul>
-<li>自愿上下文切换：进程无法获取所需的资源，导致的上下文切换，例如IO、内存等资源不足时，就会发生自愿上下文切换。</li>
-</ul>
-</li>
-<li><code>nvcswch</code>(non voluntary context switches)：表示每秒<strong>非自愿上下文切换</strong>的次数。<ul>
-<li>非自愿上下文切换：进程由于时间片已到等时间，被系统强制调度，进而发生的上下文切换，例如大量的进程都在争抢CPU时，就容易发生非自愿上下文切换。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="CPU上下文切换次数与性能的关系"><a href="#CPU上下文切换次数与性能的关系" class="headerlink" title="CPU上下文切换次数与性能的关系"></a>CPU上下文切换次数与性能的关系</h3><ul>
-<li>自愿上下文切换变多了，说明进程都在等待资源，有可能发生了I/O 等其他问题；</li>
-<li>非自愿上下文切换变多了，说明进程都在被强制调度，也就是都在争抢CPU，说明CPU的确成了瓶颈；</li>
-<li>中断次数变多了，说明CPU被中断处理程序占用，还需要通过查看/proc/interrupts文件查看中断调用详情再做判断。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>操作系统</category>
-      </categories>
-      <tags>
-        <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux网络基础(一)</title>
-    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="Linux网络基础-一"><a href="#Linux网络基础-一" class="headerlink" title="Linux网络基础(一)"></a>Linux网络基础(一)</h1><h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><p>Socket又称套接字，是一个通信链的句柄，位于应用层和传输层之间，用于唯一标识网络中某一台主机上的某一个进程。它通常由主机的IP地址和端口号拼接而成。</p>
-<h2 id="Linux的socket相关函数"><a href="#Linux的socket相关函数" class="headerlink" title="Linux的socket相关函数"></a>Linux的socket相关函数</h2><h3 id="socket库"><a href="#socket库" class="headerlink" title="socket库"></a>socket库</h3><p>与Windows提供了 <code>&lt;winsock2.h&gt;</code>库方便开发者进行socket编程相同，Linux为开发者提供了 <code>&lt;sys/socket.h&gt;</code>库。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span> <span class="comment">// Linux提供的socket库</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span> <span class="comment">// 保存不同协议的地址结构体，如socketaddr_in</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span>  <span class="comment">// 地址格式转换函数</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="socket的创建"><a href="#socket的创建" class="headerlink" title="socket的创建"></a>socket的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> domain, <span class="type">int</span> type, <span class="type">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>domain: 用于确定通信的特性，包括地址的格式</code><ul>
-<li><code>AF_INET</code> : IPV4因特网域</li>
-<li><code>AF_INET6</code>: IPV6因特网域</li>
-<li><code>AF_UNIX</code> : UNIX域</li>
-<li><code>AF_UPSPEC</code>: 未指定</li>
-</ul>
-</li>
-<li><code>type</code><ul>
-<li><code>SOCK_DGRAM</code> : 固定长度的、无连接的、不可靠的报文传输(UDP)</li>
-<li><code>SOCK_STREAM</code>: 有序的、可靠的、双向的、面向连接的字节流(TCP)</li>
-<li><code>SOCK_SEQPACKET</code>: 固定长度的、有序的、可靠的、面向连接的报文传递</li>
-<li><code>SOCK_RAW</code>: IP协议的数据报接口</li>
-</ul>
-</li>
-<li><code>protocol</code><ul>
-<li>通常为0，表示为给定的 <code>domain</code>和 <code>type</code>选择默认协议。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>创建成功，返回文件描述符(套接字)</li>
-<li>创建失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h3 id="地址格式"><a href="#地址格式" class="headerlink" title="地址格式"></a>地址格式</h3><p>不同的通信协议会有不同的套接字地址结构。为使不同格式地址能够传入套接字函数，地址会被强制转换成一个通用的地址结构<code>sockaddr</code></p>
-<p><code>sockaddr_in</code>是Internet环境下的套接字地址形式，主要用于socket定义和赋值；</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr_in for IPV4 16 bytes */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">in_addr</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">int</span> s_addr;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> &#123;</span><br><span class="line">  <span class="type">sa_family_t</span> sin_family; <span class="comment">/* 地址族 */</span>    <span class="comment">//2字节</span></span><br><span class="line">  in_port  sin_port; <span class="comment">/* 目的端口号 */</span>  <span class="comment">//2字节</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr; <span class="comment">/* IP地址*/</span>  <span class="comment">// 4 字节</span></span><br><span class="line">  <span class="comment">/* Pad to size of `struct sockaddr&#x27;. */</span>  </span><br><span class="line">  <span class="type">unsigned</span> <span class="type">char</span>  sin_zero[<span class="number">8</span>];<span class="comment">/*填充字节*/</span> <span class="comment">//8 字节 需要清零</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>定义socket的各类地址形式最终转换成<code>sockaddr</code>类型作为函数参数传输。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr 16 bytes*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span> &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sa_family;  <span class="comment">//地址族   AF_XXXX    2字节</span></span><br><span class="line"> <span class="type">char</span>        sa_data[<span class="number">14</span>]; <span class="comment">//可变长度地址 包含IP地址、port 14 字节</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="将socket与地址关联-服务器"><a href="#将socket与地址关联-服务器" class="headerlink" title="将socket与地址关联(服务器)"></a>将socket与地址关联(服务器)</h3><p>创建socket后还需将socket和地址进行关联，所以调用<code>bind()</code>函数将地址指向的<code>sockaddr</code>结构体中描述的一些属性与socket套接字绑定(也叫命名)。然后就可以通过socket读取和使用，当然也可通过该socket发送数据到指定目的。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bind</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、IP地址、port的sockaddr_in结构体，传参时被强制转换为sockaddr。</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<p>对于服务器，<code>bind</code>是必须要做的事情。服务器启动的时候需要绑定指定的端口来提供服务(以便客户向指定的端口发送请求)。一般来说，会将参数中的IP地址赋值为<code>INADDR_ANY</code>，即无论发送到系统中的哪个IP地址(多网卡情况)的请求都采用被绑定的socket处理，无需指定固定IP。</p>
-<p>对于客户端来说，一般不需要主动进行<code>bind</code>，交给操作系统分配可用端口。</p>
-<blockquote>
-<p>公认端口:从0到1023。<br>小于256的端口作为保留端口。<br>注册端口:端口号从1024到49151。实际上，机器通常从1024起分配动态端口。<br>动态和/或私有端口:从49152到65535。理论上，不应为服务分配这些端口。</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> sock_fd = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">// IPV4 tcp socket</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_INET;                              <span class="comment">// IPV4 需要与socket中的指定一致</span></span><br><span class="line">addr.sin_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.51.122&quot;</span>);            <span class="comment">// 点分十进制转三十二位字节序</span></span><br><span class="line">addr.sin_port = <span class="number">5050</span>;                                   <span class="comment">//大于1024</span></span><br><span class="line"><span class="built_in">bind</span>(sock_fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="built_in">sizeof</span>(addr));   <span class="comment">// 关联绑定</span></span><br></pre></td></tr></table></figure>
-<h3 id="网络连接"><a href="#网络连接" class="headerlink" title="网络连接"></a>网络连接</h3><p>面向连接的网络服务(TCP)在开始交换数据之前，需要在请求服务的进程套接字(客户端)和提供服务的套接字(服务器)之间建立一个连接(TCP是三次握手)。</p>
-<h4 id="连接请求connect-客户端"><a href="#连接请求connect-客户端" class="headerlink" title="连接请求connect(客户端)"></a>连接请求connect(客户端)</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="type">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 返回值：成功返回0， 失败返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、服务器IP地址、服务器port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果sockfd参数中无法获知服务器IP地址和服务器的端口号，则绑定一个默认地址，即客户端本机的IP。</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<p>在客户端尝试连接服务器的过程中，可能会出现连接失败的情况。这很可能是由一些瞬时错误引起的，如果一个服务器运行在一个负载很重的系统上，就很有可能发生这种错误。</p>
-<p>通常采用指数补偿算法解决瞬时错误。当调用的connect失败后，进程会休眠一小段时间，然后进行第二次尝试。如果第二次的尝试依然失败，则休眠时间指数级增加，以此类推进行循环，直到最大休眠延时达到2分钟左右。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MAXSLEEP 128  <span class="comment">// 最大休眠时间</span></span></span><br><span class="line"><span class="comment">/* 指数补偿算法 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect_try</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> strcut sockaddr *addr, <span class="type">socklen_t</span> addrlen)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> num_sec;</span><br><span class="line">  <span class="keyword">for</span>(num_sec = <span class="number">1</span>; numsec &lt;= MAXSLEEP; numsec &lt;&lt;= <span class="number">1</span>)  <span class="comment">// 休眠时间指数级增长</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">connect</span>(sockfd, addr, addrlen) == <span class="number">0</span>)</span><br><span class="line">      <span class="comment">// 成功连接</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (num_sec &lt;= MAXSLEEP/<span class="number">2</span>)  <span class="comment">// 休眠，然后再次重连</span></span><br><span class="line">      <span class="built_in">sleep</span>(num_sec);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;  <span class="comment">//超时， 返回 -1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="监听连接请求listen-服务器"><a href="#监听连接请求listen-服务器" class="headerlink" title="监听连接请求listen(服务器)"></a>监听连接请求listen(服务器)</h4><p>服务器调用<code>listen</code>函数来宣告它正在接收连接请求。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">listen</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> backlog)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>backlog</code>: accept应答之前，允许在进入队列中等待的连接数目，最大值128。连接队列缓存的容量</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h4 id="处理客户端的连接请求accept-服务器"><a href="#处理客户端的连接请求accept-服务器" class="headerlink" title="处理客户端的连接请求accept(服务器)"></a>处理客户端的连接请求accept(服务器)</h4><p>服务器调用<code>accept</code>来建立套接字连接，处理单个连接请求。如果服务器调用accept后没有收到连接请求，则服务器会阻塞直到新的请求到来。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> sockfd, <span class="keyword">struct</span> sockaddr *addr, <span class="type">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: 正在监听端口的socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、客户端IP地址、客户端port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果服务器不关心，可以设置为NULL</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回与客户端连接的套接字，该套接字域客户端连接</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h3 id="网络连接的关闭和socket的关闭"><a href="#网络连接的关闭和socket的关闭" class="headerlink" title="网络连接的关闭和socket的关闭"></a>网络连接的关闭和socket的关闭</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">shutdown</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> how)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>how</code>: 关闭方式<ul>
-<li><code>SHUT_RD</code>: 关闭读端</li>
-<li><code>SHUT_WR</code>: 关闭写端</li>
-<li><code>SHUT_RDWR</code>: 关闭读写</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">closesocket</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>close和shutdown的区别<br>shutdown不管引用计数，关闭的是连接而不是套接字，调用后套接字依然存在，直到调用close将套接字清除。并且，它需要等待输出缓冲区中的数据传输完毕再发送FIN包关闭连接。<br>close是把socket描述符的引用计数-1，仅在引用计数为0时关闭套接字。使用后套接字描述符将从内存中清除，之后也不能再被使用。如果调用后会关闭套接字，它将不管输出缓冲区是否还有数据，直接将套接字描述符从内存清除。</p>
-</blockquote>
-<h3 id="大小端转换"><a href="#大小端转换" class="headerlink" title="大小端转换"></a>大小端转换</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl</span><span class="params">(<span class="type">uint32_t</span> hostlong)</span></span>;  <span class="comment">//返回值：以网络字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htons</span><span class="params">(<span class="type">uint16_t</span> hostshort)</span></span>; <span class="comment">//返回值：以网络字节序表示的16位整数</span></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">ntohl</span><span class="params">(<span class="type">uint32_t</span> netlong)</span></span>;   <span class="comment">//返回值：以主机字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">ntohs</span><span class="params">(<span class="type">uint16_t</span> netshort)</span></span>;  <span class="comment">//返回值：以主机字节序表示的16位整数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl32</span><span class="params">(<span class="type">uint32_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint32_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0x000000FF</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">24</span>) &amp; <span class="number">0xFF000000</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0x00FF0000</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x0000FF00</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htonl16</span><span class="params">(<span class="type">uint16_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint16_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0xFF00</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x00FF</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="IP地址转换"><a href="#IP地址转换" class="headerlink" title="IP地址转换"></a>IP地址转换</h3><h4 id="点分十进制转32位网络字节序"><a href="#点分十进制转32位网络字节序" class="headerlink" title="点分十进制转32位网络字节序"></a>点分十进制转32位网络字节序</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">in_addr_t</span> <span class="title">inet_addr</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp)</span></span>;  <span class="comment">//cp 点分十进制地址</span></span><br><span class="line"><span class="comment">//返回网络字节序的32位地址</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_aton</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp, <span class="keyword">struct</span> in_addr *inp)</span></span>; <span class="comment">// cp 点分十进制地址; inp 转换结果空间的首地址，即存放转换结果的变量的地址</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_pton</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">char</span> *src, <span class="type">void</span> *dst)</span></span>;  <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                        cp 点分十进制地址; </span></span><br><span class="line"><span class="comment">                                                        inp 存放转换结果的缓冲区, 如果是IPV4需要4字节, IPV6需要16字节</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br></pre></td></tr></table></figure>
-<h4 id="32位网络字节序转点分十进制"><a href="#32位网络字节序转点分十进制" class="headerlink" title="32位网络字节序转点分十进制"></a>32位网络字节序转点分十进制</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">char</span> *<span class="title">inet_ntoa</span><span class="params">(<span class="keyword">struct</span> in_addr in)</span></span>;</span><br><span class="line"><span class="comment">//返回 点分十进制地址字符串的地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span> *<span class="title">inet_ntop</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">void</span> *src,</span></span></span><br><span class="line"><span class="params"><span class="function">                      <span class="type">char</span> *dst, <span class="type">socklen_t</span> size)</span></span>; <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                      src 32位网络字节序的二进制IP地址;</span></span><br><span class="line"><span class="comment">                                                      dst 保存点分十进制字符串的缓冲区;</span></span><br><span class="line"><span class="comment">                                                      size dst缓冲区的大小，两个常量INET_ADDRSRTRLEN(IPV4)、INET6_ADDRSTRLEN(IPV6)</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//返回值，成功，返回地址字符串指针，失败返回 NULL</span></span><br></pre></td></tr></table></figure>
-<h2 id="基于TCP-IP协议网络编程模型"><a href="#基于TCP-IP协议网络编程模型" class="headerlink" title="基于TCP/IP协议网络编程模型"></a>基于TCP/IP协议网络编程模型</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B.png?raw=true" alt="基于TCP/IP协议网络编程模型"></p>
-<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>TCP并发服务器的思想是每一个客户机的请求并不由服务器直接处理，二十由服务器创建一个子进程(子线程)来处理。</p>
-<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/TCP%E5%A4%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A8%A1%E5%9E%8B.png?raw=true" alt="TCP多进程/多线程服务器模型"></p>
-<ul>
-<li>TCP多进程服务器模型<ul>
-<li>优点<ul>
-<li>安全、进程之间相互隔离，一个进程崩溃不会导致整个服务器崩溃。</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>占用资源较大</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>TCP多线程服务器模型<ul>
-<li>优点<ul>
-<li>占用资源较少</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>不安全，因为线程之间是共享进程的资源，一个线程崩溃会导致服务器整个进程崩溃</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>Linux网络编程</tag>
-        <tag>Socket</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux网络编程导引</title>
-    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
-    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>Linux网络编程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>协议栈无线收发控制LED</title>
-    <url>/2022/02/27/ZigBee/2022-02-27-%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%97%A0%E7%BA%BF%E6%94%B6%E5%8F%91%E6%8E%A7%E5%88%B6LED/</url>
-    <content><![CDATA[]]></content>
-      <categories>
-        <category>ZigBee开发—提高篇</category>
-      </categories>
-      <tags>
-        <tag>ZigBee</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Zigbee协议栈 1</title>
     <url>/2022/02/27/ZigBee/2022-02-27-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E5%89%96%E6%9E%90/</url>
     <content><![CDATA[<h1 id="Zigbee协议栈"><a href="#Zigbee协议栈" class="headerlink" title="Zigbee协议栈"></a>Zigbee协议栈</h1><h2 id="Zigbee协议栈简介"><a href="#Zigbee协议栈简介" class="headerlink" title="Zigbee协议栈简介"></a>Zigbee协议栈简介</h2><h3 id="协议和协议栈"><a href="#协议和协议栈" class="headerlink" title="协议和协议栈"></a>协议和协议栈</h3><ul>
@@ -1507,45 +1581,14 @@
       </tags>
   </entry>
   <entry>
-    <title>Zigbee协议栈 3</title>
-    <url>/2022/03/12/ZigBee/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</url>
-    <content><![CDATA[<h1 id="Zigbee协议栈-3"><a href="#Zigbee协议栈-3" class="headerlink" title="Zigbee协议栈 3"></a>Zigbee协议栈 3</h1>]]></content>
+    <title>协议栈无线收发控制LED</title>
+    <url>/2022/02/27/ZigBee/2022-02-27-%E5%8D%8F%E8%AE%AE%E6%A0%88%E6%97%A0%E7%BA%BF%E6%94%B6%E5%8F%91%E6%8E%A7%E5%88%B6LED/</url>
+    <content><![CDATA[]]></content>
       <categories>
-        <category>ZigBee开发</category>
+        <category>ZigBee开发—提高篇</category>
       </categories>
       <tags>
         <tag>ZigBee</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RK3568 Linux的I2C驱动分析</title>
-    <url>/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E9%A9%B1%E5%8A%A8/</url>
-    <content><![CDATA[<h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>为了提高代码的重用性，解决驱动代码和设备信息耦合的问题，Linux提出了总线、设备、驱动模型。</p>
-<p>总线上管理着两个链表，分别管理设备和驱动。每当要向系统注册一个驱动或设备时，总线负责对新插入的驱动或设备进行匹配，根据匹配结果将新插入的驱动或设备添加到所对应的管理链表中。每当要从系统移除一个驱动或设备时，总线负责将其从所对应的管理链表中删除。</p>
-<p>由于并不是所有的设备都能够归属于常见的总线(USB、PCI、I2C、SPI), Linux为了保持设备驱动的统一性，提出了一条虚拟的、抽象出来的总线 <code>platform</code> 。下图展示了Platform平台设备驱动框架的总线、设备、驱动模型。</p>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/platform%E6%80%BB%E7%BA%BF%E3%80%81%E9%A9%B1%E5%8A%A8%E3%80%81%E8%AE%BE%E5%A4%87%E6%A8%A1%E5%9E%8B.png?raw=true" alt="platform总线、驱动、设备模型"></p>
-<h1 id="2-Linux内核里I2C驱动的体系结构"><a href="#2-Linux内核里I2C驱动的体系结构" class="headerlink" title="2. Linux内核里I2C驱动的体系结构"></a>2. Linux内核里I2C驱动的体系结构</h1><h2 id="2-1-组成部分"><a href="#2-1-组成部分" class="headerlink" title="2.1. 组成部分"></a>2.1. 组成部分</h2><p>《Linux设备驱动开发详解》一书第15章《Linux I2C核心、总线与设备驱动》将Linux的I2C体系结构分为核心、总线驱动和设备驱动三部分。</p>
-<h3 id="2-1-1-I2C核心"><a href="#2-1-1-I2C核心" class="headerlink" title="2.1.1. I2C核心"></a>2.1.1. I2C核心</h3><p>I2C核心提供了I2C总线驱动和I2C设备驱动注册和注销的方法，I2C通信方法中上层与具体适配器无关的代码，以及探测设备、检测设备地址的上层代码。</p>
-<h3 id="2-1-2-I2C总线驱动"><a href="#2-1-2-I2C总线驱动" class="headerlink" title="2.1.2. I2C总线驱动"></a>2.1.2. I2C总线驱动</h3><p>I2C总线驱动是对I2C硬件体系结构中适配器端的实现。主要包含I2C适配器的数据结构 <code>i2c_adapter</code> 、I2C适配器的通信方法(与设备之间)数据结构 <code>i2c_algorithm</code> 和控制I2C适配器产生通信信号的函数。</p>
-<h3 id="2-1-3-I2C设备驱动"><a href="#2-1-3-I2C设备驱动" class="headerlink" title="2.1.3. I2C设备驱动"></a>2.1.3. I2C设备驱动</h3><p>I2C设备驱动(客户驱动)是对I2C硬件体系结构中设备端的实现。一般挂载在I2C适配器上。主要包含数据结构 <code>i2c_driver</code> 和 <code>i2c_client</code> 。</p>
-<h2 id="2-2-体系结构"><a href="#2-2-体系结构" class="headerlink" title="2.2. 体系结构"></a>2.2. 体系结构</h2><p>下图展示了Linux内核里I2C驱动的体系结构。CPU的每个I2C接口都配有一个I2C总线控制器(硬件)，负责控制所对应的一条I2C总线。I2C控制器可通过挂载在其他总线上被CPU控制，也可以直接集成在CPU内部。 <code>i2c_adapter</code> 是在软件上抽象出来的I2C总线控制器(适配器)，与硬件一一对应。</p>
-<p>每个I2C设备( <code>i2c_device</code> )在软件上抽象成 <code>i2c_client</code> ，通过设备驱动( <code>i2c_driver</code> )挂载到 <code>i2c_adapter</code> 控制的I2C总线上， <code>i2c_adapter</code> 则通过根据控制逻辑实现的 <code>i2c_algorithm</code> 与 <code>i2c_client</code> 进行通信。</p>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/Linux%E5%86%85%E6%A0%B8%E9%87%8CI2C%E9%A9%B1%E5%8A%A8%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84.png?raw=true" alt="Linux内核里I2C驱动的体系结构"></p>
-<h1 id="RK3568-Linux的I2C驱动"><a href="#RK3568-Linux的I2C驱动" class="headerlink" title="RK3568 Linux的I2C驱动"></a>RK3568 Linux的I2C驱动</h1><p>RK平台的I2C总线控制器并非直接集成在内部，而是挂载到platform总线上，所以可以将RK3568 Linux的I2C驱动划分为两个部分实现：</p>
-<ul>
-<li>采用platform驱动框架为I2C适配器设计驱动，以挂载到platform总线。</li>
-<li>采用I2C驱动框架为设备设计驱动，以挂载到I2C总线。</li>
-</ul>
-<p><img src="https://github.com/zjn-astonishe/Linux_Share/blob/master/Image/image/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/I2C%E4%B8%BB%E6%9C%BA%E5%92%8C%E5%A4%96%E8%AE%BE%E7%9C%BC%E9%87%8C%E7%9A%84Linux%E4%B8%96%E7%95%8C.png?raw=true" alt="Linux内核里I2C驱动的设计框架"></p>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>I2C驱动</category>
-        <category>设备驱动</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>I2C</tag>
       </tags>
   </entry>
   <entry>
@@ -1826,6 +1869,17 @@
 </li>
 </ul>
 ]]></content>
+      <categories>
+        <category>ZigBee开发</category>
+      </categories>
+      <tags>
+        <tag>ZigBee</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Zigbee协议栈 3</title>
+    <url>/2022/03/12/ZigBee/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</url>
+    <content><![CDATA[<h1 id="Zigbee协议栈-3"><a href="#Zigbee协议栈-3" class="headerlink" title="Zigbee协议栈 3"></a>Zigbee协议栈 3</h1>]]></content>
       <categories>
         <category>ZigBee开发</category>
       </categories>
@@ -2171,60 +2225,6 @@
       </categories>
       <tags>
         <tag>进程、线程</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>RK3568 Linux的I2C总线驱动分析</title>
-    <url>/2022/08/15/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-15-RK3568%20Linux%E7%9A%84I2C%E6%80%BB%E7%BA%BF%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<h1 id="1-RK3568-I2C总线驱动概述"><a href="#1-RK3568-I2C总线驱动概述" class="headerlink" title="1. RK3568 I2C总线驱动概述"></a>1. RK3568 I2C总线驱动概述</h1><ul>
-<li>文件路径<ul>
-<li><code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/drivers/i2c/busses/i2c-rk3x.c</code></li>
-</ul>
-</li>
-<li>设备树文件<ul>
-<li><code>.../OpenHarmony/out/kernel/src_tmp/linux-5.10/arch/arm64/boot/dts/rockchip/rk3568.dtsi</code></li>
-</ul>
-</li>
-<li>总线驱动：<code>rk3x_i2c_driver</code>：<ul>
-<li>probe方法：<code>rk3x_i2c_probe</code></li>
-<li>remove方法：<code>rk3x_i2c_remove</code></li>
-<li>设备树匹配：<code>rk3x_i2c_match</code></li>
-</ul>
-</li>
-<li>通信方法集合：<code>rk3x_i2c_algorithm</code><ul>
-<li>通信方法：<code>rk3x_i2c_xfer</code></li>
-<li>功能检测方法：<code>rk3x_i2c_func</code></li>
-</ul>
-</li>
-<li>驱动注册和卸载方法<ul>
-<li><code>module_platform_driver</code><h1 id="2-总线驱动定义"><a href="#2-总线驱动定义" class="headerlink" title="2. 总线驱动定义"></a>2. 总线驱动定义</h1></li>
-</ul>
-</li>
-</ul>
-<p>因为RK平台的I2C总线控制器挂载在platform总线上，总线驱动采用platform驱动框架实现，所以填充 <code>platform_driver</code> 结构体以定义I2C总线驱动。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">struct</span> <span class="title class_">platform_driver</span> rk3x_i2c_driver = &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 当驱动注册完毕，并且匹配成功，则会自动调用该方法对硬件进行操作：</span></span><br><span class="line"><span class="comment">	 * a. 注册设备号，并且注册fops(为用户提供设备标示，同时提供文件操作io接口)</span></span><br><span class="line"><span class="comment">	 * b. 创建设备节点</span></span><br><span class="line"><span class="comment">	 * c. 初始化硬件的各项信息，如ioremap(io地址映射虚拟地址)</span></span><br><span class="line"><span class="comment">	 * d. 实现各种io功能接口</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	.probe   = rk3x_i2c_probe,      </span><br><span class="line"></span><br><span class="line">	.remove  = rk3x_i2c_remove,</span><br><span class="line">	.driver  = &#123;</span><br><span class="line">		.name  = <span class="string">&quot;rk3x-i2c&quot;</span>,                <span class="comment">// 用于驱动和设备匹配，确保驱动和设备一致，否则无法匹配成功</span></span><br><span class="line">		.of_match_table = rk3x_i2c_match,   <span class="comment">// 匹配表</span></span><br><span class="line">		.pm = &amp;rk3x_i2c_pm_ops,	            <span class="comment">// dev_pm_ops类型的结构体，用来赋值设备完成运行时的电源管理</span></span><br><span class="line">	&#125;,</span><br><span class="line"></span><br><span class="line">&#125;; </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h1 id="3-algorithm通信方法定义"><a href="#3-algorithm通信方法定义" class="headerlink" title="3. algorithm通信方法定义"></a>3. algorithm通信方法定义</h1><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="keyword">struct</span> <span class="title class_">i2c_algorithm</span> rk3x_i2c_algorithm = &#123;</span><br><span class="line">	.master_xfer		= rk3x_i2c_xfer,             <span class="comment">// 通信方法</span></span><br><span class="line">	.master_xfer_atomic	= rk3x_i2c_xfer_polling,     <span class="comment">// 通信方法，仅使用于原子上下文</span></span><br><span class="line">	.functionality		= rk3x_i2c_func,             <span class="comment">// 检测通信方法支持的功能或协议</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h1 id="4-设备树的匹配方法"><a href="#4-设备树的匹配方法" class="headerlink" title="4. 设备树的匹配方法"></a>4. 设备树的匹配方法</h1><p>RK3568共有6个I2C控制器，分别为I2C0~I2C5，每个控制器对应不同的寄存器基地址(i2c0是0xfdd40000)， <code>.compatible</code> 属性都是 <code>rockchip, rk3399-i2c</code> ，即对应了同一个adapter驱动。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">i2c0: i2c@fdd40000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfdd40000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;pmucru CLK_I2C0&gt;, &lt;&amp;pmucru PCLK_I2C0&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">46</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c1: i2c@fe5a0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5a0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C1&gt;, &lt;&amp;cru PCLK_I2C1&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">47</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c1_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c2: i2c@fe5b0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5b0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C2&gt;, &lt;&amp;cru PCLK_I2C2&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">48</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c2m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c3: i2c@fe5c0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5c0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C3&gt;, &lt;&amp;cru PCLK_I2C3&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">49</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c3m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c4: i2c@fe5d0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5d0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C4&gt;, &lt;&amp;cru PCLK_I2C4&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">50</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c4m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line">i2c5: i2c@fe5e0000 &#123;</span><br><span class="line">	compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>;</span><br><span class="line">	reg = &lt;<span class="number">0x0</span> <span class="number">0xfe5e0000</span> <span class="number">0x0</span> <span class="number">0x1000</span>&gt;;</span><br><span class="line">	clocks = &lt;&amp;cru CLK_I2C5&gt;, &lt;&amp;cru PCLK_I2C5&gt;;</span><br><span class="line">	clock-names = <span class="string">&quot;i2c&quot;</span>, <span class="string">&quot;pclk&quot;</span>;</span><br><span class="line">	interrupts = &lt;GIC_SPI <span class="number">51</span> IRQ_TYPE_LEVEL_HIGH&gt;;</span><br><span class="line">	pinctrl-names = <span class="string">&quot;default&quot;</span>;</span><br><span class="line">	pinctrl<span class="number">-0</span> = &lt;&amp;i2c5m0_xfer&gt;;</span><br><span class="line">	<span class="meta">#address-cells = <span class="string">&lt;1&gt;</span>;</span></span><br><span class="line">	<span class="meta">#size-cells = <span class="string">&lt;0&gt;</span>;</span></span><br><span class="line">	status = <span class="string">&quot;disabled&quot;</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>将<code>rk3x_i2c_driver</code>作为一个<code>platform_driver</code>注册到内核，<code>rk3x_i2c_match</code>作为结构体中的参数实际是一个记录设备信息的结构体数组。系统启动后会比较DTS中的匹配属性与驱动匹配表中是否相符，如果相符则会进入<code>rk3x_i2c_probe</code>接口，完成驱动各项参数的初始化。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// rk3x_i2c_driver结构体中.driver的匹配表参数</span></span><br><span class="line"><span class="type">static</span> <span class="type">const</span> <span class="keyword">struct</span> <span class="title class_">of_device_id</span> rk3x_i2c_match[] = &#123;</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rv1108-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rv1108_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rv1126-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rv1126_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3066-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3066_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3188-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3188_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3228-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3228_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3288-i2c&quot;</span>,</span><br><span class="line">		.data = &amp;rk3288_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;</span><br><span class="line">		.compatible = <span class="string">&quot;rockchip,rk3399-i2c&quot;</span>, <span class="comment">// 符合DTS中描述的匹配字符串</span></span><br><span class="line">		.data = &amp;rk3399_soc_data</span><br><span class="line">	&#125;,</span><br><span class="line">	&#123;&#125;,</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param usb               设备名</span></span><br><span class="line"><span class="comment"> * @param skel_table        该设备加入到模块中时对应产生的设备搜索符号</span></span><br><span class="line"><span class="comment"> * @return 生成一个名为__mod_pci_device_table局部变量，这个变量指向第二个参数</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="built_in">MODULE_DEVICE_TABLE</span>(of, rk3x_i2c_match); <span class="comment">// 两个功能，一是将设备加入到外设队列中，二是告诉程序阅读者该设备是热插拔设备或支持热插拔功能。</span></span><br></pre></td></tr></table></figure>
-<h1 id="5-总线驱动注册和卸载方法"><a href="#5-总线驱动注册和卸载方法" class="headerlink" title="5. 总线驱动注册和卸载方法"></a>5. 总线驱动注册和卸载方法</h1><p>为了提高代码的重用性，消除多余的样板文件。当module_init和module_exit都不做任何特殊操作时，调用宏定义函数 <code>module_platform_driver</code> 替换 <code>module_init</code> 和 <code>module_exit</code> (实际还要调用一次宏定义函数 <code>module_driver</code> 才能完成替换)。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * module_platform_driver() - Helper macro for drivers that don&#x27;t do</span></span><br><span class="line"><span class="comment"> * anything special in module init/exit.  </span></span><br><span class="line"><span class="comment"> * This eliminates a lot of boilerplate.  </span></span><br><span class="line"><span class="comment"> * Each module may only use this macro once, and</span></span><br><span class="line"><span class="comment"> * calling it replaces module_init() and module_exit()</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> module_platform_driver(__platform_driver) \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">	<span class="built_in">module_driver</span>(__platform_driver, platform_driver_register, \</span><br><span class="line">			platform_driver_unregister)</span><br><span class="line">			</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * module_driver() - Helper macro for drivers that don&#x27;t do anything</span></span><br><span class="line"><span class="comment"> * special in module init/exit. This eliminates a lot of boilerplate.</span></span><br><span class="line"><span class="comment"> * Each module may only use this macro once, and calling it replaces</span></span><br><span class="line"><span class="comment"> * module_init() and module_exit().</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @__driver: driver name</span></span><br><span class="line"><span class="comment"> * @__register: register function for this driver type</span></span><br><span class="line"><span class="comment"> * @__unregister: unregister function for this driver type</span></span><br><span class="line"><span class="comment"> * @...: Additional arguments to be passed to __register and __unregister.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Use this macro to construct bus specific macros for registering</span></span><br><span class="line"><span class="comment"> * drivers, and do not use it on its own.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> module_driver(__driver, __register, __unregister, ...) \</span></span><br><span class="line"><span class="meta"><span class="comment">// 注册方法，替代module_init</span></span></span><br><span class="line"><span class="type">static</span> <span class="type">int</span> __init __driver##_init(<span class="type">void</span>) \</span><br><span class="line">&#123; \</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> __register(&amp;(__driver) , ##__VA_ARGS__); \</span><br><span class="line"></span><br><span class="line">&#125; \</span><br><span class="line"><span class="built_in">module_init</span>(__driver##_init); \</span><br><span class="line"><span class="comment">// 卸载方法，替代module_exit</span></span><br><span class="line"><span class="type">static</span> <span class="type">void</span> __exit __driver##_exit(<span class="type">void</span>) \</span><br><span class="line">&#123; \</span><br><span class="line"></span><br><span class="line">	__unregister(&amp;(__driver) , ##__VA_ARGS__); \</span><br><span class="line"></span><br><span class="line">&#125; \</span><br><span class="line"><span class="built_in">module_exit</span>(__driver##_exit); </span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h1 id="6-总线驱动函数"><a href="#6-总线驱动函数" class="headerlink" title="6. 总线驱动函数"></a>6. 总线驱动函数</h1><h2 id="6-1-初始化函数probe"><a href="#6-1-初始化函数probe" class="headerlink" title="6.1. 初始化函数probe()"></a>6.1. 初始化函数probe()</h2><p><code>platform_driver</code>在注册时会遍历<code>platform</code>总线上的<code>platform_device</code>，当条件(<code>.compatible</code>属性或<code>id_table</code>)匹配(通过得分机制，得分最高的最终会匹配成功)时，便会调用<code>rk3x_i2c_probe</code>函数。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * @param pdev: 即i2c_adapter，相当于是挂载在platform总线上的platform_device。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_probe</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">device_node</span> *np = pdev-&gt;dev.of_node;</span><br><span class="line">	<span class="type">const</span> <span class="keyword">struct</span> <span class="title class_">of_device_id</span> *match;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">rk3x_i2c</span> *i2c;	<span class="comment">// 声明一个rk3x_i2c的适配器结构体，是i2c_adapter的进一步封装，相当于面向对象中的继承</span></span><br><span class="line">	<span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line">	u32 value;</span><br><span class="line">	<span class="type">int</span> irq;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> clk_rate;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 采用devm_kzalloc与kzalloc相比，优点在于不用考虑释放问题，由内核完成内存回收工作</span></span><br><span class="line"><span class="comment">	 * devm_kzalloc — Resource-managed kzalloc</span></span><br><span class="line"><span class="comment">	 * @param pdev: 申请内存的目标设备</span></span><br><span class="line"><span class="comment">	 * @param gftp: 申请内存的类型标志，标识内存分配器将要采取的行为。其中GFP_KERNEL最常用，五内存可用时可引起休眠。</span></span><br><span class="line"><span class="comment">	 * @return: 成功返回首地址，失败返回NULL</span></span><br><span class="line"><span class="comment">	 * </span></span><br><span class="line"><span class="comment">	 * 为适配器结构体申请内存，为后续实例化完成基础工作。</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	i2c = <span class="built_in">devm_kzalloc</span>(&amp;pdev-&gt;dev, <span class="built_in">sizeof</span>(<span class="keyword">struct</span> rk3x_i2c), GFP_KERNEL);</span><br><span class="line">	<span class="keyword">if</span> (!i2c)	<span class="comment">// 申请失败</span></span><br><span class="line">		<span class="keyword">return</span> -ENOMEM;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * 找到rk3x_i2c_match数组里与之匹配的那个struct of_device_id</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * i2c_adapter驱动会兼容多个RK平台(如rk3188/rk3288/rk3399等)的i2c控制器，</span></span><br><span class="line"><span class="comment">	 * 各个平台有些差异，差异性的信息可以通过.data这个成员指针保存起来，用到的时候再取出来</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	match = <span class="built_in">of_match_node</span>(rk3x_i2c_match, np);</span><br><span class="line">	i2c-&gt;soc_data = match-&gt;data;	<span class="comment">// 取出所匹配的i2c控制器的配置信息</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">/* use common interface to get I2C timing properties */</span></span><br><span class="line">	<span class="built_in">i2c_parse_fw_timings</span>(&amp;pdev-&gt;dev, &amp;i2c-&gt;t, <span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// i2c_adapter部分成员初始化</span></span><br><span class="line">	<span class="comment">// 名字</span></span><br><span class="line">	<span class="built_in">strlcpy</span>(i2c-&gt;adap.name, <span class="string">&quot;rk3x-i2c&quot;</span>, <span class="built_in">sizeof</span>(i2c-&gt;adap.name));</span><br><span class="line">	<span class="comment">// 拥有者</span></span><br><span class="line">	i2c-&gt;adap.owner = THIS_MODULE;</span><br><span class="line">	<span class="comment">// 通信方法</span></span><br><span class="line">	i2c-&gt;adap.algo = &amp;rk3x_i2c_algorithm;</span><br><span class="line">	i2c-&gt;adap.retries = <span class="number">3</span>;</span><br><span class="line">	i2c-&gt;adap.dev.of_node = np;</span><br><span class="line">	i2c-&gt;adap.algo_data = i2c;</span><br><span class="line">	i2c-&gt;adap.dev.parent = &amp;pdev-&gt;dev;</span><br><span class="line"></span><br><span class="line">	i2c-&gt;dev = &amp;pdev-&gt;dev;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">spin_lock_init</span>(&amp;i2c-&gt;lock);</span><br><span class="line">	<span class="comment">// 初始化等待队列头部，等待在进程调度中使用</span></span><br><span class="line">	<span class="built_in">init_waitqueue_head</span>(&amp;i2c-&gt;wait);</span><br><span class="line">	<span class="comment">// 通知链机制，在内核重启之前会调用回调函数rk3x_i2c_restart_notify</span></span><br><span class="line">	i2c-&gt;i2c_restart_nb.notifier_call = rk3x_i2c_restart_notify;</span><br><span class="line">	i2c-&gt;i2c_restart_nb.priority = <span class="number">128</span>;</span><br><span class="line">	ret = <span class="built_in">register_pre_restart_handler</span>(&amp;i2c-&gt;i2c_restart_nb);</span><br><span class="line">	<span class="keyword">if</span> (ret) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;failed to setup i2c restart handler.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 从dts中获取设备的物理基址</span></span><br><span class="line">	i2c-&gt;regs = <span class="built_in">devm_platform_ioremap_resource</span>(pdev, <span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">IS_ERR</span>(i2c-&gt;regs))</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">PTR_ERR</span>(i2c-&gt;regs);</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Switch to new interface if the SoC also offers the old one.</span></span><br><span class="line"><span class="comment">	 * The control bit is located in the GRF register space.</span></span><br><span class="line"><span class="comment">	 * grf_offset: offset inside the grf regmap for setting the i2c type</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">if</span> (i2c-&gt;soc_data-&gt;grf_offset &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">struct</span> <span class="title class_">regmap</span> *grf;</span><br><span class="line"></span><br><span class="line">		grf = <span class="built_in">syscon_regmap_lookup_by_phandle</span>(np, <span class="string">&quot;rockchip,grf&quot;</span>);</span><br><span class="line">		<span class="keyword">if</span> (!<span class="built_in">IS_ERR</span>(grf)) &#123;</span><br><span class="line">			<span class="type">int</span> bus_nr;</span><br><span class="line"></span><br><span class="line">			<span class="comment">/* Try to set the I2C adapter number from dt */</span></span><br><span class="line">			bus_nr = <span class="built_in">of_alias_get_id</span>(np, <span class="string">&quot;i2c&quot;</span>);</span><br><span class="line">			<span class="keyword">if</span> (bus_nr &lt; <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;rk3x-i2c needs i2cX alias&quot;</span>);</span><br><span class="line">				<span class="keyword">return</span> -EINVAL;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="keyword">if</span> (i2c-&gt;soc_data == &amp;rv1108_soc_data &amp;&amp; bus_nr == <span class="number">2</span>)</span><br><span class="line">				<span class="comment">/* rv1108 i2c2 set grf offset-0x408, bit-10 */</span></span><br><span class="line">				value = <span class="built_in">BIT</span>(<span class="number">26</span>) | <span class="built_in">BIT</span>(<span class="number">10</span>);</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (i2c-&gt;soc_data == &amp;rv1126_soc_data &amp;&amp;</span><br><span class="line">				 bus_nr == <span class="number">2</span>)</span><br><span class="line">				<span class="comment">/* rv1126 i2c2 set pmugrf offset-0x118, bit-4 */</span></span><br><span class="line">				value = <span class="built_in">BIT</span>(<span class="number">20</span>) | <span class="built_in">BIT</span>(<span class="number">4</span>);</span><br><span class="line">			<span class="keyword">else</span></span><br><span class="line">				<span class="comment">/* rk3xxx 27+i: write mask, 11+i: value */</span></span><br><span class="line">				value = <span class="built_in">BIT</span>(<span class="number">27</span> + bus_nr) | <span class="built_in">BIT</span>(<span class="number">11</span> + bus_nr);</span><br><span class="line"></span><br><span class="line">			ret = <span class="built_in">regmap_write</span>(grf, i2c-&gt;soc_data-&gt;grf_offset,</span><br><span class="line">					   value);</span><br><span class="line">			<span class="keyword">if</span> (ret != <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="built_in">dev_err</span>(i2c-&gt;dev, <span class="string">&quot;Could not write to GRF: %d\n&quot;</span>,</span><br><span class="line">					ret);</span><br><span class="line">				<span class="keyword">return</span> ret;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/* IRQ setup(中断设置) */</span></span><br><span class="line">	irq = <span class="built_in">platform_get_irq</span>(pdev, <span class="number">0</span>);	<span class="comment">// platform_device结构体中存储有所用到的中断号</span></span><br><span class="line">	<span class="keyword">if</span> (irq &lt; <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">return</span> irq;</span><br><span class="line"></span><br><span class="line">	ret = <span class="built_in">devm_request_irq</span>(&amp;pdev-&gt;dev, irq, rk3x_i2c_irq,</span><br><span class="line">			       <span class="number">0</span>, <span class="built_in">dev_name</span>(&amp;pdev-&gt;dev), i2c);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;cannot request IRQ\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 存储用户主动申请的内存区域指针防止丢失</span></span><br><span class="line">	<span class="built_in">platform_set_drvdata</span>(pdev, i2c);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 平台时钟设置</span></span><br><span class="line">	<span class="keyword">if</span> (i2c-&gt;soc_data-&gt;calc_timings == rk3x_i2c_v0_calc_timings) &#123;</span><br><span class="line">		<span class="comment">/* Only one clock to use for bus clock and peripheral clock */</span></span><br><span class="line">		i2c-&gt;clk = <span class="built_in">devm_clk_get</span>(&amp;pdev-&gt;dev, <span class="literal">NULL</span>);</span><br><span class="line">		i2c-&gt;pclk = i2c-&gt;clk;</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		i2c-&gt;clk = <span class="built_in">devm_clk_get</span>(&amp;pdev-&gt;dev, <span class="string">&quot;i2c&quot;</span>);</span><br><span class="line">		i2c-&gt;pclk = <span class="built_in">devm_clk_get</span>(&amp;pdev-&gt;dev, <span class="string">&quot;pclk&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">IS_ERR</span>(i2c-&gt;clk))</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">dev_err_probe</span>(&amp;pdev-&gt;dev, <span class="built_in">PTR_ERR</span>(i2c-&gt;clk),</span><br><span class="line">				     <span class="string">&quot;Can&#x27;t get bus clk\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (<span class="built_in">IS_ERR</span>(i2c-&gt;pclk))</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">dev_err_probe</span>(&amp;pdev-&gt;dev, <span class="built_in">PTR_ERR</span>(i2c-&gt;pclk),</span><br><span class="line">				     <span class="string">&quot;Can&#x27;t get periph clk\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	ret = <span class="built_in">clk_prepare</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;Can&#x27;t prepare bus clk: %d\n&quot;</span>, ret);</span><br><span class="line">		<span class="keyword">return</span> ret;</span><br><span class="line">	&#125;</span><br><span class="line">	ret = <span class="built_in">clk_prepare</span>(i2c-&gt;pclk);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;Can&#x27;t prepare periph clock: %d\n&quot;</span>, ret);</span><br><span class="line">		<span class="keyword">goto</span> err_clk;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	i2c-&gt;clk_rate_nb.notifier_call = rk3x_i2c_clk_notifier_cb;</span><br><span class="line">	ret = <span class="built_in">clk_notifier_register</span>(i2c-&gt;clk, &amp;i2c-&gt;clk_rate_nb);</span><br><span class="line">	<span class="keyword">if</span> (ret != <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="built_in">dev_err</span>(&amp;pdev-&gt;dev, <span class="string">&quot;Unable to register clock notifier\n&quot;</span>);</span><br><span class="line">		<span class="keyword">goto</span> err_pclk;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	clk_rate = <span class="built_in">clk_get_rate</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="built_in">rk3x_i2c_adapt_div</span>(i2c, clk_rate);</span><br><span class="line"></span><br><span class="line">	ret = <span class="built_in">i2c_add_adapter</span>(&amp;i2c-&gt;adap);</span><br><span class="line">	<span class="keyword">if</span> (ret &lt; <span class="number">0</span>)	<span class="comment">// 注册i2c_adapter失败</span></span><br><span class="line">		<span class="keyword">goto</span> err_clk_notifier;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">err_clk_notifier:</span><br><span class="line">	<span class="built_in">clk_notifier_unregister</span>(i2c-&gt;clk, &amp;i2c-&gt;clk_rate_nb);</span><br><span class="line">err_pclk:</span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;pclk);</span><br><span class="line">err_clk:</span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="6-2-释放函数remove"><a href="#6-2-释放函数remove" class="headerlink" title="6.2. 释放函数remove()"></a>6.2. 释放函数remove()</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_remove</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">// 获得rk3x_i2c_probe中存储的主动申请的内存区域指针</span></span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">rk3x_i2c</span> *i2c = <span class="built_in">platform_get_drvdata</span>(pdev);</span><br><span class="line">	<span class="comment">// 卸载i2c_adapter</span></span><br><span class="line">	<span class="built_in">i2c_del_adapter</span>(&amp;i2c-&gt;adap);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 注销时钟</span></span><br><span class="line">	<span class="built_in">clk_notifier_unregister</span>(i2c-&gt;clk, &amp;i2c-&gt;clk_rate_nb);</span><br><span class="line">	<span class="built_in">unregister_pre_restart_handler</span>(&amp;i2c-&gt;i2c_restart_nb); </span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;pclk);</span><br><span class="line">	<span class="built_in">clk_unprepare</span>(i2c-&gt;clk); </span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="6-3-通信方法函数xfer"><a href="#6-3-通信方法函数xfer" class="headerlink" title="6.3. 通信方法函数xfer()"></a>6.3. 通信方法函数xfer()</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_xfer</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap,</span></span></span><br><span class="line"><span class="params"><span class="function">			 <span class="keyword">struct</span> i2c_msg *msgs, <span class="type">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">rk3x_i2c_xfer_common</span>(adap, msgs, num, <span class="literal">false</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_xfer_polling</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap,</span></span></span><br><span class="line"><span class="params"><span class="function">				 <span class="keyword">struct</span> i2c_msg *msgs, <span class="type">int</span> num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">rk3x_i2c_xfer_common</span>(adap, msgs, num, <span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">static</span> <span class="type">int</span> <span class="title">rk3x_i2c_xfer_common</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap,</span></span></span><br><span class="line"><span class="params"><span class="function">				<span class="keyword">struct</span> i2c_msg *msgs, <span class="type">int</span> num, <span class="type">bool</span> polling)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">struct</span> <span class="title class_">rk3x_i2c</span> *i2c = (<span class="keyword">struct</span> rk3x_i2c *)adap-&gt;algo_data;</span><br><span class="line">	<span class="type">unsigned</span> <span class="type">long</span> timeout, flags;</span><br><span class="line">	u32 val;</span><br><span class="line">	<span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> i;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (i2c-&gt;suspended)</span><br><span class="line">		<span class="keyword">return</span> -EACCES;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">spin_lock_irqsave</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">clk_enable</span>(i2c-&gt;clk);</span><br><span class="line">	<span class="built_in">clk_enable</span>(i2c-&gt;pclk);</span><br><span class="line"></span><br><span class="line">	i2c-&gt;is_last_msg = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/*</span></span><br><span class="line"><span class="comment">	 * Process msgs. We can handle more than one message at once (see</span></span><br><span class="line"><span class="comment">	 * rk3x_i2c_setup()).</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; num; i += ret) &#123;</span><br><span class="line">		ret = <span class="built_in">rk3x_i2c_setup</span>(i2c, msgs + i, num - i);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (ret &lt; <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="built_in">dev_err</span>(i2c-&gt;dev, <span class="string">&quot;rk3x_i2c_setup() failed\n&quot;</span>);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (i + ret &gt;= num)</span><br><span class="line">			i2c-&gt;is_last_msg = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">		<span class="built_in">rk3x_i2c_start</span>(i2c);</span><br><span class="line"></span><br><span class="line">		<span class="built_in">spin_unlock_irqrestore</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (!polling) &#123;</span><br><span class="line">			timeout = <span class="built_in">wait_event_timeout</span>(i2c-&gt;wait, !i2c-&gt;busy,</span><br><span class="line">						     <span class="built_in">msecs_to_jiffies</span>(WAIT_TIMEOUT));</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			timeout = <span class="built_in">rk3x_i2c_wait_xfer_poll</span>(i2c);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="built_in">spin_lock_irqsave</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (timeout == <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="built_in">dev_err</span>(i2c-&gt;dev, <span class="string">&quot;timeout, ipd: 0x%02x, state: %d\n&quot;</span>,</span><br><span class="line">				<span class="built_in">i2c_readl</span>(i2c, REG_IPD), i2c-&gt;state);</span><br><span class="line"></span><br><span class="line">			<span class="comment">/* Force a STOP condition without interrupt */</span></span><br><span class="line">			<span class="built_in">rk3x_i2c_disable_irq</span>(i2c);</span><br><span class="line">			val = <span class="built_in">i2c_readl</span>(i2c, REG_CON) &amp; REG_CON_TUNING_MASK;</span><br><span class="line">			val |= REG_CON_EN | REG_CON_STOP;</span><br><span class="line">			<span class="built_in">i2c_writel</span>(i2c, val, REG_CON);</span><br><span class="line"></span><br><span class="line">			i2c-&gt;state = STATE_IDLE;</span><br><span class="line"></span><br><span class="line">			ret = -ETIMEDOUT;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (i2c-&gt;error) &#123;</span><br><span class="line">			ret = i2c-&gt;error;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">rk3x_i2c_disable_irq</span>(i2c);</span><br><span class="line">	<span class="built_in">rk3x_i2c_disable</span>(i2c);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">clk_disable</span>(i2c-&gt;pclk);</span><br><span class="line">	<span class="built_in">clk_disable</span>(i2c-&gt;clk);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">spin_unlock_irqrestore</span>(&amp;i2c-&gt;lock, flags);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> ret &lt; <span class="number">0</span> ? ret : num;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="6-4-功能检测函数func"><a href="#6-4-功能检测函数func" class="headerlink" title="6.4. 功能检测函数func()"></a>6.4. 功能检测函数func()</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_I2C			0x00000001</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_EMUL		(I2C_FUNC_SMBUS_QUICK | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_BYTE | \</span><br><span class="line">					 I2C_FUNC_SMBUS_BYTE_DATA | \</span><br><span class="line">					 I2C_FUNC_SMBUS_WORD_DATA | \</span><br><span class="line">					 I2C_FUNC_SMBUS_PROC_CALL | \</span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_BLOCK_DATA | \</span><br><span class="line">					 I2C_FUNC_SMBUS_I2C_BLOCK | \</span><br><span class="line">					 I2C_FUNC_SMBUS_PEC)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_PROTOCOL_MANGLING	0x00000004 <span class="comment">/* I2C_M_IGNORE_NAK etc. */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_QUICK		0x00010000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_BYTE		(I2C_FUNC_SMBUS_READ_BYTE | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_BYTE)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_BYTE_DATA	(I2C_FUNC_SMBUS_READ_BYTE_DATA | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_BYTE_DATA)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WORD_DATA	(I2C_FUNC_SMBUS_READ_WORD_DATA | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_WORD_DATA)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_PROC_CALL	0x00800000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_BLOCK_DATA 0x02000000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_I2C_BLOCK	(I2C_FUNC_SMBUS_READ_I2C_BLOCK | \</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line">					 I2C_FUNC_SMBUS_WRITE_I2C_BLOCK)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_PEC		0x00000008</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_BYTE	0x00020000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_BYTE	0x00040000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_BYTE_DATA	0x00080000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_BYTE_DATA	0x00100000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_WORD_DATA	0x00200000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_WORD_DATA	0x00400000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_READ_I2C_BLOCK	0x04000000 <span class="comment">/* I2C-like block xfer  */</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> I2C_FUNC_SMBUS_WRITE_I2C_BLOCK	0x08000000 <span class="comment">/* w/ 1-byte reg. addr. */</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">static</span> u32 <span class="title">rk3x_i2c_func</span><span class="params">(<span class="keyword">struct</span> i2c_adapter *adap)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_PROTOCOL_MANGLING;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>RK3568</category>
-        <category>I2C驱动</category>
-        <category>代码分析</category>
-      </categories>
-      <tags>
-        <tag>Linux设备驱动</tag>
-        <tag>RK3568</tag>
       </tags>
   </entry>
   <entry>

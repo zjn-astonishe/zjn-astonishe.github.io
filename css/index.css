@@ -3400,7 +3400,7 @@ h1.page-title + .tag-cloud-list {
   font-size: 30px;
 }
 #page-header.not-home-page {
-  height: 400px;
+  height: 45vh;
 }
 @media screen and (max-width: 768px) {
   #page-header.not-home-page {
