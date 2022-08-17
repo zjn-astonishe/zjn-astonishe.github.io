@@ -3318,7 +3318,7 @@ h1.page-title + .tag-cloud-list {
   position: relative;
   width: 100%;
   background-color: #000;
-  background-position: center center;
+  background-position: center top;
   background-size: cover;
   background-repeat: no-repeat;
   -webkit-transition: all 0.5s;
