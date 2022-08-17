@@ -369,6 +369,48 @@
       </tags>
   </entry>
   <entry>
+    <title>C++面向对象 2</title>
+    <url>/2022/03/16/C%E3%80%81C++/2022-03-16-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%202/</url>
+    <content><![CDATA[<h1 id="C-面向对象-2"><a href="#C-面向对象-2" class="headerlink" title="C++面向对象 2"></a>C++面向对象 2</h1><h2 id="构造函数和析构函数"><a href="#构造函数和析构函数" class="headerlink" title="构造函数和析构函数"></a>构造函数和析构函数</h2><h3 id="对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？"><a href="#对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？" class="headerlink" title="对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？"></a>对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？</h3><ul>
+<li>浅拷贝是增加了一个指针，指向原来已经存在的内存。<ul>
+<li>浅拷贝在多个对象指向同一块空间的时候，释放一个空间会导致其他对象所使用的空间也被释放，其他空间再次释放会出现错误。</li>
+</ul>
+</li>
+<li>深拷贝是增加了一个指针，并新开辟了一块空间让指针指向这块新开辟的空间。</li>
+<li>深拷贝和浅拷贝的不同之处，仅仅在于修改了拷贝构造函数，以及赋值运算符的重载。相同类型的类对象是通过拷贝构造函数来完成复制过程的。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CopyDemo</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">CopyDemo</span>(<span class="type">int</span> pa,<span class="type">char</span> *cstr)  <span class="comment">//构造函数，两个参数</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;a = pa;</span><br><span class="line">    <span class="keyword">this</span>-&gt;str = <span class="keyword">new</span> <span class="type">char</span>[<span class="number">1024</span>]; <span class="comment">//指针数组，动态的用new在堆上分配存储空间</span></span><br><span class="line">    <span class="built_in">strcpy</span>(<span class="keyword">this</span>-&gt;str,cstr);    <span class="comment">//拷贝过来</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 没写，C++会自动帮忙写一个复制构造函数，这个默认拷贝构造函数执行的是浅拷贝。</span></span><br><span class="line"><span class="comment">// 浅拷贝只复制指针,如下注释部分</span></span><br><span class="line">  <span class="built_in">CopyDemo</span>(CopyDemo&amp; obj)  </span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;a = obj.a;</span><br><span class="line">    <span class="keyword">this</span>-&gt;str = obj.str; <span class="comment">// 这里是浅复制会出问题，要深复制</span></span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  CopyDemo(CopyDemo&amp; obj)  //一般数据成员有指针要自己写复制构造函数，如下</span></span><br><span class="line"><span class="comment">  &#123;</span></span><br><span class="line"><span class="comment">    this-&gt;a = obj.a;</span></span><br><span class="line"><span class="comment">    this-&gt;str = new char[1024];// 深复制</span></span><br><span class="line"><span class="comment">    if(str != 0)</span></span><br><span class="line"><span class="comment">      strcpy(this-&gt;str,obj.str); // 如果成功，把内容复制过来</span></span><br><span class="line"><span class="comment">  &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">  ~<span class="built_in">CopyDemo</span>()  <span class="comment">//析构函数</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">delete</span> str;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="type">int</span> a;  <span class="comment">//定义一个整型的数据成员</span></span><br><span class="line">  <span class="type">char</span> *str; <span class="comment">//字符串指针</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="function">CopyDemo <span class="title">A</span><span class="params">(<span class="number">100</span>,<span class="string">&quot;hello!!!&quot;</span>)</span></span>;</span><br><span class="line">  CopyDemo B = A;  <span class="comment">//复制构造函数，把A的10和hello!!!复制给B</span></span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;A:&quot;</span>&lt;&lt; A.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;A.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出A:100，hello!!!</span></span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;B:&quot;</span>&lt;&lt; B.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;B.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出B:100，hello!!!</span></span><br><span class="line">  <span class="comment">//修改后,发现A,B都被改变，原因就是浅复制，A,B指针指向同一地方，修改后都改变</span></span><br><span class="line">  B.a = <span class="number">80</span>;</span><br><span class="line">  B.str[<span class="number">0</span>] = <span class="string">&#x27;k&#x27;</span>;</span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;A:&quot;</span>&lt;&lt; A.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;A.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出A:100，kello!!!</span></span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;B:&quot;</span>&lt;&lt; B.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;B.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出B:80，kello!!!</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>对于凡是包含动态分配成员或包含指针成员(如字符串)的类都应该提供拷贝构造函数；在提供拷贝构造函数的同时，还应该考虑重载”=”赋值操作符号。</li>
+</ul>
+<h3 id="调用拷贝构造函数的三种情况"><a href="#调用拷贝构造函数的三种情况" class="headerlink" title="调用拷贝构造函数的三种情况"></a>调用拷贝构造函数的三种情况</h3><ul>
+<li>一个对象以值传递的方式传入函数体(形参)<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局函数，传入的是对象</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">g_Fun</span><span class="params">(CExample C)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;test&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">CExample <span class="title">test</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">    <span class="comment">//传入对象</span></span><br><span class="line">    <span class="built_in">g_Fun</span>(test);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调用g_Fun()时，会产生以下几个重要步骤：</span></span><br><span class="line"><span class="comment">  * (1)test对象传入形参时，会先会产生一个临时变量，就叫tmp_test吧。</span></span><br><span class="line"><span class="comment">  * (2)然后调用拷贝构造函数把test的值给tmp_test。整个这两个步骤有点像：</span></span><br><span class="line"><span class="comment">  *    CExample tmp_test(test);</span></span><br><span class="line"><span class="comment">  * (3)等g_Fun()执行完后,析构掉tmp_test对象。</span></span><br><span class="line"><span class="comment">  * */</span></span><br></pre></td></tr></table></figure></li>
+<li>一个对象以值传递的方式返回(返回值)<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局函数</span></span><br><span class="line"><span class="function">CExample <span class="title">g_Fun</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">CExample <span class="title">temp</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">g_Fun</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 当g_Fun()函数执行到return时，会产生以下几个重要步骤：</span></span><br><span class="line"><span class="comment"> * (1)先会产生一个临时变量，就叫XXXX吧。</span></span><br><span class="line"><span class="comment"> * (2)然后调用拷贝构造函数把temp的值给XXXX。整个这两个步骤有点像：CExample XXXX(temp);</span></span><br><span class="line"><span class="comment"> * (3)在函数执行到最后先析构temp局部变量。</span></span><br><span class="line"><span class="comment"> * (4)等g_Fun()执行完后再析构掉XXXX对象.</span></span><br><span class="line"><span class="comment"> * */</span></span><br></pre></td></tr></table></figure></li>
+<li>一个对象需要通过另外一个对象进行初始化(初始化)<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">CExample <span class="title">A</span><span class="params">(<span class="number">100</span>)</span></span>;</span><br><span class="line">CExample B = A; <span class="comment">//这句和下句都会调用拷贝构造函数。</span></span><br><span class="line"><span class="comment">// CExample B(A);</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="构造函数为什么一般不定义为虚函数"><a href="#构造函数为什么一般不定义为虚函数" class="headerlink" title="构造函数为什么一般不定义为虚函数"></a>构造函数为什么一般不定义为虚函数</h3><ul>
+<li>从存储空间角度</li>
+<li>从使用角度</li>
+<li>从实现角度</li>
+<li>构造函数不需要是虚函数，</li>
+<li>当一个构造函数被调用的时候</li>
+</ul>
+<h3 id="析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？"><a href="#析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？" class="headerlink" title="析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？"></a>析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？</h3><ul>
+<li>C++标准指明析构函数不能、也不应该抛出异常。<ul>
+<li>如果对象在运行期间出现了异常，C++异常处理模型有责任清楚由于异常导致失效的对象(对象超出了原来的作用域)，并释放对象原来所分配的资源。而释放资源的任务是由对象的析构函数完成的。所以，某种意义上说，析构函数已经变成了异常处理的一部分。</li>
+</ul>
+</li>
+<li>如果析构函数抛出异常，则异常点之后的程序不会执行，如果析构函数在异常点之后执行了某些必要的动作，比如释放资源，则这些动作不会执行，没有释放的资源便造成了资源泄露问题。</li>
+<li>通常在异常发生时，C++的机制会调用已经构造对象的析构函数释放资源，此时若析构函数本身也抛出异常，则会出现程序崩溃问题。例如在析构函数里delete this指针，该操作会调用析构函数，那么就会陷入死循环造成程序崩溃。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>C/C++</category>
+      </categories>
+      <tags>
+        <tag>C/C++面经</tag>
+        <tag>面向对象</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>C++面向对象 1</title>
     <url>/2022/03/15/C%E3%80%81C++/2022-03-15-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%201/</url>
     <content><![CDATA[<h1 id="C-面向对象-1"><a href="#C-面向对象-1" class="headerlink" title="C++面向对象 1"></a>C++面向对象 1</h1><h2 id="继承和多态"><a href="#继承和多态" class="headerlink" title="继承和多态"></a>继承和多态</h2><ul>
@@ -502,256 +544,6 @@
       <tags>
         <tag>C/C++面经</tag>
         <tag>面向对象，继承和多态</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>C++面向对象 2</title>
-    <url>/2022/03/16/C%E3%80%81C++/2022-03-16-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%202/</url>
-    <content><![CDATA[<h1 id="C-面向对象-2"><a href="#C-面向对象-2" class="headerlink" title="C++面向对象 2"></a>C++面向对象 2</h1><h2 id="构造函数和析构函数"><a href="#构造函数和析构函数" class="headerlink" title="构造函数和析构函数"></a>构造函数和析构函数</h2><h3 id="对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？"><a href="#对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？" class="headerlink" title="对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？"></a>对拷贝构造函数、深浅拷贝的理解。拷贝构造函数作用及用途？什么时候需要自定义拷贝构造函数？</h3><ul>
-<li>浅拷贝是增加了一个指针，指向原来已经存在的内存。<ul>
-<li>浅拷贝在多个对象指向同一块空间的时候，释放一个空间会导致其他对象所使用的空间也被释放，其他空间再次释放会出现错误。</li>
-</ul>
-</li>
-<li>深拷贝是增加了一个指针，并新开辟了一块空间让指针指向这块新开辟的空间。</li>
-<li>深拷贝和浅拷贝的不同之处，仅仅在于修改了拷贝构造函数，以及赋值运算符的重载。相同类型的类对象是通过拷贝构造函数来完成复制过程的。<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstring&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CopyDemo</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="built_in">CopyDemo</span>(<span class="type">int</span> pa,<span class="type">char</span> *cstr)  <span class="comment">//构造函数，两个参数</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;a = pa;</span><br><span class="line">    <span class="keyword">this</span>-&gt;str = <span class="keyword">new</span> <span class="type">char</span>[<span class="number">1024</span>]; <span class="comment">//指针数组，动态的用new在堆上分配存储空间</span></span><br><span class="line">    <span class="built_in">strcpy</span>(<span class="keyword">this</span>-&gt;str,cstr);    <span class="comment">//拷贝过来</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 没写，C++会自动帮忙写一个复制构造函数，这个默认拷贝构造函数执行的是浅拷贝。</span></span><br><span class="line"><span class="comment">// 浅拷贝只复制指针,如下注释部分</span></span><br><span class="line">  <span class="built_in">CopyDemo</span>(CopyDemo&amp; obj)  </span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">this</span>-&gt;a = obj.a;</span><br><span class="line">    <span class="keyword">this</span>-&gt;str = obj.str; <span class="comment">// 这里是浅复制会出问题，要深复制</span></span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  CopyDemo(CopyDemo&amp; obj)  //一般数据成员有指针要自己写复制构造函数，如下</span></span><br><span class="line"><span class="comment">  &#123;</span></span><br><span class="line"><span class="comment">    this-&gt;a = obj.a;</span></span><br><span class="line"><span class="comment">    this-&gt;str = new char[1024];// 深复制</span></span><br><span class="line"><span class="comment">    if(str != 0)</span></span><br><span class="line"><span class="comment">      strcpy(this-&gt;str,obj.str); // 如果成功，把内容复制过来</span></span><br><span class="line"><span class="comment">  &#125;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">  ~<span class="built_in">CopyDemo</span>()  <span class="comment">//析构函数</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">delete</span> str;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">  <span class="type">int</span> a;  <span class="comment">//定义一个整型的数据成员</span></span><br><span class="line">  <span class="type">char</span> *str; <span class="comment">//字符串指针</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="function">CopyDemo <span class="title">A</span><span class="params">(<span class="number">100</span>,<span class="string">&quot;hello!!!&quot;</span>)</span></span>;</span><br><span class="line">  CopyDemo B = A;  <span class="comment">//复制构造函数，把A的10和hello!!!复制给B</span></span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;A:&quot;</span>&lt;&lt; A.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;A.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出A:100，hello!!!</span></span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;B:&quot;</span>&lt;&lt; B.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;B.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出B:100，hello!!!</span></span><br><span class="line">  <span class="comment">//修改后,发现A,B都被改变，原因就是浅复制，A,B指针指向同一地方，修改后都改变</span></span><br><span class="line">  B.a = <span class="number">80</span>;</span><br><span class="line">  B.str[<span class="number">0</span>] = <span class="string">&#x27;k&#x27;</span>;</span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;A:&quot;</span>&lt;&lt; A.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;A.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出A:100，kello!!!</span></span><br><span class="line">  cout &lt;&lt;<span class="string">&quot;B:&quot;</span>&lt;&lt; B.a &lt;&lt; <span class="string">&quot;,&quot;</span> &lt;&lt;B.str &lt;&lt; endl;</span><br><span class="line">  <span class="comment">//输出B:80，kello!!!</span></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>对于凡是包含动态分配成员或包含指针成员(如字符串)的类都应该提供拷贝构造函数；在提供拷贝构造函数的同时，还应该考虑重载”=”赋值操作符号。</li>
-</ul>
-<h3 id="调用拷贝构造函数的三种情况"><a href="#调用拷贝构造函数的三种情况" class="headerlink" title="调用拷贝构造函数的三种情况"></a>调用拷贝构造函数的三种情况</h3><ul>
-<li>一个对象以值传递的方式传入函数体(形参)<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局函数，传入的是对象</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">g_Fun</span><span class="params">(CExample C)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cout&lt;&lt;<span class="string">&quot;test&quot;</span>&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">CExample <span class="title">test</span><span class="params">(<span class="number">1</span>)</span></span>;</span><br><span class="line">    <span class="comment">//传入对象</span></span><br><span class="line">    <span class="built_in">g_Fun</span>(test);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 调用g_Fun()时，会产生以下几个重要步骤：</span></span><br><span class="line"><span class="comment">  * (1)test对象传入形参时，会先会产生一个临时变量，就叫tmp_test吧。</span></span><br><span class="line"><span class="comment">  * (2)然后调用拷贝构造函数把test的值给tmp_test。整个这两个步骤有点像：</span></span><br><span class="line"><span class="comment">  *    CExample tmp_test(test);</span></span><br><span class="line"><span class="comment">  * (3)等g_Fun()执行完后,析构掉tmp_test对象。</span></span><br><span class="line"><span class="comment">  * */</span></span><br></pre></td></tr></table></figure></li>
-<li>一个对象以值传递的方式返回(返回值)<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//全局函数</span></span><br><span class="line"><span class="function">CExample <span class="title">g_Fun</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">CExample <span class="title">temp</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line">    <span class="keyword">return</span> temp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">g_Fun</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 当g_Fun()函数执行到return时，会产生以下几个重要步骤：</span></span><br><span class="line"><span class="comment"> * (1)先会产生一个临时变量，就叫XXXX吧。</span></span><br><span class="line"><span class="comment"> * (2)然后调用拷贝构造函数把temp的值给XXXX。整个这两个步骤有点像：CExample XXXX(temp);</span></span><br><span class="line"><span class="comment"> * (3)在函数执行到最后先析构temp局部变量。</span></span><br><span class="line"><span class="comment"> * (4)等g_Fun()执行完后再析构掉XXXX对象.</span></span><br><span class="line"><span class="comment"> * */</span></span><br></pre></td></tr></table></figure></li>
-<li>一个对象需要通过另外一个对象进行初始化(初始化)<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">CExample <span class="title">A</span><span class="params">(<span class="number">100</span>)</span></span>;</span><br><span class="line">CExample B = A; <span class="comment">//这句和下句都会调用拷贝构造函数。</span></span><br><span class="line"><span class="comment">// CExample B(A);</span></span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h3 id="构造函数为什么一般不定义为虚函数"><a href="#构造函数为什么一般不定义为虚函数" class="headerlink" title="构造函数为什么一般不定义为虚函数"></a>构造函数为什么一般不定义为虚函数</h3><ul>
-<li>从存储空间角度</li>
-<li>从使用角度</li>
-<li>从实现角度</li>
-<li>构造函数不需要是虚函数，</li>
-<li>当一个构造函数被调用的时候</li>
-</ul>
-<h3 id="析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？"><a href="#析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？" class="headerlink" title="析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？"></a>析构函数可以抛出异常吗？为什么？除了资源泄露，还会造成怎样的影响？</h3><ul>
-<li>C++标准指明析构函数不能、也不应该抛出异常。<ul>
-<li>如果对象在运行期间出现了异常，C++异常处理模型有责任清楚由于异常导致失效的对象(对象超出了原来的作用域)，并释放对象原来所分配的资源。而释放资源的任务是由对象的析构函数完成的。所以，某种意义上说，析构函数已经变成了异常处理的一部分。</li>
-</ul>
-</li>
-<li>如果析构函数抛出异常，则异常点之后的程序不会执行，如果析构函数在异常点之后执行了某些必要的动作，比如释放资源，则这些动作不会执行，没有释放的资源便造成了资源泄露问题。</li>
-<li>通常在异常发生时，C++的机制会调用已经构造对象的析构函数释放资源，此时若析构函数本身也抛出异常，则会出现程序崩溃问题。例如在析构函数里delete this指针，该操作会调用析构函数，那么就会陷入死循环造成程序崩溃。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>C/C++</category>
-      </categories>
-      <tags>
-        <tag>C/C++面经</tag>
-        <tag>面向对象</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux网络基础(一)</title>
-    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</url>
-    <content><![CDATA[<h1 id="Linux网络基础-一"><a href="#Linux网络基础-一" class="headerlink" title="Linux网络基础(一)"></a>Linux网络基础(一)</h1><h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><p>Socket又称套接字，是一个通信链的句柄，位于应用层和传输层之间，用于唯一标识网络中某一台主机上的某一个进程。它通常由主机的IP地址和端口号拼接而成。</p>
-<h2 id="Linux的socket相关函数"><a href="#Linux的socket相关函数" class="headerlink" title="Linux的socket相关函数"></a>Linux的socket相关函数</h2><h3 id="socket库"><a href="#socket库" class="headerlink" title="socket库"></a>socket库</h3><p>与Windows提供了 <code>&lt;winsock2.h&gt;</code>库方便开发者进行socket编程相同，Linux为开发者提供了 <code>&lt;sys/socket.h&gt;</code>库。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span> <span class="comment">// Linux提供的socket库</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span> <span class="comment">// 保存不同协议的地址结构体，如socketaddr_in</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span>  <span class="comment">// 地址格式转换函数</span></span></span><br></pre></td></tr></table></figure>
-<h3 id="socket的创建"><a href="#socket的创建" class="headerlink" title="socket的创建"></a>socket的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> domain, <span class="type">int</span> type, <span class="type">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>domain: 用于确定通信的特性，包括地址的格式</code><ul>
-<li><code>AF_INET</code> : IPV4因特网域</li>
-<li><code>AF_INET6</code>: IPV6因特网域</li>
-<li><code>AF_UNIX</code> : UNIX域</li>
-<li><code>AF_UPSPEC</code>: 未指定</li>
-</ul>
-</li>
-<li><code>type</code><ul>
-<li><code>SOCK_DGRAM</code> : 固定长度的、无连接的、不可靠的报文传输(UDP)</li>
-<li><code>SOCK_STREAM</code>: 有序的、可靠的、双向的、面向连接的字节流(TCP)</li>
-<li><code>SOCK_SEQPACKET</code>: 固定长度的、有序的、可靠的、面向连接的报文传递</li>
-<li><code>SOCK_RAW</code>: IP协议的数据报接口</li>
-</ul>
-</li>
-<li><code>protocol</code><ul>
-<li>通常为0，表示为给定的 <code>domain</code>和 <code>type</code>选择默认协议。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>创建成功，返回文件描述符(套接字)</li>
-<li>创建失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h3 id="地址格式"><a href="#地址格式" class="headerlink" title="地址格式"></a>地址格式</h3><p>不同的通信协议会有不同的套接字地址结构。为使不同格式地址能够传入套接字函数，地址会被强制转换成一个通用的地址结构<code>sockaddr</code></p>
-<p><code>sockaddr_in</code>是Internet环境下的套接字地址形式，主要用于socket定义和赋值；</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr_in for IPV4 16 bytes */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">in_addr</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">int</span> s_addr;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> &#123;</span><br><span class="line">  <span class="type">sa_family_t</span> sin_family; <span class="comment">/* 地址族 */</span>    <span class="comment">//2字节</span></span><br><span class="line">  in_port  sin_port; <span class="comment">/* 目的端口号 */</span>  <span class="comment">//2字节</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr; <span class="comment">/* IP地址*/</span>  <span class="comment">// 4 字节</span></span><br><span class="line">  <span class="comment">/* Pad to size of `struct sockaddr&#x27;. */</span>  </span><br><span class="line">  <span class="type">unsigned</span> <span class="type">char</span>  sin_zero[<span class="number">8</span>];<span class="comment">/*填充字节*/</span> <span class="comment">//8 字节 需要清零</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>定义socket的各类地址形式最终转换成<code>sockaddr</code>类型作为函数参数传输。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr 16 bytes*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span> &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sa_family;  <span class="comment">//地址族   AF_XXXX    2字节</span></span><br><span class="line"> <span class="type">char</span>        sa_data[<span class="number">14</span>]; <span class="comment">//可变长度地址 包含IP地址、port 14 字节</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="将socket与地址关联-服务器"><a href="#将socket与地址关联-服务器" class="headerlink" title="将socket与地址关联(服务器)"></a>将socket与地址关联(服务器)</h3><p>创建socket后还需将socket和地址进行关联，所以调用<code>bind()</code>函数将地址指向的<code>sockaddr</code>结构体中描述的一些属性与socket套接字绑定(也叫命名)。然后就可以通过socket读取和使用，当然也可通过该socket发送数据到指定目的。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bind</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、IP地址、port的sockaddr_in结构体，传参时被强制转换为sockaddr。</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<p>对于服务器，<code>bind</code>是必须要做的事情。服务器启动的时候需要绑定指定的端口来提供服务(以便客户向指定的端口发送请求)。一般来说，会将参数中的IP地址赋值为<code>INADDR_ANY</code>，即无论发送到系统中的哪个IP地址(多网卡情况)的请求都采用被绑定的socket处理，无需指定固定IP。</p>
-<p>对于客户端来说，一般不需要主动进行<code>bind</code>，交给操作系统分配可用端口。</p>
-<blockquote>
-<p>公认端口:从0到1023。<br>小于256的端口作为保留端口。<br>注册端口:端口号从1024到49151。实际上，机器通常从1024起分配动态端口。<br>动态和/或私有端口:从49152到65535。理论上，不应为服务分配这些端口。</p>
-</blockquote>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> sock_fd = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">// IPV4 tcp socket</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_INET;                              <span class="comment">// IPV4 需要与socket中的指定一致</span></span><br><span class="line">addr.sin_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.51.122&quot;</span>);            <span class="comment">// 点分十进制转三十二位字节序</span></span><br><span class="line">addr.sin_port = <span class="number">5050</span>;                                   <span class="comment">//大于1024</span></span><br><span class="line"><span class="built_in">bind</span>(sock_fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="built_in">sizeof</span>(addr));   <span class="comment">// 关联绑定</span></span><br></pre></td></tr></table></figure>
-<h3 id="网络连接"><a href="#网络连接" class="headerlink" title="网络连接"></a>网络连接</h3><p>面向连接的网络服务(TCP)在开始交换数据之前，需要在请求服务的进程套接字(客户端)和提供服务的套接字(服务器)之间建立一个连接(TCP是三次握手)。</p>
-<h4 id="连接请求connect-客户端"><a href="#连接请求connect-客户端" class="headerlink" title="连接请求connect(客户端)"></a>连接请求connect(客户端)</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="type">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 返回值：成功返回0， 失败返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、服务器IP地址、服务器port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果sockfd参数中无法获知服务器IP地址和服务器的端口号，则绑定一个默认地址，即客户端本机的IP。</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<p>在客户端尝试连接服务器的过程中，可能会出现连接失败的情况。这很可能是由一些瞬时错误引起的，如果一个服务器运行在一个负载很重的系统上，就很有可能发生这种错误。</p>
-<p>通常采用指数补偿算法解决瞬时错误。当调用的connect失败后，进程会休眠一小段时间，然后进行第二次尝试。如果第二次的尝试依然失败，则休眠时间指数级增加，以此类推进行循环，直到最大休眠延时达到2分钟左右。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MAXSLEEP 128  <span class="comment">// 最大休眠时间</span></span></span><br><span class="line"><span class="comment">/* 指数补偿算法 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect_try</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> strcut sockaddr *addr, <span class="type">socklen_t</span> addrlen)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> num_sec;</span><br><span class="line">  <span class="keyword">for</span>(num_sec = <span class="number">1</span>; numsec &lt;= MAXSLEEP; numsec &lt;&lt;= <span class="number">1</span>)  <span class="comment">// 休眠时间指数级增长</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">connect</span>(sockfd, addr, addrlen) == <span class="number">0</span>)</span><br><span class="line">      <span class="comment">// 成功连接</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (num_sec &lt;= MAXSLEEP/<span class="number">2</span>)  <span class="comment">// 休眠，然后再次重连</span></span><br><span class="line">      <span class="built_in">sleep</span>(num_sec);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;  <span class="comment">//超时， 返回 -1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="监听连接请求listen-服务器"><a href="#监听连接请求listen-服务器" class="headerlink" title="监听连接请求listen(服务器)"></a>监听连接请求listen(服务器)</h4><p>服务器调用<code>listen</code>函数来宣告它正在接收连接请求。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">listen</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> backlog)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>backlog</code>: accept应答之前，允许在进入队列中等待的连接数目，最大值128。连接队列缓存的容量</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h4 id="处理客户端的连接请求accept-服务器"><a href="#处理客户端的连接请求accept-服务器" class="headerlink" title="处理客户端的连接请求accept(服务器)"></a>处理客户端的连接请求accept(服务器)</h4><p>服务器调用<code>accept</code>来建立套接字连接，处理单个连接请求。如果服务器调用accept后没有收到连接请求，则服务器会阻塞直到新的请求到来。</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> sockfd, <span class="keyword">struct</span> sockaddr *addr, <span class="type">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: 正在监听端口的socket的文件描述符</li>
-<li><code>addr</code>: 填充了地址族、客户端IP地址、客户端port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果服务器不关心，可以设置为NULL</li>
-<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回与客户端连接的套接字，该套接字域客户端连接</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<h3 id="网络连接的关闭和socket的关闭"><a href="#网络连接的关闭和socket的关闭" class="headerlink" title="网络连接的关闭和socket的关闭"></a>网络连接的关闭和socket的关闭</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">shutdown</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> how)</span></span>;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-<li><code>how</code>: 关闭方式<ul>
-<li><code>SHUT_RD</code>: 关闭读端</li>
-<li><code>SHUT_WR</code>: 关闭写端</li>
-<li><code>SHUT_RDWR</code>: 关闭读写</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">closesocket</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>参数</p>
-<ul>
-<li><code>sockfd</code>: socket的文件描述符</li>
-</ul>
-</li>
-<li><p>返回值</p>
-<ul>
-<li>成功，返回0</li>
-<li>失败，返回-1</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>close和shutdown的区别<br>shutdown不管引用计数，关闭的是连接而不是套接字，调用后套接字依然存在，直到调用close将套接字清除。并且，它需要等待输出缓冲区中的数据传输完毕再发送FIN包关闭连接。<br>close是把socket描述符的引用计数-1，仅在引用计数为0时关闭套接字。使用后套接字描述符将从内存中清除，之后也不能再被使用。如果调用后会关闭套接字，它将不管输出缓冲区是否还有数据，直接将套接字描述符从内存清除。</p>
-</blockquote>
-<h3 id="大小端转换"><a href="#大小端转换" class="headerlink" title="大小端转换"></a>大小端转换</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl</span><span class="params">(<span class="type">uint32_t</span> hostlong)</span></span>;  <span class="comment">//返回值：以网络字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htons</span><span class="params">(<span class="type">uint16_t</span> hostshort)</span></span>; <span class="comment">//返回值：以网络字节序表示的16位整数</span></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">ntohl</span><span class="params">(<span class="type">uint32_t</span> netlong)</span></span>;   <span class="comment">//返回值：以主机字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">ntohs</span><span class="params">(<span class="type">uint16_t</span> netshort)</span></span>;  <span class="comment">//返回值：以主机字节序表示的16位整数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl32</span><span class="params">(<span class="type">uint32_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint32_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0x000000FF</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">24</span>) &amp; <span class="number">0xFF000000</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0x00FF0000</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x0000FF00</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htonl16</span><span class="params">(<span class="type">uint16_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint16_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0xFF00</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x00FF</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="IP地址转换"><a href="#IP地址转换" class="headerlink" title="IP地址转换"></a>IP地址转换</h3><h4 id="点分十进制转32位网络字节序"><a href="#点分十进制转32位网络字节序" class="headerlink" title="点分十进制转32位网络字节序"></a>点分十进制转32位网络字节序</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">in_addr_t</span> <span class="title">inet_addr</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp)</span></span>;  <span class="comment">//cp 点分十进制地址</span></span><br><span class="line"><span class="comment">//返回网络字节序的32位地址</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_aton</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp, <span class="keyword">struct</span> in_addr *inp)</span></span>; <span class="comment">// cp 点分十进制地址; inp 转换结果空间的首地址，即存放转换结果的变量的地址</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_pton</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">char</span> *src, <span class="type">void</span> *dst)</span></span>;  <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                        cp 点分十进制地址; </span></span><br><span class="line"><span class="comment">                                                        inp 存放转换结果的缓冲区, 如果是IPV4需要4字节, IPV6需要16字节</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br></pre></td></tr></table></figure>
-<h4 id="32位网络字节序转点分十进制"><a href="#32位网络字节序转点分十进制" class="headerlink" title="32位网络字节序转点分十进制"></a>32位网络字节序转点分十进制</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">char</span> *<span class="title">inet_ntoa</span><span class="params">(<span class="keyword">struct</span> in_addr in)</span></span>;</span><br><span class="line"><span class="comment">//返回 点分十进制地址字符串的地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span> *<span class="title">inet_ntop</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">void</span> *src,</span></span></span><br><span class="line"><span class="params"><span class="function">                      <span class="type">char</span> *dst, <span class="type">socklen_t</span> size)</span></span>; <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                      src 32位网络字节序的二进制IP地址;</span></span><br><span class="line"><span class="comment">                                                      dst 保存点分十进制字符串的缓冲区;</span></span><br><span class="line"><span class="comment">                                                      size dst缓冲区的大小，两个常量INET_ADDRSRTRLEN(IPV4)、INET6_ADDRSTRLEN(IPV6)</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//返回值，成功，返回地址字符串指针，失败返回 NULL</span></span><br></pre></td></tr></table></figure>
-<h2 id="基于TCP-IP协议网络编程模型"><a href="#基于TCP-IP协议网络编程模型" class="headerlink" title="基于TCP/IP协议网络编程模型"></a>基于TCP/IP协议网络编程模型</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B.png?raw=true" alt="基于TCP/IP协议网络编程模型"></p>
-<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>TCP并发服务器的思想是每一个客户机的请求并不由服务器直接处理，二十由服务器创建一个子进程(子线程)来处理。</p>
-<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/TCP%E5%A4%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A8%A1%E5%9E%8B.png?raw=true" alt="TCP多进程/多线程服务器模型"></p>
-<ul>
-<li>TCP多进程服务器模型<ul>
-<li>优点<ul>
-<li>安全、进程之间相互隔离，一个进程崩溃不会导致整个服务器崩溃。</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>占用资源较大</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>TCP多线程服务器模型<ul>
-<li>优点<ul>
-<li>占用资源较少</li>
-</ul>
-</li>
-<li>缺点<ul>
-<li>不安全，因为线程之间是共享进程的资源，一个线程崩溃会导致服务器整个进程崩溃</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>Linux网络编程</tag>
-        <tag>Socket</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux网络编程导引</title>
-    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
-    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
-      <categories>
-        <category>Linux</category>
-        <category>网络编程</category>
-      </categories>
-      <tags>
-        <tag>Linux网络编程</tag>
       </tags>
   </entry>
   <entry>
@@ -2445,6 +2237,214 @@
       <tags>
         <tag>剑指Offer</tag>
         <tag>基础知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux网络编程导引</title>
+    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%AF%BC%E5%BC%95/</url>
+    <content><![CDATA[<h1 id="Linux网络编程导引"><a href="#Linux网络编程导引" class="headerlink" title="Linux网络编程导引"></a>Linux网络编程导引</h1>]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>网络编程</category>
+      </categories>
+      <tags>
+        <tag>Linux网络编程</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Linux网络基础(一)</title>
+    <url>/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</url>
+    <content><![CDATA[<h1 id="Linux网络基础-一"><a href="#Linux网络基础-一" class="headerlink" title="Linux网络基础(一)"></a>Linux网络基础(一)</h1><h2 id="Socket"><a href="#Socket" class="headerlink" title="Socket"></a>Socket</h2><p>Socket又称套接字，是一个通信链的句柄，位于应用层和传输层之间，用于唯一标识网络中某一台主机上的某一个进程。它通常由主机的IP地址和端口号拼接而成。</p>
+<h2 id="Linux的socket相关函数"><a href="#Linux的socket相关函数" class="headerlink" title="Linux的socket相关函数"></a>Linux的socket相关函数</h2><h3 id="socket库"><a href="#socket库" class="headerlink" title="socket库"></a>socket库</h3><p>与Windows提供了 <code>&lt;winsock2.h&gt;</code>库方便开发者进行socket编程相同，Linux为开发者提供了 <code>&lt;sys/socket.h&gt;</code>库。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/socket.h&gt;</span> <span class="comment">// Linux提供的socket库</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;netinet/in.h&gt;</span> <span class="comment">// 保存不同协议的地址结构体，如socketaddr_in</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;arpa/inet.h&gt;</span>  <span class="comment">// 地址格式转换函数</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="socket的创建"><a href="#socket的创建" class="headerlink" title="socket的创建"></a>socket的创建</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">socket</span><span class="params">(<span class="type">int</span> domain, <span class="type">int</span> type, <span class="type">int</span> protocol)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>domain: 用于确定通信的特性，包括地址的格式</code><ul>
+<li><code>AF_INET</code> : IPV4因特网域</li>
+<li><code>AF_INET6</code>: IPV6因特网域</li>
+<li><code>AF_UNIX</code> : UNIX域</li>
+<li><code>AF_UPSPEC</code>: 未指定</li>
+</ul>
+</li>
+<li><code>type</code><ul>
+<li><code>SOCK_DGRAM</code> : 固定长度的、无连接的、不可靠的报文传输(UDP)</li>
+<li><code>SOCK_STREAM</code>: 有序的、可靠的、双向的、面向连接的字节流(TCP)</li>
+<li><code>SOCK_SEQPACKET</code>: 固定长度的、有序的、可靠的、面向连接的报文传递</li>
+<li><code>SOCK_RAW</code>: IP协议的数据报接口</li>
+</ul>
+</li>
+<li><code>protocol</code><ul>
+<li>通常为0，表示为给定的 <code>domain</code>和 <code>type</code>选择默认协议。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>创建成功，返回文件描述符(套接字)</li>
+<li>创建失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h3 id="地址格式"><a href="#地址格式" class="headerlink" title="地址格式"></a>地址格式</h3><p>不同的通信协议会有不同的套接字地址结构。为使不同格式地址能够传入套接字函数，地址会被强制转换成一个通用的地址结构<code>sockaddr</code></p>
+<p><code>sockaddr_in</code>是Internet环境下的套接字地址形式，主要用于socket定义和赋值；</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr_in for IPV4 16 bytes */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">in_addr</span> &#123;</span><br><span class="line"> <span class="type">unsigned</span> <span class="type">int</span> s_addr;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> &#123;</span><br><span class="line">  <span class="type">sa_family_t</span> sin_family; <span class="comment">/* 地址族 */</span>    <span class="comment">//2字节</span></span><br><span class="line">  in_port  sin_port; <span class="comment">/* 目的端口号 */</span>  <span class="comment">//2字节</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">in_addr</span> sin_addr; <span class="comment">/* IP地址*/</span>  <span class="comment">// 4 字节</span></span><br><span class="line">  <span class="comment">/* Pad to size of `struct sockaddr&#x27;. */</span>  </span><br><span class="line">  <span class="type">unsigned</span> <span class="type">char</span>  sin_zero[<span class="number">8</span>];<span class="comment">/*填充字节*/</span> <span class="comment">//8 字节 需要清零</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>定义socket的各类地址形式最终转换成<code>sockaddr</code>类型作为函数参数传输。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">/* sockaddr 16 bytes*/</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="type">unsigned</span> <span class="type">short</span> <span class="type">sa_family_t</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr</span> &#123;</span><br><span class="line"> <span class="type">sa_family_t</span> sa_family;  <span class="comment">//地址族   AF_XXXX    2字节</span></span><br><span class="line"> <span class="type">char</span>        sa_data[<span class="number">14</span>]; <span class="comment">//可变长度地址 包含IP地址、port 14 字节</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="将socket与地址关联-服务器"><a href="#将socket与地址关联-服务器" class="headerlink" title="将socket与地址关联(服务器)"></a>将socket与地址关联(服务器)</h3><p>创建socket后还需将socket和地址进行关联，所以调用<code>bind()</code>函数将地址指向的<code>sockaddr</code>结构体中描述的一些属性与socket套接字绑定(也叫命名)。然后就可以通过socket读取和使用，当然也可通过该socket发送数据到指定目的。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">bind</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="type">socklen_t</span> addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、IP地址、port的sockaddr_in结构体，传参时被强制转换为sockaddr。</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<p>对于服务器，<code>bind</code>是必须要做的事情。服务器启动的时候需要绑定指定的端口来提供服务(以便客户向指定的端口发送请求)。一般来说，会将参数中的IP地址赋值为<code>INADDR_ANY</code>，即无论发送到系统中的哪个IP地址(多网卡情况)的请求都采用被绑定的socket处理，无需指定固定IP。</p>
+<p>对于客户端来说，一般不需要主动进行<code>bind</code>，交给操作系统分配可用端口。</p>
+<blockquote>
+<p>公认端口:从0到1023。<br>小于256的端口作为保留端口。<br>注册端口:端口号从1024到49151。实际上，机器通常从1024起分配动态端口。<br>动态和/或私有端口:从49152到65535。理论上，不应为服务分配这些端口。</p>
+</blockquote>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">int</span> sock_fd = <span class="built_in">socket</span>(AF_INET, SOCK_STREAM, <span class="number">0</span>); <span class="comment">// IPV4 tcp socket</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">sockaddr_in</span> addr;</span><br><span class="line"><span class="built_in">memset</span>(&amp;addr, <span class="number">0</span>, <span class="built_in">sizeof</span>(addr));</span><br><span class="line">addr.sin_family = AF_INET;                              <span class="comment">// IPV4 需要与socket中的指定一致</span></span><br><span class="line">addr.sin_addr = <span class="built_in">inet_addr</span>(<span class="string">&quot;192.168.51.122&quot;</span>);            <span class="comment">// 点分十进制转三十二位字节序</span></span><br><span class="line">addr.sin_port = <span class="number">5050</span>;                                   <span class="comment">//大于1024</span></span><br><span class="line"><span class="built_in">bind</span>(sock_fd, (<span class="keyword">struct</span> sockaddr*)&amp;addr, <span class="built_in">sizeof</span>(addr));   <span class="comment">// 关联绑定</span></span><br></pre></td></tr></table></figure>
+<h3 id="网络连接"><a href="#网络连接" class="headerlink" title="网络连接"></a>网络连接</h3><p>面向连接的网络服务(TCP)在开始交换数据之前，需要在请求服务的进程套接字(客户端)和提供服务的套接字(服务器)之间建立一个连接(TCP是三次握手)。</p>
+<h4 id="连接请求connect-客户端"><a href="#连接请求connect-客户端" class="headerlink" title="连接请求connect(客户端)"></a>连接请求connect(客户端)</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> <span class="keyword">struct</span> sockaddr *addr,</span></span></span><br><span class="line"><span class="params"><span class="function">            <span class="type">socklen_t</span> addrlen)</span></span>;</span><br><span class="line"><span class="comment">// 返回值：成功返回0， 失败返回-1</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、服务器IP地址、服务器port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果sockfd参数中无法获知服务器IP地址和服务器的端口号，则绑定一个默认地址，即客户端本机的IP。</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<p>在客户端尝试连接服务器的过程中，可能会出现连接失败的情况。这很可能是由一些瞬时错误引起的，如果一个服务器运行在一个负载很重的系统上，就很有可能发生这种错误。</p>
+<p>通常采用指数补偿算法解决瞬时错误。当调用的connect失败后，进程会休眠一小段时间，然后进行第二次尝试。如果第二次的尝试依然失败，则休眠时间指数级增加，以此类推进行循环，直到最大休眠延时达到2分钟左右。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> MAXSLEEP 128  <span class="comment">// 最大休眠时间</span></span></span><br><span class="line"><span class="comment">/* 指数补偿算法 */</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">connect_try</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">const</span> strcut sockaddr *addr, <span class="type">socklen_t</span> addrlen)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> num_sec;</span><br><span class="line">  <span class="keyword">for</span>(num_sec = <span class="number">1</span>; numsec &lt;= MAXSLEEP; numsec &lt;&lt;= <span class="number">1</span>)  <span class="comment">// 休眠时间指数级增长</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">connect</span>(sockfd, addr, addrlen) == <span class="number">0</span>)</span><br><span class="line">      <span class="comment">// 成功连接</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (num_sec &lt;= MAXSLEEP/<span class="number">2</span>)  <span class="comment">// 休眠，然后再次重连</span></span><br><span class="line">      <span class="built_in">sleep</span>(num_sec);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;  <span class="comment">//超时， 返回 -1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="监听连接请求listen-服务器"><a href="#监听连接请求listen-服务器" class="headerlink" title="监听连接请求listen(服务器)"></a>监听连接请求listen(服务器)</h4><p>服务器调用<code>listen</code>函数来宣告它正在接收连接请求。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">listen</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> backlog)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>backlog</code>: accept应答之前，允许在进入队列中等待的连接数目，最大值128。连接队列缓存的容量</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h4 id="处理客户端的连接请求accept-服务器"><a href="#处理客户端的连接请求accept-服务器" class="headerlink" title="处理客户端的连接请求accept(服务器)"></a>处理客户端的连接请求accept(服务器)</h4><p>服务器调用<code>accept</code>来建立套接字连接，处理单个连接请求。如果服务器调用accept后没有收到连接请求，则服务器会阻塞直到新的请求到来。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">accept</span><span class="params">(<span class="type">int</span> sockfd, <span class="keyword">struct</span> sockaddr *addr, <span class="type">socklen_t</span> *addrlen)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: 正在监听端口的socket的文件描述符</li>
+<li><code>addr</code>: 填充了地址族、客户端IP地址、客户端port的sockaddr_in结构体，传参时被强制转换为sockaddr。如果服务器不关心，可以设置为NULL</li>
+<li><code>addrlen</code>: 地址的长度，因为sockaddr类型的参数中sa_data是可变长度地址</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回与客户端连接的套接字，该套接字域客户端连接</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<h3 id="网络连接的关闭和socket的关闭"><a href="#网络连接的关闭和socket的关闭" class="headerlink" title="网络连接的关闭和socket的关闭"></a>网络连接的关闭和socket的关闭</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">shutdown</span><span class="params">(<span class="type">int</span> sockfd, <span class="type">int</span> how)</span></span>;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+<li><code>how</code>: 关闭方式<ul>
+<li><code>SHUT_RD</code>: 关闭读端</li>
+<li><code>SHUT_WR</code>: 关闭写端</li>
+<li><code>SHUT_RDWR</code>: 关闭读写</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span> <span class="title">close</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">closesocket</span><span class="params">(<span class="type">int</span> sockfd)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>参数</p>
+<ul>
+<li><code>sockfd</code>: socket的文件描述符</li>
+</ul>
+</li>
+<li><p>返回值</p>
+<ul>
+<li>成功，返回0</li>
+<li>失败，返回-1</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>close和shutdown的区别<br>shutdown不管引用计数，关闭的是连接而不是套接字，调用后套接字依然存在，直到调用close将套接字清除。并且，它需要等待输出缓冲区中的数据传输完毕再发送FIN包关闭连接。<br>close是把socket描述符的引用计数-1，仅在引用计数为0时关闭套接字。使用后套接字描述符将从内存中清除，之后也不能再被使用。如果调用后会关闭套接字，它将不管输出缓冲区是否还有数据，直接将套接字描述符从内存清除。</p>
+</blockquote>
+<h3 id="大小端转换"><a href="#大小端转换" class="headerlink" title="大小端转换"></a>大小端转换</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl</span><span class="params">(<span class="type">uint32_t</span> hostlong)</span></span>;  <span class="comment">//返回值：以网络字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htons</span><span class="params">(<span class="type">uint16_t</span> hostshort)</span></span>; <span class="comment">//返回值：以网络字节序表示的16位整数</span></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">ntohl</span><span class="params">(<span class="type">uint32_t</span> netlong)</span></span>;   <span class="comment">//返回值：以主机字节序表示的32位整数</span></span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">ntohs</span><span class="params">(<span class="type">uint16_t</span> netshort)</span></span>;  <span class="comment">//返回值：以主机字节序表示的16位整数</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">uint32_t</span> <span class="title">htonl32</span><span class="params">(<span class="type">uint32_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint32_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">24</span>) &amp; <span class="number">0x000000FF</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">24</span>) &amp; <span class="number">0xFF000000</span>);</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0x00FF0000</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x0000FF00</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">uint16_t</span> <span class="title">htonl16</span><span class="params">(<span class="type">uint16_t</span> number)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">uint16_t</span> a = <span class="number">0</span>;</span><br><span class="line">  a |= ((number &lt;&lt; <span class="number">8</span>) &amp; <span class="number">0xFF00</span>);</span><br><span class="line">  a |= ((number &gt;&gt; <span class="number">8</span>) &amp; <span class="number">0x00FF</span>);</span><br><span class="line">  <span class="keyword">return</span> a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="IP地址转换"><a href="#IP地址转换" class="headerlink" title="IP地址转换"></a>IP地址转换</h3><h4 id="点分十进制转32位网络字节序"><a href="#点分十进制转32位网络字节序" class="headerlink" title="点分十进制转32位网络字节序"></a>点分十进制转32位网络字节序</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="type">in_addr_t</span> <span class="title">inet_addr</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp)</span></span>;  <span class="comment">//cp 点分十进制地址</span></span><br><span class="line"><span class="comment">//返回网络字节序的32位地址</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_aton</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *cp, <span class="keyword">struct</span> in_addr *inp)</span></span>; <span class="comment">// cp 点分十进制地址; inp 转换结果空间的首地址，即存放转换结果的变量的地址</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">inet_pton</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">char</span> *src, <span class="type">void</span> *dst)</span></span>;  <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                        cp 点分十进制地址; </span></span><br><span class="line"><span class="comment">                                                        inp 存放转换结果的缓冲区, 如果是IPV4需要4字节, IPV6需要16字节</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//成功返回1 ，失败返回0， 出错返回-1</span></span><br></pre></td></tr></table></figure>
+<h4 id="32位网络字节序转点分十进制"><a href="#32位网络字节序转点分十进制" class="headerlink" title="32位网络字节序转点分十进制"></a>32位网络字节序转点分十进制</h4><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 旧函数，只支持IPV4</span></span><br><span class="line"><span class="function"><span class="type">char</span> *<span class="title">inet_ntoa</span><span class="params">(<span class="keyword">struct</span> in_addr in)</span></span>;</span><br><span class="line"><span class="comment">//返回 点分十进制地址字符串的地址</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 新函数，支持IPV4和IPV6</span></span><br><span class="line"><span class="function"><span class="type">const</span> <span class="type">char</span> *<span class="title">inet_ntop</span><span class="params">(<span class="type">int</span> af, <span class="type">const</span> <span class="type">void</span> *src,</span></span></span><br><span class="line"><span class="params"><span class="function">                      <span class="type">char</span> *dst, <span class="type">socklen_t</span> size)</span></span>; <span class="comment">/*  af IP地址类型AF_INET(IPV4)、AF_INET6(IPV6); </span></span><br><span class="line"><span class="comment">                                                      src 32位网络字节序的二进制IP地址;</span></span><br><span class="line"><span class="comment">                                                      dst 保存点分十进制字符串的缓冲区;</span></span><br><span class="line"><span class="comment">                                                      size dst缓冲区的大小，两个常量INET_ADDRSRTRLEN(IPV4)、INET6_ADDRSTRLEN(IPV6)</span></span><br><span class="line"><span class="comment">                                                    */</span></span><br><span class="line"><span class="comment">//返回值，成功，返回地址字符串指针，失败返回 NULL</span></span><br></pre></td></tr></table></figure>
+<h2 id="基于TCP-IP协议网络编程模型"><a href="#基于TCP-IP协议网络编程模型" class="headerlink" title="基于TCP/IP协议网络编程模型"></a>基于TCP/IP协议网络编程模型</h2><p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B.png?raw=true" alt="基于TCP/IP协议网络编程模型"></p>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>TCP并发服务器的思想是每一个客户机的请求并不由服务器直接处理，二十由服务器创建一个子进程(子线程)来处理。</p>
+<p><img src="https://github.com/zjn-astonishe/image/blob/main/%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE/TCP%E5%A4%9A%E8%BF%9B%E7%A8%8B%E3%80%81%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%A8%A1%E5%9E%8B.png?raw=true" alt="TCP多进程/多线程服务器模型"></p>
+<ul>
+<li>TCP多进程服务器模型<ul>
+<li>优点<ul>
+<li>安全、进程之间相互隔离，一个进程崩溃不会导致整个服务器崩溃。</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>占用资源较大</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>TCP多线程服务器模型<ul>
+<li>优点<ul>
+<li>占用资源较少</li>
+</ul>
+</li>
+<li>缺点<ul>
+<li>不安全，因为线程之间是共享进程的资源，一个线程崩溃会导致服务器整个进程崩溃</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Linux</category>
+        <category>网络编程</category>
+      </categories>
+      <tags>
+        <tag>Linux网络编程</tag>
+        <tag>Socket</tag>
       </tags>
   </entry>
 </search>
