@@ -357,6 +357,20 @@
   </url>
   
   <url>
+    <loc>http://zjn-astonishe.github.io/tags/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2022-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/Socket/</loc>
+    <lastmod>2022-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://zjn-astonishe.github.io/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</loc>
     <lastmod>2022-08-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -412,20 +426,6 @@
     <priority>0.2</priority>
   </url>
   
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2022-08-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/Socket/</loc>
-    <lastmod>2022-08-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
 
   
   <url>
@@ -444,6 +444,13 @@
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/</loc>
+    <lastmod>2022-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/Linux/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</loc>
     <lastmod>2022-08-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -471,13 +478,6 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91%E2%80%94%E6%8F%90%E9%AB%98%E7%AF%87/</loc>
-    <lastmod>2022-08-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91/</loc>
     <lastmod>2022-08-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -485,7 +485,14 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/categories/Linux/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</loc>
+    <loc>http://zjn-astonishe.github.io/categories/Linux/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</loc>
+    <lastmod>2022-08-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91%E2%80%94%E6%8F%90%E9%AB%98%E7%AF%87/</loc>
     <lastmod>2022-08-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -500,13 +507,6 @@
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/I2C/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2022-08-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/categories/Linux/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</loc>
     <lastmod>2022-08-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
