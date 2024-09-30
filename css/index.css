@@ -3319,8 +3319,6 @@ h1.page-title + .tag-cloud-list {
   background: #000;
   background-attachment: scroll;
   background-position: bottom;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
   background-size: cover;
 }
 #footer:before {
@@ -3356,8 +3354,6 @@ h1.page-title + .tag-cloud-list {
   width: 100%;
   background-color: #000;
   background-position: center 25%;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
   background-size: cover;
   background-repeat: no-repeat;
   -webkit-transition: all 0.5s;
