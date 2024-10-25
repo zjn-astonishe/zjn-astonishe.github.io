@@ -221,8 +221,8 @@
 <li>In general, every time R1 is executed, $d$ can have a different value; however, typically $d$ is kept at 1(通常是加1)</li>
 </ul>
 </li>
-<li>R2: Each message piggybacks the clock value of its sender at sending time.(每条信息都附带了它的发送者在发送时的时钟值) When a process $p<em>i$ receives a message with timestamp $C</em>{msg}$, it executes the following actions:(选取本地的时间戳和接收到的消息中的时间戳中更大的作为新的本地时间戳)<ul>
-<li>$C<em>i = max(C_i, C</em>{msg})$</li>
+<li>R2: Each message piggybacks the clock value of its sender at sending time.(每条信息都附带了它的发送者在发送时的时钟值) When a process $p_i$ receives a message with timestamp $C_{msg}$, it executes the following actions:(选取本地的时间戳和接收到的消息中的时间戳中更大的作为新的本地时间戳)<ul>
+<li>$C_i = max(C_i, C_{msg})$</li>
 <li>Execute R1(再更新后执行一次R1，因为接收到的消息是在OS层的，要交付给应用层的过程中需要触发事件)</li>
 <li>Deliver the message<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution_scalar.png" alt="img"></li>
 </ul>
@@ -360,8 +360,8 @@
 <h4 id="Singhal-Kshemkalyani’s-Differential-Technique-差分优化技术"><a href="#Singhal-Kshemkalyani’s-Differential-Technique-差分优化技术" class="headerlink" title="Singhal-Kshemkalyani’s Differential Technique(差分优化技术)"></a>Singhal-Kshemkalyani’s Differential Technique(差分优化技术)</h4><ul>
 <li>Singhal-Kshemkalyani’s differential technique is based on the observation that between successive message sends to the same process, only a few entires of the vector clock at the sender process are likely to change(在向同一进程发送的连续消息之间，发送方进程中只有少量的向量时钟发生变化)</li>
 <li>When a process $p_i$ sends a message to a process $p_j$, it piggybacks only those entires of its vector clock that differ since the last message sent to $p_j$(进程i发给进程j消息的时候，附带的只有那些与前一次发送时向量时钟不同的部分)<ul>
-<li>If entries $i<em>1, i_2, …, i</em>{n<em>1}$ of the vector clock at $p_i$ have changed to $v_1, v_2, …,v</em>{n_1}$, respectively, since the last message sent to $p_j$, then process $p_i$ piggybacks a compressed timestamp of the form:<ul>
-<li>${(i<em>1, v_1), (i_2, v_2), …, (i</em>{n<em>1}, v</em>{n_1})}$ to the next message to $p_j$</li>
+<li>If entries $i_1, i_2, …, i_{n_1}$ of the vector clock at $p_i$ have changed to $v_1, v_2, …,v_{n_1}$, respectively, since the last message sent to $p_j$, then process $p_i$ piggybacks a compressed timestamp of the form:<ul>
+<li>$\{(i_1, v_1), (i_2, v_2), …, (i_{n_1}, v_{n_1})\}$ to the next message to $p_j$</li>
 </ul>
 </li>
 </ul>
@@ -399,11 +399,11 @@
 </li>
 <li>Since the last communication from $p_i$ to $p_j$, only those elements of vector clock $vt_i[k]$ have changed for which $LS_i[j] &lt; LU_i[k]$ holds</li>
 <li>Hence, only these elements need to be sent in a message from $p_i$ to $p_j$. When $p_i$ sends a message to $p_j$, it sends only a set of tuples<ul>
-<li>${(x, vt_i[x])\mid LS_i[j] &lt; LU_i[x]}$</li>
+<li>$\{(x, vt_i[x])\mid LS_i[j] &lt; LU_i[x]\}$</li>
 <li>as the vector timestamp to $p_j$, instead of sending a vector of $n$ entries in a message</li>
 </ul>
 </li>
-<li>Thus the entire vector of size $n$ is not sent along with a message. Instead, only the elements in the vector clock that have changed since the last message send to that process are sent in the format ${(p_1, latest_value), (p_2, latest_value), …}$, where $p_i$ indicates that the $p_i^{th}$ component of the vector clock has changed(在LS和LU找不同，发送的消息前者是不同的位置，后者是要更新的值)</li>
+<li>Thus the entire vector of size $n$ is not sent along with a message. Instead, only the elements in the vector clock that have changed since the last message send to that process are sent in the format $\{(p_1, latest_value), (p_2, latest_value), …\}$, where $p_i$ indicates that the $p_i^{th}$ component of the vector clock has changed(在LS和LU找不同，发送的消息前者是不同的位置，后者是要更新的值)</li>
 <li>This technique requires that the communication channels follow FIFO discipline for message delivery(消息传输遵守FIFO先进先出)</li>
 <li>This technique substantially reduces the cost of maintaining vector clocks in large systems, especially if the process interations exhibit temporal or spatial localities(降低在大型系统中维护向量时钟的成本，特别是进程交互包含了时空位置)</li>
 </ul>
@@ -696,16 +696,16 @@
 <li>Assume that message $m$ takes time $t$ to transfer and $m’$ takes $t’$ to transfer</li>
 <li>The offset between A’s clock and B’s clock is $O$. If A’s local clock time is $A(t)$ and B’s local clock time is $B(t)$, <ul>
 <li>$A(t)=B(t)+O$</li>
-<li>$T<em>{i-2}=T</em>{i-3}+t+O$</li>
-<li>$T<em>i=T</em>{i-1}-O+t’$</li>
+<li>$T_{i-2}=T_{i-3}+t+O$</li>
+<li>$T_i=T_{i-1}-O+t’$</li>
 </ul>
 </li>
 <li>Assuming $t=t’$, the offset $O_i$ can be estimated as:<ul>
-<li>$O<em>i=(T</em>{i-2}-T<em>{i-3}+T</em>{i-1}-T{i})/2$</li>
+<li>$O_i=(T_{i-2}-T_{i-3}+T_{i-1}-T{i})/2$</li>
 </ul>
 </li>
 <li>The round-trip delay is estimated as:<ul>
-<li>$D<em>i=(T_i-T</em>{i-3})-(T<em>{i-1}-T</em>{i-2})$</li>
+<li>$D_i=(T_i-T_{i-3})-(T_{i-1}-T_{i-2})$</li>
 </ul>
 </li>
 <li>The eight most recent pairs of $(O_i, D_i)$ are retained</li>

@@ -146,9 +146,9 @@
 </head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">43</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">23</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">全局状态及快照算法</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-10-25T13:25:26.000Z" title="发表于 2024-10-25 21:25:26">2024-10-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-10-25T14:21:03.301Z" title="更新于 2024-10-25 22:21:03">2024-10-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">685</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>3分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="全局状态及快照算法"><a href="#全局状态及快照算法" class="headerlink" title="全局状态及快照算法"></a>全局状态及快照算法</h1><h2 id="System-model"><a href="#System-model" class="headerlink" title="System model"></a>System model</h2><ul>
 <li>The system consists of a collection of $n$ processes $p_1, p_2, …, p_n$ that are connected by channels</li>
 <li>There are no globally shared memory and physical global clock and processes communicate by passing messages through communication channels with unpredicatable message delays<ul>
-<li>$C<em>{ij}$ denotes the channel from process $p_i$ to process $p_j$ and its state is denoted by $SC</em>{ij}$<ul>
+<li>$C_{ij}$ denotes the channel from process $p_i$ to process $p_j$ and its state is denoted by $SC_{ij}$<ul>
 <li>For a channel $C_{ij}$, the following set of messages can be defined based on the local states of the processes $p_i$ and $p_j$</li>
-<li>Transit: $transit(LS<em>i, LS_j)={m</em>{ij}|send(m<em>{ij}\in LS_i \wedge rec(m</em>{ij})\notin LS_j}$(发送端发送了，但接收端没接收，说明消息在信道)</li>
+<li>Transit: $transit(LS_i, LS_j)=\{m_{ij}|send(m_{ij}\in LS_i \wedge rec(m_{ij})\notin LS_j\}$(发送端发送了，但接收端没接收，说明消息在信道)</li>
 </ul>
 </li>
 </ul>
@@ -159,7 +159,7 @@
 <li>the message receive event</li>
 </ul>
 </li>
-<li>For a message $m<em>{ij}$ that is sent by process $p_i$ to process $p_j$, let $send(m</em>{ij})$ and $rec(m_{ij})$ denote its send and receive events</li>
+<li>For a message $m_{ij}$ that is sent by process $p_i$ to process $p_j$, let $send(m_{ij})$ and $rec(m_{ij})$ denote its send and receive events</li>
 <li>At any distant, the state of process $p_i$, denoted by $LS_i$, is a result of the sequence of all the events executed by $p_i$ till that instant(进程的状态是之前所有执行过的事件)<ul>
 <li>For an event $e$ and a process state $LS_i, e\in LS_i$ iff $e$ belongs to the sequence of events that have taken process $p_i$ to state $LS_i$</li>
 <li>For an event $e$ and a process state $LS_i, e\notin LS_i$, iff $e$ does not belong to the sequence of events that have taken process $p_i$ to state $LS_i$</li>
@@ -170,7 +170,7 @@
 <li>In FIFO model, each channel acts as a first-in first-out message queue and thus, message ordering is preserved by a channel(FIFO消息是有序到达)</li>
 <li>In non-FIFO model, a channel acts like a set in which the sender process adds messages and the receiver process removes messages from it in a random order.(non-FIFO消息是无序到达)</li>
 <li>A system that supports causal delivery of messages satisfies the following property: <ul>
-<li>“For any two messages $m<em>{ij}$ and $m</em>{kj}$, if $send(m<em>{ij})\rightarrow send(m</em>{kj})$, then $rec(m<em>{ij}) −→ rec(m</em>{kj})$”</li>
+<li>“For any two messages $m_{ij}$ and $m_{kj}$, if $send(m_{ij})\rightarrow send(m_{kj})$, then $rec(m_{ij}) −→ rec(m_{kj})$”</li>
 <li>因果序，先发和后发有因果序，则先发的会先收，且和后收有因果序</li>
 </ul>
 </li>
@@ -178,14 +178,14 @@
 <h2 id="Consistent-global-state"><a href="#Consistent-global-state" class="headerlink" title="Consistent global state"></a>Consistent global state</h2><ul>
 <li>The global state of a distributed system is a collection of the local states of the processes and the channels<ul>
 <li>Notationally, global state $GS$ is defined as<ul>
-<li>$GS={\bigcup<em>i LS_i, \bigcup</em>{i, j}SC_{ij}}$(所有的进程状态和所有的信道状态)</li>
+<li>$GS=\{\bigcup_i LS_i, \bigcup_{i, j}SC_{ij}\}$(所有的进程状态和所有的信道状态)</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>A global state $GS$ is a consistent global state iff it satisfies the following two conditions:<ul>
-<li>$C1: send(m<em>{ij})\in LS_i \Rightarrow m</em>{ij}\in SC<em>{ij} \bigoplus rec(m</em>{ij})\in LS_j$, ($\bigoplus$ is Ex-OR operator, 异或)(发出去的消息要么被接收要么在信道，不可能同时在接收方和信道，也不可能都不在)</li>
-<li>$C2: send(m<em>{ij})\notin LS_i \Rightarrow m</em>{ij}\notin SC<em>{ij}\wedge rec(m</em>{ij})\notin LS_j$(没发的消息不可能出现在接收方和信道)</li>
+<li>$C1: send(m_{ij})\in LS_i \Rightarrow m_{ij}\in SC_{ij} \bigoplus rec(m_{ij})\in LS_j$, ($\bigoplus$ is Ex-OR operator, 异或)(发出去的消息要么被接收要么在信道，不可能同时在接收方和信道，也不可能都不在)</li>
+<li>$C2: send(m_{ij})\notin LS_i \Rightarrow m_{ij}\notin SC_{ij}\wedge rec(m_{ij})\notin LS_j$(没发的消息不可能出现在接收方和信道)</li>
 </ul>
 </li>
 </ul>
