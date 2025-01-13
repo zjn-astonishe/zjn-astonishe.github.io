@@ -2,9 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Sia/</loc>
+    <loc>http://zjn-astonishe.github.io/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/</loc>
     
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/</loc>
+    
+    <lastmod>2025-01-12</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2024/10/23/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-23-%E9%AB%98%E6%80%A7%E8%83%BD%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%8A%80%E6%9C%AF/</loc>
+    
+    <lastmod>2024-11-13</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -13,7 +31,25 @@
   <url>
     <loc>http://zjn-astonishe.github.io/2024/10/25/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-10-25-%E5%85%A8%E5%B1%80%E7%8A%B6%E6%80%81%E5%8F%8A%E5%BF%AB%E7%85%A7%E7%AE%97%E6%B3%95/</loc>
     
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2024-11-02</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2024/10/10/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-10-10-Security/</loc>
+    
+    <lastmod>2024-10-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Sia/</loc>
+    
+    <lastmod>2024-10-29</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -32,24 +68,6 @@
     <loc>http://zjn-astonishe.github.io/2024/09/28/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-28-%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/</loc>
     
     <lastmod>2024-10-25</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/2024/10/10/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-10-10-Security/</loc>
-    
-    <lastmod>2024-10-24</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/2024/10/23/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-23-%E9%AB%98%E6%80%A7%E8%83%BD%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%8A%80%E6%9C%AF/</loc>
-    
-    <lastmod>2024-10-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -92,7 +110,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/about/index.html</loc>
+    <loc>http://zjn-astonishe.github.io/categories/index.html</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -110,7 +128,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/categories/index.html</loc>
+    <loc>http://zjn-astonishe.github.io/about/index.html</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -119,7 +137,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2024/10/09/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-09-%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD/</loc>
+    <loc>http://zjn-astonishe.github.io/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Introduction/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -137,7 +155,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Introduction/</loc>
+    <loc>http://zjn-astonishe.github.io/2024/10/09/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-09-%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -164,15 +182,6 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/12/ZigBee/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</loc>
-    
-    <lastmod>2024-10-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://zjn-astonishe.github.io/2022/03/04/ZigBee/2022-03-04-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84%E5%88%86%E6%9E%90/</loc>
     
     <lastmod>2024-10-11</lastmod>
@@ -182,7 +191,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/02/%E9%9D%A2%E8%AF%95/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</loc>
+    <loc>http://zjn-astonishe.github.io/2022/03/12/ZigBee/2022-03-12-Zigbee%E5%8D%8F%E8%AE%AE%E6%A0%88%203/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -200,7 +209,25 @@
   </url>
   
   <url>
+    <loc>http://zjn-astonishe.github.io/2022/03/02/%E9%9D%A2%E8%AF%95/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</loc>
+    
+    <lastmod>2024-10-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://zjn-astonishe.github.io/2022/03/02/%E9%9D%A2%E8%AF%95/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</loc>
+    
+    <lastmod>2024-10-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2022/03/03/%E9%9D%A2%E8%AF%95/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -218,7 +245,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/03/%E9%9D%A2%E8%AF%95/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</loc>
+    <loc>http://zjn-astonishe.github.io/2023/02/13/USBIP/2023-02-13-usbip%E5%92%8Clinux%E7%B3%BB%E7%BB%9F/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -245,24 +272,6 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2023/02/13/USBIP/2023-02-13-usbip%E5%92%8Clinux%E7%B3%BB%E7%BB%9F/</loc>
-    
-    <lastmod>2024-10-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/2022/08/15/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-15-RK3568%20Linux%E7%9A%84I2C%E6%80%BB%E7%BA%BF%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/</loc>
-    
-    <lastmod>2024-10-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://zjn-astonishe.github.io/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E9%A9%B1%E5%8A%A8/</loc>
     
     <lastmod>2024-10-11</lastmod>
@@ -272,34 +281,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</loc>
-    
-    <lastmod>2024-10-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</loc>
-    
-    <lastmod>2024-10-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/03/OS/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</loc>
-    
-    <lastmod>2024-10-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/2022/02/28/OS/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%201/</loc>
+    <loc>http://zjn-astonishe.github.io/2022/08/15/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-15-RK3568%20Linux%E7%9A%84I2C%E6%80%BB%E7%BA%BF%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -326,6 +308,42 @@
   </url>
   
   <url>
+    <loc>http://zjn-astonishe.github.io/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%203/</loc>
+    
+    <lastmod>2024-10-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2022/02/28/OS/2022-02-28-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%201/</loc>
+    
+    <lastmod>2024-10-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2022/03/03/OS/2022-03-03-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%204/</loc>
+    
+    <lastmod>2024-10-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2022/03/02/OS/2022-03-02-%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%202/</loc>
+    
+    <lastmod>2024-10-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://zjn-astonishe.github.io/2022/08/04/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/2022-08-04-Linux%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80/</loc>
     
     <lastmod>2024-10-11</lastmod>
@@ -344,16 +362,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/08/18/Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3/2022-08-18-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3%20-%20%E5%89%8D%E8%A8%80%E5%AF%BC%E5%BC%95/</loc>
-    
-    <lastmod>2024-10-11</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/2022/08/18/Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3/2022-08-18-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3%20-%20%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/</loc>
+    <loc>http://zjn-astonishe.github.io/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -371,7 +380,16 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/08/08/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91%E8%AF%A6%E8%A7%A3/2022-08-08-Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E6%A6%82%E8%BF%B0/</loc>
+    <loc>http://zjn-astonishe.github.io/2022/08/18/Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3/2022-08-18-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3%20-%20%E5%89%8D%E8%A8%80%E5%AF%BC%E5%BC%95/</loc>
+    
+    <lastmod>2024-10-11</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/2022/08/18/Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3/2022-08-18-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E5%AD%90%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3%20-%20%E9%80%9A%E4%BF%A1%E5%8E%9F%E7%90%86/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -416,7 +434,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/13/C%E3%80%81C++/2022-03-13-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%203/</loc>
+    <loc>http://zjn-astonishe.github.io/2022/03/13/C%E3%80%81C++/2022-03-13-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%202/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -425,7 +443,7 @@
   </url>
   
   <url>
-    <loc>http://zjn-astonishe.github.io/2022/03/13/C%E3%80%81C++/2022-03-13-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%202/</loc>
+    <loc>http://zjn-astonishe.github.io/2022/03/13/C%E3%80%81C++/2022-03-13-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%203/</loc>
     
     <lastmod>2024-10-11</lastmod>
     
@@ -436,7 +454,7 @@
 
   <url>
     <loc>http://zjn-astonishe.github.io/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -444,168 +462,168 @@
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/test/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/C-C-%E9%9D%A2%E7%BB%8F/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/C-C-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%8C%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/Linux%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/Socket/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/I2C/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E7%A1%AC%E4%BB%B6/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E6%A0%B7%E4%BE%8B%E5%88%86%E6%9E%90/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/Linux%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/I2C/</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/RK3568/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/ZigBee/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/usbip/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/USB%E9%A9%B1%E5%8A%A8/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/Linux%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/usbip/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/USB%E9%A9%B1%E5%8A%A8/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/Linux%E7%B3%BB%E7%BB%9F/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/ZigBee/</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E5%89%91%E6%8C%87Offer/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/tags/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/tags/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/tags/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
@@ -614,147 +632,147 @@
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/test/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/C-C/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/I2C/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/categories/Linux/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/RK3568/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91%E2%80%94%E6%8F%90%E9%AB%98%E7%AF%87/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/categories/usbip/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/Linux/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/usbip/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91/</loc>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/ZigBee%E5%BC%80%E5%8F%91%E2%80%94%E6%8F%90%E9%AB%98%E7%AF%87/</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/%E5%89%91%E6%8C%87Offer/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/categories/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/I2C/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/</loc>
-    <lastmod>2024-10-27</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://zjn-astonishe.github.io/categories/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/RK3568/I2C%E9%A9%B1%E5%8A%A8/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://zjn-astonishe.github.io/categories/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/</loc>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/usbip/USB%E9%A9%B1%E5%8A%A8/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/Linux/RK3568/I2C%E9%A9%B1%E5%8A%A8/%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
     <loc>http://zjn-astonishe.github.io/categories/usbip/USB%E9%A9%B1%E5%8A%A8/Linux%E7%B3%BB%E7%BB%9F/</loc>
-    <lastmod>2024-10-27</lastmod>
+    <lastmod>2025-01-13</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
