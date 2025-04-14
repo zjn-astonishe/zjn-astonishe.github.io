@@ -1,0 +1,546 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>分布式计算模型 | ZJN_BLOG</title><meta name="keywords" content="高级分布式系统"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="分布式计算模型典型分布式系统(Ray) Distributed Program a distributed program is composed of a set of asynchronous processes $p_1, p_2, … , p_i, … , p_n$(异步进程的集合) The processes do not share a global memory and commun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式计算模型">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2024/09/28/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-28-%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="分布式计算模型典型分布式系统(Ray) Distributed Program a distributed program is composed of a set of asynchronous processes $p_1, p_2, … , p_i, … , p_n$(异步进程的集合) The processes do not share a global memory and commun">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2024-09-28T03:41:34.000Z">
+<meta property="article:modified_time" content="2024-11-09T04:33:57.467Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="高级分布式系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2024/09/28/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-28-%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '分布式计算模型',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-11-09 12:33:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分布式计算模型</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-09-28T03:41:34.000Z" title="发表于 2024-09-28 11:41:34">2024-09-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-09T04:33:57.467Z" title="更新于 2024-11-09 12:33:57">2024-11-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">945</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>4分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="分布式计算模型"><a href="#分布式计算模型" class="headerlink" title="分布式计算模型"></a>分布式计算模型</h1><h2 id="典型分布式系统-Ray"><a href="#典型分布式系统-Ray" class="headerlink" title="典型分布式系统(Ray)"></a>典型分布式系统(Ray)</h2><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Ray.png" alt="img"></p>
+<h2 id="Distributed-Program"><a href="#Distributed-Program" class="headerlink" title="Distributed Program"></a>Distributed Program</h2><ul>
+<li>a distributed program is composed of a set of asynchronous processes $p_1, p_2, … , p_i, … , p_n$(异步进程的集合)</li>
+<li>The processes do not share a global memory and communicate solely by passing messages(消息传递，没有共享内存)</li>
+<li>The processes do not share a global clock that is instantaneously accessible to these processes(不共享可以即时访问的全局时钟)</li>
+<li>Process execution and message transfer are asynchronous(进程运行和消息收发是异步发)</li>
+<li>Without loss of generality(为了不失去一般性), we assume that each process is running on a different processor(假设每个进程运行在不同的处理器上)</li>
+<li>Let $C<em>{ij}$  denote the channel(信道) from process $p_i$ to process $p_j$ and let $m</em>{ij}$ denote a message(消息) sent by $p_i$ to $p_j$</li>
+<li>The message transmission delay is definite and unpredictable(传输延迟确定的但不可预测，只要传了，延迟就是确定的，但不知道什么时候传，所以是不可预测？)</li>
+</ul>
+<h2 id="A-Model-of-Distributed-Executions-分布式执行的模型"><a href="#A-Model-of-Distributed-Executions-分布式执行的模型" class="headerlink" title="A Model of Distributed Executions(分布式执行的模型)"></a>A Model of Distributed Executions(分布式执行的模型)</h2><ul>
+<li>The execution of a process consists of a sequential execution of its actions(进程由一系列顺序执行的动作组成)</li>
+<li>The actions are atomic(动作是原子化的) and the actions of a process are modeled as three types of events, namely, <ul>
+<li>internal events, 内部事件</li>
+<li>message send events, 消息发送事件</li>
+<li>message receive events, 消息接收事件</li>
+</ul>
+</li>
+<li>Let $e_i^x$ denote the $x^{th}$ event at process $p_i$</li>
+<li>For a message $m$, let $send(m)$ and $rec(m)$ denote its send and receive events, respectively</li>
+<li>The occurrence of events changes the states of respective processes and channels(每个事件的发生会改变对应进程和信道的状态)<ul>
+<li>An internal event changes the state of the process at which it occurs(内部事件只影响进程)</li>
+<li>A send event changes the state of the process that sends the message and the state of the channel on which the message is sent(发送事件影响发送消息的进程和发送消息的信道)</li>
+<li>A receive event changes the state of the process that receives the message and the state of the channel on which the message is received(接收事件影响接收消息的进程和接收消息的信道)</li>
+</ul>
+</li>
+<li>The events at a process are linearly ordered by their order of occurence(一个进程的事件根据发生的顺序能线性排序)</li>
+<li>The execution of process $p_i$ produces a sequence of events $e_i^1, e_i^2, … , e_i^x, e_i^{x+1}, …$ and is denoted by $H_i$ where<ul>
+<li>$ H_i = (h_i, \rightarrow_i)$</li>
+<li>$h_i$ is the set of events produced by $p_i$</li>
+<li>binary relation $\rightarrow_i$ defines a linear order on these events, expresses causal dependencies among the events of $p_i$(右箭头表示的是具有因果关系)</li>
+</ul>
+</li>
+<li>The send and the receive events signify the flow of information between processes and establish causal dependency from the sender process to the receiver process(进程之间的发送和接收事件的关系，从发送方到接收方建立因果依赖关系)</li>
+<li>A relation $\rightarrow_{msg}$ that captures the causal dependency due to message exchange, is defined as follows. For every message $m$ that is exchanged between two processes, we have<ul>
+<li>$send(m)\rightarrow_{msg}\quad rec(m)$</li>
+<li>defines causal dependencies between the pairs of corresponding send and receiver events</li>
+</ul>
+</li>
+<li>A space-time diagram Example:<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution.png" alt="img"><ul>
+<li>The evolution of a distributed execution is depicted by a space-time diagram(时空图).</li>
+<li>A horizontal line represents the progress of the process(水平线表示进程的进度), a dot indicates an event(点表示事件), a slant arrow indicates a message transfer(斜箭头表示消息传递)<ul>
+<li>Since we assume that an event execution is atomic(hence, indivisible and instantaneous(不可再分以及瞬时)), it is justified to denote it as a dot on a process line</li>
+</ul>
+</li>
+<li>In the Figure, <ul>
+<li>for process $p_1$, the second event is a message send event, </li>
+<li>the third event is an internal event, </li>
+<li>and the fourth event is a message receive event</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Causal-Precedence-Relation-因果过程关系"><a href="#Causal-Precedence-Relation-因果过程关系" class="headerlink" title="Causal Precedence Relation(因果过程关系)"></a>Causal Precedence Relation(因果过程关系)</h3><ul>
+<li>The execution of a distributed application results in a set of distributed events produced by the processes(分布式应用的结果由进程产生的分布式事件得到的)</li>
+<li>Let $H=\bigcup_i h_i$ denote the set of events executed in a distributed computation(分布式计算中的事件集合)</li>
+<li>Define a binary relation $\rightarrow$ on the set $H$ as follows that express causal dependencies between events in the distributed execution <script type="math/tex; mode=display">
+\forall e_i^x, \forall e_j^y \in H, e_i^x\rightarrow e_j^y \Leftrightarrow 
+  \begin{cases}
+    e_i^x\rightarrow_i e_j^y :i.e., (i=j)\bigwedge(x<y)\\
+    or\\
+    e_i^x\rightarrow_{msg}e_j^y\\
+    or\\
+    \exists e_k^z\in H : e_i^x\rightarrow e_k^z \bigwedge e_k^z \rightarrow e_j^y
+  \end{cases}</script></li>
+<li>The causal precedure relation induces an irreflexive partial order(不可弯曲的偏序) on the events of a distributed computation that is denoted as $H=(H,\rightarrow)$</li>
+<li>Note that the relation $\rightarrow$ is nothing but Lamport’s “happens before” relation(这个关系就是在…之前发生)</li>
+<li>For any two event $e_i$ and $e_j$, if $e_i\rightarrow e_j$, then event $e_j$ is directly or transitively(直接或传递性地) dependent on event $e_i$(Graphically, it means that there exists a path consisting of message arrows and process-line segments(along increasing time) in the space-time diagram that starts at $e_i$ and ends at $e_j$)<ul>
+<li>For example, in Figure above, $e_1^1\rightarrow e_3^3$ and $e_3^3\rightarrow e_2^6$</li>
+</ul>
+</li>
+<li>The relation $\rightarrow$ denotes flow of information in a distributed computation and $e_i\rightarrow e_j$ dictates that all the information available at $e_i$ is potentially accessible at $e_j$<ul>
+<li>For example, in Figure above, event $e_2^6$ has the knowledge of all other events shown in the figure</li>
+</ul>
+</li>
+<li>For any two events $e_i$ and $e_j$, $e_i \nrightarrow e_j$ denotes the fact that event $e_j$ does not directly or transitively dependent on event $e_i$. That is, event $e_i$ does not causally affect event $e_j$</li>
+<li>In this case, event $e_j$ is not aware of the execution of $e_i$ or any event executed after $e_i$ on the same process</li>
+<li>For example, in Figure above, $e_1^3 \nrightarrow e_3^3$ and $e_2^4\nrightarrow e_3^1$</li>
+<li>For any two events $e_i$ and $e_j$, $e_i\nrightarrow e_j\nRightarrow e_j\nrightarrow e_i$(因为可能$e_j\rightarrow e_i$)</li>
+<li>For any two events $e_i$ and $e_j$, $e_i\rightarrow e_j\Rightarrow e_j\nrightarrow e_i$</li>
+</ul>
+<h3 id="Concurrent-events-并发事件"><a href="#Concurrent-events-并发事件" class="headerlink" title="Concurrent events(并发事件)"></a>Concurrent events(并发事件)</h3><ul>
+<li>For any two events $e_i$ and $e_j$, if $e_i\nrightarrow e_j$ and $e_j\nrightarrow e_i$, then events $e_i$ and $e_j$ are said to be concurrent(denoted as $e_i||e_j$，互相没有因果关系)</li>
+<li>In the execution of Figure above, $e_1^3||e_3^3$ and $e_2^4||e_3^1$</li>
+<li>The relation $||$ is not transitive(并发不是传递性的); that is, $(e_i||e_j)\bigwedge(e_j||e_k)\nRightarrow e_i || e_k$<ul>
+<li>For example, in Figure above, $e_3^3||e_2^4$ and $e_2^4 || e_1^5$, however, $e_3^3 \nmid\nmid e_1^5$</li>
+</ul>
+</li>
+<li>For any two events $e_i$ and $e_j$ in a distributed execution, 要不就有因果关系，要不就是并发<ul>
+<li>$e_i\rightarrow e_j$</li>
+<li>$e_j\rightarrow e_i$</li>
+<li>$e_i||e_j$</li>
+</ul>
+</li>
+</ul>
+<h3 id="Logical-Concurrency-and-Physical-Concurrency-逻辑并发和物理并发"><a href="#Logical-Concurrency-and-Physical-Concurrency-逻辑并发和物理并发" class="headerlink" title="Logical Concurrency and Physical Concurrency(逻辑并发和物理并发)"></a>Logical Concurrency and Physical Concurrency(逻辑并发和物理并发)</h3><ul>
+<li>In a distribued computation, two events are logically concurrent if and only if they do not casually affect each other(互相之间没有因果就是逻辑并发的)</li>
+<li>Physical concurrency, on the other hand, has a connotation that the events occur at the same instant in physical time(在同一物理时间的瞬间发生)</li>
+<li>Two or more events may be logically concurrent even though they do not occur at the same instant in physical time</li>
+<li>However, if processor speed and message delays would have been different, the execution of these events could have very well coincided in physical time</li>
+<li>Whether a set of logically concurrent events coincide in the physical time or not, does not change the outcome of the computation(逻辑并发的结果不受物理时间的影响)</li>
+<li>Therefore, even though a set of logically concurrent events may not have occured at the same instant in physical time, we can assume that these events occured at the same instant in physical time</li>
+</ul>
+<h2 id="Models-of-Communication-Networks"><a href="#Models-of-Communication-Networks" class="headerlink" title="Models of Communication Networks"></a>Models of Communication Networks</h2><ul>
+<li>There are several models of the service provided by communication networks, namely, </li>
+</ul>
+<h3 id="FIFO"><a href="#FIFO" class="headerlink" title="FIFO,"></a>FIFO,</h3><ul>
+<li>each channel acts as a first-in first-out message queue(先进先出队列) and thus, message ordering is preserved by a channel(消息顺序由信道维护)</li>
+</ul>
+<h3 id="Non-FIFO"><a href="#Non-FIFO" class="headerlink" title="Non-FIFO,"></a>Non-FIFO,</h3><ul>
+<li>a channel acts like a set in which the sender process adds messages and the receiver process removes messages from it in a random order(随机序列)</li>
+</ul>
+<h3 id="causal-ordering-因果序"><a href="#causal-ordering-因果序" class="headerlink" title="causal ordering(因果序)"></a>causal ordering(因果序)</h3><ul>
+<li>is based on Lamport’s “happens before” relation</li>
+<li>A system that supports the causal ordering model satisfies the following property:<ul>
+<li>CO: For any two messages $m<em>{ij}$ and $m</em>{kj}$, if $send(m<em>{ij})\rightarrow send(m</em>{kj})$, then $rec(m<em>{ij})\rightarrow rec(m</em>{kj})$</li>
+<li>This property ensures that causally related messages destined to the same destination are delivered in an order that is consistent with their causality relation(因果相关的信息与其因果关系一致地顺序传递)</li>
+</ul>
+</li>
+<li>Causally ordered delivery of messages implies FIFO message delivery.(Note that $CO \subset FIFO \subset Non-FIFO$，CO是特殊的FIFO，FIFO又是特殊的Non-FIFO)</li>
+<li>Causal ordering model considerably simplifies the design of distributed algorithms because it provides a built-in synchronization(内置同步)</li>
+</ul>
+<h2 id="Global-State-of-a-Distributed-System"><a href="#Global-State-of-a-Distributed-System" class="headerlink" title="Global State of a Distributed System"></a>Global State of a Distributed System</h2><ul>
+<li><p>“A collection of the local states of its components, namely, the processes and the communication channels”(全局状态包括进程状态和信道状态)</p>
+<ul>
+<li>The state of a process is defined by the contents of processor registers, stacks, local memory, etc. and depends on the local context of the distributed application</li>
+<li>The state of channel is given by the set of messages in transit in the channel</li>
+</ul>
+</li>
+<li><p>The occurrence of events changes the states of respective processes and channels(状态改变由事件的发生引起)</p>
+<ul>
+<li>An internal event changes the state of the process at which it occurs(内部事件只影响对应进程)</li>
+<li>A send event changes the state of the process that sends the message and the state of the channel on which the message is sent(发送事件除了影响进程还影响信道)</li>
+<li>A receive event changes the state of the process that or receives the message and the state of the channel on which the message is received(接收事件除了影响进程还影响信道)</li>
+</ul>
+</li>
+</ul>
+<h3 id="Notations"><a href="#Notations" class="headerlink" title="Notations"></a>Notations</h3><h4 id="Local-State"><a href="#Local-State" class="headerlink" title="Local State"></a>Local State</h4><ul>
+<li>$LS_i^x$ denotes the state of process $p_i$ after the occurrence of event $e_i^x$ and before the event $e_i^{x+1}$(local state)<ul>
+<li>$LS_i^0$ denotes the initial state of process $p_i$</li>
+<li>$LS_i^x$ is a result of the execution of all the events executed by process $p_i$ till $e_i^x$(之前的所有事件)</li>
+</ul>
+</li>
+<li>Let $send(m) \leq LS_i^x$ denote the fact that $\exists y:1\leq y\leq x :: e_i^y=send(m)$(发送事件早于某个LS状态，说明该状态以前的事件有该发送事件)</li>
+<li>Let $rec(m) \nleq LS_i^x$ denote the fact that $\forall y:1\leq y\leq x :: e_i^y\neq rec(m)$(接收时间不早于某个LS状态，说明该状态以前的事件中不包括该接收事件)</li>
+</ul>
+<h4 id="A-Channel-State-信道状态"><a href="#A-Channel-State-信道状态" class="headerlink" title="A Channel State(信道状态)"></a>A Channel State(信道状态)</h4><ul>
+<li>The state of a channel depends upon the states of the process it connects(取决于信道所连接的进程的状态)</li>
+<li>Let $SC<em>{ij}^{x, y}$ denote the state of a channel $C</em>{ij}$</li>
+<li>The state of a channel is defined as follows:<ul>
+<li>$SC_{ij}^{x, y}$ denotes all messages that $p_i$ sent upto event $e_i^x$ and which process $p_j$ had not received until event $e_j^y$(进程i在事件x发送消息，并且进程j在事件y接收到消息)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Global-State-全局状态，不太可能，只存在与理论"><a href="#Global-State-全局状态，不太可能，只存在与理论" class="headerlink" title="Global State(全局状态，不太可能，只存在与理论)"></a>Global State(全局状态，不太可能，只存在与理论)</h4><ul>
+<li>The global state of a distributed system is a collection of the local states of the processes and the channels(进程本地状态和信道状态的集合)</li>
+<li>Notationally, global state $GS$ is defined as,<ul>
+<li>$GS={\bigcup<em>iLS_i^{x_i}, \bigcup</em>{j, k}SC_{jk}^{y_j, z_k}}$</li>
+</ul>
+</li>
+<li>For a global state to be meaningful, the states of all the components of the distributed system must be recorded at the same instant(分布式系统中的所有组件的状态需要在相同的时刻记录)</li>
+<li>This will be possible if the local clocks at processes were perferctly synchronized or if there were a global system clock that can be instantaneously read by the process(However, both are impossible)(如果要实现的话，要求时钟完美同步或者存在一个全局系统的时钟可以被进程即时读取)</li>
+</ul>
+<h4 id="A-Consistent-Global-State-一致的全局状态"><a href="#A-Consistent-Global-State-一致的全局状态" class="headerlink" title="A Consistent Global State(一致的全局状态)"></a>A Consistent Global State(一致的全局状态)</h4><ul>
+<li>Even if the state of all the components is not recorded at the same instant, such a state will be meaningful provided every message that is recorded as received is also recorded as sent(要求每个接收事件都有对应的发送事件)</li>
+<li>Basic idea is that a state should not violate causality(不能违反因果律)<ul>
+<li>an effect should not be present without its cause. A message cannot be received if it was not sent.(没有发送不可能有接收)</li>
+</ul>
+</li>
+<li>Such states are called consistent global states and are meaningful global states.</li>
+<li>Inconsistent global states are not meaningful in the sense that a distributed system can never be in an inconsistent state(分布式系统永远不可能处于不一致状态).</li>
+<li>A global state $GS={\bigcup<em>iLS_i^{x_i}, \bigcup</em>{j, k}SC_{jk}^{y_j, z_k}}$ is a consistent global state iff(if and only if):<ul>
+<li>$\forall m<em>{ij}:send(m</em>{ij})\nleq LS<em>i^{x_i} \Leftrightarrow m</em>{ij} \notin SC<em>{ij}^{x_i, y_j}\bigwedge rec(m</em>{ij})\nleq LS_j^{y_j}$(发送的消息要不还在信道中，要不就已经被接收，不能出现有接收但没发送)</li>
+<li>channel state $SC_{ij}^{y_i, z_k}$ and process state $LS_j^{z_k}$ must not include any message that process $p_i$ sent after executing event $e_i^{x_i}$</li>
+</ul>
+</li>
+<li>Example<ul>
+<li>A global state $GS<em>1={LS_1^1, LS_2^3, LS_3^3, LS_4^2}$ is inconsistent, because the state of $p_2$ has recorded the receipt of message $m</em>{12}$, however, the state of $p_1$ has not recorded its send</li>
+<li>A global state $GS<em>2$ consisting of local states ${LS_1^2, LS_2^4, LS_3^4, LS_4^2}$ is consistent, all the channels are empty except $C</em>{21}$ that contains message $m_{21}$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Cuts-of-a-Distributed"><a href="#Cuts-of-a-Distributed" class="headerlink" title="Cuts of a Distributed"></a>Cuts of a Distributed</h2><ul>
+<li>In the space-time diagram of a distributed computation, a cut is a zigzag line(锯齿线) joining one arbitrary point on each process line(连接每个进程线上任意一点)</li>
+<li>A cut slices the space-time diagram, and thus the set of events in the distributed computation, into a <code>PAST</code> and a <code>FUTURE</code>.(cut将时空图分为过去和将来)<ul>
+<li>The <code>PAST</code> contains all the events to the left of the cut </li>
+<li>The <code>FUTURE</code> contains all the events to the right of the cut.</li>
+<li>For a cut <code>C</code>, let <code>PAST(C)</code> and <code>FUTURE(C)</code> denote the set of events in the <code>PAST</code> and <code>FUTURE</code> of <code>C</code>, respectively.</li>
+</ul>
+</li>
+<li>Every cut corresponds to a global state and every global state can be graphically represented as a cut in the computation’s space-time diagram.(每个cut对应一个全局状态，每个全局状态都可以在计算的时空图中以图形的方式表示cut)<ul>
+<li>Cuts in a space-time diagram provide a powerful graphical aid in representing and reasoning about global states of a computation.</li>
+<li>In a consistent cut, every message received in the PAST of the cut was sent in the PAST of that cut. (In Figure 2.3, cut C2 is a consistent cut. 过去接收到的消息只能是过去发送的)</li>
+<li>All messages that cross the cut from the PAST to the FUTURE are in transit in the corresponding consistent global state.(未来收到的消息可能是过去发送的，也可能是未来发送的)</li>
+<li>A cut is inconsistent if a message crosses the cut from the FUTURE to the PAST. (In Figure 2.3, cut C1 is an inconsistent cut.)(但是未来发送的消息不可能在过去被接收)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Illustration%20of%20cuts%20in%20a%20distributed%20exection.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Past-and-Future-Cones-of-an-Event"><a href="#Past-and-Future-Cones-of-an-Event" class="headerlink" title="Past and Future Cones of an Event"></a>Past and Future Cones of an Event</h2><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Illustration%20of%20past%20and%20future%20cones.png" alt="img"></p>
+<h3 id="Past-Cone-of-an-Event-事件因果关系的因"><a href="#Past-Cone-of-an-Event-事件因果关系的因" class="headerlink" title="Past Cone of an Event(事件因果关系的因)"></a>Past Cone of an Event(事件因果关系的因)</h3><ul>
+<li>An event $e_j$ could have been affected only by all events $e_i$ such that $e_i\rightarrow e_j$</li>
+<li>In this situation, all the information available at $e_i$ could be made accessible at $e_j$</li>
+<li>All such events $e_i$ belong to the past of $e_j$<ul>
+<li>Let $Past(e_j)$ denote all events in the past of $e_j$ in a computation $(H, \rightarrow)$. Then, <ul>
+<li>$Past(e_j) = {e_i\mid \forall e_i\in H, e_i\rightarrow e_j}$</li>
+<li>$Past(e_j)$ represents all events on the past light cone that affect $e_j$  </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Let $Past_i(e_j)$ be the set of all those events of $Past(e_j)$ that are on process $p_i$<ul>
+<li>$Past_i(e_j)$ is a totally ordered set(顺序集), ordered by the relation $\rightarrow_i$, whose maximal element is denoted by $max(Past_i(e_j))$<ul>
+<li>$max(Past_i(e_j))$ is the <strong>latest event</strong> at process $p_i$ that affected event $e_j$</li>
+</ul>
+</li>
+<li>Let $Max_Past(e<em>j) = \bigcup</em>{(\forall i)} {max(Past_i(e_j))}$(所有进程中的latest event)<ul>
+<li>$Max_Past(e_j)$ consists of the latest event at every process that affected event $e_j$ and is referred to as the surface of the past cone of $e_j$(past cone的latest平面)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Future-Cone-of-an-Event-事件因果关系中的果"><a href="#Future-Cone-of-an-Event-事件因果关系中的果" class="headerlink" title="Future Cone of an Event(事件因果关系中的果)"></a>Future Cone of an Event(事件因果关系中的果)</h3><ul>
+<li>The future of an event $e_j$, denoted by $Future(e_j)$, contains all events $e_i$ that are causally affected by $e_j$</li>
+<li>In a computation $(H, \rightarrow)$, $Future(e_j)$ is defined as:<ul>
+<li>$Future(e_j) = {e_i\mid \forall e_i \in H, e_j\rightarrow e_i}$</li>
+</ul>
+</li>
+<li>Define $Future_i(e_j)$ as the set of those events of $Future(e_j)$ that are on process $p_i$<ul>
+<li>define $min(Future_i(e_j))$ as the <strong>first event</strong> on process $p_i$ that is affected by $e_j$</li>
+<li>Define $Min<em>Future(e_j)$ as $\bigcup</em>{(\forall i)}{min(Future_i(e_j))}$, which consists of the first event at every process that is causally affected by event $e_j$(所有进程中的first event)</li>
+<li>$Min_Future(e_j)$ is referred to as the surface of the future cone of $e_j$(事件j的future cone平面)</li>
+<li>All events at a process $p_i$ that occurred after $max(Past_i(e_j))$ but before $min(Future_i(e_j))$ are concurrent with $e_j$(与事件j无因果关系)</li>
+<li>Therefore, all and only those events of computation $H$ that belong to the set “$H - Past(e_j) - Future(e_j)$” are concurrent with event $e_j$(所有事件去掉有因果关系的得到的便是并发的事件)</li>
+</ul>
+</li>
+</ul>
+<h2 id="Model-of-Process-Communications"><a href="#Model-of-Process-Communications" class="headerlink" title="Model of Process Communications"></a>Model of Process Communications</h2><ul>
+<li>There are two basic models of process communications(进程通信)<ul>
+<li>synchronous communication model(同步通信模型，阻塞的)<ul>
+<li>a blocking type where on a message send, the sender process blocks until the message has been received by the receiver process</li>
+<li>The sender process resumes execution only after it learns that the receiver process has accepted the message</li>
+<li>Thus, the sender and the receiver processes must synchronize to exchange a message</li>
+</ul>
+</li>
+<li>asynchronous communication models of process communicatiion(异步通信模型，非阻塞的)<ul>
+<li>a non-blocking type where the sender and the receiver do not synchronize to exchange a message</li>
+<li>After having sent a message, the sender process does not wait for the message to be delivered to the receiver process</li>
+<li>The message is bufferred by the system(消息需要操作系统进行缓存) and is delivered to the receiver process when it is ready to accept the message</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Neither of the communication models is superior to the other.(两者各有优劣)<ul>
+<li>Asynchronous communication provides higher parallelism because the sender process can execute while the message is in transit to the receiver(异步提供更高的并行性)<ul>
+<li>However, a buffer overflow may occur if a process sends a large number of message in a burst to another process(可能会缓存溢出)</li>
+<li>Thus, an implementation of asynchronous communication requires more complex buffer management(异步系统要求更复杂的缓存管理)</li>
+<li>In addition, due to higher degree of parallelism and non-determinism(更高的并行性和更高的非确定性), it is much more difficult to design, verify, and implement distributed algorithms for asynchronous communications(难以为异步通信设计、验证、实现分布式算法)</li>
+</ul>
+</li>
+<li>Synchronous communication is simpler to handle and implement(同步通信更简单管理和实现)<ul>
+<li>However, due to frequent blocking, it is likely to have poor performance and is likely to be more prone to deadlocks(频繁地阻塞，性能更差，更可能出现死锁)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/09/25/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-09-25-%E5%9F%BA%E5%87%86%E8%AF%84%E6%B5%8B%E9%9B%86/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">基准评测集</div></div></a></div><div class="next-post pull-right"><a href="/2024/09/29/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-29-%E9%80%BB%E8%BE%91%E6%97%B6%E9%97%B4/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">逻辑时间</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/09/21/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-21-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B/" title="分布式系统简介"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-21</div><div class="title">分布式系统简介</div></div></a></div><div><a href="/2024/09/29/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-29-%E9%80%BB%E8%BE%91%E6%97%B6%E9%97%B4/" title="逻辑时间"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-29</div><div class="title">逻辑时间</div></div></a></div><div><a href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="title">术语和基本算法</div></div></a></div><div><a href="/2024/10/25/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-10-25-%E5%85%A8%E5%B1%80%E7%8A%B6%E6%80%81%E5%8F%8A%E5%BF%AB%E7%85%A7%E7%AE%97%E6%B3%95/" title="全局状态及快照算法"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-25</div><div class="title">全局状态及快照算法</div></div></a></div><div><a href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="title">消息序和组通信</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B"><span class="toc-text">分布式计算模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B8%E5%9E%8B%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F-Ray"><span class="toc-text">典型分布式系统(Ray)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Distributed-Program"><span class="toc-text">Distributed Program</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Model-of-Distributed-Executions-%E5%88%86%E5%B8%83%E5%BC%8F%E6%89%A7%E8%A1%8C%E7%9A%84%E6%A8%A1%E5%9E%8B"><span class="toc-text">A Model of Distributed Executions(分布式执行的模型)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Causal-Precedence-Relation-%E5%9B%A0%E6%9E%9C%E8%BF%87%E7%A8%8B%E5%85%B3%E7%B3%BB"><span class="toc-text">Causal Precedence Relation(因果过程关系)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Concurrent-events-%E5%B9%B6%E5%8F%91%E4%BA%8B%E4%BB%B6"><span class="toc-text">Concurrent events(并发事件)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Logical-Concurrency-and-Physical-Concurrency-%E9%80%BB%E8%BE%91%E5%B9%B6%E5%8F%91%E5%92%8C%E7%89%A9%E7%90%86%E5%B9%B6%E5%8F%91"><span class="toc-text">Logical Concurrency and Physical Concurrency(逻辑并发和物理并发)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Models-of-Communication-Networks"><span class="toc-text">Models of Communication Networks</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#FIFO"><span class="toc-text">FIFO,</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Non-FIFO"><span class="toc-text">Non-FIFO,</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#causal-ordering-%E5%9B%A0%E6%9E%9C%E5%BA%8F"><span class="toc-text">causal ordering(因果序)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Global-State-of-a-Distributed-System"><span class="toc-text">Global State of a Distributed System</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Notations"><span class="toc-text">Notations</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Local-State"><span class="toc-text">Local State</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#A-Channel-State-%E4%BF%A1%E9%81%93%E7%8A%B6%E6%80%81"><span class="toc-text">A Channel State(信道状态)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Global-State-%E5%85%A8%E5%B1%80%E7%8A%B6%E6%80%81%EF%BC%8C%E4%B8%8D%E5%A4%AA%E5%8F%AF%E8%83%BD%EF%BC%8C%E5%8F%AA%E5%AD%98%E5%9C%A8%E4%B8%8E%E7%90%86%E8%AE%BA"><span class="toc-text">Global State(全局状态，不太可能，只存在与理论)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#A-Consistent-Global-State-%E4%B8%80%E8%87%B4%E7%9A%84%E5%85%A8%E5%B1%80%E7%8A%B6%E6%80%81"><span class="toc-text">A Consistent Global State(一致的全局状态)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Cuts-of-a-Distributed"><span class="toc-text">Cuts of a Distributed</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Past-and-Future-Cones-of-an-Event"><span class="toc-text">Past and Future Cones of an Event</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Past-Cone-of-an-Event-%E4%BA%8B%E4%BB%B6%E5%9B%A0%E6%9E%9C%E5%85%B3%E7%B3%BB%E7%9A%84%E5%9B%A0"><span class="toc-text">Past Cone of an Event(事件因果关系的因)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Future-Cone-of-an-Event-%E4%BA%8B%E4%BB%B6%E5%9B%A0%E6%9E%9C%E5%85%B3%E7%B3%BB%E4%B8%AD%E7%9A%84%E6%9E%9C"><span class="toc-text">Future Cone of an Event(事件因果关系中的果)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Model-of-Process-Communications"><span class="toc-text">Model of Process Communications</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>

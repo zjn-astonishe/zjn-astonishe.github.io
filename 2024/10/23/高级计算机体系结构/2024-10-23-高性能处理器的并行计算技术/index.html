@@ -1,0 +1,1439 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>高性能处理器的并行计算技术 | ZJN_BLOG</title><meta name="keywords" content="高级计算机体系结构"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="高性能处理器的并行计算技术Introduction现代处理器的特征 深度流水线 十多个功能段的流水线   多功能部件 多个浮点乘法器、 加法器等   一个时钟周期能够流出多条指令 发掘指令之间的并行性已成为现代处理器性能优化的重要方面  指令级并行的技术 软件技术: 循环展开、VLIW… 硬件技术: 分支预测、推测执行、动态调度  指令级并行存在的挑战 指令之间存在一定的竞争或依赖关系 结构冒险">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高性能处理器的并行计算技术">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2024/10/23/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-23-%E9%AB%98%E6%80%A7%E8%83%BD%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="高性能处理器的并行计算技术Introduction现代处理器的特征 深度流水线 十多个功能段的流水线   多功能部件 多个浮点乘法器、 加法器等   一个时钟周期能够流出多条指令 发掘指令之间的并行性已成为现代处理器性能优化的重要方面  指令级并行的技术 软件技术: 循环展开、VLIW… 硬件技术: 分支预测、推测执行、动态调度  指令级并行存在的挑战 指令之间存在一定的竞争或依赖关系 结构冒险">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2024-10-23T08:00:38.000Z">
+<meta property="article:modified_time" content="2025-04-14T03:05:11.078Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="高级计算机体系结构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2024/10/23/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-23-%E9%AB%98%E6%80%A7%E8%83%BD%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%8A%80%E6%9C%AF/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '高性能处理器的并行计算技术',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-04-14 11:05:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">高性能处理器的并行计算技术</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-10-23T08:00:38.000Z" title="发表于 2024-10-23 16:00:38">2024-10-23</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-04-14T03:05:11.078Z" title="更新于 2025-04-14 11:05:11">2025-04-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">高级计算机体系结构</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">12.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>42分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="高性能处理器的并行计算技术"><a href="#高性能处理器的并行计算技术" class="headerlink" title="高性能处理器的并行计算技术"></a>高性能处理器的并行计算技术</h1><h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><h3 id="现代处理器的特征"><a href="#现代处理器的特征" class="headerlink" title="现代处理器的特征"></a>现代处理器的特征</h3><ul>
+<li>深度流水线<ul>
+<li>十多个功能段的流水线</li>
+</ul>
+</li>
+<li>多功能部件<ul>
+<li>多个浮点乘法器、 加法器等</li>
+</ul>
+</li>
+<li>一个时钟周期能够流出多条指令</li>
+<li>发掘指令之间的并行性已成为现代处理器性能优化的重要方面</li>
+</ul>
+<h3 id="指令级并行的技术"><a href="#指令级并行的技术" class="headerlink" title="指令级并行的技术"></a>指令级并行的技术</h3><ul>
+<li>软件技术: 循环展开、VLIW…</li>
+<li>硬件技术: 分支预测、推测执行、动态调度</li>
+</ul>
+<h3 id="指令级并行存在的挑战"><a href="#指令级并行存在的挑战" class="headerlink" title="指令级并行存在的挑战"></a>指令级并行存在的挑战</h3><ul>
+<li><p>指令之间存在一定的竞争或依赖关系</p>
+<h4 id="结构冒险"><a href="#结构冒险" class="headerlink" title="结构冒险"></a>结构冒险</h4></li>
+<li><p>多条指令争用同一个功能部件<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E7%BB%93%E6%9E%84%E5%86%92%E9%99%A9.png" alt="img"></p>
+</li>
+<li>如Cycle4中的访存和取指冲突<ul>
+<li>因为数据和指令都存储在同一个内存中，而内存只有一个端口，不能被同时访问</li>
+<li>可通过将L1缓存改造成数据Cache和指令Cache，即将指令和数据分开存储来解决内存争用</li>
+<li>可通过分时解决争用问题，如上升沿读取指令，下降沿读取数据</li>
+<li>也可通过延迟一个周期再执行指令避开争用情况<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E7%BB%93%E6%9E%84%E5%86%92%E9%99%A9%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="数据冒险"><a href="#数据冒险" class="headerlink" title="数据冒险"></a>数据冒险</h4><ul>
+<li>数据之间存在真假依赖</li>
+<li>数据相关类型<ul>
+<li>Read After Write(RAW, 写后读): 真相关，上一个指令的结果作为下一个指令的参数，会造成冒险</li>
+<li>Write After Read(WAR, 读后写): 名字相关、反相关，上一个指令的参数位置是下一个指令所输出的位置，不会造成冒险</li>
+<li>Write After Write(WAW, 写后写): 名字相关、输出相关，上一个指令输出的位置是下一个指令输出的位置，不会造成冒险(只要中间不会有其他操作)</li>
+<li>Read After Read(RAR, 读后读)</li>
+</ul>
+</li>
+<li>数据相关的特性<ul>
+<li>传递性: i与j相关，j与h相关，则i与h相关</li>
+<li>不一定导致数据冒险(Hazard)<ul>
+<li>数据相关是程序的属性</li>
+<li>但是否发生冒险还取决于处理器的体系结构和功能部件，只要<strong>合理安排功能部件</strong>就能避免冒险</li>
+<li>两条存在相关的指令，在指令序列中如果距离较远，也不会造成冒险(所以<strong>调度指令序列</strong>也能避免冒险)</li>
+</ul>
+</li>
+<li>给出了可发掘的指令级并行的上限<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E5%86%92%E9%99%A9.png" alt="img"></li>
+</ul>
+</li>
+<li>数据相关的解决方法<ul>
+<li>转发(Forward): 将计算出的结果尽早发送到等待该结果的部件<ul>
+<li>例如ALU的运算结果先不访存和写回，直接传递给下一条指令作为运算参数<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E5%86%92%E9%99%A9%E5%AF%B9alu%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.png" alt="img"></li>
+<li>但不能解决所有问题，例如对于load来说，结果在访存阶段结束才能拿到，但下一条指令在阶段结束前就需要该结果作为参数，只能辅以延时等待解决<br><img src="https://github.com/zjn-astonishe/image/blob/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E5%86%92%E9%99%A9%E5%AF%B9load%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88.png?raw=true" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="控制冒险"><a href="#控制冒险" class="headerlink" title="控制冒险"></a>控制冒险</h4><ul>
+<li>分支语句执行具有不确定性，无法确定后续执行的指令(跳还是不跳)</li>
+<li>如果一条指令是否执行依赖于一条分支指令的执行结果，则不能把这条指令提到分支指令之前(否则会不受控于分支结果)</li>
+<li>如果一条指令与一个分支指令没有控制相关，则不能把这条指令放在分支指令之后(否则会使这条指令受分支结果控制)</li>
+<li>控制冒险在很大程度上限制了指令级并行(决定上限)<ul>
+<li>对于典型的MIPS程序，分支频率在15%~25%，平均3~6条指令就有一个分支出现<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E6%8E%A7%E5%88%B6%E5%86%92%E9%99%A9.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h3 id="发掘指令级并行的目的"><a href="#发掘指令级并行的目的" class="headerlink" title="发掘指令级并行的目的"></a>发掘指令级并行的目的</h3><ul>
+<li>降低程序执行的平均CPI<ul>
+<li>$Pipeline\quad CPI = Ideal\quad pipeline\quad CPI + Structural\quad stalls + Data\quad hazard\quad stalls + Control\quad stalls$</li>
+<li>最小化冒险发生的可能性</li>
+</ul>
+</li>
+</ul>
+<h3 id="Example"><a href="#Example" class="headerlink" title="Example"></a>Example</h3><figure class="highlight mips"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">I1  FDIV.D  f6,  f6,  f4</span><br><span class="line">I2  FLD     f2,  <span class="number">45</span>(x3)</span><br><span class="line">I3  FMUL.D  f0,  f2,  f4</span><br><span class="line">I4  FDIV.D  f8,  f6,  f2</span><br><span class="line">I5  FSUB.D  f10, f0,  f6</span><br><span class="line">I6  FADD.D  f6,  f8,  f2</span><br></pre></td></tr></table></figure>
+<h4 id="数据相关分析"><a href="#数据相关分析" class="headerlink" title="数据相关分析"></a>数据相关分析</h4><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E7%9B%B8%E5%85%B3%E5%88%86%E6%9E%90%E5%AE%9E%E4%BE%8B.png" alt="img"></p>
+<ul>
+<li>红色代表真相关<ul>
+<li>指令I1与指令I4、I5存在写后读(f6)真相关</li>
+<li>指令I2与指令I3、I4、I6存在写后读(f2)真相关</li>
+<li>指令I3与指令I5存在写后读(f0)真相关</li>
+<li>指令I4与指令I6存在写后读(f8)真相关</li>
+</ul>
+</li>
+<li>蓝色代表名字相关、反相关<ul>
+<li>指令I4、I5与指令I6存在读后写(f6)反相关</li>
+</ul>
+</li>
+<li>橙色代表输出相关<ul>
+<li>指令I1与指令I6存在写后写(f6)输出相关</li>
+</ul>
+</li>
+</ul>
+<h4 id="执行顺序分析"><a href="#执行顺序分析" class="headerlink" title="执行顺序分析"></a>执行顺序分析</h4><ul>
+<li><p>标准五段流水线的执行顺序</p>
+<ul>
+<li><p>顺序执行: </p>
+<p>clk|1|2|3|4|5|6|7|8|9|10|11<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>in/out|I1|I2|stall|stall|stall|I3|I4|stall|stall|I5|I6</p>
+</li>
+<li><p>乱序执行: </p>
+<p>clk|1|2|3|4|5|6|7|8|9|10|<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>in/out|I2|I1|stall|stall|I3|I4|stall|stall|I5|I6</p>
+</li>
+</ul>
+</li>
+<li><p>假定各种指令具有额外延迟</p>
+<ul>
+<li>相对标准的五段流水线需要额外时钟数，即如果下一条指令想要使用本指令的结果，必须延后几个周期发射</li>
+</ul>
+<p>Ins|I1|I2|I3|I4|I5|I6<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>Latency|4|1|3|4|1|1</p>
+</li>
+<li><p>按序发射/按序执行</p>
+<p>clk|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>in/out|I1|I2|stall|stall|I1_c|I2_c|I3|I4|stall|I3_c|I5|I4_c|I6|I5_c|I6_c</p>
+</li>
+<li><p>按序发射/乱序执行</p>
+<p>clk|1|2|3|4|5|6|7|8|9|10|11|12|<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>in/out|I1|I2|I2_c|I3|I1_c|I4|I3_c|I5|I5_c|I4_c|I6|I6_c</p>
+</li>
+</ul>
+<h2 id="基于循环展开的指令调度"><a href="#基于循环展开的指令调度" class="headerlink" title="基于循环展开的指令调度"></a>基于循环展开的指令调度</h2><ul>
+<li><p>基本假设</p>
+<ul>
+<li>五段流水线</li>
+<li>分支延迟为1个额外时钟</li>
+<li>定点计算的额外延迟为0</li>
+<li>浮点单元足够多，能够充分流水</li>
+</ul>
+<p>产生结果指令|等待结果指令|延迟<br>:-:|:-:|:-:<br>FP ALU OP|Another FP ALU OP|3<br>FP ALU OP|Store double|2<br>Load double|FP ALU OP|1<br>Load double|Store double|0<br>FP ALU OP|Load double|1<br>Store double|ADR ALU OP|0<br>Load double|ADR ALU OP|0</p>
+</li>
+</ul>
+<h3 id="循环展开的优势"><a href="#循环展开的优势" class="headerlink" title="循环展开的优势"></a>循环展开的优势</h3><ul>
+<li>降低循环条件判断在代码中的比例，因为：<ul>
+<li>分支指令本身会带来额外的延迟</li>
+<li>分支指令会导致控制冒险</li>
+</ul>
+</li>
+<li>提升循环体内可发掘的指令级并行性<ul>
+<li>循环体内指令变多，能够充分占据功能部件</li>
+<li>乱序执行调度的余地更大</li>
+</ul>
+</li>
+</ul>
+<h3 id="Example-1"><a href="#Example-1" class="headerlink" title="Example"></a>Example</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> (i=<span class="number">999</span>; i&gt;=<span class="number">0</span>; i=i<span class="number">-1</span>)</span><br><span class="line">    x[i] = x[i] + s;</span><br><span class="line"></span><br><span class="line">Loop:   fld     f0, <span class="number">0</span>(x1)       <span class="comment">// f0=array element</span></span><br><span class="line">        fadd.d  f4, f0, f2      <span class="comment">// add scalar in f2</span></span><br><span class="line">        fsd     f4, <span class="number">0</span>(x1)       <span class="comment">// store result</span></span><br><span class="line">        addi    x1, x1, <span class="number">-8</span>      <span class="comment">// decrement pointer 8B(per DW)</span></span><br><span class="line">        bne     x1, x2, Loop    <span class="comment">// branch x1 != x2</span></span><br></pre></td></tr></table></figure>
+<h4 id="未调度的执行"><a href="#未调度的执行" class="headerlink" title="未调度的执行"></a>未调度的执行</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Clock</th>
+<th style="text-align:center">Unscheduled</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">fld     f0, 0(x1) </td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">Stall</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">fadd.d  f4, f0, f2    // Load后ALU，延迟为1</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">Stall</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">Stall</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">fsd     f4, 0(x1)     // ALU后Store，延迟为2</td>
+</tr>
+<tr>
+<td style="text-align:center">7</td>
+<td style="text-align:center">addi    x1, x1, -8    // Store后ADR ALU，延迟为0</td>
+</tr>
+<tr>
+<td style="text-align:center">8</td>
+<td style="text-align:center">Stall</td>
+</tr>
+<tr>
+<td style="text-align:center">9</td>
+<td style="text-align:center">bne     x1, x2, Loop  // ALU后Load，延迟为1</td>
+</tr>
+<tr>
+<td style="text-align:center">10</td>
+<td style="text-align:center">Stall                // 分支延迟为1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>每次循环需要10个时钟周期</li>
+<li>有效负荷较少： 只有fld、 fadd、 fsd三条指令<ul>
+<li>有效负荷占30%</li>
+<li>50%的时钟停顿(优化方案是尽可能消除停顿)</li>
+<li>20%的时钟用于循环控制</li>
+</ul>
+</li>
+</ul>
+<h4 id="调度执行"><a href="#调度执行" class="headerlink" title="调度执行"></a>调度执行</h4><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Clock</th>
+<th style="text-align:center">Unscheduled</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">1</td>
+<td style="text-align:center">fld     f0, 0(x1) </td>
+</tr>
+<tr>
+<td style="text-align:center">2</td>
+<td style="text-align:center">addi    x1, x1, -8    // Load后ADR ALU，延迟为0</td>
+</tr>
+<tr>
+<td style="text-align:center">3</td>
+<td style="text-align:center">fadd.d  f4, f0, f2    // Load后ALU，延迟为1</td>
+</tr>
+<tr>
+<td style="text-align:center">4</td>
+<td style="text-align:center">Stall</td>
+</tr>
+<tr>
+<td style="text-align:center">5</td>
+<td style="text-align:center">bne     x1, x2, Loop  // 如果放在上一个Stall，下一次循环的第一条指令会和本次循环最后一条指令冲突？</td>
+</tr>
+<tr>
+<td style="text-align:center">6</td>
+<td style="text-align:center">fsd     f4, 8(x1)     // ALU后Store，延迟为2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>每次循环需要6个时钟周期<ul>
+<li>加速比： 10/6=1.67</li>
+</ul>
+</li>
+<li>有效负荷仍然较少： 只有fld、 fadd、 fsd三条指令<ul>
+<li>有效负荷占50%(优化方案是尽可能增加有效负荷——循环展开，增加一次循环的操作数)</li>
+<li>一个时钟停顿， 占16.67%</li>
+<li>两个时钟用于循环控制， 占33.33%(优化方案是减少循环控制开销——循环展开，减少循环的次数)</li>
+</ul>
+</li>
+</ul>
+<h4 id="未调度的循环展开"><a href="#未调度的循环展开" class="headerlink" title="未调度的循环展开"></a>未调度的循环展开</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Loop:   fld f0,0(x1)        // 1</span><br><span class="line">        fadd.d f4,f0,f2     // 2,3</span><br><span class="line">        fsd f4,0(x1)        // 4,5,6</span><br><span class="line">        fld f6,8(x1)        // 7</span><br><span class="line">        fadd.d f8,f6,f2     // 8,9</span><br><span class="line">        fsd f8,8(x1)        // 10,11,12</span><br><span class="line">        fld f10,16(x1)      // 13</span><br><span class="line">        fadd.d f12,f10,f2   // 14,15</span><br><span class="line">        fsd f12,16(x1)      // 16,17,18</span><br><span class="line">        fld f14,24(x1)      // 19</span><br><span class="line">        fadd.d f16,f14,f2   // 20,21</span><br><span class="line">        fsd f16,24(x1)      // 22,23,24</span><br><span class="line">        addi x1,x1,32       // 25</span><br><span class="line">        bne x1,x2,Loop      // 26,27</span><br><span class="line">        Stall               // 28</span><br></pre></td></tr></table></figure>
+<ul>
+<li>展开4次循环，每次循环需要28个时钟周期<ul>
+<li>发射14条指令<ul>
+<li>12条指令的有效负荷(42.9%)</li>
+<li>2个时钟周期用于循环控制(7.1%)</li>
+<li>14个时钟周期的停顿(50%)</li>
+</ul>
+</li>
+<li>但需要更多的寄存器</li>
+<li>平均每个原始循环7个时钟(28/4)</li>
+</ul>
+</li>
+</ul>
+<h4 id="调度的循环展开"><a href="#调度的循环展开" class="headerlink" title="调度的循环展开"></a>调度的循环展开</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Loop:   fld f0,0(x1)        // 1</span><br><span class="line">        fld f6,8(x1)        // 2</span><br><span class="line">        fld f10,16(x1)      // 3</span><br><span class="line">        fld f14,24(x1)      // 4</span><br><span class="line">        fadd.d f4,f0,f2     // 5</span><br><span class="line">        fadd.d f8,f6,f2     // 6</span><br><span class="line">        fadd.d f12,f0,f2    // 7</span><br><span class="line">        fadd.d f16,f14,f2   // 8</span><br><span class="line">        fsd f4,0(x1)        // 9</span><br><span class="line">        fsd f8,8(x1)        // 10</span><br><span class="line">        addi x1,x1,32       // 11</span><br><span class="line">        fsd f12,-16(x1)     // 12</span><br><span class="line">        bne x1,x2,Loop      // 13</span><br><span class="line">        fsd f16,-8(x1)      // 14        </span><br></pre></td></tr></table></figure>
+<ul>
+<li>每次循环需要14个时钟周期<ul>
+<li>发射14条指令<ul>
+<li>12条指令的有效负荷，占比85.7%</li>
+<li>2个时钟周期用于循环控制(14.3%)</li>
+<li>0个时钟周期的停顿</li>
+</ul>
+</li>
+<li>平均每个原始循环3.5个时钟(14/4)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Example-Conclusion"><a href="#Example-Conclusion" class="headerlink" title="Example Conclusion"></a>Example Conclusion</h4><ul>
+<li>未调度未展开： 10个时钟周期</li>
+<li>有调度未展开： 6个时钟周期</li>
+<li>未调度有展开： 7个时钟周期</li>
+<li>有调度有展开： 3.5个时钟周期</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><h4 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h4><ul>
+<li>确认循环迭代是不相关的， 从而能够展开</li>
+<li>使用不同的寄存器， 避免名字相关</li>
+<li>去除多余的分支与条件指令， 调整循环终止与迭代代码</li>
+<li>分析是否存在关于存储地址的相关性</li>
+<li>对代码进行调度</li>
+</ul>
+<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
+<li>代码量显著增长，并由此可能引起频繁的指令缓存缺失(Miss)，因为要存更多的指令在缓存</li>
+<li>寄存器消耗较多，并由此可能引起不必要的访存操作</li>
+</ul>
+<h2 id="基于计分板的指令调度"><a href="#基于计分板的指令调度" class="headerlink" title="基于计分板的指令调度"></a>基于计分板的指令调度</h2><h3 id="静态调度的缺陷"><a href="#静态调度的缺陷" class="headerlink" title="静态调度的缺陷"></a>静态调度的缺陷</h3><ul>
+<li>以循环展开为代表的静态调度需要对每个流水段的执行时间有明确的预期</li>
+<li>然而实际上，指令执行有很多的不确定性<ul>
+<li>同一种指令集体系结构具有不同的组成和实现方式，从而具有不同的微体系结构<ul>
+<li>如果流水线不同，针对一种流水线的静态调度难以在另一种流水线上高效执行</li>
+<li>不可能要求所有的软件为所有的微体系结构编译出一个可执行文件的版本</li>
+</ul>
+</li>
+<li>一些相关性在编译阶段难以发现<ul>
+<li>存储地址带来的相关性</li>
+<li>大量的分支指令</li>
+</ul>
+</li>
+<li>一些不可控的额外延迟，例如缓存缺失(miss)</li>
+</ul>
+</li>
+</ul>
+<h3 id="基于计分板的动态调度-CDC6600"><a href="#基于计分板的动态调度-CDC6600" class="headerlink" title="基于计分板的动态调度(CDC6600)"></a>基于计分板的动态调度(CDC6600)</h3><h4 id="计分板-ScoreBoard-的结构"><a href="#计分板-ScoreBoard-的结构" class="headerlink" title="计分板(ScoreBoard)的结构"></a>计分板(ScoreBoard)的结构</h4><ul>
+<li>记录已发射指令的状态</li>
+<li>记录各个寄存器的使用和等待情况</li>
+<li>记录各个功能单元的使用和等待情况<ul>
+<li>2个乘法器，1个除法器，1个加法器，1个与数据加载器</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF%E7%BB%93%E6%9E%84.png" alt="img"></p>
+<h4 id="动态调度机制"><a href="#动态调度机制" class="headerlink" title="动态调度机制"></a>动态调度机制</h4><ul>
+<li>针对多个功能部件和流水线展开调度</li>
+<li>针对RAW相关(写后读，真相关)<ul>
+<li>设置数据就绪位，强制等待数据就绪</li>
+</ul>
+</li>
+<li>针对WAR相关(读后写，反相关)<ul>
+<li>在一个寄存器被读之前，不允许后续的指令写</li>
+</ul>
+</li>
+<li>针对WAW相关(写后写，输出相关)<ul>
+<li>延迟寄存器写回，避免覆盖</li>
+</ul>
+</li>
+</ul>
+<h4 id="定义流水线的各个阶段"><a href="#定义流水线的各个阶段" class="headerlink" title="定义流水线的各个阶段"></a>定义流水线的各个阶段</h4><ul>
+<li>第一阶段: 发射阶段，负责译码、检查结构冒险(资源争用)<ul>
+<li>按指令的原始顺序完成发射</li>
+<li>有结构冒险的话，则不能发射</li>
+<li>有WAW冒险(输出冒险)的话，也不能发射</li>
+</ul>
+</li>
+<li>第二阶段: 读操作数，在没有冒险时读操作数<ul>
+<li>在RAW消除后读操作数</li>
+<li>计分板不考虑转发(Forward)，即上一条指令执行的结果不可能转发给下一条指令的操作数寄存器，必须遵循写回</li>
+</ul>
+</li>
+<li>第三阶段: 执行阶段，对操作数进行运算(乱序执行)<ul>
+<li>执行指令，并向计分板通知指令执行完成</li>
+</ul>
+</li>
+<li>第四阶段: 写回阶段，写回结果到指定位置(乱序写回)<ul>
+<li>在没有WAR冒险时写回结果</li>
+</ul>
+</li>
+</ul>
+<h4 id="运作机制"><a href="#运作机制" class="headerlink" title="运作机制"></a>运作机制</h4><ul>
+<li>记录指令状态<ul>
+<li>每条已发射指令处于流水线四个阶段的哪个</li>
+</ul>
+</li>
+<li>记录寄存器状态<ul>
+<li>记录每个寄存器是否会被某个功能单元写入，如果是，则还要记录将会被哪个功能单元写入</li>
+</ul>
+</li>
+<li>记录功能单元状态  <ul>
+<li>记录各个功能单元的使用和等待情况</li>
+<li>9个字段的标记<ul>
+<li>Busy: 当前单元是否空闲</li>
+<li>Op: 当前单元执行的操作</li>
+<li>Fi: 目的寄存器</li>
+<li>Fj、Fk: 源寄存器的编号</li>
+<li>Qj、Qk: 为源寄存器产生数据的功能单元</li>
+<li>Rj、Rk: 源寄存器中数据是否就绪的标志位</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Example-2"><a href="#Example-2" class="headerlink" title="Example"></a>Example</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">L.D     F6, 34(R2)</span><br><span class="line">L.D     F2, 45(R3)</span><br><span class="line">MUL.D   F0,  F2, F4</span><br><span class="line">SUB.D   F8,  F2, F4</span><br><span class="line">DIV.D   F10, F0, F6</span><br><span class="line">ADD.D   F6,  F8, F2</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>一些关于延迟的假设</p>
+<ul>
+<li>ADD指令: 读到操作数后需要2时钟计算出结果(有一个加法器)</li>
+<li>MULTIPLY指令: 读到操作数后需要10时钟计算出结果(有两个乘法器)</li>
+<li>DIVIDE指令: 读到操作数后需要40时钟计算出结果(有一个除法器)</li>
+<li>Load指令: 只需要1个时钟</li>
+</ul>
+</li>
+<li><p>首先要找出上述指令中的各种相关：</p>
+<ul>
+<li>RAW相关:<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF%E7%9A%84RAW%E7%9B%B8%E5%85%B3.png" alt="img"> </li>
+<li>WAR相关:<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF%E7%9A%84WAR%E7%9B%B8%E5%85%B3.png" alt="img"></li>
+</ul>
+</li>
+<li>初始化计分板，为三个表<ul>
+<li>Instruction status: 记录每个时钟周期的指令状态(或者说每个时钟周期流水线的状态)</li>
+<li>Functional unit status: 记录每个时钟周期的功能单元状态</li>
+<li>Register result status: 记录每个时钟周期的寄存器状态<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81.png" alt="img"></li>
+</ul>
+</li>
+<li>第1个时钟周期<ul>
+<li>Instruction status记录发射第1条指令</li>
+<li>因为执行的是Load指令，所以Functional unit status记录Integer组件的使用情况，其中目的寄存器是F6，操作数的源寄存器是R2，流水线上看不需要依赖任何功能组件，因此设置就绪标志位为Yes，表示占用。另一个操作数是立即数，不需记录</li>
+<li>Register result status记录F6寄存器需要被Integer功能组件写入<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF1.png" alt="img"></li>
+</ul>
+</li>
+<li>第2个时钟周期<ul>
+<li>Instruction status记录第1条指令读取操作数。不能发送第2条指令，因为有结构冒险，即第1条指令和第2条指令都是Load指令，都需要访问同一个功能组件(内存)</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF2.png" alt="img"></li>
+</ul>
+</li>
+<li>第3个时钟周期<ul>
+<li>Instruction status记录第1条指令处于执行完成阶段。依然不能发送第2条指令，也不能发送第3条指令，因为第3条指令的源操作数需要第2条指令指明，否则不知道该从哪里读取该操作数。</li>
+<li>第1条指令操作数的源寄存器R2已不需再使用，因此设置Functional unit status中对应就绪标志位为No</li>
+<li>Register result status不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF3.png" alt="img"></li>
+</ul>
+</li>
+<li>第4个时钟周期<ul>
+<li>Instruction status记录第1条指令处于写回完成阶段。不过下一周期才能发送后续指令</li>
+<li>Functional unit status清空Integer功能组件的使用情况，因为第1条指令的Load已经完成，该时钟周期是要将结果写回指定位置(但是内存依然是被占用的，所以还不能发送第2条指令)</li>
+<li>Register result status不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF4.png" alt="img"></li>
+</ul>
+</li>
+<li>第5个时钟周期<ul>
+<li>Instruction status记录发射第2条指令，因为第1条指令已经执行完毕，现在不存在结构冒险</li>
+<li>因为执行的是Load指令，所以Functional unit status记录Integer组件的使用情况，其中目的寄存器是F2，操作数的源寄存器是R3，流水线上看不需要依赖任何功能组件，因此设置就绪标志位为Yes，表示占用。另一个操作数是立即数，不需记录</li>
+<li>Register result status记录F2寄存器需要被Integer功能组件写入，将F6寄存器状态置空<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF5.png" alt="img"></li>
+</ul>
+</li>
+<li>第6个时钟周期<ul>
+<li>Instruction status记录第2条指令读取操作数，发射第3条指令</li>
+<li>因为第3条执行的是Mult指令，所以Functional unit status记录Mult1组件的使用情况，其中目的寄存器是F0，一个操作数的源寄存器一个是F2，功能组件Integer尚未为此寄存器产生数据，因此设置就绪标志位为No。另一个操作数的源寄存器是F4，流水线上看不需要依赖任何功能组件，因此设置就绪标志位为Yes，表示占用</li>
+<li>Register result status记录F0寄存器需要被Mult1功能组件写入<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF6.png" alt="img"></li>
+</ul>
+</li>
+<li>第7个时钟周期<ul>
+<li>Instruction status记录第2条指令处于执行完成阶段，第3条指令由于源寄存器F2的操作数需要在第2条指令完成写回后才能获得，因此不能进行读取操作数阶段。发射第4条指令</li>
+<li>因为第4条执行的是Sub指令，所以Functional unit status记录Add组件的使用情况，其中目的寄存器是F8，一个操作数的源寄存器是F6，流水线上看不需要依赖任何功能组件，因此设置就绪标志位为Yes，表示占用。另一个操作数的源寄存器是F2，功能组件Integer尚未为此寄存器产生数据，因此设置就绪标志位为No。而第2条指令已经读取完了操作数，R3寄存器不需再使用，因此设置就绪标志位为No</li>
+<li>Register result status记录F8寄存器需要被Add功能组件写入<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF7.png" alt="img"></li>
+</ul>
+</li>
+<li>第8个时钟周期<ul>
+<li>Instruction status记录第2条指令处于写回完成阶段，第3条指令和第4条指令由于源寄存器F2的操作数需要在第2条指令完成写回后才能获得，因此不能进行读取操作数阶段。发射第5条指令</li>
+<li>因为第5条指令执行的是Div指令，所以Functional unit status记录Divide组件的使用情况，其中目的寄存器为F10，一个操作数的源寄存器是F0，功能组件Mult1尚未为此寄存器产生数据，因此设置就绪标志位为No。另一个操作数的源寄存器是F6，流水线上看不需要依赖任何功能组件，因此设置就绪标志位为Yes。清空Integer功能组件的使用情况，因为第2条指令的Load已经完成。而Integer已经为F2产生了数据，因此需修改第3条指令和第4条指令对应操作数源寄存器F2的就绪状态为Yes</li>
+<li>Register result status记录F10寄存器需要被Divide功能组件写入，将F2寄存器状态置空<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF8_1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF8_2.png" alt="img"></li>
+</ul>
+</li>
+<li>第9个时钟周期<ul>
+<li>Instruction status记录第3和第4条指令读取操作数(因为操作数源寄存器都已就绪)，第5条指令由于源寄存器F0的操作数需要在第3条指令完成写回后才能获得，因此不能进行读取操作数阶段。第6条指令与第4条指令都需要用到Add功能组件，存在结构冒险而不能发射</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF9.png" alt="img"></li>
+</ul>
+</li>
+<li>第10个时钟周期<ul>
+<li>由于第3和第4条指令都已经读取完了操作数，F2、F4、F6寄存器不需再使用，因此Functional unit status设置对应就绪标志位为No</li>
+<li>其余两个表不变，因为第3和第4条指令执行需要不止1个时钟周期<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF10.png" alt="img"></li>
+</ul>
+</li>
+<li>第11个时钟周期<ul>
+<li>Instruction status记录第4条指令处于执行完成阶段</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF11.png" alt="img"></li>
+</ul>
+</li>
+<li>第12个时钟周期<ul>
+<li>Instruction status记录第4条指令处于写回完成阶段(有结构冒险的必须在写回完成后的下一周期才能发射指令)</li>
+<li>Functional unit status清空Add功能组件的使用情况，因为第4条指令已经完成。</li>
+<li>Register result status将F8寄存器状态置空<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF12.png" alt="img"></li>
+</ul>
+</li>
+<li>第13个时钟周期<ul>
+<li>Instruction status记录发射第6条指令</li>
+<li>因为第5条指令执行的是ADD指令，所以Functional unit status记录Add组件的使用情况，其中目的寄存器为F6，一个操作数的源寄存器是F8，流水线上看不需要依赖任何功能组件，因此设置就绪标志位为Yes。另一个操作数的源寄存器是F2，流水线上看不需要依赖任何功能组件，因此设置就绪标志位为Yes。</li>
+<li>Register result status记录F6寄存器需要被Add功能组件写入<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF13.png" alt="img"></li>
+</ul>
+</li>
+<li>第14个时钟周期<ul>
+<li>Instruction status记录第6条指令读取操作数</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF14.png" alt="img"></li>
+</ul>
+</li>
+<li>第15个时钟周期<ul>
+<li>由于第6条指令已经读取完了操作数，F8、F2寄存器不需再使用，因此Functional unit status设置对应就绪标志位为No</li>
+<li>其余两个表不变，因为第3和第6条指令执行需要不止1个时钟周期<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF15.png" alt="img"></li>
+</ul>
+</li>
+<li>第16个时钟周期<ul>
+<li>Instruction status记录第6条指令处于执行完成阶段</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF16.png" alt="img"></li>
+</ul>
+</li>
+<li>第17个时钟周期<ul>
+<li>所有表都不变，因为第5条指令的源寄存器F6处于就绪状态，与第6条指令的目的寄存器现在存在WAR相关，因此在第5条指令读完操作数之前，第6条指令还不能进行写回<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF17.png" alt="img"></li>
+</ul>
+</li>
+<li>第18个时钟周期<ul>
+<li>所有表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF18.png" alt="img"></li>
+</ul>
+</li>
+<li>第19个时钟周期<ul>
+<li>Instruction status记录第3条指令处于执行完成阶段</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF19.png" alt="img"></li>
+</ul>
+</li>
+<li>第20个时钟周期<ul>
+<li>Instruction status记录第3条指令处于写回完成阶段</li>
+<li>Functional unit status清空Mult1功能组件的使用情况，因为第3条指令已经完成。且Mult1功能组件已经为第5条指令的操作数源寄存器F0产生了数据，因此修改对就绪标志位为Yes</li>
+<li>Register result status将F0寄存器状态置空<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF20.png" alt="img"></li>
+</ul>
+</li>
+<li>第21个时钟周期<ul>
+<li>Instruction status记录第5条指令读取操作数(第6条指令可以进行写回了)</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF21.png" alt="img"></li>
+</ul>
+</li>
+<li>第22个时钟周期<ul>
+<li>Instruction status记录第6条指令处于写回完成阶段</li>
+<li>Functional unit status清空Add功能组件的使用情况，因为第6条指令已经完成。由于第5条指令已经读取完了操作数，F0、F6寄存器不需再使用，因此设置对应就绪标志位为No</li>
+<li>Register result status将F6寄存器状态置空<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF22.png" alt="img"></li>
+</ul>
+</li>
+<li>第61个时钟周期<ul>
+<li>Instruction status记录第5条指令处于执行完成阶段</li>
+<li>其余两个表不变<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF61.png" alt="img"></li>
+</ul>
+</li>
+<li>第62个时钟周期<ul>
+<li>Instruction status记录第5条指令处于写回完成阶段</li>
+<li>Functional unit status清空Divide功能组件的使用情况，因为第5条指令已经完成。</li>
+<li>Register result status将F10寄存器状态置空<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E8%AE%A1%E5%88%86%E6%9D%BF62.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="不足之处"><a href="#不足之处" class="headerlink" title="不足之处"></a>不足之处</h4><ul>
+<li>没有转发(Forward)</li>
+<li>没有考虑分支指令，只能处理基本块内的调度，窗口较小</li>
+<li>发生结构冒险时，选择不发射指令，但实际是可以发射的，因为有流水线，只需小小延迟</li>
+<li>没有对名字相关采取重命名<ul>
+<li>等待WAR冒险(改名即可避免)</li>
+<li>阻止WAW冒险(改名即可避免)</li>
+</ul>
+</li>
+<li>写寄存器与读该寄存器的数据不能同时进行，需要一个额外时钟(出现写回和读操作数需要两个周期)</li>
+</ul>
+<h2 id="基于Tomasulo算法的指令调度"><a href="#基于Tomasulo算法的指令调度" class="headerlink" title="基于Tomasulo算法的指令调度"></a>基于Tomasulo算法的指令调度</h2><h3 id="数据相关分析-1"><a href="#数据相关分析-1" class="headerlink" title="数据相关分析"></a>数据相关分析</h3><h4 id="真数据相关-True-Data-Dependence"><a href="#真数据相关-True-Data-Dependence" class="headerlink" title="真数据相关(True Data Dependence)"></a>真数据相关(True Data Dependence)</h4><ul>
+<li>只有当指令的操作数可用时，才能执行指令，从而避免RAW冒险</li>
+<li>计分板已经提供了解决方法</li>
+</ul>
+<h4 id="名字相关-Name-Dependence"><a href="#名字相关-Name-Dependence" class="headerlink" title="名字相关(Name Dependence)"></a>名字相关(Name Dependence)</h4><ul>
+<li>WAR和WAW冒险实际源于名字相关<ul>
+<li>WAR: 读后写的反相关</li>
+<li>WAW: 写后写的输出相关</li>
+</ul>
+</li>
+<li>计分板并没有完美解决，选择了不发送指令延时的方法</li>
+<li>可以通过寄存器重命名(Register Renaming)消除</li>
+</ul>
+<h3 id="Tomasulo算法"><a href="#Tomasulo算法" class="headerlink" title="Tomasulo算法"></a>Tomasulo算法</h3><ul>
+<li>为IBM 360/91设计的，在CDC 6600(上节的<a href="#基于计分板的动态调度cdc6600">基于计分板的动态调度(CDC6600)</a>)三年之后(1966)<ul>
+<li>IBM的每条指令有两个寄存器描述符(register specifiers)，CDC 6600有三个(前者没有结果寄存器？)</li>
+<li>IBM有四个浮点寄存器，而CDC 6600有八个</li>
+</ul>
+</li>
+</ul>
+<h4 id="具体方法"><a href="#具体方法" class="headerlink" title="具体方法"></a>具体方法</h4><ul>
+<li>跟踪操作数何时可用</li>
+<li>控制&amp;缓冲器分布于功能部件(FU)与集中于计分板<ul>
+<li>功能部件缓冲器称为”保留站(RS)”</li>
+<li>用于存放未决的操作数</li>
+</ul>
+</li>
+<li>在硬件中引入寄存器重命名</li>
+<li>指令中的寄存器被数值或者指向保留站的指针替代，即寄存器重命名(Register Renaming)<ul>
+<li>消除WAR、WAW冒险</li>
+<li>保留站比实际寄存器多，因为可以完成优化编译器所不能完成的一些工作结果</li>
+<li>从RS直接到FU，无需通过寄存器，而是通过公共数据总线(Common Data Bus)把结果广播到所有FU(如上图)<ul>
+<li>Normal data bus(正常数据总线): <ul>
+<li>data + destination(“go to” bus)</li>
+</ul>
+</li>
+<li>Common data bus(通用数据总线): <ul>
+<li>data + source(“come from” bus)</li>
+<li>64 bits of data + 4 bits of Functional Unit source address(源地址)</li>
+<li>Write if matches expected Functional Unit(produces result)(与预期功能单元匹配就写入)</li>
+<li>Does the broadcast(广播)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>载入(Load)和存储(Store)也像其他功能部件一样使用保留站</li>
+</ul>
+</li>
+</ul>
+<h4 id="Reservation-stations-RS-保留站"><a href="#Reservation-stations-RS-保留站" class="headerlink" title="Reservation stations(RS, 保留站)"></a>Reservation stations(RS, 保留站)</h4><ul>
+<li>Register renaming is provided by reservation stations, contains:</li>
+<li>Components<ul>
+<li>The instruction(指令)</li>
+<li>Buffered operand values(when available)(缓冲的操作数数值)</li>
+<li>Reservation station number of instruction providing the operand values(提供操作数数值的指令的保留站编号)</li>
+</ul>
+</li>
+<li>RS fetches and buffers an operand as soon as it becomes available(RS在操作数可用的时候立即获取并缓存该操作数)<ul>
+<li>not necessarily involving register file(不一定涉及寄存器文件)</li>
+</ul>
+</li>
+<li>Pending instructions designate the RS to which they will send their output(待定指令指定了它们将要将输出发送到哪个RS)<ul>
+<li>Result values broadcast on a result bus, called Common Data Bus(CDB, 结果在结果总线上广播，该总线叫做通用数据总线)</li>
+</ul>
+</li>
+<li>Only the last output updates the register file(只有最后一个输出会更新寄存器文件)</li>
+<li>As instructions are issued, the register specifiers are renamed with the reservation station(指令发送后，寄存器说明符将用保留站进行重命名)<ul>
+<li>May be more reservation stations than registers(也许保留站甚至比寄存器还要多，因为寄存器名称冲突了才重命名的)</li>
+</ul>
+</li>
+<li><p>Load and store buffers(加载和保存缓存，也就是保留站的工作)</p>
+<ul>
+<li>Contain data and addresses, act like reservation stations(包括了数据和地址)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo%20Reservation%20Station.png" alt="img"></p>
+</li>
+</ul>
+<h4 id="Steps"><a href="#Steps" class="headerlink" title="Steps"></a>Steps</h4><ul>
+<li>Issue(Sometimes called dispatch调度 in a dynamically scheduled processor)<ul>
+<li>Get next instruction from FIFO queue(FIFO队列中获取下一条指令)</li>
+<li>If available RS(no structural hazard, 没有结构冒险), issue the instruction to the RS with operand values if avaliable(renames registers)(没有结构冒险就发射指令到RS，如此便能对寄存器进行重命名。如果操作数值可用，则带着操作数)</li>
+<li>If operand values not available, stall the instruction(如果操作数值暂时不可用，则暂停该指令)</li>
+</ul>
+</li>
+<li>Execute(执行)<ul>
+<li>When operand becomes available, store it in any reservation stations waiting for it(操作数可用时)</li>
+<li>When both operands ready, then execute(所有的操作数都就绪，执行它)</li>
+<li>If not ready, watch Common Data Bus for result(不就绪，监听通用数据总线等待结果)</li>
+</ul>
+</li>
+<li>Write result(写回)<ul>
+<li>Write result on CDB, and from there into registers, reservation stations and store buffers waiting for this result(将结果写道通用数据总线，并从通用数据总线写入目标寄存器、保留站和等待此结果的存储缓冲区)</li>
+<li>Stores must wait until store address and value to be stored are available(存储必须等到要存储的数据和存储目标地址可用才能存储)</li>
+<li>Mark reservation station available(标记保留站可用)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Example-3"><a href="#Example-3" class="headerlink" title="Example"></a>Example</h4><ul>
+<li>保留站中记录的信息<ul>
+<li>$Op$: 操作类型 </li>
+<li>$Busy$: 是否占用</li>
+<li>$V_j$, $V_k$: 源操作数的值(已经就绪的源操作数才能保留在此)</li>
+<li>$Q_j$, $Q_k$: 如果源操作数的值尚未就绪，该部分指向操作数的值依赖保留站中的哪一项<ul>
+<li>当值为0的时候，说明操作数已经就绪了</li>
+<li>对于一个源操作数，V和Q只有一个有效</li>
+</ul>
+</li>
+<li>$A$: Load、Store指令对应的地址<ul>
+<li>如果地址还未算出来，则保留立即数</li>
+<li>如果地址已经算出来，则保留访存目标地址的值</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>寄存器组保留的信息<ul>
+<li>$Q_i$: 第i号寄存器的值由哪个保留站计算出来的</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">L.D     F6, 34(R2)</span><br><span class="line">L.D     F2, 45(R3)</span><br><span class="line">MUL.D   F0,  F2, F4</span><br><span class="line">SUB.D   F8,  F2, F4</span><br><span class="line">DIV.D   F10, F0, F6</span><br><span class="line">ADD.D   F6,  F8, F2</span><br></pre></td></tr></table></figure>
+<ul>
+<li>初始化<ul>
+<li>Instruction status: 记录指令所处状态</li>
+<li>Load/Buffers: 缓存指令的操作数</li>
+<li>Reservation Station: 记录操作数状态</li>
+<li>Register result status: 记录寄存器状态<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo%E5%88%9D%E5%A7%8B%E7%8A%B6%E6%80%81.png" alt="img"></li>
+</ul>
+</li>
+<li>第1个时钟周期<ul>
+<li>Instruction status: 发射第1条指令</li>
+<li>Load/Buffers: 缓存第1条指令的操作数，所占位置设置为Busy</li>
+<li>Reservation Station: 暂时为空</li>
+<li>Register result status: 记录寄存器F6需要等待来自Buffer中Load1的结果<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo1.png" alt="img"></li>
+</ul>
+</li>
+<li>第2个时钟周期<ul>
+<li>Instruction status: 由于有缓冲区的存在，可以不管结构冒险发射第2条指令，即使和第一条指令可能会争用内存。(即可以发送多条Load指令)</li>
+<li>Load/Buffers: 缓存第2条指令的操作数，所占位置Busy设置为Yes</li>
+<li>Reservation Station: 暂时为空</li>
+<li>Register result status: 记录寄存器F2需要等待来自Buffer中Load2的结果<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo2.png" alt="img"></li>
+</ul>
+</li>
+<li>第3个时钟周期<ul>
+<li>Instruction status: 发射第3条指令，第1条指令执行完毕(可以在CDB广播该结果)</li>
+<li>Load/Buffers: 为空，不需要缓存操作数</li>
+<li>Reservation Station: 记录第3条指令占用乘法器Mult1进行乘法操作，第1个操作数来自寄存器F2的值还未就绪，需要来自第2条指令的写回结果，因此在$Q_j$记录该操作数在Buffer的来源，第2个操作数则已就绪写在$V_k$(操作数都保留在此，寄存器F4和F2不需要使用)</li>
+<li>Register result status: 记录寄存器F0需要等待来自第3条指令的乘法器Mult1的计算结果<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo3.png" alt="img"></li>
+</ul>
+</li>
+<li>第4个时钟周期<ul>
+<li>Instruction status: 发射第4条指令，第1条指令写回完成，第2条指令执行完成(可以在CDB广播该结果)</li>
+<li>Load/Buffers: 第1条指令占据的位置可以空出来了，Busy设置为No</li>
+<li>Reservation Station: 记录第4条指令占用加法器Add1进行减法操作，因为第1个操作数来自第1条指令的结果，而第1条指令已经写回，则在$V_j$表示就绪(其中A1为第1条指令里的地址)。第2个操作数来自寄存器F2的值还未就绪，需要来自第2条指令的写回结果，因此在$Q_k$记录该操作数在Buffer的来源</li>
+<li>Register result status: 记录寄存器F8需要等待来自第4条指令的加法器Add1的计算结果，记录F6寄存器已取得写回结果(A1为第1条指令里的地址)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo4.png" alt="img"></li>
+</ul>
+</li>
+<li>第5个时钟周期<ul>
+<li>Instruction status: 发射第5条指令，第2条指令写回完成，第3、4条指令此时操作数才能就绪，尚未执行完成</li>
+<li>Load/Buffers: 第2条指令占据的位置可以空出来了，Busy设置为No</li>
+<li>Reservation Station: 记录第5条指令占用乘法器Mult2进行除法操作，因为第1个操作数来自寄存器F0还未就绪，需要乘法器Mult1写回计算结果，因此在$Q_j$记录该操作数在来源。第2个操作数来自第1条指令的结果，而第1条指令早已经写回，则在$V_k$表示就绪(其中A1为第1条指令里的地址)。由于第2条指令已经完成写回，则需要第2条指令写回结果作为源操作数的第3、4条指令的RS项可以将未就绪改为就绪，并注明来源自写回结果(A2为第2条指令里的地址)，然后两者现在可同时执行，由于没有用到相同的源寄存器，操作数都存在不同RS中，就相当于重命名了。</li>
+<li>Register result status: 记录F2寄存器已取得写回结果(A2为第2条指令里的地址)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo5.png" alt="img"></li>
+</ul>
+</li>
+<li>第6个时钟周期<ul>
+<li>Instruction status: 发射第6条指令，由上节知道加减需要2个周期完成执行，乘法需要10个周期完成执行，所以第3、4条指令尚未执行完成</li>
+<li>Load/Buffers: 无需改动</li>
+<li>Reservation Station: 记录第6条指令占用加法器Add2进行加法操作，因为第1个操作数来自寄存器F8还未就绪，需要加法器Add1写回计算结果，因此在$Q_j$记录该操作数在来源。第2个操作数来自第2条指令的结果，而第2条指令早已经写回，则在$V_k$表示就绪(其中A2为第2条指令里的地址)</li>
+<li>Register result status: 记录F6寄存器需要等待来自第6条指令的加法器Add2的计算结果<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo6.png" alt="img"></li>
+</ul>
+</li>
+<li>第7个时钟周期<ul>
+<li>Instruction status: 第4条指令执行完成</li>
+<li>Load/Buffers: 无需改动</li>
+<li>Reservation Station: 无需改动</li>
+<li>Register result status: 无需改动<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo7.png" alt="img"></li>
+</ul>
+</li>
+<li>第8个时钟周期<ul>
+<li>Instruction status: 第4条指令写回完成</li>
+<li>Load/Buffers: 无需改动</li>
+<li>Reservation Station: 第4条指令已完成，所以需清空占用的加法器Add1的记录，且因此第6条指令第1个操作数就绪，清空$Q_j$，设置$V_j$(从CDB获得？)</li>
+<li>Register result status: 记录F8寄存器从CDB获得的值<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo8.png" alt="img"></li>
+</ul>
+</li>
+<li>第9个时钟周期<ul>
+<li>Instruction status: 第3、6条指令在执行，第5条指令在等待，所以无需修改</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo9.png" alt="img"></li>
+</ul>
+</li>
+<li>第10个时钟周期<ul>
+<li>Instruction status: 第6条指令执行完成</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo10.png" alt="img"></li>
+</ul>
+</li>
+<li>第11个时钟周期<ul>
+<li>Instruction status: 第6条指令写回完成</li>
+<li>Load/Buffers: 无需改动</li>
+<li>Reservation Station: 第4条指令已完成，所以需清空占用的加法器Add2的记录</li>
+<li>Register result status: 记录F6寄存器从CDB获得的值(因为其他操作数都不在寄存器，所以不存在RAW冒险)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo11.png" alt="img"></li>
+</ul>
+</li>
+<li>第12个时钟周期<ul>
+<li>Instruction status: 无需修改</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo12.png" alt="img"></li>
+</ul>
+</li>
+<li>第13个时钟周期<ul>
+<li>Instruction status: 无需修改</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo13.png" alt="img"></li>
+</ul>
+</li>
+<li>第14个时钟周期<ul>
+<li>Instruction status: 无需修改</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo14.png" alt="img"></li>
+</ul>
+</li>
+<li>第15个时钟周期<ul>
+<li>Instruction status: 第3条指令执行完成</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo15.png" alt="img"></li>
+</ul>
+</li>
+<li>第16个时钟周期<ul>
+<li>Instruction status: 第3条指令写回完成</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 第3条指令已完成，所以需清空占用的乘法器Mult1的记录，且因此第5条指令的第1个操作数就绪，清空$Q_j$，设置$V_j$(从CDB获得？)</li>
+<li>Register result status: 记录F0寄存器从CDB获得的值<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo16.png" alt="img"></li>
+</ul>
+</li>
+<li>第17-55个时钟周期<ul>
+<li>Instruction status: 由上节知道除法指令要花费48个时钟周期，无需修改</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo55.png" alt="img"></li>
+</ul>
+</li>
+<li>第56个时钟周期<ul>
+<li>Instruction status: 第5条指令执行完成</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 无需修改</li>
+<li>Register result status: 无需修改<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo56.png" alt="img"></li>
+</ul>
+</li>
+<li>第57个时钟周期<ul>
+<li>Instruction status: 第5条指令写回完成</li>
+<li>Load/Buffers: 无需修改</li>
+<li>Reservation Station: 第5条指令已完成，所以需清空占用的乘法器Mult2的记录</li>
+<li>Register result status: 记录F10寄存器从CDB获得的值<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo57.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ul>
+<li>按序发射</li>
+<li>乱序执行</li>
+<li>乱序完成</li>
+</ul>
+<h4 id="Tomasulo算法的优势"><a href="#Tomasulo算法的优势" class="headerlink" title="Tomasulo算法的优势"></a>Tomasulo算法的优势</h4><ul>
+<li>分布式的冒险检测<ul>
+<li>采用分布式的保留站: 每个保留站可以自主判断冒险</li>
+<li>CDB的使用: 一个结果被多个功能单元等待，这些功能单元能够同时得到该结果的广播消息，同时记录(如果在寄存器，则只能一个功能单元访问，而总线能够被多个功能单元访问)</li>
+</ul>
+</li>
+<li>能够消除WAW、WAR冒险<ul>
+<li>利用保留站可实现寄存器的重命名</li>
+<li>WAR: 一旦数据从寄存器读取到保留站，就不再依赖寄存器</li>
+<li>WAW: 两条指令的目标寄存器相同，但结果由不同的功能单元等待，则不会出现WAW</li>
+</ul>
+</li>
+</ul>
+<h4 id="Tomasulo算法的劣势"><a href="#Tomasulo算法的劣势" class="headerlink" title="Tomasulo算法的劣势"></a>Tomasulo算法的劣势</h4><ul>
+<li>主要缺点是复杂度太高<ul>
+<li>要求大量的硬件</li>
+<li>保留站必须维护一个高速运行和拥且复杂控制逻辑的关联缓冲器</li>
+<li>单CDB总线可能也会由性能瓶颈，当太多功能部件共同访问的时候</li>
+</ul>
+</li>
+</ul>
+<h4 id="不精确的意外情况"><a href="#不精确的意外情况" class="headerlink" title="不精确的意外情况"></a>不精确的意外情况</h4><ul>
+<li>动态地调度过程可能产生不精确的意外情况<ul>
+<li>流水线可能已经完成了比异常产生时的指令在程序的顺序上更晚的指令(即先执行后面的指令去了，但前面的指令又异常了)</li>
+<li>流水线可能还没完成异常产生时的指令在程序的顺序上之前的指令(即前面的指令还没完成，先执行后面指令，但又异常了)</li>
+</ul>
+</li>
+</ul>
+<h4 id="适用范围"><a href="#适用范围" class="headerlink" title="适用范围"></a>适用范围</h4><ul>
+<li>寄存器较少的体系结构</li>
+<li>代码难以调度的场景</li>
+</ul>
+<h4 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>基于保留站的动态调度<ul>
+<li>允许发射很多指令，只要保留站够用</li>
+<li>允许将寄存器的旧值保存在保留站，避免WAR冒险</li>
+</ul>
+</li>
+<li>基于保留站的寄存器重命名<ul>
+<li>解决寄存器不够用的问题</li>
+</ul>
+</li>
+<li>解决访存时的地址冲突问题<ul>
+<li>发射Load、Store指令的时候，仍需要检查是否有关于访存的WAW、WAR</li>
+</ul>
+</li>
+<li>Tomasulo算法在代码执行过程中建立数据流依赖关系图</li>
+</ul>
+<h2 id="分支预测"><a href="#分支预测" class="headerlink" title="分支预测"></a>分支预测</h2><h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><ul>
+<li>典型的MIPS程序中，每3-6条指令会出现一条分支指令，使得动态调度的窗口变小</li>
+<li>上面几节分享的调度算法都没有涉及分支</li>
+<li>指令并行发掘得越多，分支带来的性能损失就越大</li>
+</ul>
+<h3 id="Branch-Hazards-分支冒险"><a href="#Branch-Hazards-分支冒险" class="headerlink" title="Branch Hazards(分支冒险)"></a>Branch Hazards(分支冒险)</h3><ul>
+<li>造成比数据冒险更糟糕的性能损失<ul>
+<li>大概10-30%的性能衰减</li>
+<li>cycle stall in the pipeline(流水线中的循环等待？)<ul>
+<li>在分支后的指令在分支被确认之前就进入了流水线，但分支预测到的实际结果并不需要执行该指令</li>
+<li>而且一个分支出错，也会影响下一个分支</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>需要减少流水线的分支惩罚</li>
+</ul>
+<h3 id="过去的解决方案"><a href="#过去的解决方案" class="headerlink" title="过去的解决方案"></a>过去的解决方案</h3><h4 id="方案1-freeze-flush-pipeline-冻结或冲洗流水线"><a href="#方案1-freeze-flush-pipeline-冻结或冲洗流水线" class="headerlink" title="方案1: freeze/flush pipeline(冻结或冲洗流水线)"></a>方案1: freeze/flush pipeline(冻结或冲洗流水线)</h4><ul>
+<li>保留或删除分支后的任何指令，直到得知分支的目的地(早期方法)</li>
+<li>该方案的分支惩罚是固定的，而且不能被软件继续优化减少</li>
+</ul>
+<h4 id="方案2-预测每个分支都不发生跳转-not-taken-属于静态分支预测"><a href="#方案2-预测每个分支都不发生跳转-not-taken-属于静态分支预测" class="headerlink" title="方案2: 预测每个分支都不发生跳转(not taken, 属于静态分支预测)"></a>方案2: 预测每个分支都不发生跳转(not taken, 属于静态分支预测)</h4><ul>
+<li>性能较好但稍微复杂<ul>
+<li>只是允许硬件继续运行</li>
+</ul>
+</li>
+<li>需要知道指令什么时候可能会变化状态，以及如何退出(back out)这种改变(也就是要知道什么情况下可能会预测不跳转出现错误，也就是实际要跳转。还要知道如何应对预测错误)<ul>
+<li>当分支确实不需要跳转的时候，说明预测成功，继续执行就可以了</li>
+<li>当分支是需要跳转的时候，说明预测失败，则需要先重新读取跳转后的指令到PC才能继续执行，也就是说后续指令会慢一个周期(因为目前的下一条指令是不进行跳转的，不能对它进行解码，所以也就延迟了)</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/untaken_branch.png" alt="img"></p>
+<h4 id="方案3-预测每个分支都要发生跳转-taken-属于静态分支预测"><a href="#方案3-预测每个分支都要发生跳转-taken-属于静态分支预测" class="headerlink" title="方案3: 预测每个分支都要发生跳转(taken, 属于静态分支预测)"></a>方案3: 预测每个分支都要发生跳转(taken, 属于静态分支预测)</h4><ul>
+<li>由于是否发生跳转需要在流水线第三阶段的执行阶段才能知道，提前预测需要跳转，则能提前对跳转部分进行解码，也就是有一个时钟周期的提升</li>
+</ul>
+<h4 id="方案4-延迟分支-Delayed-Branch"><a href="#方案4-延迟分支-Delayed-Branch" class="headerlink" title="方案4: 延迟分支(Delayed Branch)"></a>方案4: 延迟分支(Delayed Branch)</h4><ul>
+<li>在早期RISC架构的处理器中使用</li>
+<li>无论分支是否需要跳转，都要在分支指令后插入一条指令(但不允许该指令也是个分支指令，否则会含义不清晰，可能是嵌套分支)作为延迟指令，然后才在再下一个指令周期读取分支要执行的指令</li>
+<li>缺点<ul>
+<li>需要重新定义架构</li>
+<li>可能会导致轻微的代码扩展</li>
+<li>中断处理变得更困难<ul>
+<li>由延迟槽中的指令引起的中断请求必须与”正常”指令引起的中断请求做不同的处理</li>
+</ul>
+</li>
+<li>需要额外的硬件</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/delay_branch.png" alt="img"></p>
+<h3 id="现在的解决方案-动态分支预测"><a href="#现在的解决方案-动态分支预测" class="headerlink" title="现在的解决方案: 动态分支预测"></a>现在的解决方案: 动态分支预测</h3><ul>
+<li>基于程序的行为对分支做出预测</li>
+<li>动态分支预测的改进将随着流水线长度的增加而增加，但因此分支延迟也会增加</li>
+<li>更好的预测器将产生更好的性能</li>
+<li>现代的高性能处理器都有大概15个时钟周期的分支预测失败延迟<ul>
+<li>所以预测的准确度是很重要的</li>
+</ul>
+</li>
+</ul>
+<h4 id="原因-1"><a href="#原因-1" class="headerlink" title="原因"></a>原因</h4><ul>
+<li>随着流水线变得更深，分支的潜在惩罚提高，过去的方案是不够的</li>
+<li>需要更激进的方案来预测分支</li>
+</ul>
+<h4 id="静态分支预测"><a href="#静态分支预测" class="headerlink" title="静态分支预测"></a>静态分支预测</h4><ul>
+<li>低成本的静态方案，依赖于编译时获得的可用信息</li>
+<li>服从二项分布(要么跳转，要么不跳转)</li>
+</ul>
+<h4 id="基本组件"><a href="#基本组件" class="headerlink" title="基本组件"></a>基本组件</h4><ul>
+<li>分支历史记录表(BHT, Branch History Table)<ul>
+<li>存放在指令cache或由专门硬件实现</li>
+</ul>
+</li>
+<li>分支预测缓冲器(BPB, Branch Prediction Buffer): 预测分支是否发生跳转<ul>
+<li>根据同一分支以前是否跳转预测当前执行是否跳转</li>
+<li>根据最近的几个分支是否跳转预测当前执行是否跳转</li>
+<li>预测的准确度取决于程序的特性和预测缓存的大小(是否有足够多的参考)</li>
+</ul>
+</li>
+<li><p>分支目标缓冲器(BTB, Branch Target Buffer)</p>
+<ul>
+<li>目的: 在取指IF阶段(译码ID之前)就能知道本指令是否为分支指令，如果是分支指令则知道是否需要转移，如果需要转移则知道转移目标是哪里</li>
+<li><p>BTB是一个高速缓存，只用来保存需要跳转的分支指令或者无条件跳转的指令，必要字段包括:</p>
+<ul>
+<li>分支指令的PC值</li>
+<li>要跳转的分支指令的转移地址</li>
+<li><p>工作原理</p>
+<ul>
+<li>在取指阶段，将PC与BTB中的条目比较，看BTB中是否出现当前PC</li>
+<li>如果当前PC出现在BTB中， 则返回所保存的转移目标地址<ul>
+<li>返回的转移目标地址用于下一条指令取指</li>
+<li>如果该指令实际是不需要跳转的，则要在取消转移目标地址的指令执行，重启不跳转指令执行的同时，删除BTB中关于该指令的记录</li>
+</ul>
+</li>
+<li>如果当前PC未出现在BTB中，则根据<code>PC+4</code>取指<ul>
+<li>如果该指令实际是要跳转的，则要把转移目标地址和该指令的PC添加到BTB中</li>
+</ul>
+</li>
+<li>于是在分支指令的取指阶段就可以知道转移目标</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/BTB.png" alt="img"></p>
+</li>
+<li><p>失败的代价:<br>Instruction in BTB|Prediction|Actual branch|Penalty cycle<br>:-:|:-:|:-:|:-:<br>yes|Taken|Taken|0<br>yes|Taken|Not Taken|2<br>yes||Taken|2<br>yes||Not Taken|0</p>
+</li>
+<li><p>改进:</p>
+<ul>
+<li>将目标指令也保存在BTB中，于是可在取目标PC的同时，将目标指令也取出来，减少一次访存</li>
+<li>记录返回地址，将Call指令的返回地址(下一条指令)记录在一个小的栈中<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/BTB%E4%BC%98%E5%8C%96.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="动态分支预测的基本原理"><a href="#动态分支预测的基本原理" class="headerlink" title="动态分支预测的基本原理"></a>动态分支预测的基本原理</h4><ul>
+<li>利用最近的转移发生情况，预测下一次可能发生的转移(也就是看以前这条指令是跳还是不跳)</li>
+<li>预测后，在实际发生时验证预测是否成功并调整再下一次的预测</li>
+<li>转移发生的历史情况记录在BHT(Branch History Table)</li>
+<li>每个表项由分支指令地址的低位作为索引，在IF阶段就可以获取预测位<ul>
+<li>也就是不需要在ID进行解码才能获得</li>
+<li>低位地址相同的分支指令共享一个表项，由此可能会有冲突</li>
+<li>由于仅用于预测，所以不会影响实际的执行结果</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E5%8A%A8%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86.png" alt="img"></p>
+<h4 id="简单的1位预测器"><a href="#简单的1位预测器" class="headerlink" title="简单的1位预测器"></a>简单的1位预测器</h4><ul>
+<li>分支预测缓冲器只有一个预测位: 用于记录单个分支指令最近的一次历史<ul>
+<li>只要预测出错就在下一次做相反预测</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/1%E4%BD%8D%E9%A2%84%E6%B5%8B%E5%99%A8.png" alt="img"></p>
+<h4 id="简单的2位预测器"><a href="#简单的2位预测器" class="headerlink" title="简单的2位预测器"></a>简单的2位预测器</h4><ul>
+<li>采用2位记录历史: 与n位预测器效果差不多(也就是说还有3位4位等，但实际效果也没提升多少)<ul>
+<li>采用有限状态机记录单个分支是否成功的历史情况</li>
+<li>根据状态机的状态做出预测</li>
+<li>根据真实分支情况修正预测器<ul>
+<li>只有连续失败两次才改变下一次预测的结果</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2%E4%BD%8D%E9%A2%84%E6%B5%8B%E5%99%A8.png" alt="img"></p>
+<h4 id="相关预测器-两级预测器-correlating-predictor"><a href="#相关预测器-两级预测器-correlating-predictor" class="headerlink" title="相关预测器(两级预测器, correlating predictor)"></a>相关预测器(两级预测器, correlating predictor)</h4><ul>
+<li>用移位寄存器记录最近m个分支指令的转移情况<ul>
+<li>转移成功置1，不成功置0</li>
+<li>可以寻址$2^m$个预测器，而每个预测器有n位<ul>
+<li>如下图的16个预测器，每个预测器2位<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E7%9B%B8%E5%85%B3%E9%A2%84%E6%B5%8B%E5%99%A81.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>预测器根据分支指令地址低位+寄存器m位(最近全局发生的m次分支)得到的地址查询BPB(Branch Prediction Buffer)从$2^m$个n位预测器中选出一个<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E7%9B%B8%E5%85%B3%E9%A2%84%E6%B5%8B%E5%99%A82.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E7%9B%B8%E5%85%B3%E9%A2%84%E6%B5%8B%E5%99%A83.png" alt="img"></li>
+<li>相关预测其的表现比单个分支预测的表现好很多，即使单个分支预测能记录所有该分支的跳转历史(局部性原理?)</li>
+</ul>
+<h4 id="局部预测器-local-predictor"><a href="#局部预测器-local-predictor" class="headerlink" title="局部预测器(local predictor)"></a>局部预测器(local predictor)</h4><ul>
+<li>为每个分支设置$2^m$个n位的预测器</li>
+<li>根据最近本身分支发生的m次分支从$2^m$个n位预测器中选出一个</li>
+</ul>
+<h4 id="竞赛预测器-Tournament-predictor"><a href="#竞赛预测器-Tournament-predictor" class="headerlink" title="竞赛预测器(Tournament predictor)"></a>竞赛预测器(Tournament predictor)</h4><ul>
+<li>结合了相关预测器和本地预测器<ul>
+<li>全局预测器(相关预测)使用最近的分支跳转历史作为索引</li>
+<li>本地预测器使用分支地址作为索引(选择哪个预测器)</li>
+</ul>
+</li>
+<li>其实就是单分支预测器和相关预测器分别进行各自的预测，然后用一个二路复用器选择用哪个预测结果作为最终预测结果<ul>
+<li>二路复用器相当于一个2位预测器，如果当前选择的结果连续两次出错，就更改下次预测给出预测结果的预测器(所以也是用分支地址作为索引看怎么决定预测器的选择)</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E7%AB%9E%E4%BA%89%E9%A2%84%E6%B5%8B%E5%99%A8.png" alt="img"></p>
+<h4 id="标记混合预测器-Tagged-Hybrid-Predictors-or-TAGE——Tagged-Geometic-Predictors"><a href="#标记混合预测器-Tagged-Hybrid-Predictors-or-TAGE——Tagged-Geometic-Predictors" class="headerlink" title="标记混合预测器(Tagged Hybrid Predictors, or TAGE——Tagged Geometic Predictors)"></a>标记混合预测器(Tagged Hybrid Predictors, or TAGE——Tagged Geometic Predictors)</h4><ul>
+<li>需要为每个分支提供预测器和记录每个分支的跳转历史<ul>
+<li>这会导致巨大的记录表，查询会有麻烦</li>
+<li>用hash表(hash值由分支地址和分支历史计算出来)解决该问题</li>
+<li>不过较长的历史记录可能会导致哈希冲突的机会增加，因此使用多个表(也就是分多个表去查历史)X</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/%E6%B7%B7%E5%90%88%E6%A0%87%E8%AE%B0%E9%A2%84%E6%B5%8B%E5%99%A8.png" alt="img"></p>
+<h3 id="Intel-Core-i7的分支预测方法"><a href="#Intel-Core-i7的分支预测方法" class="headerlink" title="Intel Core i7的分支预测方法"></a>Intel Core i7的分支预测方法</h3><ul>
+<li>综合了三种预测器<ul>
+<li>简单的2位预测器</li>
+<li>基于全局历史的相关预测器</li>
+<li>循环跳出(Loop Exit)预测器<ul>
+<li>当一个分支被判断为一个循环时，用一个计数器记录循环次数，也就知道什么时候可能不需要跳转或者需要跳转了</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="推测执行"><a href="#推测执行" class="headerlink" title="推测执行"></a>推测执行</h2><h3 id="基本理念"><a href="#基本理念" class="headerlink" title="基本理念"></a>基本理念</h3><ul>
+<li>推测执行是分支预测的目的所在</li>
+<li>假定分支预测永远正确，则按预测结果发射指令</li>
+<li>对发射的指令进行动态调度</li>
+<li>设计一定的机制容忍预测出现错误</li>
+</ul>
+<h3 id="挑战"><a href="#挑战" class="headerlink" title="挑战"></a>挑战</h3><h4 id="分支预测错误"><a href="#分支预测错误" class="headerlink" title="分支预测错误"></a>分支预测错误</h4><ul>
+<li>可以按照分支预测执行，但是必须保证分支结果确定之后再提交(也就是不管预测执行，如果预测失败就不提交)</li>
+</ul>
+<h4 id="精确中断"><a href="#精确中断" class="headerlink" title="精确中断"></a>精确中断</h4><ul>
+<li>一条指令发生中断/异常时，其后的指令不能已经提交</li>
+</ul>
+<h4 id="计分板和Tomasulo算法都不是按序提交"><a href="#计分板和Tomasulo算法都不是按序提交" class="headerlink" title="计分板和Tomasulo算法都不是按序提交"></a>计分板和Tomasulo算法都不是按序提交</h4><ul>
+<li>都是按序发射，乱序执行，乱序提交</li>
+</ul>
+<h3 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h3><ul>
+<li>按序发射</li>
+<li>乱序执行</li>
+<li>按序提交</li>
+<li>提交前阻止一切不可逆转的事件<ul>
+<li>中断</li>
+<li>异常</li>
+</ul>
+</li>
+</ul>
+<h3 id="硬件推测执行所需组件"><a href="#硬件推测执行所需组件" class="headerlink" title="硬件推测执行所需组件"></a>硬件推测执行所需组件</h3><ul>
+<li>动态分支预测</li>
+<li>动态指令调度<ul>
+<li>跨基本块的调度</li>
+</ul>
+</li>
+<li>指令推测执行</li>
+<li>结果UNDO模块(不提交)</li>
+</ul>
+<h3 id="按序提交的实现——引入重排序缓存-ROB"><a href="#按序提交的实现——引入重排序缓存-ROB" class="headerlink" title="按序提交的实现——引入重排序缓存(ROB)"></a>按序提交的实现——引入重排序缓存(ROB)</h3><h4 id="回顾Tomasulo算法"><a href="#回顾Tomasulo算法" class="headerlink" title="回顾Tomasulo算法"></a>回顾Tomasulo算法</h4><ul>
+<li>指令发射到保留站</li>
+<li>保留站动态调度功能单元执行指令</li>
+<li>功能单元发送结果到CDB(Common Data Bus)</li>
+<li>CDB广播结果</li>
+<li>寄存器组乱序提交结果<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/Tomasulo.png" alt="img"></li>
+</ul>
+<h4 id="重排序缓存-Recorder-Buffer-ROB-的各个字段"><a href="#重排序缓存-Recorder-Buffer-ROB-的各个字段" class="headerlink" title="重排序缓存(Recorder Buffer, ROB)的各个字段"></a>重排序缓存(Recorder Buffer, ROB)的各个字段</h4><ul>
+<li>指令类型<ul>
+<li>分支指令: 无需提交结果</li>
+<li>Store指令: 需要写内存</li>
+<li>写寄存器指令: 需要写寄存器</li>
+</ul>
+</li>
+<li>目标域<ul>
+<li>寄存器编号</li>
+<li>内存地址</li>
+</ul>
+</li>
+<li>Value: 值</li>
+<li>Ready: 指令是否已经执行完成，随时准备提交</li>
+</ul>
+<h4 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h4><ul>
+<li>指令发射阶段<ul>
+<li>将发射的指令按序保存在ROB中</li>
+<li>记录指令的目的寄存器、PC值<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ROB%E6%8C%87%E4%BB%A4%E5%8F%91%E5%B0%84.png" alt="img"></li>
+</ul>
+</li>
+<li>指令执行阶段<ul>
+<li>将指令执行结果保存在ROB中<ul>
+<li>暂时不提交</li>
+<li>但可以广播到保留站各个等待该结果的单元中</li>
+</ul>
+</li>
+<li>记录可能发生的中断和异常<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ROB%E6%8C%87%E4%BB%A4%E6%89%A7%E8%A1%8C.png" alt="img"></li>
+</ul>
+</li>
+<li>结果写回阶段<ul>
+<li>将ROB头部的指令结果提交<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ROB%E7%BB%93%E6%9E%9C%E6%8F%90%E4%BA%A4.png" alt="img"><ul>
+<li>写寄存器</li>
+<li>写存储器</li>
+</ul>
+</li>
+<li>处理发生的中断和异常<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ROB%E7%BB%93%E6%9E%9C%E5%86%99%E5%9B%9E.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="可行优化——重排序缓存-Forwarding-推测执行"><a href="#可行优化——重排序缓存-Forwarding-推测执行" class="headerlink" title="可行优化——重排序缓存+Forwarding+推测执行"></a>可行优化——重排序缓存+Forwarding+推测执行</h4><ul>
+<li>将已经确定提交的结果直接Forward到需要该结果的指令<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ROBForwarding.png" alt="img"></li>
+<li>发射分支指令到ROB<ul>
+<li>但须标记这是预测执行的指令</li>
+</ul>
+</li>
+<li>正常执行分支指令<ul>
+<li>谨慎提交</li>
+</ul>
+</li>
+<li>分支确定之后决定是否提交<ul>
+<li>预测正确<ul>
+<li>后续指令都可以提交</li>
+</ul>
+</li>
+<li>预测错误<ul>
+<li>清除ROB中的后续指令<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ROB%E4%BC%98%E5%8C%96.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h4><ul>
+<li>发射</li>
+<li>执行</li>
+<li>写结果</li>
+<li>提交</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/">高级计算机体系结构</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/10/16/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-16-%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">高性能计算机的体系结构</div></div></a></div><div class="next-post pull-right"><a href="/2024/10/25/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-10-25-%E5%85%A8%E5%B1%80%E7%8A%B6%E6%80%81%E5%8F%8A%E5%BF%AB%E7%85%A7%E7%AE%97%E6%B3%95/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">全局状态及快照算法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/09/11/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-09-11-%E7%BB%AA%E8%AE%BA/" title="绪论"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-11</div><div class="title">绪论</div></div></a></div><div><a href="/2024/10/09/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-09-%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD/" title="如何提高性能"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-09</div><div class="title">如何提高性能</div></div></a></div><div><a href="/2024/09/25/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-09-25-%E5%9F%BA%E5%87%86%E8%AF%84%E6%B5%8B%E9%9B%86/" title="基准评测集"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-25</div><div class="title">基准评测集</div></div></a></div><div><a href="/2024/10/16/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-16-%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/" title="高性能计算机的体系结构"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-16</div><div class="title">高性能计算机的体系结构</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%AB%98%E6%80%A7%E8%83%BD%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%B9%B6%E8%A1%8C%E8%AE%A1%E7%AE%97%E6%8A%80%E6%9C%AF"><span class="toc-text">高性能处理器的并行计算技术</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E4%BB%A3%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E7%89%B9%E5%BE%81"><span class="toc-text">现代处理器的特征</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%B9%B6%E8%A1%8C%E7%9A%84%E6%8A%80%E6%9C%AF"><span class="toc-text">指令级并行的技术</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%B9%B6%E8%A1%8C%E5%AD%98%E5%9C%A8%E7%9A%84%E6%8C%91%E6%88%98"><span class="toc-text">指令级并行存在的挑战</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BB%93%E6%9E%84%E5%86%92%E9%99%A9"><span class="toc-text">结构冒险</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%86%92%E9%99%A9"><span class="toc-text">数据冒险</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8E%A7%E5%88%B6%E5%86%92%E9%99%A9"><span class="toc-text">控制冒险</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%91%E6%8E%98%E6%8C%87%E4%BB%A4%E7%BA%A7%E5%B9%B6%E8%A1%8C%E7%9A%84%E7%9B%AE%E7%9A%84"><span class="toc-text">发掘指令级并行的目的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example"><span class="toc-text">Example</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%9B%B8%E5%85%B3%E5%88%86%E6%9E%90"><span class="toc-text">数据相关分析</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F%E5%88%86%E6%9E%90"><span class="toc-text">执行顺序分析</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80%E7%9A%84%E6%8C%87%E4%BB%A4%E8%B0%83%E5%BA%A6"><span class="toc-text">基于循环展开的指令调度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">循环展开的优势</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-1"><span class="toc-text">Example</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%AA%E8%B0%83%E5%BA%A6%E7%9A%84%E6%89%A7%E8%A1%8C"><span class="toc-text">未调度的执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E6%89%A7%E8%A1%8C"><span class="toc-text">调度执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%9C%AA%E8%B0%83%E5%BA%A6%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80"><span class="toc-text">未调度的循环展开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%B0%83%E5%BA%A6%E7%9A%84%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80"><span class="toc-text">调度的循环展开</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Example-Conclusion"><span class="toc-text">Example Conclusion</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-text">总结</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%AD%A5%E9%AA%A4"><span class="toc-text">步骤</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%BA%E7%82%B9"><span class="toc-text">缺点</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E8%AE%A1%E5%88%86%E6%9D%BF%E7%9A%84%E6%8C%87%E4%BB%A4%E8%B0%83%E5%BA%A6"><span class="toc-text">基于计分板的指令调度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E8%B0%83%E5%BA%A6%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="toc-text">静态调度的缺陷</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E8%AE%A1%E5%88%86%E6%9D%BF%E7%9A%84%E5%8A%A8%E6%80%81%E8%B0%83%E5%BA%A6-CDC6600"><span class="toc-text">基于计分板的动态调度(CDC6600)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A1%E5%88%86%E6%9D%BF-ScoreBoard-%E7%9A%84%E7%BB%93%E6%9E%84"><span class="toc-text">计分板(ScoreBoard)的结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E5%BA%A6%E6%9C%BA%E5%88%B6"><span class="toc-text">动态调度机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89%E6%B5%81%E6%B0%B4%E7%BA%BF%E7%9A%84%E5%90%84%E4%B8%AA%E9%98%B6%E6%AE%B5"><span class="toc-text">定义流水线的各个阶段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%BF%90%E4%BD%9C%E6%9C%BA%E5%88%B6"><span class="toc-text">运作机制</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Example-2"><span class="toc-text">Example</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E8%B6%B3%E4%B9%8B%E5%A4%84"><span class="toc-text">不足之处</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8ETomasulo%E7%AE%97%E6%B3%95%E7%9A%84%E6%8C%87%E4%BB%A4%E8%B0%83%E5%BA%A6"><span class="toc-text">基于Tomasulo算法的指令调度</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E7%9B%B8%E5%85%B3%E5%88%86%E6%9E%90-1"><span class="toc-text">数据相关分析</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9C%9F%E6%95%B0%E6%8D%AE%E7%9B%B8%E5%85%B3-True-Data-Dependence"><span class="toc-text">真数据相关(True Data Dependence)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%90%8D%E5%AD%97%E7%9B%B8%E5%85%B3-Name-Dependence"><span class="toc-text">名字相关(Name Dependence)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Tomasulo%E7%AE%97%E6%B3%95"><span class="toc-text">Tomasulo算法</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E6%96%B9%E6%B3%95"><span class="toc-text">具体方法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Reservation-stations-RS-%E4%BF%9D%E7%95%99%E7%AB%99"><span class="toc-text">Reservation stations(RS, 保留站)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Steps"><span class="toc-text">Steps</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Example-3"><span class="toc-text">Example</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%89%B9%E7%82%B9"><span class="toc-text">特点</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Tomasulo%E7%AE%97%E6%B3%95%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="toc-text">Tomasulo算法的优势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Tomasulo%E7%AE%97%E6%B3%95%E7%9A%84%E5%8A%A3%E5%8A%BF"><span class="toc-text">Tomasulo算法的劣势</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%8D%E7%B2%BE%E7%A1%AE%E7%9A%84%E6%84%8F%E5%A4%96%E6%83%85%E5%86%B5"><span class="toc-text">不精确的意外情况</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%80%82%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="toc-text">适用范围</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-text">总结</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B"><span class="toc-text">分支预测</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0"><span class="toc-text">原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Branch-Hazards-%E5%88%86%E6%94%AF%E5%86%92%E9%99%A9"><span class="toc-text">Branch Hazards(分支冒险)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%BF%87%E5%8E%BB%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-text">过去的解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%881-freeze-flush-pipeline-%E5%86%BB%E7%BB%93%E6%88%96%E5%86%B2%E6%B4%97%E6%B5%81%E6%B0%B4%E7%BA%BF"><span class="toc-text">方案1: freeze&#x2F;flush pipeline(冻结或冲洗流水线)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%882-%E9%A2%84%E6%B5%8B%E6%AF%8F%E4%B8%AA%E5%88%86%E6%94%AF%E9%83%BD%E4%B8%8D%E5%8F%91%E7%94%9F%E8%B7%B3%E8%BD%AC-not-taken-%E5%B1%9E%E4%BA%8E%E9%9D%99%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B"><span class="toc-text">方案2: 预测每个分支都不发生跳转(not taken, 属于静态分支预测)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%883-%E9%A2%84%E6%B5%8B%E6%AF%8F%E4%B8%AA%E5%88%86%E6%94%AF%E9%83%BD%E8%A6%81%E5%8F%91%E7%94%9F%E8%B7%B3%E8%BD%AC-taken-%E5%B1%9E%E4%BA%8E%E9%9D%99%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B"><span class="toc-text">方案3: 预测每个分支都要发生跳转(taken, 属于静态分支预测)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%96%B9%E6%A1%884-%E5%BB%B6%E8%BF%9F%E5%88%86%E6%94%AF-Delayed-Branch"><span class="toc-text">方案4: 延迟分支(Delayed Branch)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%B0%E5%9C%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88-%E5%8A%A8%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B"><span class="toc-text">现在的解决方案: 动态分支预测</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0-1"><span class="toc-text">原因</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%9D%99%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B"><span class="toc-text">静态分支预测</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6"><span class="toc-text">基本组件</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-text">动态分支预测的基本原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%841%E4%BD%8D%E9%A2%84%E6%B5%8B%E5%99%A8"><span class="toc-text">简单的1位预测器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E7%9A%842%E4%BD%8D%E9%A2%84%E6%B5%8B%E5%99%A8"><span class="toc-text">简单的2位预测器</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%9B%B8%E5%85%B3%E9%A2%84%E6%B5%8B%E5%99%A8-%E4%B8%A4%E7%BA%A7%E9%A2%84%E6%B5%8B%E5%99%A8-correlating-predictor"><span class="toc-text">相关预测器(两级预测器, correlating predictor)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%B1%80%E9%83%A8%E9%A2%84%E6%B5%8B%E5%99%A8-local-predictor"><span class="toc-text">局部预测器(local predictor)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AB%9E%E8%B5%9B%E9%A2%84%E6%B5%8B%E5%99%A8-Tournament-predictor"><span class="toc-text">竞赛预测器(Tournament predictor)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A0%87%E8%AE%B0%E6%B7%B7%E5%90%88%E9%A2%84%E6%B5%8B%E5%99%A8-Tagged-Hybrid-Predictors-or-TAGE%E2%80%94%E2%80%94Tagged-Geometic-Predictors"><span class="toc-text">标记混合预测器(Tagged Hybrid Predictors, or TAGE——Tagged Geometic Predictors)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Intel-Core-i7%E7%9A%84%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E6%96%B9%E6%B3%95"><span class="toc-text">Intel Core i7的分支预测方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A8%E6%B5%8B%E6%89%A7%E8%A1%8C"><span class="toc-text">推测执行</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E7%90%86%E5%BF%B5"><span class="toc-text">基本理念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%91%E6%88%98"><span class="toc-text">挑战</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E6%94%AF%E9%A2%84%E6%B5%8B%E9%94%99%E8%AF%AF"><span class="toc-text">分支预测错误</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B2%BE%E7%A1%AE%E4%B8%AD%E6%96%AD"><span class="toc-text">精确中断</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%AE%A1%E5%88%86%E6%9D%BF%E5%92%8CTomasulo%E7%AE%97%E6%B3%95%E9%83%BD%E4%B8%8D%E6%98%AF%E6%8C%89%E5%BA%8F%E6%8F%90%E4%BA%A4"><span class="toc-text">计分板和Tomasulo算法都不是按序提交</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E6%83%B3"><span class="toc-text">核心思想</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%A1%AC%E4%BB%B6%E6%8E%A8%E6%B5%8B%E6%89%A7%E8%A1%8C%E6%89%80%E9%9C%80%E7%BB%84%E4%BB%B6"><span class="toc-text">硬件推测执行所需组件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%89%E5%BA%8F%E6%8F%90%E4%BA%A4%E7%9A%84%E5%AE%9E%E7%8E%B0%E2%80%94%E2%80%94%E5%BC%95%E5%85%A5%E9%87%8D%E6%8E%92%E5%BA%8F%E7%BC%93%E5%AD%98-ROB"><span class="toc-text">按序提交的实现——引入重排序缓存(ROB)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9B%9E%E9%A1%BETomasulo%E7%AE%97%E6%B3%95"><span class="toc-text">回顾Tomasulo算法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%87%8D%E6%8E%92%E5%BA%8F%E7%BC%93%E5%AD%98-Recorder-Buffer-ROB-%E7%9A%84%E5%90%84%E4%B8%AA%E5%AD%97%E6%AE%B5"><span class="toc-text">重排序缓存(Recorder Buffer, ROB)的各个字段</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="toc-text">基本原理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%AF%E8%A1%8C%E4%BC%98%E5%8C%96%E2%80%94%E2%80%94%E9%87%8D%E6%8E%92%E5%BA%8F%E7%BC%93%E5%AD%98-Forwarding-%E6%8E%A8%E6%B5%8B%E6%89%A7%E8%A1%8C"><span class="toc-text">可行优化——重排序缓存+Forwarding+推测执行</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B"><span class="toc-text">执行流程</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>

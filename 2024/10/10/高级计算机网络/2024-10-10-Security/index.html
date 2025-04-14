@@ -1,0 +1,1376 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Security | ZJN_BLOG</title><meta name="keywords" content="高级计算机网络"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="SecurityIntroductionWhat does network security includeconfidentiality(保密性，对消息加密) research object: sender but intended receiver should “understand” message contents sender encrypts message receiver dec">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Security">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2024/10/10/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-10-10-Security/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="SecurityIntroductionWhat does network security includeconfidentiality(保密性，对消息加密) research object: sender but intended receiver should “understand” message contents sender encrypts message receiver dec">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2024-10-10T04:48:57.000Z">
+<meta property="article:modified_time" content="2024-11-09T04:33:57.470Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="高级计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2024/10/10/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-10-10-Security/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Security',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-11-09 12:33:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Security</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-10-10T04:48:57.000Z" title="发表于 2024-10-10 12:48:57">2024-10-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-09T04:33:57.470Z" title="更新于 2024-11-09 12:33:57">2024-11-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">高级计算机网络</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">11.8k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>54分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Security"><a href="#Security" class="headerlink" title="Security"></a>Security</h1><h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><h3 id="What-does-network-security-include"><a href="#What-does-network-security-include" class="headerlink" title="What does network security include"></a>What does network security include</h3><h4 id="confidentiality-保密性，对消息加密"><a href="#confidentiality-保密性，对消息加密" class="headerlink" title="confidentiality(保密性，对消息加密)"></a>confidentiality(保密性，对消息加密)</h4><ul>
+<li>research object: sender</li>
+<li>but intended receiver should “understand” message contents<ul>
+<li>sender encrypts message</li>
+<li>receiver decrypts message</li>
+</ul>
+</li>
+</ul>
+<h4 id="authentication-身份认证"><a href="#authentication-身份认证" class="headerlink" title="authentication(身份认证)"></a>authentication(身份认证)</h4><ul>
+<li>research object: sender, receiver<ul>
+<li>want to confirm identity of each other</li>
+</ul>
+</li>
+</ul>
+<h4 id="message-integrity-消息完整"><a href="#message-integrity-消息完整" class="headerlink" title="message integrity(消息完整)"></a>message integrity(消息完整)</h4><ul>
+<li>research object: sender, receiver<ul>
+<li>want to ensure message not altered(in transit, or afterwards) without detection<ul>
+<li>attacker may intercept, delete, add message<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8%E5%9C%BA%E6%99%AF%E6%A8%A1%E5%9E%8B.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="access-and-availability-可访问且可用"><a href="#access-and-availability-可访问且可用" class="headerlink" title="access and availability(可访问且可用)"></a>access and availability(可访问且可用)</h4><ul>
+<li>services must be accessible and available to users</li>
+</ul>
+<h3 id="What-can-a-“bad-guy”-do"><a href="#What-can-a-“bad-guy”-do" class="headerlink" title="What can a “bad guy” do?"></a>What can a “bad guy” do?</h3><ul>
+<li>eavesdrop(窃听): intercept message</li>
+<li>alter(篡改): actively insert message into connection</li>
+<li>impersonation(伪装): can fake(spoof) source address in packet(or any field in packet)</li>
+<li>hijacking(劫持): “take over” ongoing connection by removing sender or receiver, inserting himself in place</li>
+<li>denial of service(拒绝服务): prevent service from being used by others(like overloading resources, TCP flooding attack)</li>
+</ul>
+<h3 id="How-is-network-security-different-与普通安全相比"><a href="#How-is-network-security-different-与普通安全相比" class="headerlink" title="How is network security different?(与普通安全相比)"></a>How is network security different?(与普通安全相比)</h3><ul>
+<li>From software and crypto(不仅和软件设计相关，还和密码学相关)</li>
+<li>“Shared” resource(要进行资源共享)</li>
+<li>Often “default open”(网路默认是对所有人开放的)</li>
+<li>No built-in security in the beginning(起初就没考虑过安全问题), so it is vulnerable at every layer<ul>
+<li>Network-layer(网络层)<ul>
+<li>IP-level attack<ul>
+<li>If you use IP Address for authentication, it will occur that ‘A’ receives responses from ‘S’, which are actually spoofed packets. But ‘A’ doesn’t know, so it will respond with a TCP Reset(RST) packet which closes the connection</li>
+<li>Maybe you can solve it by overflowing the queues of ‘A’ with connection requests, because it is likely that ‘A’ drops the replies from ‘S’.</li>
+<li>However, it also causes another attack, such as DDos attack.</li>
+</ul>
+</li>
+<li>Routing attack<ul>
+<li>篡改路由转发表</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Transport-layer(传输层)<ul>
+<li>针对三次握手协议，曾经是序号是从0开始的，所以会被预测。现在已经得到解决，使用随机序号</li>
+</ul>
+</li>
+<li>Application-layer(应用层)<ul>
+<li>DNS cache poisoning(利用DNS缓存机制下毒): 在向DNS服务器注册自己的DNS信息的时候附带进去对其他信息的错误重定向，使得用户在访问相关域名的时候被DNS服务器误导到攻击者指定的网站<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/DNS%20cache%20poisoning.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Principles-of-cryptography"><a href="#Principles-of-cryptography" class="headerlink" title="Principles of cryptography"></a>Principles of cryptography</h2><h3 id="The-language-of-cryptography"><a href="#The-language-of-cryptography" class="headerlink" title="The language of cryptography"></a>The language of cryptography</h3><ul>
+<li>假设有明文$m$，发送方有密钥$K_A$，接收方有密钥$K_B$。则发送方在发送时，用$K_A(m)$对明文进行加密，接收方接收到消息后，用$K_B(K_A(m))$将明文再解密出来</li>
+</ul>
+<h3 id="How-to-break-an-encryption-scheme"><a href="#How-to-break-an-encryption-scheme" class="headerlink" title="How to break an encryption scheme"></a>How to break an encryption scheme</h3><ul>
+<li>cipher-text only attack(只知道密文)<ul>
+<li>brute force: search through all keys(暴力破解，通常是穷举法)</li>
+<li>statistical analysis(统计分析，例如福尔摩斯小说的跳舞小人)</li>
+</ul>
+</li>
+<li>known-plaintext attack(已知明文攻击)<ul>
+<li>根据明文和密文的对应关系(最简单的是解决凯撒加密法)</li>
+</ul>
+</li>
+<li>chosen-plaintext attack(知道部分明文的密文)</li>
+</ul>
+<h3 id="Simple-encryption-scheme-substitution-cipher"><a href="#Simple-encryption-scheme-substitution-cipher" class="headerlink" title="Simple encryption scheme: substitution cipher"></a>Simple encryption scheme: substitution cipher</h3><ul>
+<li>substituting one or more things for another(凯撒加密法)<ul>
+<li>encryption key: mapping from set of plaintext’s letters to set of cipher-text’s letters, some even have unique design patterns </li>
+</ul>
+</li>
+</ul>
+<h3 id="Symmetric-key-cryptography-对称加密法，对称指的是密钥相不相同"><a href="#Symmetric-key-cryptography-对称加密法，对称指的是密钥相不相同" class="headerlink" title="Symmetric key cryptography(对称加密法，对称指的是密钥相不相同)"></a>Symmetric key cryptography(对称加密法，对称指的是密钥相不相同)</h3><ul>
+<li>share same(symmetric) key: $K_S$</li>
+<li>It is hard to agree on key in first place and without eavesdrop<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Symmetric%20key%20cryptography.png" alt="img"></li>
+</ul>
+<h4 id="DES-Data-Encryption-Standard"><a href="#DES-Data-Encryption-Standard" class="headerlink" title="DES: Data Encryption Standard"></a>DES: Data Encryption Standard</h4><ul>
+<li>processes data in 64-bit blocks(一次处理64bit明文)</li>
+<li>56-bit symmetric key(too simple, just need less than a day be decrypted through brute force)<ul>
+<li>3DES: encrypt 3 times with 3 different keys</li>
+</ul>
+</li>
+<li>block cipher with cipher block chaining(分块链式加密)<ul>
+<li>initial permutation(交换中轴线分成的左右两边)</li>
+<li>16 identical “rounds” of function Application, each using different 48 bits of key<ul>
+<li>右侧数据直接复制作为下一层的左侧数据，本层所有数据和56-bit密钥中抽出形成的48-bit新密钥加密运算得到下一轮的右侧数据</li>
+</ul>
+</li>
+<li>final permutation(交换中轴线分成的左右两边)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/DES.png" alt="img"></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/715713979">DES具体算法</a></li>
+</ul>
+<h4 id="AES"><a href="#AES" class="headerlink" title="AES"></a>AES</h4><ul>
+<li>processes data in 128 bit blocks(一次处理128bit明文)</li>
+<li>128, 192, or 256 bit keys</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/716048861">AES具体算法</a></li>
+</ul>
+<h3 id="Public-key-cryptography"><a href="#Public-key-cryptography" class="headerlink" title="Public key cryptography"></a>Public key cryptography</h3><ul>
+<li>sender, receiver do not share secret key<ul>
+<li>public encryption key known to all</li>
+<li>private decryption key known only to receiver</li>
+</ul>
+</li>
+<li>algorithms<ul>
+<li>need $K_B^+(\cdot)$ and $K_B^-(\cdot)$: $K_B^-(K_B^+(m)) = m$</li>
+<li>given public key $K_B^+$ and should be impossible to compute private key $K_B^-$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Public%20Key.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h4><ul>
+<li>Prerequisite: modular arithmetic<ul>
+<li>$x\mod n$: remainder of x when divede by n(求余数)</li>
+<li>facts:<ul>
+<li>$[(a\mod n)+(b\mod n)]\mod n=(a+b)\mod n$</li>
+<li>$[(a\mod n)-(b\mod n)]\mod n=(a-b)\mod n$</li>
+<li>$[(a\mod n)<em>(b\mod n)]\mod n=(a</em>b)\mod n$<ul>
+<li>$(a\mod n)^d\mod n=a^d\mod n$</li>
+</ul>
+</li>
+<li>$x^y\mod n=x^{y \mod z}\mod n$<ul>
+<li>$z = (p-1)(q-1)$ and $n = pq$<ul>
+<li>$p$ and $q$ are two large prime numbers</li>
+<li>欧拉函数特殊情况: $\phi(n)=n-1$, if n is a prime number</li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/151756874">欧拉函数和欧拉定理</a></li>
+<li><a target="_blank" rel="noopener" href="https://pages.cs.wisc.edu/~agorenst/rsa.pdf">证明的参考论文</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Converting message into a number<ul>
+<li>message is just a bit pattern, and it can be uniquely represented by an integer number, thus, encrypting a message is equivalent to encrypting a number<ul>
+<li>to encrypt $m$, we encrypt the corresponding number, which gives a new number(the ciphertext)</li>
+<li>$m$ can be converted into binary, and then into decimal</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Creating public/private key pair(找一对足够大的互质数)<ul>
+<li>choose two large prime numbers $p$, $q$(1024 bits each)</li>
+<li>compute $n=pq$, $z=(p-1)(q-1)$</li>
+<li>choose $e(e&lt;n)$ that has no common factors with $z$<ul>
+<li>$e$, $z$ are relatively prime(相对质数)</li>
+</ul>
+</li>
+<li>choose $d$ such that $ed-1$ is exactly divisible by $z$<ul>
+<li>$ed\mod z = 1$</li>
+</ul>
+</li>
+<li>public key is $K_B^+=(n, e)$</li>
+<li>private key is $K_B^-=(n, d)$</li>
+</ul>
+</li>
+<li>Encryption: <ul>
+<li>$c = m^e\mod n$</li>
+</ul>
+</li>
+<li>Decryption: <ul>
+<li>$m = c^d\mod n = (m^e\mod n)^d\mod n = m^{ed}\mod n = m^{(ed\mod z)}\mod n = m\mod n = m$</li>
+</ul>
+</li>
+<li>The result of using public key first, followed by private key is the same as the result of using private key first, followed by public key<ul>
+<li>$K_B^-(K_B^+(m)) = m = K_B^+(K_B^-(m))$</li>
+</ul>
+</li>
+<li>RSA is secure<ul>
+<li>attacker just know total number $n=pq$ and a number $e$, but they don’t know $p$, $q$, $d$<ul>
+<li>factoring a big number is hard</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>exponentiation in RSA is computationally intensive<ul>
+<li>In practice, usinig public key crypto to establish secure connection, then establish second key – symmetric session key $K_S$ – for encrypting data</li>
+</ul>
+</li>
+</ul>
+<h2 id="Message-integrity-authentication"><a href="#Message-integrity-authentication" class="headerlink" title="Message integrity, authentication"></a>Message integrity, authentication</h2><ul>
+<li>打过来显示的呼叫号码可以作假，但是自己手机打过去的号码是没问题的</li>
+</ul>
+<h3 id="Attempt-at-authentication-method"><a href="#Attempt-at-authentication-method" class="headerlink" title="Attempt at authentication method"></a>Attempt at authentication method</h3><ul>
+<li>无论对消息中的标识加不加密发送，都容易遭受playback attack</li>
+<li>采用nonce验证码的形式:<ul>
+<li>nonce: number(R) used only once-in-a-lifetime</li>
+<li>接收请求方向发送方发送一个验证码，<ul>
+<li>发送方根据收到的验证码用两人都知道的密钥加密再发给接收方，由接收方比对<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ap4_0.png" alt="img"></li>
+<li>发送方根据收到的验证码用自己的公钥加密发给接收方，接收方向发送方索要公钥后解密比对<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ap5_0.png" alt="img"></li>
+</ul>
+</li>
+<li>由于所有信息都走的互联网(用手机发验证码也许不会？)，中间的攻击者也能收到这些信息，便可假扮双方骗取加密的密钥<ul>
+<li>下图表示，攻击者收到Bob发送的$R$，用自己的私钥$K_T$加密$R$后发给Bob，但Bob不知道这个结果不适用正确用户Alice的密钥加密的，于是向攻击者索要公钥$K_T$，解密后当然没问题，Bob就把攻击者当成了Alice，用攻击者的密钥加密了信息，攻击者便窃取了信息。攻击者还可以把接收到的$R$发给Alice，Alice将用自己私钥加密后的$R$发给攻击者，接着攻击者便可向Alice索要公钥$K_A^+$，然后攻击者便可用公钥$K_A^+$加密篡改的消息$m’$假扮Bob发给Alice<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ap5_0_1.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Public-key-certification"><a href="#Public-key-certification" class="headerlink" title="Public-key certification"></a>Public-key certification</h3><ul>
+<li>上节的问题会出现是因为Bob并不知道攻击者发送的公钥$K_T$并不是真正用户Alice的公钥$K_A$</li>
+</ul>
+<h3 id="Certification-authorities-CA"><a href="#Certification-authorities-CA" class="headerlink" title="Certification authorities(CA)"></a>Certification authorities(CA)</h3><ul>
+<li>CA: binds public key to particular entity, E.</li>
+<li>E(person, router) registers its public key with CA<ul>
+<li>E provides “proof of identity” to CA. </li>
+<li>CA creates certificate binding E to its public key.</li>
+<li>certificate containing E’s public key digitally signed by CA – CA says “this is E’s public key”<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CA.png" alt="img"></li>
+<li>when want public key $K_B^+$<ul>
+<li>get certificate</li>
+<li>apply CA’s public key $K<em>{CA}^+$ to certificate, get public key $K_B^+ = K</em>{CA}^+(K_{CA}^-(K_B^+))$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CA1.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Message-integrity-信息摘要，数字签名-digitally-signs"><a href="#Message-integrity-信息摘要，数字签名-digitally-signs" class="headerlink" title="Message integrity: 信息摘要，数字签名(digitally signs)"></a>Message integrity: 信息摘要，数字签名(digitally signs)</h3><ul>
+<li>MD5(王晓云已破解，用另一串文本可以生成一样的MD5码)</li>
+<li>SHA</li>
+</ul>
+<h2 id="Securing-e-mail"><a href="#Securing-e-mail" class="headerlink" title="Securing e-mail"></a>Securing e-mail</h2><h3 id="只加密邮件消息-send-confidential-e-mail"><a href="#只加密邮件消息-send-confidential-e-mail" class="headerlink" title="只加密邮件消息(send confidential e-mail)"></a>只加密邮件消息(send confidential e-mail)</h3><ul>
+<li>sender <ul>
+<li>generates random symmetric private key $K_S$</li>
+<li>encrypts message $m$ with $K_S$(for efficiency)</li>
+<li>encrypts $K_S$ with receiver’s public key $K_B^+$</li>
+<li>sends both $K_S(m)$ and $K_B^+(K_S)$ to receiver</li>
+</ul>
+</li>
+<li>receiver <ul>
+<li>uses its own private key $K_B^-$ to decrypt $K_S$, and then uses $K_S$ to decrypt $m$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Secure%20email1.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h3 id="只加密数字签名-send-authentication-message-integrity"><a href="#只加密数字签名-send-authentication-message-integrity" class="headerlink" title="只加密数字签名(send authentication message integrity)"></a>只加密数字签名(send authentication message integrity)</h3><ul>
+<li>sender<ul>
+<li>digitally signs message $m$ as $H(m)$</li>
+<li>encrypts $H(m)$ with its own private key $K_A^-$</li>
+<li>sends both message $m$(in the clear) and digital signature $K_A^-(H(m))$</li>
+</ul>
+</li>
+<li>receiver<ul>
+<li>uses sender’s public key $K_A^+$ to decrypt $K_A^-(H(m))$</li>
+<li>digitally signs received message $m’$ as $H(m’)$</li>
+<li>compares whether $H(m) = H(m’)$, if so, then $m=m’$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Secure%20email2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h3 id="两者都需加密-provide-secrecy-sender-authentication-message-integrity"><a href="#两者都需加密-provide-secrecy-sender-authentication-message-integrity" class="headerlink" title="两者都需加密(provide secrecy sender authentication, message integrity)"></a>两者都需加密(provide secrecy sender authentication, message integrity)</h3><ul>
+<li>sender<ul>
+<li>digitally signs message $m$ as $H(m)$</li>
+<li>encrypts $H(m)$ with its own private key $K_A^-$</li>
+<li>combine digital signature $K_A^-(H(m))$ and message $m$ together, then encrypts them with a symmetric private key $K_S$ which generates randomly</li>
+<li>encrypts $K_S$ with receiver’s public key $K_B^+$</li>
+<li>sends both $K_S(K_A^-(H(m))+m)$ and $K_B^+(K_S)$ to receiver</li>
+</ul>
+</li>
+<li>receiver<ul>
+<li>uses its own private key $K_B^-$ to decrypt $K_S$, and then uses $K_S$ to decrypt $m’$ and $K_A^-(H(m))$</li>
+<li>uses sender’s public key $K_A^+$ to decrypt $K_A^-(H(m))$</li>
+<li>digitally signs received message $m’$ as $H(m’)$</li>
+<li>compares whether $H(m) = H(m’)$, if so, then $m’=m$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Secure%20email3.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Securing-TCP-connections-TLS-SSL"><a href="#Securing-TCP-connections-TLS-SSL" class="headerlink" title="Securing TCP connections: TLS/SSL"></a>Securing TCP connections: TLS/SSL</h2><ul>
+<li>provides<ul>
+<li>confidentiality(保密性)</li>
+<li>integrity(完整性)</li>
+<li>authentication(认证)</li>
+</ul>
+</li>
+<li>application domain<ul>
+<li>Web e-commerce transactions(电子商务)<ul>
+<li>minimum hassle in doing business with new merchant</li>
+</ul>
+</li>
+<li>encryption(especially credit-card numbers)</li>
+<li>Web-server or optional client authentication</li>
+<li>optional client authentication</li>
+</ul>
+</li>
+<li>original goal<ul>
+<li>send byte stream &amp; interactive data</li>
+<li>set of secret keys for entire connection(该协议用来交换整个连接过程要用到的密钥)</li>
+<li>certificate exchange as part of protocol: handshake phase(连接建立握手阶段的互相认证)</li>
+<li>available to all TCP applications<ul>
+<li>provides application programming interface(API) to applications<ul>
+<li>C and Java SSL libraries/classes readily available</li>
+</ul>
+</li>
+<li>secure socket interface(TCP的接口)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>SSL适用于TCP协议和HTTP1.0</li>
+<li>TLS适用于TCP协议和HTTP2.0，TLS1.0即SSL3.0</li>
+<li>QUIC适用于UDP协议和HTTP2.0以上如HTTP3.0，包含了TLS<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/SSLTLSQUIC.png" alt="img"></li>
+</ul>
+<h3 id="SSL-Secure-Sockets-Layer-已经基本淘汰"><a href="#SSL-Secure-Sockets-Layer-已经基本淘汰" class="headerlink" title="SSL: Secure Sockets Layer(已经基本淘汰)"></a>SSL: Secure Sockets Layer(已经基本淘汰)</h3><h4 id="Toy-SSL-a-simple-secure-channel-简单模型"><a href="#Toy-SSL-a-simple-secure-channel-简单模型" class="headerlink" title="Toy SSL: a simple secure channel(简单模型)"></a>Toy SSL: a simple secure channel(简单模型)</h4><ul>
+<li>handshake: users use their certificates, private keys to authenticate each other and exchange shared secret(互相认证并共享后面要用的某些加密密钥)</li>
+<li>key derivation: users use shared secret to derive set of keys(用共享密钥和一些附加信息生成各自的密钥集), through key derivation function(KDF)<ul>
+<li>use different keys for message authentication code(MAC) and encryption(前者是消息完整性验证码，后者是加密数据)</li>
+<li>$K_c$: encryption key for data sent from client to server </li>
+<li>$M_c$: MAC key for data sent from client to server</li>
+<li>$K_s$: encryption key for data sent from server to client</li>
+<li>$M_s$: MAC key for data sent from server to client</li>
+</ul>
+</li>
+<li>data transfer: data to be transferred is broken up into series of records(将数据分片传输)<ul>
+<li>with instant messaging, we cannot do integrity check over all bytes sent before displaying, thus break stream in series of records<ul>
+<li>each record carries a MAC</li>
+<li>receiver can act on each record as it arrives</li>
+</ul>
+</li>
+<li>use variable-length records to distinguish MAC from data(用长度位确认MAC和数据的分界)</li>
+<li>put sequence number into MAC to prevent attacker capturing and re-ordering records<ul>
+<li>$MAC = MAC(M_x, sequence || data)$(用密钥$M_x$计算加了编号后的数据的完整性验证码，但要注意传输的数据里不包括序号)</li>
+</ul>
+</li>
+<li>use nonce to prevent attacker capturing and replaying record(一次性验证码) </li>
+</ul>
+</li>
+<li>connection closure: special messages to securely close connection(用特殊的消息来确保安全地关闭连接)<ul>
+<li>use record types, with one type for closure to prevent attacker forging TCP connection close segment(truncation attack，用约定好的加密的类型来表示结束)<ul>
+<li>$MAC=MAC(M_x, sequence||type||data)$<br>length|type|data|MAC<br>:-:|:-:|:-:|:-:<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/ToySSL.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>allow client and server to support different encryption algorithms and to choose together specific algorithm before data transfer(允许自行协商选择加密算法)</li>
+</ul>
+<h4 id="SSL-cipher-suite-密码套件"><a href="#SSL-cipher-suite-密码套件" class="headerlink" title="SSL cipher suite(密码套件)"></a>SSL cipher suite(密码套件)</h4><ul>
+<li>cipher suite: algorithms that can be used for key generation, encryption, MAC, digital signature<ul>
+<li>public-key algorithm<ul>
+<li>RSA</li>
+</ul>
+</li>
+<li>symmetric encryption algorithm<ul>
+<li>DES: block</li>
+<li>3DES: block</li>
+<li>Rivest Cipher 2: block</li>
+<li>Rivest Cipher 4: stream</li>
+</ul>
+</li>
+<li>MAC algorithm</li>
+</ul>
+</li>
+<li>negotiation between client and server<ul>
+<li>client offers choice of cipher suite</li>
+<li>server picks one </li>
+</ul>
+</li>
+</ul>
+<h4 id="Real-SSL"><a href="#Real-SSL" class="headerlink" title="Real SSL"></a>Real SSL</h4><ul>
+<li>The purpose of handshake<ul>
+<li>server authentication(服务器认证客户端，例如确定客户端的权限)</li>
+<li>negotiation: agree on crypto algorithms(协商加密用到的算法)</li>
+<li>establish keys(根据选定的算法生成密钥)</li>
+<li>client authentication(optional, 可选客户端认证服务器)</li>
+</ul>
+</li>
+<li>The step of handshake <ul>
+<li>client sends list of algorithms it supports, along with client nonce(用一次性验证码是避免被攻击者发动重放攻击)<ul>
+<li>client typically offers range of algorithms, some strong, some weak</li>
+</ul>
+</li>
+<li>server chooses algorithms from list; sends back: choice + certificate + server nonce</li>
+<li>client verifies certificate, extracts server’s public key, generates pre_master_secret, encrypts with server’s public key, sends to server</li>
+<li>client and server independently compute encryption and MAC keys from pre_master_secret and nonces(前面是握手时的协商)</li>
+<li>client sends a MAC of all the handshake messages to protect handshake from tampering(最后用MAC验证握手消息的完整性，就是用接收到的消息计算MAC，然后发回给服务器，与服务器正确的MAC的比对消息完整性)</li>
+<li>server sends a MAC of all the handshake messages to protect handshake from tampering<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Real%20SSL%20connection.png" alt="img"></li>
+</ul>
+</li>
+<li>SSL record protocol<ul>
+<li>record header<ul>
+<li>content type</li>
+<li>version</li>
+<li>length</li>
+</ul>
+</li>
+<li>data fragment<ul>
+<li>each SSL data fragment has $2^14(16K)$bytes </li>
+</ul>
+</li>
+<li>MAC<ul>
+<li>calculated by sequence number, MAC key $M_x$, and data fragment<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/SSL%20record%20protocol.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>SSL record format<ul>
+<li>data and MAC use symmetric algorithm to be encrypted</li>
+<li>record header don’t need to be encrypted<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/SSL%20record%20format.png" alt="img"></li>
+</ul>
+</li>
+<li>key derivation<ul>
+<li>client nonce, server nonce, and pre-master secret input into pseudo random-number generator to produce master secret(共享密钥的生成)</li>
+<li>master secret and new nonces input into another random-number generator: “key block”(工作密钥集合)</li>
+<li>key block sliced and diced(将工作密钥集按照顺序和长度划分各个要用到的密钥)<ul>
+<li>client MAC key</li>
+<li>server MAC key</li>
+<li>client encryption key</li>
+<li>server encryption key</li>
+<li>client initialization vector (IV)</li>
+<li>server initialization vector (IV)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="TLS-Transport-layer-security"><a href="#TLS-Transport-layer-security" class="headerlink" title="TLS: Transport-layer security"></a>TLS: Transport-layer security</h3><ul>
+<li>is a widely deployed security protocol above the transport layer<ul>
+<li>supported by almost all browsers, web servers: https(port 443)</li>
+</ul>
+</li>
+<li>provides<ul>
+<li>confidentiality: via symmetric encryption</li>
+<li>integrity: via cryptographic hashing</li>
+<li>authentication: via public key cryptography</li>
+</ul>
+</li>
+</ul>
+<h4 id="Toy-TLS"><a href="#Toy-TLS" class="headerlink" title="Toy TLS"></a>Toy TLS</h4><ul>
+<li>handshake<ul>
+<li>B establishes TCP connection with A</li>
+<li>B verifies that A is really A</li>
+<li>B sends A a master secret key(MS), used to generate all other keys for TLS session</li>
+<li>potential issues: 3 RTT before client can start receiving data(including TCP handshake)(时延太长)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/t-tls%20handshake.png" alt="img"></li>
+</ul>
+</li>
+<li>cryptographic keys<ul>
+<li>like <a href="#toy-ssl-a-simple-secure-channel简单模型">SSL</a></li>
+</ul>
+</li>
+<li>encrypting data<ul>
+<li>like <a href="#toy-ssl-a-simple-secure-channel简单模型">SSL</a></li>
+<li>but record encrypted using symmetric key, $Kc$, passed to TCP:$K_c(length||type||data||MAC)$</li>
+</ul>
+</li>
+<li>connection close<ul>
+<li>like <a href="#toy-ssl-a-simple-secure-channel简单模型">SSL</a></li>
+<li>For example: type 0 for data, type 1 for close</li>
+</ul>
+</li>
+</ul>
+<h4 id="TLS-1-3-cipher-suite"><a href="#TLS-1-3-cipher-suite" class="headerlink" title="TLS:1.3 cipher suite"></a>TLS:1.3 cipher suite</h4><ul>
+<li>TLS: 1.3 (2018): more limited cipher suite choice than TLS 1.2 (2008)<ul>
+<li>only 5 choices, rather than 37 choices(5种加密算法选择？)</li>
+<li>requires Diffie-Hellman (DH) for key exchange, rather than DH or RSA(密钥交换的方法)</li>
+<li>combined encryption and authentication algorithm (“authenticated encryption”) for data rather than serial encryption, authentication<ul>
+<li>4 based on AES</li>
+</ul>
+</li>
+<li>HMAC uses SHA (256 or 284) cryptographic hash function(MAC使用的是SHA)</li>
+<li><a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc8446">rfc8446</a></li>
+</ul>
+</li>
+<li>handshake<ul>
+<li>1 RTT<ul>
+<li>client TLS hello msg: <ul>
+<li>guesses key agreement protocol, parameters</li>
+<li>indicates cipher suites it supports</li>
+</ul>
+</li>
+<li>server TLS hello msg chooses <ul>
+<li>key agreement protocol, parameters</li>
+<li>cipher suite</li>
+<li>server-signed certificate</li>
+</ul>
+</li>
+<li>client:<ul>
+<li>checks server certificate</li>
+<li>generates key</li>
+<li>can now make application request (e.g.., HTTPS GET)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/1RTT.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>0 RTT<ul>
+<li>initial hello message contains encrypted application data!<ul>
+<li>“resuming” earlier connection between client and server (恢复早期连接)</li>
+<li>application data encrypted using “resumption master secret” from earlier connection</li>
+</ul>
+</li>
+<li>vulnerable to replay attacks!(对于重放攻击来说很脆弱)<ul>
+<li>maybe OK for get HTTP GET or client requests not modifying server state<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/0RTT.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Network-layer-security-IPSec-Routing"><a href="#Network-layer-security-IPSec-Routing" class="headerlink" title="Network layer security: IPSec, Routing"></a>Network layer security: IPSec, Routing</h2><h3 id="Network-layer-security"><a href="#Network-layer-security" class="headerlink" title="Network layer security"></a>Network layer security</h3><ul>
+<li>between two network entities:<ul>
+<li>sending entity encrypts datagram payload(发送实体加密的数据负载), payload could be:<ul>
+<li>TCP or UDP segment, ICMP message, OSPF message</li>
+</ul>
+</li>
+<li>all data sent from one entity to other would be hidden<ul>
+<li>web pages, e-mail, P2P file transfer, TCP SYN packets</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>blanket coverage</li>
+</ul>
+<h3 id="Virtual-Private-Networks-VPNs"><a href="#Virtual-Private-Networks-VPNs" class="headerlink" title="Virtual Private Networks(VPNs)"></a>Virtual Private Networks(VPNs)</h3><ul>
+<li>motivation:<ul>
+<li>insinstitutions often want private networks for security(机构需求拥有安全的内网)<ul>
+<li>costly: separate routers, links, DNS infrastructure.(如果使用单独的专有设备去实现会很昂贵，因此采用软件实现的虚拟的私密内网)</li>
+</ul>
+</li>
+<li>institution’s inter-office traffic is sent over public Internet instead(机构间的通信需要经过公网)</li>
+</ul>
+</li>
+<li>implementation: <ul>
+<li>encrypted before entering public Internet(在进入公网前进行加密)</li>
+<li>logically separate from other traffic(逻辑上与其他流分开，方便后续解密)</li>
+</ul>
+</li>
+<li>其实就是在终端或者网关上安装一个软件，以实现不在内网时依然可以通过公网访问内网</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/VPN.png" alt="img"></p>
+<h3 id="IPSec-services"><a href="#IPSec-services" class="headerlink" title="IPSec services"></a>IPSec services</h3><ul>
+<li>including<ul>
+<li>data integrity(数据完整性)</li>
+<li>origin authentication(认证)</li>
+<li>replay attack prevention(防止重放攻击)</li>
+<li>confidentiality(保密性)</li>
+</ul>
+</li>
+<li>transport mode<ul>
+<li>IPsec datagram emitted and received by end-system(端到端发送和接收IPsec数据报)</li>
+<li>protects upper level protocols(保护网络层及上层的协议)</li>
+</ul>
+</li>
+<li>IPsec protocols<ul>
+<li>Authentication Header (AH) Protocol: provides source authentication and data integrity but not confidentiality</li>
+<li>Encapsulation Security Protocol(ESP): provides source authentication, data integrity, and confidentiality(more widely used than AH, 因为AH不支持保密性)</li>
+</ul>
+</li>
+<li>tunneling mode(隧道模式)<ul>
+<li>edge routers IPsec-aware(在边缘路由器上实现IPsec)<ul>
+<li>tunnel mode with ESP(most common and most important)</li>
+<li>tunnel mode with AH</li>
+</ul>
+</li>
+<li>hosts IPsec-aware(在终端主机实现IPsec)<ul>
+<li>host mode with ESP</li>
+<li>tunnel mode with AH</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>IPsec peers can be <ul>
+<li>two end systems, </li>
+<li>two routers/firewalls, </li>
+<li>a router/firewall and an end system</li>
+</ul>
+</li>
+</ul>
+<h4 id="Security-associations-SAs"><a href="#Security-associations-SAs" class="headerlink" title="Security associations(SAs)"></a>Security associations(SAs)</h4><ul>
+<li>before sending data, “security association(SA)” established from sending to receiving entity(在发送数据之前要先在发送方和接收方之间建立SA)<ul>
+<li>SAs are simplex: for only one direction(单向的，只有从发送者到接收者)</li>
+</ul>
+</li>
+<li>ending, receiving entitles maintain state information about SA<ul>
+<li>recall: TCP endpoints also maintaain state info</li>
+<li>IP is connectionless while IPsec is connection-oriented(IP不是面向连接的，IPsec则是面向连接的)</li>
+</ul>
+</li>
+<li>Example SA from R1 to R2(R1 stores for SA)<ul>
+<li>32-bit SA identifier: Security Parameter Index(SPI, 32位的SA标识)</li>
+<li>origin SA interface(200.168.1.100, 发送方的边缘路由接口)</li>
+<li>destination SA interface(193.68.2.23, 接收方的边缘路由接口)</li>
+<li>type of encryption used(like 3DES with CBC, 加密算法)</li>
+<li>encryption key(加密密钥)</li>
+<li>type of integrity check used(like HMAC with MD5, 数据完整性检验方法)</li>
+<li>authentication key(完整性?认证密钥)</li>
+<li>with n salespersons, there are $2+2n$ SAs in R1’s SAD<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/SA%20from%20R1%20to%20R2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="Security-Association-Database-SAD"><a href="#Security-Association-Database-SAD" class="headerlink" title="Security Association Database(SAD)"></a>Security Association Database(SAD)</h4><ul>
+<li>endpoint holds SA state in security association database(SAD, 用于保存终端的SA状态), where it can locate them during processing</li>
+<li>when sending IPsec datagram, The sending router accesses SAD to determine how to process datagram(发送IPsec数据报的时候，路由器访问SAD确认如何处理数据报，说明是考虑的tunnel mode with ESP)</li>
+<li>when IPsec datagram arrives to the receiving router, router examines SPI in IPsec datagram, indexes SAD with SPI, and processes datagram accordingly(从IPsec数据报中找到SPI，即Security Parameter Index，然后根据Index查找SAD，最后根据查到的信息处理数据报)</li>
+</ul>
+<h4 id="IPsec-datagram-focus-on-tunnel-mode-with-ESP-for-now"><a href="#IPsec-datagram-focus-on-tunnel-mode-with-ESP-for-now" class="headerlink" title="IPsec datagram(focus on tunnel mode with ESP for now)"></a>IPsec datagram(focus on tunnel mode with ESP for now)</h4><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/IPsec%20datagram.png" alt="img"></p>
+<ul>
+<li>ESP trl(trailer): Padding for block ciphers(尾部填充，用于分块加密凑长度)<ul>
+<li>appends to back of original datagram (which includes original header fields!) an “ESP trailer” field. </li>
+</ul>
+</li>
+<li>encrypts result using algorithm &amp; key specified by SA.(对整个数据报和填充的ESP trl加密)</li>
+<li>ESP hdr(header):<ul>
+<li>appends to front of this encrypted quantity the “ESP header, creating “enchilada”(墨西哥辣肉馅玉米卷). </li>
+<li>SPI, receiving entity knows what to do</li>
+<li>Sequence number: thwart replay attacks(应对重放攻击，因为如果收到同样序号的文件大概率会默认丢弃)<ul>
+<li>for new SA, sender initializes seq# to 0(从0开始计数)</li>
+<li>each time datagram in sent on SA:<ul>
+<li>sender increments seq# counter(序号靠计数器累加)</li>
+<li>places value in seq# field(序号靠直接分配)</li>
+</ul>
+</li>
+<li>goal:<ul>
+<li>prevent attacker from sniffing and replaying a packet</li>
+<li>destination checks for duplicates</li>
+</ul>
+</li>
+<li>method:<ul>
+<li>receipt of duplicate, authenticated IP packets may disrupt service(重复的通过验证的IP数据报引起中断服务)</li>
+<li>doesn’t keep track of all received packets; instead uses a window(不持续跟踪所有接收到的数据报，只在接收窗口检查序号？)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>creates authentication MAC over the whole enchilada, using algorithm and key specified in SA; (对ESP hdr+IP数据报+ESP trl做完整性认证)<ul>
+<li>MAC in ESP auth field is created with shared secret key</li>
+</ul>
+</li>
+<li>ESP auth: appends MAC to back of enchilada, forming payload;(认证结果放在数据报后面)</li>
+<li>new IP header: creates brand new IP header, with all the classic IPv4 header fields, which it appends before payload</li>
+</ul>
+<h4 id="Security-Policy-Database-SPD"><a href="#Security-Policy-Database-SPD" class="headerlink" title="Security Policy Database(SPD)"></a>Security Policy Database(SPD)</h4><ul>
+<li>policy: <ul>
+<li>For a given datagram, sending entity needs to know if it should use IPsec(确认是否使用了IPsec)</li>
+<li>needs also to know which SA to use(使用的是哪个SA)<ul>
+<li>may use: source and destination IP address; protocol number(通过IP header包含的源IP地址和目的IP地址，所用协议的序号)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>info in SPD indicates “what” to do with arriving datagram(SPD决定要对数据报做什么动作) </li>
+<li>info in SAD indicates “how” to do it(SAD说明要做的动作怎么做)</li>
+</ul>
+<h4 id="Internet-Key-Exchange-IKE"><a href="#Internet-Key-Exchange-IKE" class="headerlink" title="Internet Key Exchange(IKE)"></a>Internet Key Exchange(IKE)</h4><ul>
+<li>manual keying is impractical for VPN with many endpoints, instead use IPsec IKE(Internet Key Exchange)</li>
+<li>IKE message exchange for algorithms, secret keys, SPI numbers, and authenticating (prove who you are) with either<ul>
+<li>pre-shared secret (PSK, 预公钥): both sides start with secret<ul>
+<li>run IKE to authenticate each other and to generate IPsec SAs (one in each direction, 所以有两遍，一遍一个方向), including encryption, authentication keys</li>
+</ul>
+</li>
+<li>PKI(pubic/private keys and certificates): both sides start with public/private key pair, certificate<ul>
+<li>run IKE to authenticate each other, obtain IPsec SAs (one in each direction).</li>
+<li>similar with handshake in SSL.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>IKE has two phase<ul>
+<li>phase 1: establish bi-directional IKE SA<ul>
+<li>note: IKE SA different from IPsec SA</li>
+<li>has two mode:<ul>
+<li>aggressive mode: using fewer messages</li>
+<li>main mode: providing identity protection and is more flexible</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>phase 2: ISAKMP is used to securely negotiate IPsec pair of SAs<ul>
+<li>aka ISAKMP security association: Internet Security Association and Key Management Protocol(ISAKMP)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Routing"><a href="#Routing" class="headerlink" title="Routing"></a>Routing</h3><h4 id="Internet-approach-to-scalable-routing-增加路由的方法"><a href="#Internet-approach-to-scalable-routing-增加路由的方法" class="headerlink" title="Internet approach to scalable routing(增加路由的方法)"></a>Internet approach to scalable routing(增加路由的方法)</h4><ul>
+<li>aggregate routers into regions known as “autonomous systems” (AS，聚合路由器形成自治系统) (a.k.a. “domains”)<ul>
+<li>intra-AS (aka “intra-domain”，内部自治系统，管理同一IP网络号内的多个子网): routing among within same AS (“network”)<ul>
+<li>all routers in AS must run same intra-domain protocol(相同域内协议)</li>
+<li>routers in different AS can run different intra-domain routing protocols</li>
+<li>gateway router(网关路由器，也称边缘路由器): at “edge” of its own AS, has link(s) to router(s) in other AS’es</li>
+</ul>
+</li>
+<li>inter-AS (aka “inter-domain”，域间自治系统): routing among AS’es<ul>
+<li>gateways perform inter-domain routing (as well as intra-domain routing，边缘路由器扮演域内域间两种角色)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The Internet comprises of Autonomous Routing Domains (ARDs)<ul>
+<li>An ARD is a collection of resources under the administrative control of a single entity<ul>
+<li>CMU network is an ARD</li>
+<li>Routers, links, networks, etc</li>
+<li>Policies, interconnections with other ARDs(ARDs们如何互联)</li>
+<li>Big or small: Campus, corporate, ISP networks</li>
+<li>Allocated numbers, names and addresses</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>scale: billions of destinations:(AS规模不能太大，否则一是记录路由表会占据内存，二是频繁交换路由表会覆盖有效链路通信)<ul>
+<li>can’t store all destinations in routing tables!</li>
+<li>routing table exchange would swamp links! </li>
+</ul>
+</li>
+<li>administrative autonomy:<ul>
+<li>Internet: a network of networks</li>
+<li>each network admin may want to control routing in its own network</li>
+</ul>
+</li>
+</ul>
+<h4 id="Autonomous-Systems-自治系统"><a href="#Autonomous-Systems-自治系统" class="headerlink" title="Autonomous Systems(自治系统)"></a>Autonomous Systems(自治系统)</h4><ul>
+<li>An Autonomous System (AS) is an ARD with an AS number assigned by IANA<ul>
+<li>AS number(ASN): <ul>
+<li>16-bit, 1 to 64511 are public, 64512 to 65535 are private<ul>
+<li>CMU has ASN 9, UUNet has ASN 701, 702, 703, 704, 705(An organization can have multiple AS numbers)</li>
+<li>This can be there is one AS number for each geographical region, one for America, one for Asia, one for Europe.</li>
+<li>Can also be a result of consolidation of companies and their networks. So when ISPs merge right the bubble burst, they probably keep all the AS numbers from the individual companies. </li>
+<li>Last count, there are more than 46,000 ASs (CIDR report, mar 2014)</li>
+</ul>
+</li>
+<li>Not every ARD has a public AS number(不一定有ASN)<ul>
+<li>Only if talks to more than one ASs(只在三个以上ASs的情景需要ASs拥有ASN)</li>
+<li>Nowadays, must justify to IANA why you need one(名额有限，所以申请要向IANA说明原因)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Interconnected-ASes"><a href="#Interconnected-ASes" class="headerlink" title="Interconnected ASes"></a>Interconnected ASes</h4><ul>
+<li><p>forwarding tableL configured by intra-AS routing algorithms and inter-AS routing algorithms</p>
+<ul>
+<li>intra-AS routing determine entries for destinations within AS(内部自治系统的路由决定内部的目的地址)</li>
+<li>inter-AS and intra-AS determine entires for external destinations(自治系统间的路由决定外部的目的地址)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/edge%20routing.png" alt="img"></li>
+</ul>
+</li>
+<li><p>Example:</p>
+<ul>
+<li>AS1 inter-domain routing(边缘路由器) must:<ul>
+<li>learn which destinations reachable through AS2, which through AS3(了解可通过其他邻域到达的目标)</li>
+<li>propagate this reachablility info to all routers in AS1(让AS1中所有路由器知道可达的这些目标)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/inter-domian%20routing%20example.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Most-common-intra-AS-routing-protocols"><a href="#Most-common-intra-AS-routing-protocols" class="headerlink" title="Most common intra-AS routing protocols"></a>Most common intra-AS routing protocols</h4><ul>
+<li>RIP: Routing Information Protocol [RFC 1723]<ul>
+<li>classic DV: DVs exchanged every 30 secs(distance vector, 距离向量)</li>
+<li>no longer widely used(不怎么用了)</li>
+</ul>
+</li>
+<li>EIGRP: Enhanced Interior Gateway Routing Protocol<ul>
+<li>DV based</li>
+<li>formerly Cisco-proprietary for decades (became open in 2013 [RFC 7868])</li>
+</ul>
+</li>
+<li>OSPF: Open Shortest Path First  [RFC 2328]<ul>
+<li>link-state routing(基于链路状态)</li>
+<li>IS-IS protocol (ISO standard, not RFC standard) essentially same as OSPF</li>
+</ul>
+</li>
+</ul>
+<h4 id="Internet-inter-AS-routing-BGP"><a href="#Internet-inter-AS-routing-BGP" class="headerlink" title="Internet inter-AS routing: BGP"></a>Internet inter-AS routing: BGP</h4><ul>
+<li>BGP(Boder Gateway Protocol, 边界网关协议, 域间路由协议): the de facto inter-domain routing protocol<ul>
+<li>allows subnet to advertise its existence, and the destinations it can reach, to rest of Internet: “I am here, here is who I can reach, and how”</li>
+<li>允许子网自发向其他广播自己的相关路由信息</li>
+</ul>
+</li>
+<li>BGP provides each AS a means to:<ul>
+<li>eBGP: obtain subnet reachability information from neighboring ASes(边缘路由器从相邻AS获取子网的可达性信息)</li>
+<li>iBGP: propagate reachability information to all AS-internal routers.(边缘路由器将获得的可达性信息告知内部AS的所有路由器)</li>
+<li>determine “good” routes to other networks based on reachability information and policy(基于可达性信息和策略决定一个路由是不是好的路由选择)</li>
+</ul>
+</li>
+<li>BGP advertised route: prefix + attributes<ul>
+<li>prefix: destination being advertised</li>
+<li>two important attributes:<ul>
+<li>AS-Path: list of ASes through which prefix advertisement has passed</li>
+<li>NEXT-HOP: indicates specific internal-AS router to next-hop AS(下一跳的AS)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>BGP policy-based routing:<ul>
+<li>gateway receiving route advertisement uses import policy to accept/decline path (e.g., never route through AS Y).</li>
+<li>AS policy also determines whether to advertise path to other neighboring ASes(是否告知相邻AS)</li>
+</ul>
+</li>
+<li>Example1: 路径广告的运作原理<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/BGPExample1.png" alt="img"><ul>
+<li>AS2的路由器2c通过eBGP接收到来自AS3路由器3a的路径广告(path advertisement)<code>AS3, X</code></li>
+<li>基于AS2的策略，AS2路由器2c将接收到的<code>AS3, X</code>通过iBGP广播到AS2中的所有路由器</li>
+<li>基于AS2的策略，AS2的路由器2a通过eBGP向AS1的路由器1c发出路径广告<code>AS2, AS3, X</code></li>
+</ul>
+</li>
+<li>Example2: 网关路由器(gateway router)可能获得不止一条到达目的地的路径<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/BGPExample2.png" alt="img"><ul>
+<li>AS1的网关路由器1c从AS2的网关路由器2a获得路径<code>AS2, AS3, X</code></li>
+<li>AS1的网关路由器1c从AS3的网关路由器3a获得路径<code>AS3, X</code></li>
+<li>基于AS1的策略，网关路由器1c会选择路径<code>AS3, X</code>(最短？)并将该路径通过iBGP告知AS1中的所有路由器</li>
+</ul>
+</li>
+<li>Example3<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/BGPExample3.png" alt="img"><ul>
+<li>AS1的路由器1d是OSPF域内路由器(OSPF intra-domain routing)，要到达AS1的路由器1c或AS3的路由器X，会使用自身的1号接口</li>
+<li>AS1的路由器1a是OSPF域内路由器(OSPF intra-domain routing)，要到达AS1的路由器1c或AS3的路由器X，会使用自身的2号接口</li>
+</ul>
+</li>
+<li>BGP messages: BGP messages exchanged between peers over TCP connection(TCP连接中的连接对互相交换BGP消息)<ul>
+<li><code>OPEN</code>: opens TCP connection to remote BGP peer and authenticates sending BGP peer(打开连接并验证)</li>
+<li><code>UPDATE</code>: advertises new path or withdraws old(广播新路径或撤回旧路径)<ul>
+<li>Announced prefixes(通告前缀), a.k.a. NLRI(network layer reachability information) </li>
+<li>Path attributes associated with annoucement(路径长度?下一跳地址?)</li>
+<li>Withdrawn prefixes(撤回前缀)</li>
+</ul>
+</li>
+<li><code>KEEPALIVE</code>: keeps connection alive in absence of UPDATES; also ACKs <code>OPEN</code> request(在没有<code>UPDATES</code>的情况下保持有效连接，确认<code>OPEN</code>的请求)</li>
+<li><code>NOTIFICATION</code>: reports errors in previous msg; also used to close connection(报告错误消息，也用于关闭连接)</li>
+</ul>
+</li>
+<li>Hot potato routing(烫山芋路由策略)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/hot%20potato%20routing.png" alt="img"><ul>
+<li>AS2的路由器2d通过iBGP有两条到达AS3的路由器X的路径<ul>
+<li>2d-&gt;2a-&gt;1c-&gt;3a-&gt;3d-&gt;X(选择这个，因为2d到2a比2d到2c成本低)</li>
+<li>2d-&gt;2c-&gt;3a-&gt;3d-&gt;X</li>
+</ul>
+</li>
+<li>choose local gateway that has least intra-domain cost (域内成本最低的本地网关，即使可能跳数会更多。e.g., 2d chooses 2a, even though more AS hops to X): don’t worry about inter-domain cost!</li>
+</ul>
+</li>
+<li>ISP(互联网服务供应商)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/BGP%20policy.png" alt="img"><ul>
+<li>The ISP can offer a service to its customers where the ISP creates and maintains CA certificates for the customers’ resources and ROAs for the customers’ prefixes.(为客户提供服务，为客户的资源创建和维护CA证书，为客户的前缀创建和维护ROA) </li>
+<li>only wants to route traffic to/from its customer networks(只将路由信息发送给消费者网络，不发给其他提供转发服务的网络?即不会出现转发环) (does not want to carry transit traffic between other ISPs – a typical “real world” policy)</li>
+<li>provider networks: 包含提供转发服务的网络</li>
+<li>customer networks: 包含使用转发服务的网络</li>
+<li>dual-homed: attached to two provider networks</li>
+</ul>
+</li>
+<li>BGP route selection: router may learn about more than one route to destination AS, selects route based on(多条路径，即多个下一跳路由)<ul>
+<li>local preference value attribute: policy decision</li>
+<li>shortest AS-PATH (最短的路径)</li>
+<li>closest NEXT-HOP router: hot potato routing (最低的成本)</li>
+<li>additional criteria <ul>
+<li>Drop routes with inaccessible Nexthops(不选择没有下一跳的路由器)</li>
+<li>Prefer route with largest LocalPref(偏爱有最大优先级的路由器)</li>
+<li>Prefer lowest origin type IGP&lt; EGP &lt; Incomplete</li>
+<li>Prefer route with smallest MED Compare MEDs from same AS only</li>
+<li>Prefer path with lowest IGP metric</li>
+<li>Prefer path by lowest BGP IDs</li>
+<li>(vendor-specific hacks …)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="BGP-Attack"><a href="#BGP-Attack" class="headerlink" title="BGP Attack"></a>BGP Attack</h3><h4 id="BGP-Vulnerabilities"><a href="#BGP-Vulnerabilities" class="headerlink" title="BGP Vulnerabilities"></a>BGP Vulnerabilities</h4><ul>
+<li>Routers run an operating system which hackers now target(路由器有操作系统，容易受到攻击)</li>
+<li>Potential attack objectives<ul>
+<li>Blackholing: make something unreachable(使消息无法到达目的地，如何进入转发死循环)</li>
+<li>Redirection(重定向，篡改转发方向): congestion(拥塞), eavesdropping(窃听)<ul>
+<li>Unauthorized origin ISP(未经验证的宣称，被误导)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/unauthorized%20origin%20ISP.png" alt="img"></li>
+<li>AS-path truncation(截断)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/truncation.png" alt="img"></li>
+<li>AS-path alteration(篡改)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/alteration.png" alt="img"></li>
+</ul>
+</li>
+<li>Instability(不稳定)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Attack-method"><a href="#Attack-method" class="headerlink" title="Attack method"></a>Attack method</h4><ul>
+<li>Prefix Hijacking and Announcement of Unallocated Address Space <ul>
+<li>an autonomous system (AS) accidentally or maliciously originates a prefix that it is not authorized (by the prefix owner) to originate(即实际不能到达该前缀对应的网络，因为没有被授权，会被拒绝)</li>
+<li>IP route selection: most specific (i.e., longest) matching entry in a router’s FIB. Offending AS falsely announces a more-specific prefix, the longer, unauthorized prefix will be widely accepted and used to route data.(利用最长匹配规则，扩大前缀的掩码，误导路由选择错误的下一跳地址) </li>
+<li>AS may also falsely originate allocated but currently unused address space(for send spam or for some other malicious purpose.)(伪装成合法的但暂时无人使用的地址)</li>
+<li>sub-prefix hijack can be serious(可能很严重)</li>
+<li>DOS, eavesdropping, misdirection to imposter servers (to steal login credentials or inject malware)(DOS攻击，窃取，误导以冒名顶替服务器从而窃取登录姘居或注入恶意软件)</li>
+<li>defeat of IP reputation systems to launch spam email. (破坏IP的信誉系统以发送垃圾邮件)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Attack%20method1.png" alt="img"></li>
+</ul>
+</li>
+<li>AS-path Modification<ul>
+<li>AS-path是一个AS数字序列，表示数据将在互联网流过的路径，用于实现路由策略(reflect the business agreements and peering policies that have been negotiated between networks.<br>)</li>
+<li>a malicious AS which receives a BGP update may illegitimately remove some of the preceding ASes in the AS_PATH attribute of the update to make the path length seem shorter.(由于BGP是广播的，因此可能有接收到BGP更新的恶意AS。它可以在更新AS-path属性时非法删除一些前面的AS，以使得通过自己的那条路径的长度看起来更短)<ul>
+<li>illegitimately increase its revenue from its customers(从而可以非法增大它的客户的成本，因为实际路径长度没那么短)</li>
+<li>may be able to eavesdrop on traffic that would otherwise not transit through their AS. (也能够窃听原本不会通过该恶意AS传输的流量，因为修改了传播路径)</li>
+</ul>
+</li>
+<li>adversary AS replaces a prefix in a received update with a more-specific prefix(利用最长匹配原则，恶意AS将接收到的BGP更新消息中的前缀替换为更具体的前缀) and then forwards the update to neighbors.(然后将该更新消息转发给邻居) <ul>
+<li>ASes on the internet would widely accept and use the adversary AS’s advertisement for the more-specific prefix. (于是根据最长匹配原则，接收到该更新消息的AS都会使用这个更具体的前缀)</li>
+<li>The adversary would be able to force almost all traffic for the more-specific prefix to be routed via their AS. Therefore, the adversary can eavesdrop on the data without being detected, because data reach destination correctly!(恶意AS可以汇聚几乎所有的流量，因为都通过它更具体的前缀进行转发。从而能够窃听数据而不被发现，因为数据确实成功到达了目的地)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Route Leaks: is the propagation of routing announcements beyond their intended scope(路由的作用范围超出了预期)<ul>
+<li>Peering policies often specify limits on what routing announcements will be accepted by each party. (限制路由广告)</li>
+<li>a stub or customer AS should never be used to route between two transit ASes.(使用转发服务的AS不应该告知两个本身就已有连接的AS自己与它们各自的路由信息) </li>
+<li>The result of a route leak can include redirection of traffic through an unintended path, (会有重定向问题)<ul>
+<li>enable eavesdropping or malicious traffic analysis. (窃听或恶意流量分析)</li>
+<li>causes blackholing and denial-of-service for the affected prefixes. (前缀出现黑点和拒绝服务)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/route%20leak.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>IP Address Spoofing &amp; Reflection Amplification Attack <ul>
+<li>Spoofed Source Addresses(伪造源地址，可以发起DDoS攻击，即不断发送请求使服务器宕机)</li>
+<li>Reflection and Amplification Attacks<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/DDos.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h3 id="Securing-BGP"><a href="#Securing-BGP" class="headerlink" title="Securing BGP"></a>Securing BGP</h3><h4 id="BGP-Security-Requirements"><a href="#BGP-Security-Requirements" class="headerlink" title="BGP Security Requirements"></a>BGP Security Requirements</h4><ul>
+<li>Verification of address space “ownership”(需要验证地址空间的所有权)</li>
+<li>Authentication of Autonomous Systems (AS)(AS认证)</li>
+<li>Router authentication and authorization (relative to an AS)(相对于AS来说进行路由器身份验证和授权，防止AS中的非法路由器?还是防止路由器并不是在AS中)</li>
+<li>Route and address advertisement authorization(路由和地址的广告授权)</li>
+<li>Route withdrawal authorization(路由撤回授权)</li>
+<li>Integrity and authenticity of all BGP traffic on the wire(线路上所有BGP流量的完整性和真实性)</li>
+<li>Timeliness of BGP traffic(BGP流量的及时性)</li>
+</ul>
+<h4 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h4><ul>
+<li>Authentication at BGP layer(BGP层的认证)<ul>
+<li>MD5 checksum option protects TCP layer connection in BGP, provides authentication between BGP speakers(MD5校验和用来保护BGP中的TCP层连接，保障BGP路由之间的身份验证)<ul>
+<li>Prevents external attacker from injecting bogus information into TCP connection, e.g., TCP poisoning(防止外部攻击者窃取TCP连接的数据报并注入虚假信息)</li>
+<li>Does not provide authenticity for routing information, all 3 attacks are still possible!(但不提供路由信息的真实性认证，仍然可能受到除修改路由信息外其他攻击方式攻击)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Route filtering<ul>
+<li>Use Internet routing registries<ul>
+<li>Database of who owns what prefix</li>
+</ul>
+</li>
+<li>Typically route filtering used for “business”<ul>
+<li>don’t want to go through this AS</li>
+<li>don’t want to reveal route to this AS</li>
+</ul>
+</li>
+<li>Ingress filters: Does AS own the prefix? If no, don’t accept</li>
+<li>Problem is incomplete databases, multiorigin conflicts etc</li>
+</ul>
+</li>
+</ul>
+<h4 id="S-BGP-design-overview"><a href="#S-BGP-design-overview" class="headerlink" title="S-BGP design overview"></a>S-BGP design overview</h4><ul>
+<li>IPSec: authenticity and integrity of peer-to-peer communication, automated key management(用于对等通信的真实性和完整性认证，自动密钥的管理)</li>
+<li>Public Key Infrasturctures(PKIs): secure identification of BGP speakers and of owners of AS’s and of address blocks(BGP发言人和AS所有者以及地址块所有者的安全识别)</li>
+<li>Attestations -&gt; authorization: of the subject (by the issuer) to advertise specified address blocks(由发行人即主体发布指定地址块的广告)</li>
+<li>Validation of UPDATEs: based on a new path attribute, using certificates and attestations(基于新的路径属性，使用证书和认证验证BGP的更新消息)<ul>
+<li>Internet Corporation for Assigned Names and Numbers(ICANN，用于名称与数字地址分配的互联网机构) issues certificates(颁布证书) for AS ownership(AS所有权证书) to ISPs and organizations that run BGP</li>
+<li>AS operators issue certificates to routers, as AS representatives(AS运营商作为AS代表向路由器颁发证书)</li>
+<li>Holders of AS(or router) certificates generate route attestations(AS或路由的证书持有人生成路由证明), authorizing advertisement of a route by a specified next hop AS(授权指定的下一跳AS发布路由广告)</li>
+<li>Route attestations are used to express a secure route as a sequence of AS hops(路由证明用于将安全路由表示为AS跳的序列)</li>
+</ul>
+</li>
+<li>Distribution of countermeasure data(分布式的对策数据): certificates(证书), Certificate Revocation List (CRLs，证书吊销列表，即黑名单?), attestations(证明)</li>
+</ul>
+<h4 id="Registration-of-Route-Objects-in-Internet-Routing-Registries"><a href="#Registration-of-Route-Objects-in-Internet-Routing-Registries" class="headerlink" title="Registration of Route Objects in Internet Routing Registries"></a>Registration of Route Objects in Internet Routing Registries</h4><ul>
+<li>Internet路由注册表中路由对象的注册</li>
+<li>regional internet registries (RIRs, 区域互联网注册中心)<ul>
+<li>ARIN in North America</li>
+<li>LACNIC in Latin America,</li>
+<li>RIPE in Europe</li>
+<li>APNIC in Asia-Pacific</li>
+<li>AfriNIC in Africa</li>
+</ul>
+</li>
+<li>internet routing registries (IRRs, 互联网路由注册中心)<ul>
+<li>RIPE NCC, APNIC, AfriNIC, and ARIN </li>
+<li>major internet service providers (ISPs, 互联网服务供应商) </li>
+</ul>
+</li>
+<li>Roles of RIRs and IRRs<ul>
+<li>Maintain declarative data about internet resource allocations and routing policies(维护有关互联网资源分配和路由策略的声明性数据) </li>
+<li>route objects available in the IRRs provide routing information declared by network operators (IRR中可用的路由对象提供由网络运营商声明的路由信息)</li>
+<li>Merit’s Routing Assets Database (RADb) and other similar entities provide a collective routing information base consisting of registered (at their site) as well as mirrored (from the IRRs) data. (路由资产数据库RADb和其他类似实体提供一个由注册和镜像数据组成的集体路由信息库，其中注册数据在站点，镜像在IRR)</li>
+<li>Network operators often obtain route object information from the IRRs and/or RADb, and they can make use of the data in the creation of prefix filters  in their BGP routers. (网络运营商经常从IRR或RADb获取路由对象信息，利用这些数据在BGP路由器中创建前缀过滤器，过滤掉不符合标准的过长前缀，防止最长匹配机制被利用)</li>
+</ul>
+</li>
+<li>data exchanged in RIRs/IRRs<ul>
+<li>Routing Policy Specification Language (RPSL, 路由策略规范语言)  (most RIR and ISP use)</li>
+<li>Shared Whois Project (SWIP, 共享Whois项目)  (ARIN, LACNIC) </li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>greater efforts should be devoted to creating route origin authorizations (ROAs, 路由源授权)</p>
+<ul>
+<li>because RPKI provides a stronger authentication and validation framework for network operators than IRR(RPKI为网络运营商提供了比IRR更强的身份验证和确认框架)</li>
+</ul>
+</li>
+<li><p>Security Recommendation 1: All internet number resources (e.g., address blocks and AS numbers) should be covered by an appropriate registration services agreement with an RIR, and all point-of-contact (POC) information should be up to date. The granularity of such registrations should reflect all sub-allocations to entities (e.g., enterprises within the parent organization, branch offices) that operate their own network services (e.g., internet access, DNS). </p>
+<ul>
+<li>所有的互联网号码资源(地址块，AS号码)都应该与RIR签订适当的注册服务协议</li>
+<li>所有的联系点(POC)信息都应该是最新的</li>
+<li>此类注册的粒度应该能反映对运营自己网络服务(如互联网接入、DNS)的实体(如母组织内的企业、分支机构)的所有子分配</li>
+</ul>
+</li>
+<li>Security Recommendation 2: In the case of address block (NetRange) registration in ARIN, the originating autonomous system (origin AS) should be included. <ul>
+<li>在ARIN中进行地址块(NetRange)注册的情况下，应该包括地址块对应的原始自治系统(原始AS)</li>
+</ul>
+</li>
+<li>Security Recommendation 3: Route objects corresponding to the BGP routes originating from an AS should be registered and actively maintained in an appropriate RIR’s IRR. Enterprises should ensure that appropriate IRR information exists for all IP address space used directly and by their outsourced IT systems and services. <ul>
+<li>与源自AS的BGP路由相对应的路由实体对象应该在恰当的RIR的IRR中注册和积极维护。</li>
+<li>企业应该确保其外包的IT系统和服务直接使用的所有IP地址空间都有恰当的IRR信息(都合法)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Certification-of-Resources-in-Resource-Public-Key-Infrastructure-（RPKI）"><a href="#Certification-of-Resources-in-Resource-Public-Key-Infrastructure-（RPKI）" class="headerlink" title="Certification of Resources in Resource Public Key Infrastructure （RPKI）"></a>Certification of Resources in Resource Public Key Infrastructure （RPKI）</h4><ul>
+<li>资源公钥基础设施(RPKI)中的资源认证</li>
+<li>RPKI is standards-based approach for providing cryptographically secured registries of internet resources and routing authorization(基于标准的方法，用于提供安全加密的互联网资源注册表和路由授权)</li>
+<li>global certificate authority (CA, 全球证书颁发机构) and registry service offered by all regional internet registries (RIRs, 提供注册服务)<ul>
+<li>five RIRs (AFRINIC, APNIC, ARIN, LACNIC, and RIPE) maintains an independent trust anchor (TA) for RPKI certification services in its respective region.(五个RIR为其各自地区的RPKI认证服务维护独立的信任锚) </li>
+</ul>
+</li>
+<li>The Internet Assigned Numbers Authority (ICANA, 互联网号码分配机构) allocates resources to the regional internet registries (RIRs, 为区域互联网注册中心分配资源) <ul>
+<li>Internet Corporation for Assigned Names and Numbers (ICANN, 互联网名称与号码分配机构)</li>
+<li>RIRs suballocate to local internet registries (LIRs, RIRs分配给本地互联网注册中心, RIRs &gt; LTRs), </li>
+<li>LIRs suballocate to ISPs and enterprises. (LIRs分配给ISPs互联网服务供应商和公司)</li>
+</ul>
+</li>
+<li>RPKI is based on the X.509 standard with RFC 3779 extensions that describe special certificate profiles for internet number resources (prefixes and AS numbers) <ul>
+<li>描述了互联网号码资源(如前缀和号码)的特殊证书配置文件</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/RPKI.png" alt="img"></p>
+<ul>
+<li>Security Recommendation 4: Internet number resource holders with IPv4/IPv6 prefixes and/or AS numbers (ASNs) should obtain RPKI certificate(s) for their resources. (具有IPv4/IPv6前缀和/或AS号码ASN这些互联网号码资源的持有者应该为其拥有的这些资源获取RPKI证书，保证其合法性)</li>
+<li>Security Recommendation 5: Transit providers should provide a service where they create, publish, and manage subordinate resource certificates for address space and/or ASNs suballocated to their customers.(传输服务供应商应该提供额外一项服务，为分配给客户的地址空间和/或ASN创建、发布和管理从属资源证书)</li>
+</ul>
+<h4 id="BGP-Origin-Validation-BGP-OV"><a href="#BGP-Origin-Validation-BGP-OV" class="headerlink" title="BGP Origin Validation (BGP-OV)"></a>BGP Origin Validation (BGP-OV)</h4><ul>
+<li>BGP源验证</li>
+<li>Once an address prefix owner obtains a CA certificate, they can generate an end-entity (EE) certificate and use the private key associated with the EE certificate to digitally sign a route origin authorization (ROA).(一旦地址前缀所有者获得了CA证书，就可以生成端实体EE证书，并使用与EE证书关联的私钥对路由源授权ROA进行数字签名) <ul>
+<li>An ROA declares a specific AS as an authorized originator of BGP announcements for the prefix (ROA声明特定AS作为授权发起者，授权BGP发布前缀相关的广告)</li>
+<li>ROAs can also be created (signed) by an ISP (transit provider) on behalf of its customer based on a service agreement provided that the ISP suballocated the address space to the customer. (如果ISP将地址空间重新分配给客户，则ISP或传输供应商也可以根据服务协议代表其客户创建或签署ROA)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Creation%20of%20Route%20Origin%20Authorization%20(ROA" alt="img">%20by%20prefix%20owner.png)</li>
+</ul>
+</li>
+<li>Once created, RPKI data is used throughout the internet by relying parties (RPs).(一旦创建，依赖方RP会在整个互联网上使用RPKI数据) <ul>
+<li>RPs, such as RPKI-validating servers, can access RPKI data from the repositories  using either the rsync protocol or the RPKI Repository Delta Protocol (RRDP) [RFC8182].(例如RPKI验证服务器的RP，可以使用rsync协议或RPKI存储库增量协议RRDP从存储库访问RPKI数据) <ul>
+<li>The RRDP protocol is often called “delta protocol” as shorthand. A BGP router typically accesses the required ROA data from one or more RPKI cache servers that are maintained by its AS. (RRDP协议通常被速记为delta协议，BGP路由器通常从其AS维护的一个或多个RPKI缓存服务器访问所需的ROA数据)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The RPKI-to-router protocol is used for communication between the RPKI cache server and the router (RPKI到路由器协议用于RPKI缓存服务器和路由器之间的通信)</li>
+<li>A BGP router can use the ROA information retrieved from an RPKI cache server to mitigate the risk of prefix hijacks and some forms of route leaks in advertised routes.(BGP路由器可以使用从RPKI缓存服务器检索到的ROA信息降低前缀劫持和广告路由器中某些形式的路由泄露风险)  </li>
+<li><p>A BGP router would typically receive a validated white list of {prefix, maxlength, origin AS} tuples (derived from valid ROAs) from one or more RPKI cache servers. A BGP route is deemed to have a “Valid” origin if the {prefix, origin AS} pair in the advertised route can be corroborated with the white list (i.e., the pair is permissible in accordance with at least one ROA; (BGP路由器通常会从一个或多个RPKI缓存服务器接收经过验证的{prefix, maxlength, originAS}元组白名单，该白名单从有效的ROA派生。如果广告路由器中的{prefix, originAS}对可以用白名单验证，即根据至少一个ROA，该对是允许的，则BGP路由被视为具有”有效”的起点，)</p>
+<ul>
+<li>The router makes use of this white list with the BGP origin validation (BGP-OV) process depicted to determine the validation state of an advertised route [RFC6811].(路由器利用此白名单和描述的BGP源验证过程，即BGP-OV，来确定广告路由的验证状态) </li>
+<li>A BGP route is deemed to have a “Valid” origin if the {prefix, origin AS} pair in the advertised route can be corroborated with the white list (i.e., the pair is permissible in accordance with at least one ROA; A route is considered “Invalid” if there is a mismatch with the white list (i.e., AS number does not match, or the prefix length exceeds maxlength) (如果广告路由中的{prefix, originAS}对可以用白名单证实，则BGP路由被称为具有有效的源，如果与白名单不匹配，则是无效的)</li>
+<li>a route is deemed “NotFound” if the prefix announced is not covered by any prefix in the white list (i.e., there is no ROA that contains a prefix that equals or subsumes the announced prefix).(如果路由所宣布的前缀未被白名单中的任何前缀匹配，没有包含或等于所宣布前缀的ROA，则该路由被称为未发现NotFound)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/RPKI%20data%20retrieval%2C%20caching%2C%20and%20propagation%20to%20routers.png" alt="img"></li>
+</ul>
+</li>
+<li><p>The RPKI-based origin validation may be supplemented by validation based on IRR data.(基于RPKI的源验证可以通过基于IRR数据的验证来作为补充)</p>
+<ul>
+<li>Although RPKI-based BGP- OV is already implemented in commercial BGP routers[Juniper1] [Cisco1] [Patel] [Scudder] [NIST-SRx] [Parsons2] [goBGP] [RTRlib]. , the activation and ubiquitous use of RPKI and BGP-OV in BGP routers require motivation and commitment on the part.(即使基于RPKI的BGP-OV已经在商业BGP路由器中实现，但并没有完全覆盖所有的路由器，目前大概只有60%)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Algorithm%20for%20origin%20validation%20(based%20on%20RFC%206811" alt="img">.png)</li>
+</ul>
+</li>
+<li>Security Recommendation 6: Resource holders should register Route Origin Authorization (ROA(s) in the global RPKI for all prefixes that are announced or intended to be announced on the public internet. (资源持有者应该在全球RPKI中注册路由源授权ROA，用于在公共互联网上宣布或计划宣布前缀)</li>
+<li>Security Recommendation 7: Each transit provider should provide a service where they create, publish, and maintain ROAs for prefixes suballocated to their customers. Alternatively, as part of the service, customers can be allowed to create, publish, and maintain their ROAs in a repository maintained by the transit provider. (每个传输供应商都应该提供一项服务，在其中创建、发布和维护分配给用户的前缀ROA。或者作为服务的一部分，可以允许客户在运输供应商维护的存储库中创建、发布和维护它们的ROA。要么自己做，要么客户做)</li>
+<li>Security Recommendation 8: If a prefix that is announced (or intended to be announced) is multi-homed and originated from multiple ASes, then one ROA per originating AS should be registered for the prefix (possibly in combination with other prefixes which are also originated from the same AS). (如果宣布或打算宣布的前缀是多归属的，并且源自多个AS，则每个源AS都应该为该前缀注册一个ROA，可能与源自同一AS的其他前缀组合注册到一个ROA)</li>
+<li>Security Recommendation 9: When an ISP or enterprise owns multiple prefixes that include less-specific and more-specific prefixes, they should ensure that the more- specific prefixes have ROAs before creating ROAs for the subsuming less-specific prefixes. (当ISP或企业拥有多个不太具体和更具体的前缀时，应该在为包含不太具体的前缀的前缀创建ROA之前，确保更具体的前缀具有ROA，即先具体后不太具体)</li>
+<li>Security Recommendation 10: An ISP should ensure that more specific prefixes announced from within their customer cone have ROAs prior to the creation of its own ROAs for subsuming less-specific prefix(es).(ISP应该确保在为包含不太具体的前缀创建ROA之前，其客户群体中宣布的更具体的前缀都具有ROA) </li>
+<li>Security Recommendation 11: An ISP or enterprise should create an AS0 ROA (Route Origin Authorization) for any prefix that is currently not announced to the public internet. However, this should be done only after ensuring that ROAs exist for any more-specific prefixes subsumed(纳入) by the prefix that are announced or are intended to be announced. (ISP或企业为目前未向公共互联网公布的任何前缀创建AS0 ROA。但只有在确保已宣布或打算宣布的任何更具体的前缀都存在ROA后，才能这么做。先公布具体的，后未公布的)</li>
+<li>Security Recommendation 12: A BGP router should not send updates with AS_SET or AS_CONFED_SET in them (in compliance with BCP 172 [RFC6472]). (BGP路由器不应该发送包含AS_SET或AS_CONFED_SET的更新)<ul>
+<li>When an AS_SET is present in a BGP update, it is not possible to clearly determine the origin AS from the AS_PATH [RFC6811]. Thus, an update containing an AS_SET in its AS_PATH can never receive an assessment of “Valid” in the origin validation process(如果BGP更新中包含AS_SET，无法从AS_PATH中清楚地确定源AS。因此在AS_PATH中包含的AS_SET的更新在源验证过程中永远不会收到结果为”有效”的评估) </li>
+</ul>
+</li>
+<li>Security Recommendation 13: ISPs and enterprises that operate BGP routers should also operate one or more RPKI-validating caches. (运营BGP路由器的ISP和企业也应该运行一个或多个RPKI验证缓存)</li>
+<li>Security Recommendation 14: A BGP router should maintain an up-to-date white list consisting of {prefix, maxlength, origin ASN} that is derived from valid ROAs (Route Origin Authorization ) in the global RPKI. The router should perform BGP-OV. (BGP路由器应该维护一个最新的白名单，其中包括从全局RPKI中的有效ROA导出的{prefix, maxlength, origiin ASN}。路由器应该执行BGP-OV)</li>
+<li>Security Recommendation 15: In partial/incremental deployment state of the RPKI, the permissible {prefix, origin ASN} pairs for performing BGP-OV should be generated by taking the union of such data obtained from ROAs, IRR data, and customer contracts. (在RPKI的部分部署或增量部署状态下，应该通过合并从ROA、IRR数据和客户合同中获得的数据来生成用于执行BGP-OV的可行的{prefix, origin ASN}对)</li>
+<li>Security Recommendation 16: BGP-OV results should be incorporated into local policy decisions to select BGP best paths. (BGP-OV的结果应该纳入本地策略决策，以选择BGP最佳路径，保证路径的可靠性)</li>
+</ul>
+<h4 id="Minimize-Forged-Origin-Hijacks"><a href="#Minimize-Forged-Origin-Hijacks" class="headerlink" title="Minimize Forged-Origin Hijacks"></a>Minimize Forged-Origin Hijacks</h4><ul>
+<li>a purposeful malicious hijacker can forge the origin AS of any update by prepending the number of an AS found in an ROA (Route Origin Authorization ) for the target prefix onto their own unauthorized BGP announcement. (有目的的恶意劫持者可以通过将目标前缀的ROA中发现的ASN预先添加到他们自己的未经授权的BGP广告中，伪造来自源AS的更新)<ul>
+<li>With ROA-based origin validation alone, it is possible to prevent accidental misoriginations. (仅通过基于ROA的源验证，就可以防止意外的源错误)</li>
+</ul>
+</li>
+<li>replace the prefix in the route with a more-specific prefix that has a length not exceeding the maxlength in the ROA. (将路由器中的前缀替换为长度不超过ROA最大长度的更具体的前缀，利用了最大匹配机制)<ul>
+<li>subsumed(包含在) under the announced prefix</li>
+</ul>
+</li>
+<li>Security Recommendation 17: The maxlength in the ROA should not exceed the length of the most specific prefix (subsumed under the prefix in consideration) that is originated or intended to be originated from the AS listed in the ROA. (ROA中的最大长度不应该超过源自或意图源自ROA中列出的AS的最具体前缀的长度)</li>
+<li>Security Recommendation 18: If a prefix and select more-specific prefixes subsumed under it are announced or intended to be announced, then instead of specifying a maxlength, the prefix and the more-specific prefixes should be listed explicitly in multiple ROAs (i.e., one ROA per prefix or more-specific prefix). (对于被宣布或打算被宣布的一个前缀和其包含的更具体的前缀，与其指定最大长度，不如在多个ROA中明确列出前缀和更具体的前缀，即一个ROA一个前缀)</li>
+</ul>
+<h4 id="Enable-Prefix-Filters"><a href="#Enable-Prefix-Filters" class="headerlink" title="Enable Prefix Filters"></a>Enable Prefix Filters</h4><ul>
+<li>Prefix Filtering with Lateral Peer</li>
+<li>Prefix Filtering with Transit Provider </li>
+<li>Prefix Filtering with Customer </li>
+<li>Prefix Filtering Performed in a Leaf Customer Network </li>
+<li>Role of RPKI in Prefix Filtering </li>
+</ul>
+<h4 id="AS-Path-Validation-Emerging-Future"><a href="#AS-Path-Validation-Emerging-Future" class="headerlink" title="AS Path Validation (Emerging/Future)"></a>AS Path Validation (Emerging/Future)</h4><h4 id="Generalized-TTL-Security-Mechanism-GTSM"><a href="#Generalized-TTL-Security-Mechanism-GTSM" class="headerlink" title="Generalized TTL Security Mechanism (GTSM)"></a>Generalized TTL Security Mechanism (GTSM)</h4><h4 id="Route-Leak-Detection-and-Mitigation"><a href="#Route-Leak-Detection-and-Mitigation" class="headerlink" title="Route Leak Detection and Mitigation"></a>Route Leak Detection and Mitigation</h4></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">高级计算机网络</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/10/09/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-09-%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">如何提高性能</div></div></a></div><div class="next-post pull-right"><a href="/2024/10/16/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-16-%E9%AB%98%E6%80%A7%E8%83%BD%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%9A%84%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">高性能计算机的体系结构</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Multimedia/" title="Multimedia"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-13</div><div class="title">Multimedia</div></div></a></div><div><a href="/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Introduction/" title="Introduction"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-13</div><div class="title">Introduction</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Security"><span class="toc-text">Security</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#What-does-network-security-include"><span class="toc-text">What does network security include</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#confidentiality-%E4%BF%9D%E5%AF%86%E6%80%A7%EF%BC%8C%E5%AF%B9%E6%B6%88%E6%81%AF%E5%8A%A0%E5%AF%86"><span class="toc-text">confidentiality(保密性，对消息加密)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#authentication-%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81"><span class="toc-text">authentication(身份认证)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#message-integrity-%E6%B6%88%E6%81%AF%E5%AE%8C%E6%95%B4"><span class="toc-text">message integrity(消息完整)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#access-and-availability-%E5%8F%AF%E8%AE%BF%E9%97%AE%E4%B8%94%E5%8F%AF%E7%94%A8"><span class="toc-text">access and availability(可访问且可用)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#What-can-a-%E2%80%9Cbad-guy%E2%80%9D-do"><span class="toc-text">What can a “bad guy” do?</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-is-network-security-different-%E4%B8%8E%E6%99%AE%E9%80%9A%E5%AE%89%E5%85%A8%E7%9B%B8%E6%AF%94"><span class="toc-text">How is network security different?(与普通安全相比)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Principles-of-cryptography"><span class="toc-text">Principles of cryptography</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-language-of-cryptography"><span class="toc-text">The language of cryptography</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#How-to-break-an-encryption-scheme"><span class="toc-text">How to break an encryption scheme</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Simple-encryption-scheme-substitution-cipher"><span class="toc-text">Simple encryption scheme: substitution cipher</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Symmetric-key-cryptography-%E5%AF%B9%E7%A7%B0%E5%8A%A0%E5%AF%86%E6%B3%95%EF%BC%8C%E5%AF%B9%E7%A7%B0%E6%8C%87%E7%9A%84%E6%98%AF%E5%AF%86%E9%92%A5%E7%9B%B8%E4%B8%8D%E7%9B%B8%E5%90%8C"><span class="toc-text">Symmetric key cryptography(对称加密法，对称指的是密钥相不相同)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#DES-Data-Encryption-Standard"><span class="toc-text">DES: Data Encryption Standard</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AES"><span class="toc-text">AES</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Public-key-cryptography"><span class="toc-text">Public key cryptography</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#RSA"><span class="toc-text">RSA</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Message-integrity-authentication"><span class="toc-text">Message integrity, authentication</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Attempt-at-authentication-method"><span class="toc-text">Attempt at authentication method</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Public-key-certification"><span class="toc-text">Public-key certification</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Certification-authorities-CA"><span class="toc-text">Certification authorities(CA)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Message-integrity-%E4%BF%A1%E6%81%AF%E6%91%98%E8%A6%81%EF%BC%8C%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D-digitally-signs"><span class="toc-text">Message integrity: 信息摘要，数字签名(digitally signs)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Securing-e-mail"><span class="toc-text">Securing e-mail</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AA%E5%8A%A0%E5%AF%86%E9%82%AE%E4%BB%B6%E6%B6%88%E6%81%AF-send-confidential-e-mail"><span class="toc-text">只加密邮件消息(send confidential e-mail)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AA%E5%8A%A0%E5%AF%86%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D-send-authentication-message-integrity"><span class="toc-text">只加密数字签名(send authentication message integrity)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%A4%E8%80%85%E9%83%BD%E9%9C%80%E5%8A%A0%E5%AF%86-provide-secrecy-sender-authentication-message-integrity"><span class="toc-text">两者都需加密(provide secrecy sender authentication, message integrity)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Securing-TCP-connections-TLS-SSL"><span class="toc-text">Securing TCP connections: TLS&#x2F;SSL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#SSL-Secure-Sockets-Layer-%E5%B7%B2%E7%BB%8F%E5%9F%BA%E6%9C%AC%E6%B7%98%E6%B1%B0"><span class="toc-text">SSL: Secure Sockets Layer(已经基本淘汰)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Toy-SSL-a-simple-secure-channel-%E7%AE%80%E5%8D%95%E6%A8%A1%E5%9E%8B"><span class="toc-text">Toy SSL: a simple secure channel(简单模型)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SSL-cipher-suite-%E5%AF%86%E7%A0%81%E5%A5%97%E4%BB%B6"><span class="toc-text">SSL cipher suite(密码套件)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Real-SSL"><span class="toc-text">Real SSL</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TLS-Transport-layer-security"><span class="toc-text">TLS: Transport-layer security</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Toy-TLS"><span class="toc-text">Toy TLS</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#TLS-1-3-cipher-suite"><span class="toc-text">TLS:1.3 cipher suite</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Network-layer-security-IPSec-Routing"><span class="toc-text">Network layer security: IPSec, Routing</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Network-layer-security"><span class="toc-text">Network layer security</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Virtual-Private-Networks-VPNs"><span class="toc-text">Virtual Private Networks(VPNs)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPSec-services"><span class="toc-text">IPSec services</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Security-associations-SAs"><span class="toc-text">Security associations(SAs)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Security-Association-Database-SAD"><span class="toc-text">Security Association Database(SAD)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#IPsec-datagram-focus-on-tunnel-mode-with-ESP-for-now"><span class="toc-text">IPsec datagram(focus on tunnel mode with ESP for now)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Security-Policy-Database-SPD"><span class="toc-text">Security Policy Database(SPD)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Internet-Key-Exchange-IKE"><span class="toc-text">Internet Key Exchange(IKE)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Routing"><span class="toc-text">Routing</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Internet-approach-to-scalable-routing-%E5%A2%9E%E5%8A%A0%E8%B7%AF%E7%94%B1%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-text">Internet approach to scalable routing(增加路由的方法)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Autonomous-Systems-%E8%87%AA%E6%B2%BB%E7%B3%BB%E7%BB%9F"><span class="toc-text">Autonomous Systems(自治系统)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Interconnected-ASes"><span class="toc-text">Interconnected ASes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Most-common-intra-AS-routing-protocols"><span class="toc-text">Most common intra-AS routing protocols</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Internet-inter-AS-routing-BGP"><span class="toc-text">Internet inter-AS routing: BGP</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#BGP-Attack"><span class="toc-text">BGP Attack</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BGP-Vulnerabilities"><span class="toc-text">BGP Vulnerabilities</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Attack-method"><span class="toc-text">Attack method</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Securing-BGP"><span class="toc-text">Securing BGP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#BGP-Security-Requirements"><span class="toc-text">BGP Security Requirements</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Method"><span class="toc-text">Method</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#S-BGP-design-overview"><span class="toc-text">S-BGP design overview</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Registration-of-Route-Objects-in-Internet-Routing-Registries"><span class="toc-text">Registration of Route Objects in Internet Routing Registries</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Certification-of-Resources-in-Resource-Public-Key-Infrastructure-%EF%BC%88RPKI%EF%BC%89"><span class="toc-text">Certification of Resources in Resource Public Key Infrastructure （RPKI）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#BGP-Origin-Validation-BGP-OV"><span class="toc-text">BGP Origin Validation (BGP-OV)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Minimize-Forged-Origin-Hijacks"><span class="toc-text">Minimize Forged-Origin Hijacks</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Enable-Prefix-Filters"><span class="toc-text">Enable Prefix Filters</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#AS-Path-Validation-Emerging-Future"><span class="toc-text">AS Path Validation (Emerging&#x2F;Future)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Generalized-TTL-Security-Mechanism-GTSM"><span class="toc-text">Generalized TTL Security Mechanism (GTSM)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Route-Leak-Detection-and-Mitigation"><span class="toc-text">Route Leak Detection and Mitigation</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>

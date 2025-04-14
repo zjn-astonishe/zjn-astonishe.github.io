@@ -1,0 +1,403 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>C++面向对象 1 | ZJN_BLOG</title><meta name="keywords" content="C/C++面经,面向对象，继承和多态"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="C++面向对象 1继承和多态 C++支持多重继承，所以会出现重复作为基类的情况。例如: 为了节省内存空间，可以将DeriverdA、DeriverdB对Base的继承定义为虚拟继承，而A就成了虚拟基类。  1234class Base;class DeriverdA:public virtual Base; &#x2F;&#x2F;虚继承class DeriverdB:public virtual Base; &#x2F;&#x2F;虚">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++面向对象 1">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2022/03/15/C%E3%80%81C++/2022-03-15-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%201/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="C++面向对象 1继承和多态 C++支持多重继承，所以会出现重复作为基类的情况。例如: 为了节省内存空间，可以将DeriverdA、DeriverdB对Base的继承定义为虚拟继承，而A就成了虚拟基类。  1234class Base;class DeriverdA:public virtual Base; &#x2F;&#x2F;虚继承class DeriverdB:public virtual Base; &#x2F;&#x2F;虚">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2022-03-15T11:47:22.000Z">
+<meta property="article:modified_time" content="2024-11-09T04:33:57.461Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="C&#x2F;C++面经">
+<meta property="article:tag" content="面向对象，继承和多态">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2022/03/15/C%E3%80%81C++/2022-03-15-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%201/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'C++面向对象 1',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-11-09 12:33:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">C++面向对象 1</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-03-15T11:47:22.000Z" title="发表于 2022-03-15 19:47:22">2022-03-15</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-09T04:33:57.461Z" title="更新于 2024-11-09 12:33:57">2024-11-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/C-C/">C/C++</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>8分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="C-面向对象-1"><a href="#C-面向对象-1" class="headerlink" title="C++面向对象 1"></a>C++面向对象 1</h1><h2 id="继承和多态"><a href="#继承和多态" class="headerlink" title="继承和多态"></a>继承和多态</h2><ul>
+<li>C++支持多重继承，所以会出现重复作为基类的情况。例如:<br><img src="https://github.com/zjn-astonishe/image/blob/main/C%E3%80%81C++/%E8%8F%B1%E5%BD%A2%E7%BB%A7%E6%89%BF.png?raw=true" alt="菱形继承"></li>
+<li>为了节省内存空间，可以将DeriverdA、DeriverdB对Base的继承定义为虚拟继承，而A就成了虚拟基类。  <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Base</span>;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DeriverdA</span>:<span class="keyword">public</span> <span class="keyword">virtual</span> Base; <span class="comment">//虚继承</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">DeriverdB</span>:<span class="keyword">public</span> <span class="keyword">virtual</span> Base; <span class="comment">//虚继承</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">D</span>:<span class="keyword">public</span> DeriverdA,DeriverdB;  <span class="comment">//普通继承</span></span><br></pre></td></tr></table></figure></li>
+<li>虚拟继承在一般的应用中很少用到，所以也往往被忽视，这也主要是因为在C++中，多重继承是不推荐的，也并不常用，而一旦离开了多重继承，虚拟继承就完全失去了存在的必要因为这样只会降低效率和占用更多的空间。</li>
+<li>不要轻易使用虚拟继承，更不要在虚继承的基础上进行类型转换。<ul>
+<li>因为虚拟继承会破坏继承体系，不能按照平常的继承体系进行类型转换。</li>
+</ul>
+</li>
+</ul>
+<h3 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h3><ul>
+<li>基本概念<ul>
+<li>指为不同数据类型的实体提供统一的接口。多态类型可以将自身所支持的操作套用到其它类型的值上。</li>
+<li>简单的说: 就是用基类的引用指向子类的对象。</li>
+<li>可分为<ul>
+<li>变量多态和函数多态<ul>
+<li>变量多态: 基类型的变量(对于C++是引用或指针)可以对基类型对象赋值，也可以对派生类型的对象赋值。</li>
+<li>函数多态: 相同的函数调用界面(函数名与实参表)，传送给一个对象变量，可以有不同的行为，这视该对象变量所指向的对象类型而定。</li>
+<li>变量多态是函数多态的基础。</li>
+</ul>
+</li>
+<li>动态多态和静态多态<ul>
+<li>动态多态<ul>
+<li>通过类继承机制和虚函数机制生效于运行期。</li>
+<li>只要共同的基类定义了虚函数的接口，就可以优雅地处理异质对象集合。</li>
+<li>也被称为子类型多态或包含多态。在面向对象程序设计中，这被直接称为多态。</li>
+</ul>
+</li>
+<li>静态多态<ul>
+<li>模板也允许将不同的特殊行为和单个泛化记号相关联，由于这种关联处理于编译期而非运行期，因此被称为”静态”。</li>
+<li>可以用来实现类型安全、运行高效的同质对象集合操作。</li>
+<li>包括<ul>
+<li>函数重载</li>
+<li>运算符重载</li>
+<li>带变量的宏多态</li>
+<li>非参数化多态或译作特设多态</li>
+<li>参数化多态: 把类型作为参数的多态。在面向对象程序设计中，被称作泛型编程。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>运行时多态和编译时多态<ul>
+<li>运行时多态: 重写(override)</li>
+<li>编译时多态：重载(overload)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>优点<ul>
+<li>多态除了代码的复用性外，还可以解决项目中紧偶合的问题,提高程序的可扩展性。<ul>
+<li>耦合度即模块模块之间，代码代码之间的关联度。通过对系统的分析把他分解成一个一个子模块，子模块提供稳定的接口，达到降低系统耦合度的的目的，模块模块之间尽量使用模块接口访问，而不是随意引用其他模块的成员变量。</li>
+</ul>
+</li>
+<li>应用程序不必为每一个派生类编写功能调用，只需要对抽象基类进行处理即可。大大提高程序的可复用性。</li>
+<li>派生类的功能可以被基类的方法或引用变量所调用，这叫向后兼容，可以提高可扩充性和可维护性。</li>
+</ul>
+</li>
+</ul>
+<h3 id="多态的类，内存布局是怎么样的"><a href="#多态的类，内存布局是怎么样的" class="headerlink" title="多态的类，内存布局是怎么样的"></a>多态的类，内存布局是怎么样的</h3><ul>
+<li>虚继承<ul>
+<li>如果是虚继承，那么就会为这个类创建一个虚表指针，占用4个字节。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span>  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="type">int</span> a;  </span><br><span class="line">&#125;; <span class="comment">//sizeof(A)=4，因为a是整形，占用4字节</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> : <span class="keyword">virtual</span> <span class="keyword">public</span> A &#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="type">int</span> b;  </span><br><span class="line">&#125;;<span class="comment">//sizeof(B)=4(A副本)+4(虚表指针占用4字节)+4(变量b占用4字节)=12  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span> : <span class="keyword">virtual</span> <span class="keyword">public</span> B &#123;       </span><br><span class="line">&#125;;<span class="comment">//sizeof(c)= 12(B副本)+4(虚表指针) = 16，如果这里改为直接继承，那么sizeof(c)=12，因为此时就没有虚表指针了</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>多重继承(菱形继承)<ul>
+<li>如果是以虚继承实现多重继承，需要减掉基类的副本。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span>  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">A</span> &#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="type">int</span> a;  </span><br><span class="line">&#125;;<span class="comment">//sizeof(A) = 4  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span> : <span class="keyword">virtual</span> <span class="keyword">public</span> A &#123;  </span><br><span class="line">&#125;;<span class="comment">// sizeof(B) =4+4=8  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span> : <span class="keyword">virtual</span> <span class="keyword">public</span> A &#123;          </span><br><span class="line">&#125;;<span class="comment">//sizeof(C) =4+4=8  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">D</span> : <span class="keyword">public</span> B, <span class="keyword">public</span> C&#123;         </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="comment">//sizeof(D)=8+8-4=12这里需要注意要减去4，因为B和C同时继承A，只需要保存一个A的副本就好了，sizeof(D)=4(A的副本)+4(B的虚表)+4(C的虚表)=12，也可以是8（B的副本）+8（c的副本）-4（A的副本）=12</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>普通继承(空类和虚函数)<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">A</span>      </span><br><span class="line">&#123;     </span><br><span class="line">&#125;;    <span class="comment">//result=1  空类所占空间的大小为1</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">B</span>     </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="type">char</span> ch;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func0</span><span class="params">()</span>  </span>&#123;  &#125;   </span><br><span class="line">&#125;;   <span class="comment">//result=8  1+4   字节对齐后为 8</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">C</span>    </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="type">char</span> ch1;  </span><br><span class="line">    <span class="type">char</span> ch2;  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span>  </span>&#123;  &#125;    <span class="comment">//也只有一个虚指针</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func1</span><span class="params">()</span> </span>&#123;  &#125;    <span class="comment">//也只有一个虚指针</span></span><br><span class="line">&#125;;  <span class="comment">//result=8  1+1+4 字节对齐后为 8，没有继承的，此时类里即使出现多个虚函数，也只有一个虚指针</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">D</span>: <span class="keyword">public</span> A, <span class="keyword">public</span> C  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="type">int</span> d;     </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func</span><span class="params">()</span>  </span>&#123;  &#125;   <span class="comment">//继承了C，C里已经有一个虚指针，此时D自己有虚函数，</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func1</span><span class="params">()</span>  </span>&#123;  &#125; <span class="comment">//也不会创建另一个虚指针，所以D本身就变量d需要4字节</span></span><br><span class="line">&#125;;     <span class="comment">//result=12  8（C的副本）+4（整形变量d占用4字节）=12  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">E</span>: <span class="keyword">public</span> B, <span class="keyword">public</span> C  </span><br><span class="line">&#123;     </span><br><span class="line">    <span class="type">int</span> e;     </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func0</span><span class="params">()</span>  </span>&#123;  &#125;   <span class="comment">//同理，E不会创建另一个虚指针，所以E本身就变量e需</span></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">func1</span><span class="params">()</span>  </span>&#123;  &#125;  <span class="comment">//要4字节</span></span><br><span class="line">&#125;;  <span class="comment">//result=20   8（ B的副本）+8（C的副本）+4（E本身）=20</span></span><br></pre></td></tr></table></figure></li>
+<li>基类派生子类拥有虚函数的菱形继承<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CommonBase</span>  </span><br><span class="line">&#123;  </span><br><span class="line">    <span class="type">int</span> co;  </span><br><span class="line">&#125;;<span class="comment">// size = 4  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base1</span>: <span class="keyword">virtual</span> <span class="keyword">public</span> CommonBase            </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">print1</span><span class="params">()</span> </span>&#123;  &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">print2</span><span class="params">()</span> </span>&#123;  &#125;  </span><br><span class="line"><span class="keyword">private</span>:  </span><br><span class="line">    <span class="type">int</span> b1;  </span><br><span class="line">&#125;;<span class="comment">//4（父类副本）+4（自己有虚函数，加1个虚指针空间）+4（自身变量b1）+4(虚继承再加1个虚指针空间)=16  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Base2</span>: <span class="keyword">virtual</span> <span class="keyword">public</span> CommonBase          </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">dump1</span><span class="params">()</span> </span>&#123;  &#125;  </span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">dump2</span><span class="params">()</span> </span>&#123;  &#125;  </span><br><span class="line"><span class="keyword">private</span>:  </span><br><span class="line">    <span class="type">int</span> b2;  </span><br><span class="line">&#125;;<span class="comment">//同理16  </span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Derived</span>: <span class="keyword">public</span> Base1, <span class="keyword">public</span> Base2       </span><br><span class="line">&#123;  </span><br><span class="line"><span class="keyword">public</span>:  </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">print2</span><span class="params">()</span> </span>&#123;  &#125;  </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">dump2</span><span class="params">()</span> </span>&#123;  &#125;  </span><br><span class="line"><span class="keyword">private</span>:  </span><br><span class="line">    <span class="type">int</span> d;  </span><br><span class="line">&#125;;<span class="comment">//16+16-4+4=32  </span></span><br></pre></td></tr></table></figure></li>
+<li>总结<ul>
+<li>如果不是虚继承的类，即使有虚函数也不会因此增加存储空间。</li>
+<li>如果是虚继承的类，没有虚函数就添加一个虚指针空间，有虚函数(不管多少个)，就添加两个虚指针空间。</li>
+<li>继承的类的存储空间大小包括：<ul>
+<li>父类副本大小。有多重继承时，若父类的父类有重合(菱形继承)，则需要减去该基类的大小。</li>
+<li>如果是虚继承，增加一个虚拟指针空间(通常4字节)。</li>
+<li>自身变量大小(要进行字节地址对齐，通常是4个字节为单位)</li>
+<li>如果本身还有虚函数，增加一个指向虚函数表的指针(通常4字节)。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="C-如何实现多态-多态实现的三个条件、实现的原理"><a href="#C-如何实现多态-多态实现的三个条件、实现的原理" class="headerlink" title="C++如何实现多态(多态实现的三个条件、实现的原理)"></a>C++如何实现多态(多态实现的三个条件、实现的原理)</h3><ul>
+<li>多态实现的三个条件<ul>
+<li>有继承;</li>
+<li>有虚函数重写;</li>
+<li>有父类指针(父类引用)指向子类对象。</li>
+</ul>
+</li>
+<li>编译器发现一个类中有虚函数，便会立即为此类生成虚函数表<code>vtable</code>。<ul>
+<li>虚函数表的各表项为指向类里面的虚函数的指针。</li>
+</ul>
+</li>
+<li>编译器还会在此类中隐含插入一个指针<code>vptr</code>(对vc编译器来说，它插在类的内存地址的第一个位置上)指向虚函数表。</li>
+<li>调用此类的构造函数时，在类的构造函数中，编译器会隐含执行vptr与vtable的关联代码，即将vptr指向对应的vtable，将类与此类的虚函数表联系了起来。</li>
+<li>另外在调用类的构造函数时，指向基础类的指针此时已经变成指向具体的类的this指针，这样依靠此this指针即可得到正确的vtable，如此才能真正与函数体进行连接，这就是动态联编，实现多态的基本原理。<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Father</span></span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">Face</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;Father&#x27;s face&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="type">void</span> <span class="title">Say</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;Father say hello&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Son</span>:<span class="keyword">public</span> Father</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:    </span><br><span class="line">    <span class="function"><span class="type">void</span> <span class="title">Say</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        cout &lt;&lt; <span class="string">&quot;Son say hello&quot;</span> &lt;&lt; endl;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Son son;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 隐式类型转换。</span></span><br><span class="line"><span class="comment">     * 指向基础类的pFather指针已经变成指向具体的类son的this指针。</span></span><br><span class="line"><span class="comment">     * 调用pFather指针，就相当于调用子类son的this指针。</span></span><br><span class="line"><span class="comment">     * this指针所能调用的函数，自然就是子类son本身的函数。</span></span><br><span class="line"><span class="comment">     */</span> </span><br><span class="line">    Father *pFather=&amp;son; </span><br><span class="line">    pFather-&gt;<span class="built_in">Say</span>(); <span class="comment">// 调用的是子类的Say()函数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>多态的广义解释：<ul>
+<li>一段程序能够处理多种类型对象的能力。</li>
+<li>那么实现多态的方式：<ul>
+<li>重载多态(函数重载和运算符重载)</li>
+<li>类型强制转换</li>
+<li>类型参数化多态(函数模板、类模板)</li>
+<li>包含多态(继承与虚函数)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="被隐藏的基类函数如何调用或者子类调用父类的同名函数和父类成员变量"><a href="#被隐藏的基类函数如何调用或者子类调用父类的同名函数和父类成员变量" class="headerlink" title="被隐藏的基类函数如何调用或者子类调用父类的同名函数和父类成员变量"></a>被隐藏的基类函数如何调用或者子类调用父类的同名函数和父类成员变量</h3><ul>
+<li>C++有两种方法可以调用被隐藏的函数：<ul>
+<li>用<code>using</code>关键字<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Child</span>:<span class="keyword">public</span> Parent</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="built_in">Child</span>()&#123;&#125;;</span><br><span class="line">    <span class="keyword">using</span> Parent::add;    <span class="comment">// 让Parent类中的add函数对Child可见。</span></span><br><span class="line">    <span class="function"><span class="type">int</span> <span class="title">add</span><span class="params">(<span class="type">void</span>)</span></span>&#123;&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li>用域操作符<code>::</code><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Child *c;</span><br><span class="line">c-&gt;Parent::<span class="built_in">add</span>(<span class="number">10</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li>其实还可以有其他方法<ul>
+<li>使用父类指针指向子类对象<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Child *c;</span><br><span class="line">Parent* p = <span class="keyword">new</span> Child;</span><br></pre></td></tr></table></figure></li>
+<li>调用父类函数时，使用强制类型转换<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Child *c;</span><br><span class="line">((p*)c)-&gt;<span class="built_in">add</span>();</span><br></pre></td></tr></table></figure>
+<h3 id=""><a href="#" class="headerlink" title=" "></a> </h3></li>
+</ul>
+</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/C-C-%E9%9D%A2%E7%BB%8F/">C/C++面经</a><a class="post-meta__tags" href="/tags/%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%EF%BC%8C%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81/">面向对象，继承和多态</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/03/13/C%E3%80%81C++/2022-03-13-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%203/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">C_C++基础知识 3</div></div></a></div><div class="next-post pull-right"><a href="/2022/03/16/C%E3%80%81C++/2022-03-16-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%202/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">C++面向对象 2</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2022/03/13/C%E3%80%81C++/2022-03-13-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%203/" title="C_C++基础知识 3"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-13</div><div class="title">C_C++基础知识 3</div></div></a></div><div><a href="/2022/03/16/C%E3%80%81C++/2022-03-16-C++%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%202/" title="C++面向对象 2"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-16</div><div class="title">C++面向对象 2</div></div></a></div><div><a href="/2022/03/13/C%E3%80%81C++/2022-03-13-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%202/" title="C_C++基础知识 2"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-13</div><div class="title">C_C++基础知识 2</div></div></a></div><div><a href="/2022/03/12/C%E3%80%81C++/2022-03-12-C_C++%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%201/" title="C_C++基础知识 1"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2022-03-12</div><div class="title">C_C++基础知识 1</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#C-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1-1"><span class="toc-text">C++面向对象 1</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%A7%E6%89%BF%E5%92%8C%E5%A4%9A%E6%80%81"><span class="toc-text">继承和多态</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%80%81"><span class="toc-text">多态</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A4%9A%E6%80%81%E7%9A%84%E7%B1%BB%EF%BC%8C%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80%E6%98%AF%E6%80%8E%E4%B9%88%E6%A0%B7%E7%9A%84"><span class="toc-text">多态的类，内存布局是怎么样的</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#C-%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E5%A4%9A%E6%80%81-%E5%A4%9A%E6%80%81%E5%AE%9E%E7%8E%B0%E7%9A%84%E4%B8%89%E4%B8%AA%E6%9D%A1%E4%BB%B6%E3%80%81%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%8E%9F%E7%90%86"><span class="toc-text">C++如何实现多态(多态实现的三个条件、实现的原理)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A2%AB%E9%9A%90%E8%97%8F%E7%9A%84%E5%9F%BA%E7%B1%BB%E5%87%BD%E6%95%B0%E5%A6%82%E4%BD%95%E8%B0%83%E7%94%A8%E6%88%96%E8%80%85%E5%AD%90%E7%B1%BB%E8%B0%83%E7%94%A8%E7%88%B6%E7%B1%BB%E7%9A%84%E5%90%8C%E5%90%8D%E5%87%BD%E6%95%B0%E5%92%8C%E7%88%B6%E7%B1%BB%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F"><span class="toc-text">被隐藏的基类函数如何调用或者子类调用父类的同名函数和父类成员变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link"><span class="toc-text"> </span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>

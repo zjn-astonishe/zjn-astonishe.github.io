@@ -1,0 +1,985 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Multimedia | ZJN_BLOG</title><meta name="keywords" content="高级计算机网络"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Multimedia Networking(多媒体网络)Composition of Multimedia audio  analog audio signal sampled at constant rate(以恒定速率采样的模拟音频信号) telephone：8000 samples&#x2F;sec 人声常用的频率范围是500~4000赫兹。 根据采样定理——为采样率设定了一个足够的条件，即采样频率必">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multimedia">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Multimedia/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="Multimedia Networking(多媒体网络)Composition of Multimedia audio  analog audio signal sampled at constant rate(以恒定速率采样的模拟音频信号) telephone：8000 samples&#x2F;sec 人声常用的频率范围是500~4000赫兹。 根据采样定理——为采样率设定了一个足够的条件，即采样频率必">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2024-09-13T10:10:00.000Z">
+<meta property="article:modified_time" content="2024-11-09T04:33:57.469Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="高级计算机网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Multimedia/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Multimedia',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-11-09 12:33:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Multimedia</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-09-13T10:10:00.000Z" title="发表于 2024-09-13 18:10:00">2024-09-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-09T04:33:57.469Z" title="更新于 2024-11-09 12:33:57">2024-11-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">高级计算机网络</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">6.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>27分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Multimedia-Networking-多媒体网络"><a href="#Multimedia-Networking-多媒体网络" class="headerlink" title="Multimedia Networking(多媒体网络)"></a>Multimedia Networking(多媒体网络)</h1><h2 id="Composition-of-Multimedia"><a href="#Composition-of-Multimedia" class="headerlink" title="Composition of Multimedia"></a>Composition of Multimedia</h2><ul>
+<li><p>audio</p>
+<ul>
+<li>analog audio signal sampled at constant rate(以恒定速率采样的模拟音频信号)<ul>
+<li>telephone：8000 samples/sec<ul>
+<li>人声常用的频率范围是500~4000赫兹。</li>
+<li>根据采样定理——为采样率设定了一个足够的条件，即采样频率必须大于信号中最高频率的两倍（fs.max &gt; 2fmax）。这样，采样后的数字信号才能完整地保留原始信号中的信息。因此为$4000 * 2 = 8000$</li>
+</ul>
+</li>
+<li>CD music：44100 samples/sec</li>
+</ul>
+</li>
+<li>each sample qunatized<ul>
+<li>$2^8 = 256$，each quantized value represented by bits(采用8位来标志所采样品的种类，采用8位二进制数则一共能表示256种)</li>
+<li>8000 samples/sec, 256 quantized values means each samples has 8 bits, therefore there are $8000 * 8 = 64000 bps$ in total</li>
+</ul>
+</li>
+<li>receiver converts bits back to analog signal<ul>
+<li>some quality reduction(模拟信号转数字信号再转模拟信号的过程中会有质量损失)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>video is sequence of images displayed at constant rate(images/sec)</p>
+<ul>
+<li>digital image(数字图像)：array of pixels(像素阵列), each pixel represented by bits</li>
+<li>coding：use redundancy(冗余) within and between images to decrease(bits used to encode image)<ul>
+<li>spatial(within image)<ul>
+<li>instead of sending N values of same color(all purple), send only two values: color value(purple) and number of repeated values(N, number of values)，也就是把相同的值存为值和数量对</li>
+</ul>
+</li>
+<li>temporal(from one image to next)<ul>
+<li>instead of sending complete frame at i+1, send only differences from frame(不同帧之传输与上一帧不同的部分)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CBR(constant bit rate)<ul>
+<li>固定数据传输速率(video encoding rate fixed)</li>
+</ul>
+</li>
+<li>VBR(variable bit rate)<ul>
+<li>video encoding rate changes as amount of spatial, temporal coding changes(视频编码速率随着空间、时间编码量的变化而变化)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Application-types"><a href="#Application-types" class="headerlink" title="Application types"></a>Application types</h2><ul>
+<li>streaming, stored audio, video<ul>
+<li>streaming(流式)：can begin playout before downloading entire file(在下载全部文件之前也可以播放)</li>
+<li>stored(at server，存储)：can transmit faster than audio/video will be rendered(implies storing/buffering at client)，传输速度可能快于音频/视频的渲染速度(意味着在客户端进行存储/缓冲)</li>
+</ul>
+</li>
+<li>conversational voice/video over IP<ul>
+<li>interactive nature of human-to=human conversation limits delay tolerance(人类对话的互动性限制了延迟容忍度)</li>
+</ul>
+</li>
+<li>streaming live audio, video(直播)</li>
+</ul>
+<h2 id="服务质量-QoS-控制"><a href="#服务质量-QoS-控制" class="headerlink" title="服务质量(QoS)控制"></a>服务质量(QoS)控制</h2><ul>
+<li>广义的网络服务质量<ul>
+<li>考虑方向<ul>
+<li>网络性能(主要介绍方向)<ul>
+<li>性能相关的QoS参数指标<ul>
+<li>带宽</li>
+<li>延迟/延迟抖动</li>
+<li>分组丢失率</li>
+</ul>
+</li>
+<li>绝对的(确定性的)性能保证<ul>
+<li>一条在任意时刻都可以提供100Mbps带宽的网络链路</li>
+<li>绝对的带宽保证</li>
+</ul>
+</li>
+<li>概率的(随机的)性能保证<ul>
+<li>保证95%的分组的延迟不大于100ms</li>
+<li>概率的延迟保证</li>
+</ul>
+</li>
+<li>时间平均的性能保证<ul>
+<li>保证一个月中的平均分组丢失率不高于$10^{-5}$</li>
+<li>平均的丢失率保证</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>可用性</li>
+<li>可靠性</li>
+<li>安全性</li>
+</ul>
+</li>
+<li>控制粒度<ul>
+<li>Packet分组级(时间粒度大约1到100微秒)<ul>
+<li>分组是互联网QoS控制机制的最小单位</li>
+<li>流量调节机制(包括分组分类器、分组标记器和流量整形器)、分组调度机制、主动队列管理机制</li>
+</ul>
+</li>
+<li>分组的往返时间(round trip time)，大约1到100微秒<ul>
+<li>基于反馈的控制机制，拥塞控制和流量控制</li>
+</ul>
+</li>
+<li>Session会话级(以秒和分钟为单位)，用户会话持续的时间(会话可以采用各种方式定义)<ul>
+<li>准入控制和QoS路由</li>
+</ul>
+</li>
+<li>长期的QoS控制机制<ul>
+<li>流量工程、能力规划和服务定价</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>控制信息<ul>
+<li>QoS控制机制使用的控制信息的粒度(granularity)<ul>
+<li>根据每流(per-flow)状态对每个用户流进行控制<ul>
+<li>采用IP源地址、目的地址、源端口号、目的端口号和协议域进行标识</li>
+</ul>
+</li>
+<li>对流的聚集进行控制<ul>
+<li>流聚集有各种方法：每台主机、每个网络前缀、每个服务类别</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>控制状态的携带者和控制本身的位置<ul>
+<li>控制状态的携带者可以是路由器，也可以是分组</li>
+<li>控制的位置可以在用户主机、网络边缘路由器或者是网络核心路由器</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Streaming-stored-video"><a href="#Streaming-stored-video" class="headerlink" title="Streaming stored video"></a>Streaming stored video</h2><ul>
+<li>streaming：<ul>
+<li>at some time, client playing out early part of video, while server still sending later part of video</li>
+</ul>
+</li>
+<li>step：<ul>
+<li>video recorded(录制)</li>
+<li>video sent(发送)</li>
+<li>video received played out at client(播放)</li>
+</ul>
+</li>
+<li>challenges<ul>
+<li>continuous playout constraint(约束)<ul>
+<li>once client playout begins, playback must match original timing(需要符合原始时间)</li>
+<li>but network delays are variable(jitter，抖动), so will need client-side buffer to match playout requirements(需要客户端缓存)</li>
+</ul>
+</li>
+<li>client interactivity ：pause(暂停), fast-forward(快进), rewind(回看), jump through video(跳过)</li>
+<li>video packets may be lost, retransmitted(丢包重传)</li>
+</ul>
+</li>
+<li>revisited(重放)<ul>
+<li>client-side buffering and playout delay(客户端缓存和播放延迟)<ul>
+<li>compensate for network-added delay, delay jitter(补偿网络增加的延迟、延迟抖动)</li>
+<li>Initial fill of buffer until playout begins at $t_p$(初始时间接收到的帧存储在缓存区，直到缓冲了$t_p$时间后开始播放)</li>
+<li>playout begins at $t_p$</li>
+<li>buffer fill level varies over time as fill rate $x(t)$ varies and playout rate $r$ is constant(播放速率r恒定，缓冲存填充的速率$x(t)$不同，缓存被填满的时间也不同)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>playout buffering(播放缓存)：average fill rate($\overline{X}$), playout rate($r$)<ul>
+<li>$\overline{X} &lt; r$<ul>
+<li>buffer eventually empties(causing freezing of video playout until buffer again fills)，缓存终究会被清空，播放会停滞直到缓存完全充满</li>
+</ul>
+</li>
+<li>$\overline{X} &gt; r$<ul>
+<li>buffer will not empty, provided initial playout delay is large enough to absorb variability in $x(t)$(只要初始播放延迟$t_p$足够大可以应对$x(t)$的变化，则缓存无论如何都不会被清空)<ul>
+<li>initial playout delay tradeoff：buffer starvation less likely with large delay, but larger delay until user begins watching(用户观看前的延迟越大，缓存不足的可能性越小)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>client-side buffering and playout delay(客户端缓存视频流，并延迟播放): compensate for network-added delay, delay jitter(补偿网络延迟和延迟抖动，采用恒定的服务端视频流发送速率和客户端视频流播放速率)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/playout%20buffering.png" alt="img"></li>
+</ul>
+</li>
+<li>Video Streaming<ul>
+<li>stream video traffic: major consumer of Internet bandwidth(流视频流量：互联网带宽的主要消费者)</li>
+<li>challenge: <ul>
+<li>scale(how to reach 1 Billion users): single mega-video server won’t work(单个大型视频服务器无法满足可扩展，总有上限)</li>
+<li>heterogeneity: different users have different capabilities(wired vs. mobile; bandwidth rich vs. bandwidth poor)(异构性：不同的用户具有不同的能力)</li>
+</ul>
+</li>
+<li>solution<ul>
+<li>distributed(分布式)</li>
+<li>application-level infrastructure(应用程序级基础架构)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>challenges<ul>
+<li>continuous playout constraint(连续播放的约束): once client playout begins, playback must match original timing(一旦客户端开始播放，播放的时间必须与原始时间相匹配)<ul>
+<li>but network delays are variable(jitter), so will need client-side buffer to match playout requirements(网络的延迟由于抖动而变化，需要客户端有缓存匹配播放要求)</li>
+</ul>
+</li>
+<li>client interactivity(客户端的交互): pause, fast-forward(快进), rewind(倒退), jump through video(跳过)</li>
+<li>video packets may be lost, retransmitted(视频数据包可能丢包重传)</li>
+</ul>
+</li>
+</ul>
+<h3 id="Streaming-multimedia"><a href="#Streaming-multimedia" class="headerlink" title="Streaming multimedia"></a>Streaming multimedia</h3><ul>
+<li>UDP<ul>
+<li>server sends at rate appropriate for client(服务器以适应客户端的速率发送)<ul>
+<li>often:send rate = encoding rate = constant rate(发送速率与编码速率和恒定速率相等)</li>
+<li>transmission rate can be oblivious to congestion levels(传输速率可以忽略拥塞程度)</li>
+</ul>
+</li>
+<li>short playout delay(2-5 seconds) to remove network jitter(缩短播放延迟以消除网络抖动)</li>
+<li>error recovery: application-level, time permitting(错误恢复：应用级别和时间限制？允许？)</li>
+<li>RTP[RFC 2326]: multimedia payload types(多媒体有效负载的类型)</li>
+<li>UDP may not go through firewalls(可能通不过防火墙)</li>
+</ul>
+</li>
+<li>HTTP<ul>
+<li>multimedia file retrieved via <code>HTTP GET</code>(检索多媒体文件)</li>
+<li>send at maximum possible rate under TCP<ul>
+<li>Now many applications use HTTP under UDP</li>
+</ul>
+</li>
+<li>fill rate fluctuates due to TCP congestion control, retransmissions(in-order delivery, 重传是为了按顺序交付)<ul>
+<li>填充速率因TCP拥塞控制和重传发生波动</li>
+</ul>
+</li>
+<li>larger playout delay: smooth TCP delivery rate(更大的播放延迟，使得TCP传输速率更加平滑)</li>
+<li>HTTP/TCP passes more easily through firewalls(更容易通过防火墙)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%A7%86%E9%A2%91%E4%BC%A0%E8%BE%93%E6%B5%81%E7%A8%8B.png" alt="img"></li>
+</ul>
+</li>
+<li>DASH(Dynamic, Adaptive Streaming over HTTP, HTTP的动态自适应视频流)<ul>
+<li>server<ul>
+<li>divides video file into multiple chunks(将视频文件分割成多个块)</li>
+<li>each chunk stored, encoded at different rates(每个块存储、编码成不同的速率，满足不同的分辨率4K，2K等)</li>
+<li>manifest file: provide URLs for different chunks(manifest file：提供不同的块的URL)</li>
+</ul>
+</li>
+<li>client<ul>
+<li>periodically measures server-to-client bandwidth(定期测量服务器到客户端之间的带宽)</li>
+<li>consulting manifest, requests one chunk at a time (查询manifest，一次请求一个块)<ul>
+<li>chooses maximum coding rate sustainable given current bandwidth(在给定当前带宽的情况下，选择可持续的最大编码速率)</li>
+<li>can choose different coding rates at different points in time(depending on available bandwidth at time)在不同的时间点选择不同的编码速率，取决于当前时间可用的带宽</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>intelligence at client: client determines<ul>
+<li>when to request chunk(so that buffer starvation, or overflow does not occur)，为了不让缓存饥饿或者过载发生，需要明确什么时候请求块</li>
+<li>what encoding rate to request(higher quality when more bandwidth available)，当拥有更多的带宽可用时，可以获得更高的质量，以此确定编码速率</li>
+<li>where to request chunk(can request from URL server that is “close” to client or has high available bandwidth)从更靠近客户端或更高的可用带宽的URL服务器请求块</li>
+</ul>
+</li>
+<li>Streaming video = encoding + DASH + playout buffering<ul>
+<li>待编码的部分 + 编码好准备传输的动态自适应HTTP块 + 已接收的播放缓存</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Content-distribution-networks-CDNs"><a href="#Content-distribution-networks-CDNs" class="headerlink" title="Content distribution networks(CDNs)"></a>Content distribution networks(CDNs)</h3><ul>
+<li>challenge: how to stream content(selected from millions of videos) to hundreds of thousands of simultaneous users如何从上百万的视频中找出目标发送给成千上万的同时请求的用户</li>
+<li>solution<ul>
+<li>single, large, “mega-server”(单大服务器)<ul>
+<li>problem:<ul>
+<li>single point of failure(单点故障，整体瘫痪)</li>
+<li>point of network congestion(容易出现拥塞)</li>
+<li>long path to distant clients(对于某些客户端距离太远)</li>
+<li>multiple copies of video sent over outgoing link(多个用户请求同一文件会出现多个副本，对缓存要求大)</li>
+<li>simple but doesn’t scale(可扩展性有限)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>store/serve multiple copies of videos at multiple geographically distributed sites(CDN)将视频副本缓存到多个地域分布式服务器<ul>
+<li>enter deep: push CDN servers deep into many access networks(CDN服务器放在许多的接入网络中)<ul>
+<li>close to users(靠近用户)</li>
+<li>Akamai: 240,000 servers deployed in more than 120 countries (2015)</li>
+</ul>
+</li>
+<li>bring home: smaller number(10’s) of larger clusters in POPs near(but not within) access networks(POPs附近更少的大集群接入网络)<ul>
+<li>used by Limelight</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>CDN: stores copies of content at CDN nodes(CDN结点存储副本)<ul>
+<li>suscriber requests content from CDN(从CDN订阅请求)<ul>
+<li>directed to nearby copy, retrieves content(指向附近的副本，检索内容)</li>
+<li>may choose different copy if network path congested(如果网络拥塞，可以选择其他不同的副本)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CDN.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>OTT(over the top) challenges: coping with a congested Internet(应对拥塞网络)<ul>
+<li>from which CDN node to retrieve content(如何选择检索内容的CDN结点)</li>
+<li>viewer behavior in presence of congestion(拥挤情况下该怎么处理)</li>
+<li>what content to place in which CDN node(CDN结点里放置什么内容)</li>
+</ul>
+</li>
+<li>Example<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Example%20CDN.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Example%20CDN1.png" alt="img"><ul>
+<li>参考DNS获得IP地址的过程，URL是唯一标识，但是可以映射到多个IP地址，根据距离和带宽条件选择最合适的IP地址</li>
+</ul>
+</li>
+</ul>
+<h2 id="Voice-over-IP-VoIP"><a href="#Voice-over-IP-VoIP" class="headerlink" title="Voice-over-IP(VoIP)"></a>Voice-over-IP(VoIP)</h2><h3 id="service-of-VoIP"><a href="#service-of-VoIP" class="headerlink" title="service of VoIP"></a>service of VoIP</h3><ul>
+<li>end-end-delay requirement(端到端延迟需求)<ul>
+<li>needed to maintain “conversational” aspect(需要维持会话)</li>
+<li>higher delays noticeable, impair interactivity(高的延迟会很显著，影响到交互)<ul>
+<li>小于150 msec: good</li>
+<li>大于400 msec: bad</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>session initialization(会话初始化)<ul>
+<li>how does callee advertise IP address, port number, encoding algorithms?(被呼叫者通告IP地址，端口号码，编码算法)</li>
+</ul>
+</li>
+<li>value-addded services(增值服务)<ul>
+<li>call forwarding, screening, recoding(呼叫的转发、筛选、解码)</li>
+</ul>
+</li>
+<li>emergency services(紧急服务)<ul>
+<li>911</li>
+</ul>
+</li>
+</ul>
+<h3 id="characteristic"><a href="#characteristic" class="headerlink" title="characteristic"></a>characteristic</h3><ul>
+<li>speaker’s audio:<ul>
+<li>alternating talk spurts: 通话期(终端上行链路发送语音帧或下行链路接收语音帧的时期)<ul>
+<li>在通话期时期，达到速率64kbps</li>
+<li>pkts(数据包)只在通话期内生成</li>
+<li>20 msec的块，用8K 字节/秒的速度发送了160个字节的数据</li>
+</ul>
+</li>
+<li>silent periods(静默期)</li>
+</ul>
+</li>
+<li>application-layer header added to each chunk(每个块都要加应用层头部段)<ul>
+<li>chunk + header encapsulated into UDP or TCP segment(再封装进TCP或UDP报文段)</li>
+</ul>
+</li>
+<li>application sends segment into socket every 20 msec during talkspurt(通信期每20 msec发送一次报文段)</li>
+</ul>
+<h3 id="delay"><a href="#delay" class="headerlink" title="delay"></a>delay</h3><ul>
+<li>delays: processing, queueing in network(网络中处理和排队的延迟，路由器？), end-system(sender, receiver) delays(收发两端的延迟，也是处理和排队)</li>
+<li><p>Delay jitter(延迟抖动)</p>
+<ul>
+<li>end-to-end delays of two consecutive packets, difference can be more or less than 20 msec(transmission time difference)(连续两个数据包的延迟可能不一样)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/playout%20buffering.png" alt="img"></li>
+</ul>
+</li>
+<li><p>playout delay</p>
+<ul>
+<li>fixed playout delay(固定播放时延)<ul>
+<li>receiver attempts to playout each chunk exactly q msecs after chunk was generated(倾向于在块生成的q msecs后进行播放)<ul>
+<li>chunk has time stamp t: play out chunk at t + q</li>
+<li>chunk arrives after t + q: data arrives too late for playout, so data “lost”(超时未能播出就是数据丢包)</li>
+</ul>
+</li>
+<li>tradeoff in choosing q: 大则少丢包但实时性差，小则实时性好但丢包多<ul>
+<li>large q: less packet loss</li>
+<li>small q: better interactive experience<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/VoIP%20fixed%20playout.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>adaptive playout delay<ul>
+<li>goal: low playout delay and low late loss rate</li>
+<li>approach: adaptive playout delay adjustment<ul>
+<li>estimate network delay, adjust playout delay at beginning of each talkspurt<ul>
+<li>EWMA: exponentially weighted moving average(指数加权移动平均), recall TCP RTT estimate</li>
+<li>$d<em>i = (1-\alpha)d</em>{i-1} + \alpha(r_i-t_i)$<ul>
+<li>$d_i$: delay estimate after $i^{th}$ packet(第i个包后的延迟估计)</li>
+<li>$\alpha$: small constant(e.g. 0.1)</li>
+<li>$r_i$: time received，用来测量第i个包的传输延迟</li>
+<li>$t_i$: time sent(time stamp)，用来测量第i个包的传输延迟</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>chunks still played out every 20 msec during talkspurt<ul>
+<li>silent periods compressed and elongated(调整静默期的长短，满足分块依然在通信期播放20msec)</li>
+</ul>
+</li>
+<li>also useful to estimate average deviation of delay(评估延迟的平均偏差)<ul>
+<li>$v_i = (1-\beta)v{i-1} + \beta(r_i - t_i - d_i)$</li>
+</ul>
+</li>
+<li>每个包都会计算$d_i, v_i$，但是只在通信期开始的时候会使用<ul>
+<li>for first packet in talkspurt, playout time is:<ul>
+<li>$playout-time_i = t_i + d_i + Kv_i$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>剩余数据包则定期播放</li>
+</ul>
+</li>
+<li>接收方判断收到的数据包是否是通信期的第一个数据包<ul>
+<li>if no loss, receiver looks at successive timestamps(无丢包看时间戳，最早的是第一个)</li>
+<li>with loss possible, receiver must look at both time stamps and sequence numbers(有丢包就还要考虑数据包编号，编号越小越早)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="packet-loss"><a href="#packet-loss" class="headerlink" title="packet loss"></a>packet loss</h3><ul>
+<li>network loss: IP datagram lost due to network congestion(router buffer overflow)，拥塞导致的丢包，没有足够空间进行接收</li>
+<li>delay loss: IP datagram arrives too late for playout at receiver(时延超出阈值)</li>
+<li>loss tolerance(容错): <ul>
+<li>depending on voice encoding, loss concealement(取决于音频编码和丢失隐藏)</li>
+<li>packet loss rates between 1% and 10% can be tolerated(1%-10%可以接受)</li>
+</ul>
+</li>
+<li>recovery from packet loss<ul>
+<li>challenges of retransmission:recover from packet loss given small tolerable delay between original transmission and playout(传输和播放之间延迟较小，还要实现重传)<ul>
+<li>each ACK/NAK takes one RTT</li>
+</ul>
+</li>
+<li>alternative: Forward Error Correction(FEC): send enough bits to allow recovery without retransmission(recall two-dimensional parity)，检错后直接在原数据包纠错，不需要进行重传<ul>
+<li>simple FEC<ul>
+<li>for every group of n chunks, create redundant chunk by exclusive OR-ing n original chunks(异或n个块的数据得到一个冗余块)</li>
+<li>send $n + l$ chunks, increase bandwidth by factor $l/n$(所以是牺牲了带宽，不过应该不大)</li>
+<li>can reconstruct original n chunks if at most one lost chunk from $n+ l$ chunks, with playout delay</li>
+</ul>
+</li>
+<li>another FEC scheme<ul>
+<li>piggyback lower quality stream(备份一个较低质量的流)</li>
+<li>send lower resolution audio stream as redundant information(将这个低质量低分辨率的音频流作为下一个包的冗余信息一起发送)</li>
+<li>non-consecutive loss: receiver can conceal loss(非连续损失：接收方可以进行隐瞒，因为容易复原，上一个丢了就到下一个冗余取质量较低的。但连续的话就会一起丢了)</li>
+<li>generalization: can also append $(n-l)^{st}$ and $(n-2)^{nd}$ low-bit rate chunk(也可以带不止前一个的低质量流冗余，还可以前两个等)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/another%20FEC%20scheme.png" alt="img"></li>
+</ul>
+</li>
+<li>interleaving to conceal loss(交叉掩盖)<ul>
+<li>audio chunks divided into smaller units(块再分小块)</li>
+<li>packet contains small units from different chunks(打乱小块的顺序组成数据包发送，接收到后在进行重组)</li>
+<li>if packet lost, still have most of every original chunk(就是把丢包风险平摊到各个块而非集中到一个块)</li>
+<li>no redundancy overhead, but increases playout delay(没有冗余，但是会增加播放时延)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/interleaving%20to%20conceal%20loss.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Skype"><a href="#Skype" class="headerlink" title="Skype"></a>Skype</h3><ul>
+<li>use proprietary application layer protocol, 即时通讯软件，专有应用层协议<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/skype.png" alt="img"></li>
+<li>P2P components<ul>
+<li>clients: Skype peers connect directly to each other for VoIP call<ul>
+<li>joins Skype network by contacting SN (IP address cached) using TCP</li>
+<li>logs-in (username, password) to centralized Skype login server</li>
+<li>obtains IP address for callee from SN, SN overlay, or client buddy list</li>
+<li>initiate call directly to callee<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/Skype%20client1.png" alt="img"></li>
+</ul>
+</li>
+<li>super nodes(SN): Skype peers with special functions(有特殊功能的对等设备，就像路由器一样负责用户接入工作，与中央服务器联系，边界跨域连接)</li>
+<li>overlay network: among SNs to locate SCs(client)(SN之间的网络，边界)</li>
+<li>login server：登录服务器，获得peers的资格，才可以直连</li>
+<li>NAT<ul>
+<li>prevents outside peer from initiating connection to insider peer, but inside peer can initiate connection to outside(也就是连接可以发起，但不能被接受)</li>
+<li>relay solution(通过中继可以解决): maintain open connection to SNs, 由SN去实现跨域</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Protocols-for-real-time-conversational-applications-RTP-SIP"><a href="#Protocols-for-real-time-conversational-applications-RTP-SIP" class="headerlink" title="Protocols for real-time conversational applications: RTP, SIP"></a>Protocols for real-time conversational applications: RTP, SIP</h2><h3 id="Real-Time-Protocol-RTP"><a href="#Real-Time-Protocol-RTP" class="headerlink" title="Real-Time Protocol(RTP)"></a>Real-Time Protocol(RTP)</h3><ul>
+<li><p>RTP specifies packet structure for packets carrying audio, video data (encapsulated in UDP segments, 传输层封装在UDP中，以下内容加上端口号和IP地址)</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/RTP_UDP.png" alt="img"></p>
+<ul>
+<li>provides payload type identification(like audio encoding)</li>
+<li>provides packet sequence numbering</li>
+<li>provides time stamping</li>
+</ul>
+</li>
+<li>document: RFC 3550</li>
+<li>interoperability: if two VoIP applications run RTP, they may be able to work together(互操作性，可以实现异构共同工作)</li>
+<li>QoS<ul>
+<li>does not provide any mechanism to ensure timely data delivery or other QoS guarantees(不做保证)</li>
+<li>encapsulation only seen at end systems(not by intermediate routers)封装和解封都在终端系统进行。中间路由器不能进行，只提供尽力传输服务，确保及时到达目的地<ul>
+<li>routers provide best-effort service, making no special effort to ensure that RTP packets arrive at destination in timely matter</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>header</li>
+</ul>
+<div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">payload type</th>
+<th style="text-align:center">sequence number</th>
+<th style="text-align:center">time stamp</th>
+<th style="text-align:center">Synchronization SOurce ID</th>
+<th style="text-align:center">Miscellaneous fields</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<ul>
+<li>playload type(7 bits): indicates type of encoding currently being used.(说明目前正在使用的编码方式)  If sender changes encoding during call, sender informs receiver via  payload type field<ul>
+<li>Payload type 0: PCM mu-law, 64 kbps</li>
+<li>Payload type 3: GSM, 13 kbps</li>
+<li>Payload type 7: LPC, 2.4 kbps</li>
+<li>Payload type 26: Motion JPEG</li>
+<li>Payload type 31: H.261</li>
+<li>Payload type 33: MPEG2 video</li>
+</ul>
+</li>
+<li>sequence(16 bits): increment by one for each RTP packet sent(数据包编号，用于检测丢包和重传)<ul>
+<li>detect packet loss</li>
+<li>restore packet sequence</li>
+</ul>
+</li>
+<li>timestamp field (32 bits long): sampling instant of first byte in this RTP data packet(对每个RTP数据包的第一个字节进行采样)<ul>
+<li>for audio, timestamp clock increments by one for each sampling period (e.g., each 125 usecs for 8 KHz sampling clock) 对于音频，增量为1，因为连续采样？</li>
+<li>if application generates chunks of 160 encoded samples(每个块160个编码样本), timestamp increases by 160 for each RTP packet when source is active(source是active的时候增加160). Timestamp clock continues to increase at constant rate when source is inactive(inactive的时候以恒定速率增加，就是跟着时钟走？).</li>
+</ul>
+</li>
+<li>SSRC field (32 bits long):  identifies source of  RTP stream. Each stream in RTP session has distinct SSRC(标识RTP流的来源)<ul>
+<li>RTSP/RTP programming assignment</li>
+</ul>
+</li>
+<li>build a server that encapsulates stored video frames into RTP packets(RTSP)<ul>
+<li>grab video frame, add RTP headers, create UDP segments, send segments to UDP socket</li>
+<li>include seq numbers and time stamps</li>
+</ul>
+</li>
+<li>also write client side of RTSP<ul>
+<li>issue play/pause commands(播放与暂停)</li>
+</ul>
+</li>
+</ul>
+<h3 id="Real-Time-Control-Protocol-RTCP"><a href="#Real-Time-Control-Protocol-RTCP" class="headerlink" title="Real-Time Control Protocol(RTCP)"></a>Real-Time Control Protocol(RTCP)</h3><ul>
+<li>works in conjunction with RTP(与RTP协同工作)</li>
+<li>each participant in RTP session periodically sends RTCP control packets to all other participants(每个RTP会话的参与者定期向其他参与者发送RTCP控制包)</li>
+<li>each RTCP packet contains sender and/or receiver reports(发送者或接收者的报告)<ul>
+<li>report statistics useful to  application: <ul>
+<li>packets sent, 已发送</li>
+<li>packets lost, 丢包</li>
+<li>interarrival jitter，到达间隔抖动</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>feedback used to control performance<ul>
+<li>sender may modify its transmissions based on feedback(根据反馈结果调整策略)</li>
+</ul>
+</li>
+<li>multiple multicast senders(多个多播发送方)<ul>
+<li>each RTP session: typically a single multicast address; all RTP /RTCP packets belonging to session use multicast address(一个会话的所有RTP/RTCP数据包都是用多播地址)</li>
+<li>RTP, RTCP packets distinguished from each other via distinct port numbers(用端口号去区分彼此，因为地址是同样的多播)</li>
+<li>to limit traffic, each participant reduces RTCP traffic as number of conference participants increases (随着会话参与者数量增加，每个参与者减少RTCP流量以限制整体流量)</li>
+</ul>
+</li>
+<li>packet types<ul>
+<li>receiver report packets:<ul>
+<li>fraction of packets lost丢包率, last sequence number最后一个接收到的数据包, average interarrival jitter平均到达间隔抖动</li>
+</ul>
+</li>
+<li>sender report packets: <ul>
+<li>SSRC of RTP stream(RTP流的同步信源标识符), current time, number of packets sent, number of bytes sent </li>
+</ul>
+</li>
+<li>source description packets: <ul>
+<li>e-mail address of sender, sender’s name, SSRC  of associated RTP stream </li>
+<li>provide mapping between the SSRC and the user/host name</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>synchronization(同步)<ul>
+<li>RTCP can synchronize different media streams within a RTP session(同步不同的媒体流) </li>
+<li>e.g., videoconferencing app(视频会议应用): each sender generates one RTP stream for video, one for audio. (发送者两个流——视频流和音频流)</li>
+<li>timestamps in RTP packets tied to the video, audio sampling clocks时间戳与采样时间相关<ul>
+<li>not tied to wall-clock time</li>
+</ul>
+</li>
+<li>each RTCP sender-report packet contains (for most recently generated packet in associated RTP stream):<ul>
+<li>timestamp of RTP packet 与wall-clock time无关，与sampling clock相关</li>
+<li>wall-clock time for when packet was created</li>
+</ul>
+</li>
+<li>receivers uses association to synchronize playout of audio, video </li>
+</ul>
+</li>
+<li>bandwidth scaling<ul>
+<li>RTCP attempts to limit its traffic to 5% of session bandwidth(会话带宽的5%)</li>
+<li>example : one sender, sending video at 2 Mbps<ul>
+<li>RTCP attempts to limit RTCP traffic to 100 Kbps</li>
+<li>RTCP gives 75% of  rate to receivers; remaining 25% to sender<ul>
+<li>75 kbps is equally shared among receivers: with R receivers,  each receiver gets to send RTCP traffic at 75/R kbps.</li>
+<li>sender gets to send RTCP traffic at 25 kbps. </li>
+</ul>
+</li>
+</ul>
+</li>
+<li>participant determines RTCP packet transmission period by calculating avg RTCP packet size (across entire session) and dividing by allocated rate(传送周期=平均大小除以被分配到的速率)</li>
+</ul>
+</li>
+</ul>
+<h3 id="Session-Initiation-Protocol-SIP-RFC-3261"><a href="#Session-Initiation-Protocol-SIP-RFC-3261" class="headerlink" title="Session Initiation Protocol(SIP, RFC 3261)"></a>Session Initiation Protocol(SIP, RFC 3261)</h3><ul>
+<li>long term vision<ul>
+<li>all telephone calls, video conference calls take place over Internet</li>
+<li>people identified by names or e-mail addresses, rather than by phone numbers</li>
+<li>can reach callee (if callee so desire), no matter where callee roams(无论被呼叫者在哪漫游), no matter what IP device callee is currently using(无论被呼叫者使用的是什么IP地址)</li>
+</ul>
+</li>
+</ul>
+<h4 id="SIP-service"><a href="#SIP-service" class="headerlink" title="SIP service"></a>SIP service</h4><ul>
+<li>SIP provides mechanisms for all setup(SIP建立的机制):<ul>
+<li>for caller to let callee know caller wants to establish a call(发起)</li>
+<li>so caller, callee can agree on media type, encoding(协商媒体类型和编码)</li>
+<li>to end call(终止)</li>
+</ul>
+</li>
+<li>determine current IP address of callee(确定当前被呼叫者的IP地址)<ul>
+<li>maps mnemonic identifier to current IP address(将助记标识符与当前IP地址进行映射)</li>
+</ul>
+</li>
+<li>call management(通话管理):<ul>
+<li>add new media streams during call(在通话期间添加新的媒体流，如音频流添加视频流)</li>
+<li>change encoding during call(通话期间改变编码方式，如高清、超清切换)</li>
+<li>invite others(邀请其他人加入通话)</li>
+<li>transfer, hold calls(转接和挂断通话)</li>
+</ul>
+</li>
+<li>setting up call<ul>
+<li>known IP address<ul>
+<li>SIP invite message indicates port number(default: 5060), IP address, encoding prefer to receive(倾向于收到的编码形式)</li>
+<li>SIP OK message indicates port number(default: 5060), IP address, preferred encoding(发送的编码形式)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/SIP%20setting%20up%20call%20to%20known%20IP%20address.png" alt="img"></li>
+</ul>
+</li>
+<li>codec negotiation<ul>
+<li>suppose callee doesn’t have caller’s preference, callee will instead reply with <code>606 Not Acceptable Reply</code>, and listing his encoders. caller can then send new INVITE message, advertising different encoder</li>
+</ul>
+</li>
+<li>reject a call<ul>
+<li>callee can reject with replies <code>busy</code>, <code>gone</code>, <code>payment required</code>, <code>forbidden</code></li>
+</ul>
+</li>
+<li>media can be sent over RTP or some other protocol</li>
+</ul>
+</li>
+</ul>
+<h4 id="SIP-message"><a href="#SIP-message" class="headerlink" title="SIP message"></a>SIP message</h4><ul>
+<li>can be sent over TCP or UDP(UDP不容易穿透防火墙)</li>
+<li>uses HTTP message syntax(报文用的HTTP语法)</li>
+<li>sdp = session description protocol</li>
+<li>Call-ID is unique for every call(呼叫ID是独一无二的)<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">INVITE sip:bob@domain.com SIP/2.0</span><br><span class="line">Via: SIP/2.0/UDP 167.180.112.24</span><br><span class="line">From: sip:alice@hereway.com</span><br><span class="line">To: sip:bob@domain.com</span><br><span class="line">Call-ID: a2e3a@pigeon.hereway.com</span><br><span class="line">Content-Type: application/sdp</span><br><span class="line">Content-Length: 885</span><br><span class="line"></span><br><span class="line">c=IN IP4 167.180.112.24</span><br><span class="line">m=audio 38060 RTP/AVP 0</span><br></pre></td></tr></table></figure></li>
+<li>caller don’t know callee’s IP address of current host, only has callee’s name or e-mail address<ul>
+<li>user moves around</li>
+<li>DHCP protocol</li>
+<li>user has different IP devices(PC, smartphone, car device)</li>
+</ul>
+</li>
+<li>result can be based on<ul>
+<li>time of day(daytime or night)</li>
+<li>location(workplace or home)</li>
+<li>caller(boss or family)</li>
+<li>status of callee(busy or available)</li>
+</ul>
+</li>
+</ul>
+<h4 id="SIP-registrar-注册"><a href="#SIP-registrar-注册" class="headerlink" title="SIP registrar(注册)"></a>SIP registrar(注册)</h4><ul>
+<li>one function of SIP server: registrar</li>
+<li>callee starts SIP client, client sends <code>SIP REGISTER</code> message to callee’s registrar server<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">REGISTER sip:domain.com SIP/2.0</span><br><span class="line">Via: SIP/2.0/UDP 193.64.210.89</span><br><span class="line">From: sip:bob@domain.com</span><br><span class="line">To: sip:bob@domain.com</span><br><span class="line">Expires: 3600 # 有效时间, 属于软状态(soft state)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="SIP-proxy-代理"><a href="#SIP-proxy-代理" class="headerlink" title="SIP proxy(代理)"></a>SIP proxy(代理)</h4><ul>
+<li>caller sends invite message to its proxy server(呼叫者向代理服务器发送邀请被呼叫者的消息)<ul>
+<li>contains address sip:callee@domain.com(包含被呼叫者的名称或E-Mail地址)</li>
+<li>proxy responsible for routing SIP message to callee, possibly through multiple proxies(代理负责转发SIP消息到被呼叫者，可能还要通过多个代理转发)</li>
+</ul>
+</li>
+<li>callee sends response back through same set of SIP proxies(被呼叫者发送回复通过相同的代理路径)</li>
+<li>proxy returns callee’s SIP response message to caller(代理再返回给呼叫者)<ul>
+<li>contains callee’s IP address(回复消息中包含被呼叫者的IP地址)</li>
+</ul>
+</li>
+<li>SIP proxy analogous to local DNS server plus TCP setup(类似于DNS服务器)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/SIP%20example-proxy.png" alt="img"></li>
+</ul>
+<h4 id="Comparison-with-H-323"><a href="#Comparison-with-H-323" class="headerlink" title="Comparison with H.323"></a>Comparison with H.323</h4><ul>
+<li>another signaling protocol for real-time, interactive multimedia</li>
+<li>H.323 <ul>
+<li>has complete, vertically integrated suite of protocols(完整的、垂直集成的协议套件，固定灵活性差) for multimedia conferencing(多媒体会议), signaling(信号), registration(注册), admission control(准入控制), transport(传输) and codecs(编码)</li>
+<li>comes from the ITU(telephony)</li>
+</ul>
+</li>
+<li>SIP <ul>
+<li>has single component(单一组件但是很灵活，可以与很多协议组合). Works with RTP, but does not mandate it. Can be combined with other protocols, service</li>
+<li>comes from IETF: borrows much of its concepts from HTTP, SIP has Web flavor, H.323 has telephony flavor</li>
+<li>uses KISS principle(Keep It Simple Stupid，让中间的传输过程保持简单)，将复杂的功能放在终端</li>
+</ul>
+</li>
+</ul>
+<h2 id="network-support-for-multmeida-支持多媒体的网络"><a href="#network-support-for-multmeida-支持多媒体的网络" class="headerlink" title="network support for multmeida(支持多媒体的网络)"></a>network support for multmeida(支持多媒体的网络)</h2></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">高级计算机网络</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Introduction/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Introduction</div></div></a></div><div class="next-post pull-right"><a href="/2024/09/21/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-21-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">分布式系统简介</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/10/10/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-10-10-Security/" title="Security"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-10</div><div class="title">Security</div></div></a></div><div><a href="/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Introduction/" title="Introduction"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-13</div><div class="title">Introduction</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Multimedia-Networking-%E5%A4%9A%E5%AA%92%E4%BD%93%E7%BD%91%E7%BB%9C"><span class="toc-text">Multimedia Networking(多媒体网络)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Composition-of-Multimedia"><span class="toc-text">Composition of Multimedia</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Application-types"><span class="toc-text">Application types</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E8%B4%A8%E9%87%8F-QoS-%E6%8E%A7%E5%88%B6"><span class="toc-text">服务质量(QoS)控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Streaming-stored-video"><span class="toc-text">Streaming stored video</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Streaming-multimedia"><span class="toc-text">Streaming multimedia</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Content-distribution-networks-CDNs"><span class="toc-text">Content distribution networks(CDNs)</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Voice-over-IP-VoIP"><span class="toc-text">Voice-over-IP(VoIP)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#service-of-VoIP"><span class="toc-text">service of VoIP</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#characteristic"><span class="toc-text">characteristic</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#delay"><span class="toc-text">delay</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#packet-loss"><span class="toc-text">packet loss</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Skype"><span class="toc-text">Skype</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Protocols-for-real-time-conversational-applications-RTP-SIP"><span class="toc-text">Protocols for real-time conversational applications: RTP, SIP</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Real-Time-Protocol-RTP"><span class="toc-text">Real-Time Protocol(RTP)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Real-Time-Control-Protocol-RTCP"><span class="toc-text">Real-Time Control Protocol(RTCP)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Session-Initiation-Protocol-SIP-RFC-3261"><span class="toc-text">Session Initiation Protocol(SIP, RFC 3261)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP-service"><span class="toc-text">SIP service</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP-message"><span class="toc-text">SIP message</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP-registrar-%E6%B3%A8%E5%86%8C"><span class="toc-text">SIP registrar(注册)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SIP-proxy-%E4%BB%A3%E7%90%86"><span class="toc-text">SIP proxy(代理)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Comparison-with-H-323"><span class="toc-text">Comparison with H.323</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#network-support-for-multmeida-%E6%94%AF%E6%8C%81%E5%A4%9A%E5%AA%92%E4%BD%93%E7%9A%84%E7%BD%91%E7%BB%9C"><span class="toc-text">network support for multmeida(支持多媒体的网络)</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>

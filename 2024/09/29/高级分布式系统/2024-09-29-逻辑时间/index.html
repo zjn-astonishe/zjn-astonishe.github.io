@@ -1,0 +1,848 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>逻辑时间 | ZJN_BLOG</title><meta name="keywords" content="高级分布式系统"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="逻辑时间Introduction The concept of causality between events(事件的因果) is fundamental to the design and analysis of parallel and distributed computing and operating systems Usually causality is tracked using">
+<meta property="og:type" content="article">
+<meta property="og:title" content="逻辑时间">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2024/09/29/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-29-%E9%80%BB%E8%BE%91%E6%97%B6%E9%97%B4/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="逻辑时间Introduction The concept of causality between events(事件的因果) is fundamental to the design and analysis of parallel and distributed computing and operating systems Usually causality is tracked using">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2024-09-29T07:42:01.000Z">
+<meta property="article:modified_time" content="2024-11-09T04:33:57.467Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="高级分布式系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2024/09/29/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-29-%E9%80%BB%E8%BE%91%E6%97%B6%E9%97%B4/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '逻辑时间',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-11-09 12:33:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">逻辑时间</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-09-29T07:42:01.000Z" title="发表于 2024-09-29 15:42:01">2024-09-29</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-09T04:33:57.467Z" title="更新于 2024-11-09 12:33:57">2024-11-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">8.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>43分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="逻辑时间"><a href="#逻辑时间" class="headerlink" title="逻辑时间"></a>逻辑时间</h1><h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><ul>
+<li>The concept of causality between events(事件的因果) is fundamental to the design and analysis of parallel and distributed computing and operating systems<ul>
+<li>Usually causality is tracked using physical time, but in distributed systems, it is not possible to have a global physical time(分布式系统中很难使用统一的全局物理时钟)</li>
+<li>As asynchronous distributed computations make progress in spurts, the logical time is sufficient to capture the fundamental monotonicity property associated with causality in distributed systems(逻辑时间足以捕捉分布式系统中与因果关系相关的基本单调性)</li>
+</ul>
+</li>
+<li>three ways to implement logical time <ul>
+<li>scalar time(标量时间)</li>
+<li>vector time(矢量时间)</li>
+<li>matrix time(矩阵时间)</li>
+</ul>
+</li>
+<li>Causality among events in a distributed system is a powerful concept in reasoning, analyzing, and drawing inferences about a computation</li>
+<li>The knowledge of the causal precedence relation among the events of processes helps solve a variety of problems in distributed systems, such as distributed algorithms design, tracking of dependent events, knowledge about the progress of a computation, and concurrency measures(因果进程关系很重要)</li>
+</ul>
+<h2 id="A-Framework-for-a-System-of-Logical-Clocks"><a href="#A-Framework-for-a-System-of-Logical-Clocks" class="headerlink" title="A Framework for a System of Logical Clocks"></a>A Framework for a System of Logical Clocks</h2><h3 id="Definition"><a href="#Definition" class="headerlink" title="Definition"></a>Definition</h3><h4 id="Logical-clock"><a href="#Logical-clock" class="headerlink" title="Logical clock"></a>Logical clock</h4><ul>
+<li>A system of logical clocks consists of a time domian $T$(逻辑时钟组成的系统)</li>
+<li>a logical clock $C$<ul>
+<li>$C$ is a function that maps an event $e$ in a distributed system to an element in the time domain $T$(一个事件映射一个逻辑时钟的时间戳), denoted as $C(e)$ and called the timestamp of $e$, and is defined as follows;<ul>
+<li>$C:\Eta \rightarrowtail T$</li>
+</ul>
+</li>
+<li>such that the following property is satisfied:<ul>
+<li>for two events $e_i$ and $e_j$, $e_i\rightarrow e_j \Rightarrow C(e_i) &lt; C(e_j)$(互为因果的两个事件，因的逻辑时间应该比果的逻辑时间小)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Relation-“-lt-”"><a href="#Relation-“-lt-”" class="headerlink" title="Relation “&lt;”"></a>Relation “&lt;”</h4><ul>
+<li>Elements of $T$ form a partically ordered set(部分有序集合) over a relation $&lt;$<ul>
+<li>Relation $&lt;$ is called the “happened before” or “causal precedure”(在…前发生或因果序列). This relation is analogous to the earlier than relation provided by the physical time</li>
+</ul>
+</li>
+</ul>
+<h4 id="The-Clock-Consistency-Condition"><a href="#The-Clock-Consistency-Condition" class="headerlink" title="The Clock Consistency Condition"></a>The Clock Consistency Condition</h4><ul>
+<li>This monotonicity property is called the clock consistency condition(时钟一致性的条件)<ul>
+<li>When $T$ and $C$ satisfy the following condition, for two events $e_i$ and $e_j$, $e_i\rightarrow e_j \Leftrightarrow C(e_i) &lt; C(e_j)$, the system of clocks is said to be strongly consistent(强一致性，只有向右箭头的话只是弱一致性)</li>
+</ul>
+</li>
+</ul>
+<h3 id="Implementing-Logical-Clocks"><a href="#Implementing-Logical-Clocks" class="headerlink" title="Implementing Logical Clocks"></a>Implementing Logical Clocks</h3><ul>
+<li>Implementation of logical clocks requires addressing two issues(解决两个问题)<ul>
+<li>data structures</li>
+<li>protocol</li>
+</ul>
+</li>
+<li>Systems of logical clocks differ in their representation of logical time and also in the protocol to update the logical clocks(不同的逻辑时钟系统是逻辑时钟的表达(数据结构)和如何更新逻辑时钟的协议不同)</li>
+</ul>
+<h4 id="Data-Structures"><a href="#Data-Structures" class="headerlink" title="Data Structures"></a>Data Structures</h4><ul>
+<li>data structures local to every process to represent logical time(每个进程的本地数据结构，用于表示逻辑时间)<ul>
+<li>Each process $p_i$ maintains data structure that allow it the following two capabilities:</li>
+<li>A logical local clock(逻辑本地时间): denoted by $lc_i$, which helps process $p_i$ measure its own progress(用于进程估量自己)</li>
+<li>A logical global clock(逻辑全局时间): denoted by $gc_i$, which is a representation of process $p_i$’s local view of the logical global time.(用于进程自己估量全局)</li>
+<li>Typically, $lc_i$ is a part of $gc_i$</li>
+</ul>
+</li>
+</ul>
+<h4 id="Protocol"><a href="#Protocol" class="headerlink" title="Protocol"></a>Protocol</h4><ul>
+<li>a protocol to update the data structures to ensure the consistency condition(更新数据结构的数据和确保一致性条件的协议)<ul>
+<li>The protocol ensures that a process’s logical clock, and thus its view of the global time, is managed consistently(一致地管理逻辑时钟和全局时间). The protocol consists of the following two rules:<ul>
+<li>R1: This rule governs how the logical local clock is updated by a process when it executes an event(进程在执行事件的时候如何更新逻辑本地时间)</li>
+<li>R2: This rule governs how a process updates its logical global clock to update its view of the global time and global progress(进程更新全局逻辑时钟，以更新全局时间和全局进程的视图)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Scalar-Time-标量时间-Lamport’s-Logical-Clocks"><a href="#Scalar-Time-标量时间-Lamport’s-Logical-Clocks" class="headerlink" title="Scalar Time(标量时间, Lamport’s Logical Clocks)"></a>Scalar Time(标量时间, Lamport’s Logical Clocks)</h3><h4 id="Definition-1"><a href="#Definition-1" class="headerlink" title="Definition"></a>Definition</h4><ul>
+<li>Proposed by Lamport in 1978 as an attempt to totally order events in a distributed system(尝试对事件进行完全排序)</li>
+<li>Time domain is the set of non-negative integers(时间域是非负整数的集合)</li>
+<li>The logical local clock of a process $p_i$, and its local view of the global time are squashed into one integer variable $C_i$(本地角度对全局时间的看法)</li>
+<li>Rules R1 and R2 to update the clocks are as follows:<ul>
+<li>R1: Before executing an event(send, receive, or internal), process $p_i$ executes the following:(执行事件之前对时间进行增加)<ul>
+<li>$C_i := C_i + d ; (d &gt; 0)$</li>
+<li>In general, every time R1 is executed, $d$ can have a different value; however, typically $d$ is kept at 1(通常是加1)</li>
+</ul>
+</li>
+<li>R2: Each message piggybacks the clock value of its sender at sending time.(每条信息都附带了它的发送者在发送时的时钟值) When a process $p<em>i$ receives a message with timestamp $C</em>{msg}$, it executes the following actions:(选取本地的时间戳和接收到的消息中的时间戳中更大的作为新的本地时间戳)<ul>
+<li>$C<em>i = max(C_i, C</em>{msg})$</li>
+<li>Execute R1(再更新后执行一次R1，因为接收到的消息是在OS层的，要交付给应用层的过程中需要触发事件)</li>
+<li>Deliver the message<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution_scalar.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Basic-Properties"><a href="#Basic-Properties" class="headerlink" title="Basic Properties"></a>Basic Properties</h4><ul>
+<li>Consistency Property(一致性的特性)<ul>
+<li>Scalar clocks satisfy the monotonicity and hence the consistency property<ul>
+<li>for two events $e_i$ and $e_j$: $e_i\rightarrow e_j \Rightarrow C(e_i) &lt; C(e_j)$(弱一致性，因为反之不成立)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>No Strong Consistency(非强一致性)<ul>
+<li>The system of scalar clocks is not strongly consistent, that is for two events $e_i$ and $e_j$, $C(e_i) &lt; C(e_j)\nRightarrow e_i\rightarrow e_j$(无法根据逻辑时间的顺序推导出因果顺序)</li>
+<li>The reason that scalar clocks are not strongly consistent is that the logical local clock and logical global clock of a process are squashed into one(进程的逻辑本地时钟和逻辑全局时钟压缩在一维标量), resulting in the loss causal dependency information among events at different processes(会出现因果依赖信息的损失)</li>
+</ul>
+</li>
+<li>Total Ordering(完全排序)<ul>
+<li>Scalar clocks can be used to totally order events in a distributed system</li>
+<li>The main problem in totally ordering events is that two or more events at different processes may have identical timestamp(但也存在问题：在不同的进程中可能会有相同时间戳的事件)</li>
+<li>A tie-breaking mechanism(平局打破机制) is needed to order such events. A tie is broken as follows:<ul>
+<li>Process identifiers are linearly ordered and tie among events with identical scalar timestamp is broken on the basis of their process identifiers(具有相同标量时间戳的事件之间根据其所在进程的标识符来区分，标识符是线性排序的)<ul>
+<li>The lower the process identifier in the ranking, the higher the priority(进程标识符越小有越高的优先权)</li>
+</ul>
+</li>
+<li>The timestamp of an event is denoted by a tuple $(t, i)$ where $t$ is its time of occurence and $i$ is the identity of the process where it occurred(事件的时间戳表示需要加上进程的编号)</li>
+<li>The total order relation $\prec$ on two events $x$ and $y$ with timestamps $(h, i)$ and $(k, j)$, respectively, is defined as follows:<ul>
+<li>$x \prec y \Leftrightarrow (h&lt;k\quad or \quad (h = k\quad and\quad i &lt; j))$<ul>
+<li>时间戳不同比大小，小的肯定排前面</li>
+<li>时间戳相同，则比较进程号的大小，进程号小的排前面</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Event Counting(事件计数，前提是累加值为1)<ul>
+<li>If the increment value $d$ is always 1, the scalar time has the following interesting property: <ul>
+<li>if event $e$ has a timestamp $h$, then $h-1$ represents the minimum logical duration(最小的逻辑持续), counted in units of events(前面事件的数量), required before producing the event e(or call it the height of the event e，事件e的高度)<ul>
+<li>$h-1$ events have been produced sequentially(h-1个事件线性产生) before the event e regardless of the processes that produced these events(无论产生的顺序如何，这只是个整体集合)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Vector-Time-Logical-Clocks"><a href="#Vector-Time-Logical-Clocks" class="headerlink" title="Vector Time(Logical Clocks)"></a>Vector Time(Logical Clocks)</h3><ul>
+<li>The system of vector clocks was developed independently by Fidge, Mattern and Schmuck</li>
+<li>In the system of vector clocks, the time domain is represented by a set of n-dimensional non-negative integer vectors(时间域用一系列n维的非负整数向量表示)</li>
+<li>Each process $p_i$ maintains a vector $vt_i[1…n]$, where <ul>
+<li>$vt_i[i]$ is the local logical clock of $p_i$ and describes the logical time progress at process $p_i$(真正的本地逻辑时间)</li>
+<li>$vt_i[j]$ represents process $p_i$’s latest knowledge of process $p_j$ local time(本地视角下其他进程的逻辑时间)<ul>
+<li>If $vt_i[j] = x$, then process $p_i$ knows that local time at process $p_j$ has progressed till $x$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The entire vector $vt_i$ constitutes $p_i$’s view of the global logical time and is used to timestamp events</li>
+<li>Process $p_i$ uses the following two rules R1 and R2 to update its clock:(和标量时间的更新方法是类似的)<ul>
+<li>R1: Before executing an event, process $p_i$ updates its local logical time as follows:(执行事件之前对逻辑时间进行累加)<ul>
+<li>$vt_i[i]:=vt_i[i]+d (d &gt; 0)$</li>
+</ul>
+</li>
+<li>R2: Each message $m$ is piggybacked with the vector clock $vt$ of the sender process at sending time. On the receipt of such a message $(m, vt)$, process $p_i$ executes the following sequence of actions:<ul>
+<li>Update its global logical time as follows:<ul>
+<li>$1\leq k\leq n : vt_i[k]:=max(vt_i[k], vt[k])$</li>
+<li>Execute R1</li>
+<li>Deliver the message $m$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The timestamp of an event is the value of the vector clock of its process when the event is executed(一个事件的时间戳是所在进程的向量时钟在事件被执行时的值)<ul>
+<li>Initially, a vector clock is [0, 0, 0, …, 0]</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Evolution%20of%20vector%20time.png" alt="img"></p>
+<h4 id="Comparing-Vector-Timestamps-比较两个向量时间戳"><a href="#Comparing-Vector-Timestamps-比较两个向量时间戳" class="headerlink" title="Comparing Vector Timestamps(比较两个向量时间戳)"></a>Comparing Vector Timestamps(比较两个向量时间戳)</h4><ul>
+<li>The following relations are defined to compare two vector timestamps, $vh$ and $vk$<ul>
+<li>$vh = vk \Leftrightarrow \forall x: vh[x] = vk[x]$(相等)</li>
+<li>$vh \leq vk \Leftrightarrow \forall x: vh[x] \leq vk[x]$(小于等于)</li>
+<li>$vh &lt; vk \Leftrightarrow vh\leq vk$ and $\exists x: vh[x] &lt; vk[x]$(小于)</li>
+<li>$vh \mid\mid vk \Leftrightarrow \neg (vh &lt; vk) \bigwedge \neg(vk &lt; vh)$(并发，则互相没有大小关系)</li>
+</ul>
+</li>
+<li>If the process at which an event occurred is known, the test to compare two timestamps can be simplified as follows:<ul>
+<li>if events $x$ and $y$ respectively occurred at processes $p_i$ and $p_j$ and are assigned timestamps $vh$ and $vk$, respectively, then<ul>
+<li>$x \rightarrow y \Leftrightarrow vh[i] \leq vk[i]$(x和y有因果关系，且x为因，y为果。则x发生时所在进程的逻辑时间不大于y发生时所在进程的逻辑时间)</li>
+<li>$x\mid\mid y \Leftrightarrow vh[i] &gt; vk[i] \bigwedge vh[j] &lt; vk[j]$(事件x和事件y是并发的，x不晚于y，y也不晚于x)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Properties-of-Vector-Time"><a href="#Properties-of-Vector-Time" class="headerlink" title="Properties of Vector Time"></a>Properties of Vector Time</h4><ul>
+<li>Isomorphism(同构性，即事件的因果关系和向量时间的比较关系等价)<ul>
+<li>If events in a distributed system are timestamped using a system of vector clocks, we have the following property:<ul>
+<li>If two events $x$ and $y$ have timestamps $vh$ and $vk$, respectively, then:<ul>
+<li>$x\rightarrow y \Leftrightarrow vh &lt; vk$</li>
+<li>$x\mid\mid y \Leftrightarrow vh\mid\mid vk$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Thus, there is an isomorphism between the set of partially ordered events produced by a distributed computation and their vector timestamps(部分有序的事件和它们的向量时间戳同构)</li>
+</ul>
+</li>
+<li>Strong Consistency(强一致性)<ul>
+<li>The system of vector clocks is strongly consistent; thus, by examining the vector timestamp of two events, we can determine if the events are causally related(检测两个事件的向量时间戳，可以确定事件是否存在因果联系)</li>
+<li>However, Charron-Bost showed that the dimension of vector clocks cannot be less than $n$, the total number of processes in the distributed computation, for this property to hold(但是向量时钟必须有进程个数的维度大小)</li>
+</ul>
+</li>
+<li>Event Counting<ul>
+<li>If $d=1$ (in rule R1), then the $i^{th}$ component of vector clock at process $p_i$, $vt_i[i]$, denotes the number of events that have occurred at $p_i$ until that instant(发生了多少个事件可以看向量时间戳中对应进程的维度部分)</li>
+<li>So, if an event $e$ has timestamp $vh$, $vh[j]$ denotes the number of events executed by process $p_j$ that causally precedure $e$. Clearly, $\Sigma vh[j] - 1$ represents the total number of events that causally precede $e$ in the distributed computation</li>
+</ul>
+</li>
+</ul>
+<h4 id="Efficient-Implementations-of-Vector-Clock"><a href="#Efficient-Implementations-of-Vector-Clock" class="headerlink" title="Efficient Implementations of Vector Clock"></a>Efficient Implementations of Vector Clock</h4><ul>
+<li>If the number of processes in a distributed computation is large, then vector clocks will require piggybacking of huge amount of information in messages(如果分布式计算中的进程数量很多，那么在传递消息的时候需要附带很多的向量时间戳信息)</li>
+<li>The message overhead grows linearly with the number of processors in the system and when there are thousands of processors in the system, the message size becomes huge even if there are only a few events occurring in few processors(消息开销随着系统中的处理器的数量线性增长)</li>
+<li>We discuss an efficient way to maintain vector clocks</li>
+<li>Charron-Bost showed that if vector clocks have to satisfy the strong consistency property, then in general vector timestamps must be at least of size $n$, the total number of processes</li>
+<li>However, optimizations are possible and next, and we discuss a technique to implement vector clocks efficiently</li>
+</ul>
+<h4 id="Singhal-Kshemkalyani’s-Differential-Technique-差分优化技术"><a href="#Singhal-Kshemkalyani’s-Differential-Technique-差分优化技术" class="headerlink" title="Singhal-Kshemkalyani’s Differential Technique(差分优化技术)"></a>Singhal-Kshemkalyani’s Differential Technique(差分优化技术)</h4><ul>
+<li>Singhal-Kshemkalyani’s differential technique is based on the observation that between successive message sends to the same process, only a few entires of the vector clock at the sender process are likely to change(在向同一进程发送的连续消息之间，发送方进程中只有少量的向量时钟发生变化)</li>
+<li>When a process $p_i$ sends a message to a process $p_j$, it piggybacks only those entires of its vector clock that differ since the last message sent to $p_j$(进程i发给进程j消息的时候，附带的只有那些与前一次发送时向量时钟不同的部分)<ul>
+<li>If entries $i<em>1, i_2, …, i</em>{n<em>1}$ of the vector clock at $p_i$ have changed to $v_1, v_2, …,v</em>{n_1}$, respectively, since the last message sent to $p_j$, then process $p_i$ piggybacks a compressed timestamp of the form:<ul>
+<li>${(i<em>1, v_1), (i_2, v_2), …, (i</em>{n<em>1}, v</em>{n_1})}$ to the next message to $p_j$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>When $p_j$ receives this message, it updates its vector clock as follows:(接收到后根据tuple进行更新)</p>
+<ul>
+<li>$vt_i[i_k] = max(vt_i[i_k], v_k)$ for $k=1, 2, …, n_1$</li>
+</ul>
+</li>
+<li><p>Thus this technique cuts down the message size, communication bandwidth and buffer (to store message) requirements</p>
+</li>
+<li>In the worst of case, every element of the vector clock has been updated at $p_i$ since the last message to process $p_j$, and the next message from $p_i$ to $p_j$ will need to carry the entire vector timestamp of size $n$</li>
+<li><p>However, on the average the size of the timestamp on a message will be less than $n$</p>
+</li>
+<li><p>Implementation of this technique requires each process to remember the vector timestamp in the message last sent to every other process</p>
+<ul>
+<li>Direct implementation of this will result in $O(n^2)$ storage overhead at each process</li>
+</ul>
+</li>
+<li>Singhal and Kshemkalyani developed a clever technique that cuts down this storage overhead at each process to $O(n)$. The technique works in the following manner<ul>
+<li>Process $p_i$ maintains the following two additional vectors:<ul>
+<li>$LS_i[1…n]$: (‘Last Sent’)<ul>
+<li>$LS_i[j]$ indicates the value of $vt_i[i]$ when process $p_i$ last sent a message to process $p_j$</li>
+</ul>
+</li>
+<li>$LU_i[1…n]$: (‘Last Update’)<ul>
+<li>$LU_i[j]$ indicates the value of $vt_i[i]$ when process $p_i$ last updated the entry $vt_i[j]$</li>
+</ul>
+</li>
+<li>Clearly, $LU_i[i] = vt_i[i]$ at all times and $LU_i[j]$ needs to be updated only when the receipt of a mesage cause $p_i$ to update entry $vt_i[j]$.(LU只在接收消息的时候更新)</li>
+<li>Also, $LS_i[j]$ needs to be updated only when $p_i$ sends a message to $p_j$(LS只在发送消息的时候更新)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Since the last communication from $p_i$ to $p_j$, only those elements of vector clock $vt_i[k]$ have changed for which $LS_i[j] &lt; LU_i[k]$ holds</li>
+<li>Hence, only these elements need to be sent in a message from $p_i$ to $p_j$. When $p_i$ sends a message to $p_j$, it sends only a set of tuples<ul>
+<li>${(x, vt_i[x])\mid LS_i[j] &lt; LU_i[x]}$</li>
+<li>as the vector timestamp to $p_j$, instead of sending a vector of $n$ entries in a message</li>
+</ul>
+</li>
+<li>Thus the entire vector of size $n$ is not sent along with a message. Instead, only the elements in the vector clock that have changed since the last message send to that process are sent in the format ${(p_1, latest_value), (p_2, latest_value), …}$, where $p_i$ indicates that the $p_i^{th}$ component of the vector clock has changed(在LS和LU找不同，发送的消息前者是不同的位置，后者是要更新的值)</li>
+<li>This technique requires that the communication channels follow FIFO discipline for message delivery(消息传输遵守FIFO先进先出)</li>
+<li>This technique substantially reduces the cost of maintaining vector clocks in large systems, especially if the process interations exhibit temporal or spatial localities(降低在大型系统中维护向量时钟的成本，特别是进程交互包含了时空位置)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Vector%20clocks%20progress%20in%20Singhal-Kshemkalyani%20technique.png" alt="img"></p>
+<h3 id="Matrix-Time-Logical-Clocks"><a href="#Matrix-Time-Logical-Clocks" class="headerlink" title="Matrix Time(Logical Clocks)"></a>Matrix Time(Logical Clocks)</h3><ul>
+<li>In a system of matrix clocks, the time is represented by a set of $n\times n$ matrices of non-negative integers</li>
+<li>A process $p_i$ maintains a matrix $mt_i[1..n, 1..n]$, where:<ul>
+<li>$mt_i[i, i]$ denotes the local logical clock of $p_i$ and tracks the progress of the computation at process $p_i$(进程i本地的逻辑时钟)</li>
+<li>$mt_i[i, j]$ denotes the latest knowledge that process $p_i$ has about the local logical clock, $mt_j[j, j]$, of process $p_j$(进程i最近获得的关于其他进程的本地逻辑时钟，就相当于是向量时钟vector time)</li>
+<li>$mt_i[j, k]$ represents the knowledge that process $p_i$ has about the latest knowledge that $p_j$ has about the local logical clock, $mt_k[k, k]$, of $p_k$(进程i最近获得的关于其他进程对再其他进程逻辑时钟)</li>
+<li>The entire matrix $mt_i$ denotes $p_i$’s local view of the global logical time(整个矩阵时间表示的是进程对全局逻辑时钟的本地视角)</li>
+</ul>
+</li>
+<li>Process $p_i$ uses the following rules R1 and R2 to update its clock:(更新规则)<ul>
+<li>R1: Before executing an event, process $p_i$ updates its local logical time as follows:(执行事件之前更新本地的逻辑时钟)<ul>
+<li>$mt_i[i, i] := mt_i[i, i] + d \quad (d &gt; 0)$</li>
+</ul>
+</li>
+<li>R2: Each message $m$ is piggybacked with matrix time $mt$. When $p_i$ receives such a message $(m, mt)$ from a process $p_j$, $p_i$ executes the following sequence of actions:(接收消息之后更新全局逻辑时间，和标量向量时钟类似)<ul>
+<li>Update its global logical time as follows:<ul>
+<li>a. $1\leq k\leq n: mt_i[i, k]:=max(mt_i[i, k], mt[j, k])$<ul>
+<li>That is, update its row $mt_i[i, *]$with the $p_j$’s row in the received timestamp, $mt$.(先更新本地视角的逻辑时钟)</li>
+</ul>
+</li>
+<li>b. $1\leq k, l\leq n : mt_i[k, l]:=max(mt_i[k, l], mt[k, l])$(更新非本地视角的全局逻辑时钟，而且只需要更新所收消息进程编号之前的)</li>
+</ul>
+</li>
+<li>Execute R1</li>
+<li>Deliver message $m$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Evolution%20of%20matrix%20time.png" alt="img"></p>
+<ul>
+<li>Let us consider the following events:<ul>
+<li>$e_i^m$ which is the $(x_i^m)^{th}$ event at process $p_i$<ul>
+<li>$e_k^1$ and $e_k^2$ which are the $(x_k^1)^{th}$ and $(x_k^2)^{th}$ event at process $p_k$</li>
+<li>$e_j^1$ and $e_j^2$ which are the $(x_j^1)^{th}$ and $(x_j^2)^{th}$ event at process $p_j$</li>
+</ul>
+</li>
+<li>$mt_e$ denote the matrix timestamp associated with event $e$</li>
+</ul>
+</li>
+<li>Due to message $m_4$, $e_k^2$ is the last event of $p_k$ that causally precedes $e$, therefore, we have $mt_e[i, k] = mt_e[k, k] = x_k^2$<ul>
+<li>Likewise, $mt_e[i, j] = mt_e[j, j] = x_j^2$</li>
+</ul>
+</li>
+<li>The last event of $p_k$ known by $p_j$, to the knowledge of $p_i$ when it executed event, is e_k^1. Therefore, $mt_e[j, k] = x_k^1$<ul>
+<li>Likewise, $mt_e[k. j] = x_j^1$</li>
+</ul>
+</li>
+</ul>
+<h4 id="Basic-Properties-1"><a href="#Basic-Properties-1" class="headerlink" title="Basic Properties"></a>Basic Properties</h4><ul>
+<li>Vector $mt_i[i, .]$ contains all the properties of vector clocks(矩阵时钟在进程编号一行表示的就是向量时钟)</li>
+<li>In addition, matrix clocks have the following property:<ul>
+<li>$min_k(mt_i[k, l]) \geq t \Rightarrow process\quad p_i$ knows that every other process $p_k$ knows that $p_l$’s local time has progressed till $t$(在进程i的视角下，进程k所知道的直到时间t进程l所对应的逻辑时间)<ul>
+<li>If this is true, it is clear that process $p_i$ knows that all other processes know that $p_l$ will never send information with a local time $\leq t$(如果不等式成立，则说明进程i知道其他所有的进程都知道进程l在时间t之前根本没有发送过任何消息)</li>
+<li>In many applications, this implies that processes will no longer require from $p_l$ certain information and can use this fact to discard obsolete information(意味着可以丢弃关于进程l的消息，因为不太需要)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If $d$ is always 1 in the rule R1, then $mt_i[k, l]$ denotes the number of events occurred at $p_l$ and known by $p_k$ as far as $p_i$’s knowledge is concerned(如果d为1，则这个逻辑时间为执行的事件数)</li>
+</ul>
+<h3 id="Virtual-Time-虚拟时间"><a href="#Virtual-Time-虚拟时间" class="headerlink" title="Virtual Time(虚拟时间)"></a>Virtual Time(虚拟时间)</h3><ul>
+<li>参考论文: <a target="_blank" rel="noopener" href="https://cobweb.cs.uga.edu/~maria/pads/papers/p404-jefferson.pdf">Virtual Time </a></li>
+</ul>
+<h4 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h4><ul>
+<li>主要用于进行事务处理(电商系统、数据库系统)</li>
+<li>Virtual time system is a paradigm for organizing and synchronizing distributed systems</li>
+<li>The implementation of virtual time using Time Warp mechanism works on the basis of an optimistic assumption(乐观假设)<ul>
+<li>Time Warp relies on the general lookahead-rollback mechanism(往前回滚) where each process executes without regard to other processes having synchronization conflicts(不需要考虑与其他进程是否有同步矛盾)</li>
+<li>If a conflict is discovered, the offending processes are rolled back to the time just before the conflict and executed forward along the revised path(出错就回滚)</li>
+<li>Detection of conflicts and rollbacks are transparent to users</li>
+<li>optimistic assumption: synchronization conflicts and thus rollbacks generally occurs rarely(理想情景是冲突和回滚很少发生)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Definition-2"><a href="#Definition-2" class="headerlink" title="Definition"></a>Definition</h4><ul>
+<li>Virtual time is a global, one dimensional, temporal coordinate system on a distributed computation to measure the computational progress and to define synchronization<ul>
+<li>A virtual time system is a distributed system executing in coordination with an imaginary virtual clock that uses virtual time(使用想象的虚拟时钟记录虚拟时间)<ul>
+<li>these local virtual clocks are loosely synchronized</li>
+<li>these local virtual clocks move forward to higher virtual times, and occasionaly move backwards</li>
+</ul>
+</li>
+<li>Virtual times are real values that are totally ordered by the less than relation “$&lt;$”(递增序)</li>
+</ul>
+</li>
+<li>Processes run concurrently and communicate with each other by exchanging messages(进程并行运行，通过互相通信交换消息)<ul>
+<li>Every message is characterized by four values:<ul>
+<li>Name of the sender(发送者名字)</li>
+<li>Virtual send time(虚拟发送时间)<ul>
+<li>the virtual time at the sender when the message is sent</li>
+</ul>
+</li>
+<li>Name of the receiver(接收者的名字)</li>
+<li>Virtual receive time(虚拟接收时间)<ul>
+<li>the virtual time when the message must be received(are processed)by the receiver(发送者指定的该消息最晚被接收处理的时间，是一个期望时间)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Virtual time systems are subject to two semantic rules similar to Lamport’s clock conditions:<ul>
+<li>Rule1: Virtual send time of each message &lt; virtual receive time of that message(发送时间肯定比接收时间早)</li>
+<li>Rule2: Virtual time of each event in a process &lt; Virtual time of next event in that process(前一个事件的虚拟时间肯定比后一个的早)</li>
+</ul>
+</li>
+<li>The above two rules imply that a process sends all messages in increasing order of virtual send time and a process receives(and processes) all messages in the increasing order of virtual receive time(发送消息事件的虚拟时间是递增的，接收消息事件的虚拟时间也应该是递增的)<ul>
+<li>A problem arises when a message arrives at process late, that is, the virtual receive time of the message is less than the local virtual time at the receiver process when the message arrives(消息到得晚了，因为消息携带的期望接收时间比接收者接收消息时的本地虚拟时间更小，即消息错过了)</li>
+</ul>
+</li>
+<li>Causality of events is an important concept in distributed systems and is also a major constraint in the implementation of virtual time(事件的因果关系)<ul>
+<li>It is important an event that causes another should be completely executed before the caused event can be processed(因事件必须在果事件发生前结束)</li>
+<li>The constraint in the implementation of virtual time can be stated as follows: “If an event A causes event B, then the execution of A and B must be scheduled in real time so that A is completed before B starts.<ul>
+<li>events with virtual time $&lt; ‘t’$ complete before the starting of events at time ‘t’</li>
+<li>events with virtual time $&gt; ‘t’$ will start only after events at time ‘t’ are complete</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Characteristics"><a href="#Characteristics" class="headerlink" title="Characteristics"></a>Characteristics</h4><ul>
+<li>Virtual time systems are not all isomorphic, it may be either discrete or continuous(虚拟时间可以是离散或连续的)</li>
+<li>Virtual time may be only partially ordered(部分有序，因为有回滚?)</li>
+<li>Virtual time may be related to real time or may be independent of it(可以用真实时钟作为虚拟时间，也可以不用)</li>
+<li>Virtual time systems may be visible to programmers and manipulated explicitly as values, or hidden and manipulated implicity according to some system-defined discipline(程序员可见且显示赋值控制，或者隐式的由系统规则决定)</li>
+<li>Virtual times associated with events may be explicitly caculated by user programs or they may be assigned by fixed rules(程序计算或者按规则固定分配)</li>
+</ul>
+<h4 id="Time-Warp-Mechanism"><a href="#Time-Warp-Mechanism" class="headerlink" title="Time Warp Mechanism"></a>Time Warp Mechanism</h4><ul>
+<li>virtual receive time of message is considered as its timestamp</li>
+<li>The necessary and sufficient conditions for the correct implementation of virtual time are that each process must handle incoming messages in timestamp order(正确实现虚拟时间的充要条件: 每个进程必须将接收到的消息按时间戳排序，递增序)<ul>
+<li>This is highly undesirable and restrictive because process speeds and message delays are likely to highly variable. It natural for some processes to get ahead in virtual time of other processes(进程速度和消息延迟不同，因此很难满足充要条件)</li>
+</ul>
+</li>
+<li>It is impossible for a process on the basis of local information alone to block and wait for the message with the next timestamp(不能仅依赖本地的虚拟时间)<ul>
+<li>When a process executes a message, it is very difficult for it determine whether a message with an earlier timestamp will arrive later(central problem, 如何确定要处理的消息没有超时)<ul>
+<li>It is always possible that a message with earlier timestamp arrives later</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Time Warp Mechanism assumes that message communication is reliable, and messages may not be delivered in FIFO order(传输消息可靠，即不会丢包，但可能不会有序接收)</li>
+<li>local control mechanism: insures that events are executed and messages are processed in the correct order(本地控制机制保证事件执行和消息处理顺序是正确的)<ul>
+<li>There is no global virtual clock variable in this implementation, each process has a local virtual clock variable(各自进程持有本地虚拟时钟，没有全局的虚拟时钟)</li>
+<li>The local virtual clock of a process doesn’t change during an event at that process but it chages only between events(虚拟时钟只在事件之间进行更新，即事件执行过程中不能更新时钟)</li>
+<li>On the processing of next message from the input queue(接收队列), the process increases its local clock to the timestamp of the message (接收并处理消息的时候，将本地时钟更新为所接受消息携带的虚拟接收时间，这个时间是一个期望时间，发送者期望接收者接收消息的时间，或者说是最晚被接收的时间)<ul>
+<li>When a message is sent, the virtual send time is copied from the sender’s virtual clock while the name of the receiver and virtual receive time are assigned based on application specific context</li>
+</ul>
+</li>
+<li>At any instant, the value of virtual time may differ for each process but the value is transparent to other processes in the system(任何时刻，进程的虚拟时间可能和其他进程的虚拟时间不同，且是透明的，其他进程并不知道)</li>
+<li>All arriving messages at a process are stored in an input queue in the increasing order of timestamps (receive times).(所有的接收消息会在队列中按照各自携带的虚拟接收时间排序，递减序)</li>
+<li>The semantics of virtual time demands that incoming messages be received by each process strictly in the timestamp order.<ul>
+<li>But processes will receive late messages due to factors such as different computation rates of processes and network delays.</li>
+</ul>
+</li>
+<li>Runtime representation of a process is composed of the following:<ul>
+<li>Process name: Virtual spaces coordinate which is unique in the system(唯一标识)</li>
+<li>Local virtual clock: Virtual time coordinate</li>
+<li>State: Data space of the process including execution stack, program counter and its own variables(用于后面回滚恢复的记忆上下文)</li>
+<li>State queue: Contains saved copies of process’s recent states as roll back with Time warp mechanism requires the state of the process being saved(最近执行过的事件的状态副本队列)</li>
+<li>Input queue: Contains all recently arrived messages in order of virtual receive time. Processed messages from the input queue are not deleted as they are saved in the output queue with a negative sign (antimessage) to facilitate future roll backs.(输入队列，执行完后建立个副本，并将标记取反放到输出队列作为回滚的备份)<ul>
+<li>Whenever a process sends a message, a copy of the message is transmitted to receiver’s input queue and a negative copy (antimessage) is retained in the sender’s output queue for use in sender rollback.</li>
+</ul>
+</li>
+<li>Output queue: Contains negative copies of messages the process has recently sent in virtual send time order. They are needed in case of a rollback.</li>
+</ul>
+</li>
+<li>When a message arrives at the input queue of a process with timestamp greater than virtual clock time of its destination process, it is simply enqueued.</li>
+<li>When the destination process’ virtual time is greater than the virtual time of message received, the process must do a rollback.(接收消息的期望时间比当前进程的虚拟时间小，说明超时了，就要回滚)</li>
+<li>Antimessages: For every message, there exists an antimessage that is the same in content but opposite in sign(内容一样，但标记相反，例如是正负标记)<ul>
+<li>Whenever a message and its antimessage appear in the same queue no matter in which order they arrived, they immediately annihilate each other resulting in shortening of the queue by one message.(标记相反的相同消息出现在同一个队列，会被抵消掉，当作无事发生)</li>
+<li>Advantages:<ul>
+<li>It is extremely robust and works under all possible circumstances.(很稳定)</li>
+<li>It is free from deadlocks as there is no blocking.(不会死锁，因为没有阻塞)</li>
+<li>It is also free from domino effects.(不会有多米诺骨牌效应，即不会一个出错连带所有出错，因为可以级联回滚)</li>
+<li>In the worst case, all processes in system roll back to same virtual time as original one did and then proceed forward again.(最糟糕的情况也不过是重新来过，不会崩)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Rollback Mechanism(回滚机制)<ul>
+<li>Search the ”State queue” for the last saved state with timestamp that is less than the timestamp of the message received and restore it.(查找状态队列中比出错时间戳更早的最后保存状态)</li>
+<li>Make the timestamp of the received message as the value of the local virtual clock and discard from the state queue all states saved after this time. Then the resume execution forward from this point.(将虚拟接收时间作为当前的本地虚拟时间，丢掉状态队列中在此时间之后执行的所有结果，重新从这个时间点执行)</li>
+<li>Now all the messages that are sent between the current state and earlier state must be “unsent”. This is taken care of by executing a simple rule: “To unsend a message, simply transmit its antimessage.”(所有在丢弃掉的事件中发送的消息都应该撤回，也就是发送一个该消息的反消息antimessage)</li>
+<li>Depending on the timing, there are several possibilities at the receiver’s end:<ul>
+<li>The original (positive) message has arrived but not yet been processed at the receiver. The negative message causes no rollback, however, it annihilates with the positive message leaving the receiver with no record of that message.(消息还没来得及被执行就收到了负责撤回的负消息，直接抵消，无事发生)</li>
+<li>The original positive message has already been partially or completely processed by the receiver. The negative message causes the receiver to roll back to a virtual time when the positive message was received.(要被撤回的消息正在执行或已完成执行，则触发回滚，然后嵌套过程，有可能又触发其他回滚——级联回滚)</li>
+<li>A negative message can also arrive at the destination before the positive one. In this case, it is enqueued and will be annihilated when positive message arrives. (撤回的消息比消息本身到的还快，这个和链路情况有关，是可能会发生的。那就把该消息放在输入队列里等待正消息的到来，然后相互抵消)<ul>
+<li>If it is negative message’s turn to be executed at a processs’ input queqe, the receiver may take any action like a no-op. Any action taken will eventually be rolled back when the corresponding positive message arrives.(如果在正消息到来前就轮到执行负消息了，可以让进程执行空操作no-op，但时间戳还是会被更新，就会导致正消息到来后触发回滚，这种情况会浪费计算资源)</li>
+<li>An optimization would be to skip the antimessage from the input queue and treat it as a no-op, and when the corresponding positive message arrives, it will annihilate the negative message, and inhibit any rollback.(可以采用跳过该消息的方式，就是空操作也不更新时间，直接往后处理，就不会需要回滚了)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>global control mechanism: take care of global issues such as global progress, termination detection, I/O error handling, flow control(全局控制机制关注整个过程的问题，例如中断检测，I/O错误管理和流量控制)</li>
+</ul>
+<h3 id="Comparison"><a href="#Comparison" class="headerlink" title="Comparison"></a>Comparison</h3><ul>
+<li>In Lamport’s logical clock, an artificial clock is created one for each process with unique labels from a totally ordered set in a manner consistent with partial order(逻辑时钟是为每一个进程给一个时钟，全局看逻辑时间是偏序的)<ul>
+<li>all clocks are conservatively maintained so that they never violate causality, a process advances its clock as soon as it learns of new causal dependency(保守地推进时间，天然保证了因果性，)</li>
+</ul>
+</li>
+<li>In virtual time, the reverse of the above is done by assuming that every event is labeled with a clock value from a totally ordered virtual time scale satisfying Lamport’s clock conditions(虚拟时间是每个进程的每个事件单独给一个时钟值标注，这个标注与前面的标注是没有逻辑关系的，例如直接记录为事件发生的物理时钟，从全局看时钟就是全序的)<ul>
+<li>clocks are optimistically advanced and corrective actions are taken whenever a violation is detected(虚拟时钟乐观推进，只在出问题的时候用机制纠正问题)</li>
+</ul>
+</li>
+</ul>
+<h3 id="Physical-Clock-Synchronization-NTP"><a href="#Physical-Clock-Synchronization-NTP" class="headerlink" title="Physical Clock Synchronization: NTP"></a>Physical Clock Synchronization: NTP</h3><ul>
+<li>当任务要求使用高精度时间分辨率时，不能使用逻辑时钟，而要用到物理时钟</li>
+<li>Clocks that must not only be synchronized with each other but also have to adhere to physical time are termed physical clocks(互相同步且需要遵守物理时间)</li>
+</ul>
+<h4 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h4><ul>
+<li>In centralized systems, there is only single clock. A process gets the time by simply issuing a system call to the kernel(一个系统一个时钟，向内核发起系统调用就能获得时间)</li>
+<li>In distributed systems, there is no global clock or common memory. Each processor has its own internal clock and its own notion of time(分布式系统没有全局时钟或共享的内存，每个进程都有自己的时钟和自己对时钟的度量)</li>
+<li>These clocks can easily drift seconds per day, accumulating significant errors over time(每天都会偏移几秒钟，随时间会累计成非常大的错误)</li>
+<li>Also, because different clocks tick at different rates, they may not remain always synchronized although they might be synchronized when they start. (不同进程的时钟会有不同的速率，所以难以同步)<ul>
+<li>This clearly poses serious problems to applications that depend on a synchronized notion of time</li>
+</ul>
+</li>
+<li>For most applications and algorithms that run in a distributed system, we need to know time in one or more of the following contexts:<ul>
+<li>The time of the day at which an event happened on a specific machine in the network.(事件发生的时间)</li>
+<li>The time interval between two events that happened on different machines in the network.(在不同机器上发生的两个事件的时间间隔)</li>
+<li>The relative ordering of events that happened on different machines in the network.(不同机器上发生的事件的相对顺序)</li>
+</ul>
+</li>
+<li>Unless the clocks in each machine have a common notion of time, time-based queries cannot be answered(除非机器拥有相同的时间度量，否则基于时间的请求不会被响应)</li>
+<li>Clock synchronization has a significant effect on many problems like secure systems, fault diagnosis and recovery, scheduled operations, database systems, and real-world clock values(时间同步很重要)</li>
+</ul>
+<h4 id="Clock-synchronization"><a href="#Clock-synchronization" class="headerlink" title="Clock synchronization"></a>Clock synchronization</h4><ul>
+<li>Clock synchronization is the process of ensuring that physically distributed processors have a common notion of time(时间同步是让物理上的分布式进程拥有相同时间度量的过程)</li>
+<li>Due to different clocks rate, the clocks at various sites may diverge with time and periodically a clock synchronization must be performed to correct this clock skew in distributed systems</li>
+<li>Clocks are synchronized to an accurate real-time standard like UTC(Universal Coordinated Time)</li>
+</ul>
+<h4 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h4><ul>
+<li>Let $C_a$ and $C_b$ be any two clocks<ul>
+<li>Time: The time of a clock in a machine $p$ is given by the function $C_p(t)$, where $C_p(t)=t$ for a perfect clcok(没有偏差的时钟)</li>
+<li>Frequency: Frequency is the rate at which a clock progresses. The frequency at time $t$ of clock $C_a$ is $C’_a(t)$(频率是时钟的变化率，是时间函数的导数)</li>
+<li>Offset: Clock offset is the difference between the time reported by a clock and the real time. The offset of the clock $C_a$ is given by $C_a(t)-t$. The offset of clock $C_a$ relative to $C_b$ at time $t\geq0$ is given by $C_a(t)-C_b(t)$(时钟偏移是时钟之间的差值)</li>
+<li>Skew(倾斜): The skew of a clock is the difference in the frequencies of the clock and the perfect clock. The skew of a clock $C_a$ relative to clock $C_b$ at time t is $(C’_a(t)-C’_b(t))$. If the skew is bounded by $\rho$, then as per Equation(1), clock values are allowed to diverge at a arte in the range of $1-\rho$ to $1+\rho$(时钟倾斜是时钟频率的差值，通常要限定在一个范围$\rho$内)<ul>
+<li>a timer(clock) is said to be working within its specification if(where constant $\rho$ is the maximum skew rate specified by the manufacturer(制造商))</li>
+<li>$1-\rho \leq \frac{dC}{dt}\leq 1+\rho$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/repect%20to%20UTC.png" alt="img"></li>
+</ul>
+</li>
+<li>Drift(rate, 漂移): The drift of clock $C_a$ is the second derivative of the clock value with respect to time(漂移是对速度的变化率的度量，所以是时间的二阶导), namely, $C’’_a(t)$. The drift of clock $C_a$ relativ eto clock $C_a$ at time $t$ is $C’’_a(t)-C’’_b(t)$</li>
+</ul>
+</li>
+</ul>
+<h4 id="The-Network-Time-Protocol-NTP"><a href="#The-Network-Time-Protocol-NTP" class="headerlink" title="The Network Time Protocol(NTP)"></a>The Network Time Protocol(NTP)</h4><ul>
+<li>is widely used for clock synchronization on the Internet uses the The Offset Delay Estimation method(使用偏移延迟的估算方法，进行时钟同步)</li>
+<li>The design of NTP involves a hierarchical tree of time servers(分层树结构)<ul>
+<li>The primary server at the root synchronizes with the UTC(根节点是拥有UTC时间的服务器)</li>
+<li>The next level contains secondary servers, which act as a backup to the primary server(下一层是上层根节点主服务器的备份)</li>
+<li>At the lowest level is the synchronization subnet which has the clients(最底层是拥有客户端的同步子网)</li>
+</ul>
+</li>
+<li>The Offset Delay Estimation method<ul>
+<li>a source node cannnot accurately estimate the local time on the target node due to varying message or network delays between the nodes(节点之间有网络和消息延迟，无法准确目标节点的本地时间)</li>
+<li>This protocol employs a common pratice of performing several trials and chooses the trial with the minimum delay(协议选定最小延迟作为系统之间的时延，因为更贴近真实的消息传播时延)</li>
+</ul>
+</li>
+<li>Assume clocks A and B are stable and running at the same speed. Let $T_1, T_2, T_3, T_4$ be the values of the four most recent timestamps as shown:<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/offset%20and%20delay%20estimation.png" alt="img"><ul>
+<li>Each NTP message includes the latest three timestamps $T_1, T_2$ and $T_3$, while $T_4$ is determined upon arrival</li>
+<li>Let $a = T_1-T_3$ and $b=T_2-T_4$</li>
+<li>If the delay difference from A to B and from B to A, called differential delay, is small, the clock offset $\theta$ and roundtrip delay $\delta$ of B relative to A at Time $T_4$ are approximately given by the following<ul>
+<li>$\theta = \frac{(a+b)}{2}=\frac{T_1-T_3+T_2-T_4}{2}$(由下面两式联立得到)<ul>
+<li>$\theta = T_1-(T_3 + \frac{\delta}{2})$</li>
+<li>$\theta = T_4-(T_2 + \frac{\delta}{2})$</li>
+</ul>
+</li>
+<li>$\delta = a-b=T_1-T_3-(T_2-T_4)=(T_4-T_3)-(T_2-T_1)$(消息在A待的时间减去在B待的时间就是在信道中传输的时间)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Thus both peers A and B can independently calculate delay and offset using a single bidirectional messages stream<ul>
+<li>A pair of servers in symmetric mode exchange pairs of timing messages<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Timing%20diagram.png" alt="img"></li>
+<li>A store of data is then built up about the relationship between the two servers(pairs of offset and delay). Specifically, assume that each peer maintains pairs $(O_i, D_i)$, where <ul>
+<li>$O_i$: measure of offset ($\theta$)</li>
+<li>$D_i$: transmission delay of two messages ($\delta$)</li>
+</ul>
+</li>
+<li>The offset corresponding to the minimum delay is chosen. Specifically, the delay and offset are calculated as follows.(用最小延迟作为偏移，不以最小延迟为偏移可能导致偏移偏大、偏小或无影响，取决于两个时钟的快慢关系) </li>
+<li>Assume that message $m$ takes time $t$ to transfer and $m’$ takes $t’$ to transfer</li>
+<li>The offset between A’s clock and B’s clock is $O$. If A’s local clock time is $A(t)$ and B’s local clock time is $B(t)$, <ul>
+<li>$A(t)=B(t)+O$</li>
+<li>$T<em>{i-2}=T</em>{i-3}+t+O$</li>
+<li>$T<em>i=T</em>{i-1}-O+t’$</li>
+</ul>
+</li>
+<li>Assuming $t=t’$, the offset $O_i$ can be estimated as:<ul>
+<li>$O<em>i=(T</em>{i-2}-T<em>{i-3}+T</em>{i-1}-T{i})/2$</li>
+</ul>
+</li>
+<li>The round-trip delay is estimated as:<ul>
+<li>$D<em>i=(T_i-T</em>{i-3})-(T<em>{i-1}-T</em>{i-2})$</li>
+</ul>
+</li>
+<li>The eight most recent pairs of $(O_i, D_i)$ are retained</li>
+<li>The value of $O_i$ that corresponds to minimum $D_i$ is chosen to estimate $O$</li>
+</ul>
+</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/09/28/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-28-%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">分布式计算模型</div></div></a></div><div class="next-post pull-right"><a href="/2024/10/09/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-10-09-%E5%A6%82%E4%BD%95%E6%8F%90%E9%AB%98%E6%80%A7%E8%83%BD/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">如何提高性能</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/09/21/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-21-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B/" title="分布式系统简介"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-21</div><div class="title">分布式系统简介</div></div></a></div><div><a href="/2024/09/28/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-28-%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/" title="分布式计算模型"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-28</div><div class="title">分布式计算模型</div></div></a></div><div><a href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="title">术语和基本算法</div></div></a></div><div><a href="/2024/10/25/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-10-25-%E5%85%A8%E5%B1%80%E7%8A%B6%E6%80%81%E5%8F%8A%E5%BF%AB%E7%85%A7%E7%AE%97%E6%B3%95/" title="全局状态及快照算法"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-25</div><div class="title">全局状态及快照算法</div></div></a></div><div><a href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="title">消息序和组通信</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%80%BB%E8%BE%91%E6%97%B6%E9%97%B4"><span class="toc-text">逻辑时间</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#A-Framework-for-a-System-of-Logical-Clocks"><span class="toc-text">A Framework for a System of Logical Clocks</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Definition"><span class="toc-text">Definition</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Logical-clock"><span class="toc-text">Logical clock</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Relation-%E2%80%9C-lt-%E2%80%9D"><span class="toc-text">Relation “&lt;”</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#The-Clock-Consistency-Condition"><span class="toc-text">The Clock Consistency Condition</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementing-Logical-Clocks"><span class="toc-text">Implementing Logical Clocks</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Data-Structures"><span class="toc-text">Data Structures</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Protocol"><span class="toc-text">Protocol</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scalar-Time-%E6%A0%87%E9%87%8F%E6%97%B6%E9%97%B4-Lamport%E2%80%99s-Logical-Clocks"><span class="toc-text">Scalar Time(标量时间, Lamport’s Logical Clocks)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Definition-1"><span class="toc-text">Definition</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Basic-Properties"><span class="toc-text">Basic Properties</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Vector-Time-Logical-Clocks"><span class="toc-text">Vector Time(Logical Clocks)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Comparing-Vector-Timestamps-%E6%AF%94%E8%BE%83%E4%B8%A4%E4%B8%AA%E5%90%91%E9%87%8F%E6%97%B6%E9%97%B4%E6%88%B3"><span class="toc-text">Comparing Vector Timestamps(比较两个向量时间戳)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Properties-of-Vector-Time"><span class="toc-text">Properties of Vector Time</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Efficient-Implementations-of-Vector-Clock"><span class="toc-text">Efficient Implementations of Vector Clock</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Singhal-Kshemkalyani%E2%80%99s-Differential-Technique-%E5%B7%AE%E5%88%86%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF"><span class="toc-text">Singhal-Kshemkalyani’s Differential Technique(差分优化技术)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Matrix-Time-Logical-Clocks"><span class="toc-text">Matrix Time(Logical Clocks)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Basic-Properties-1"><span class="toc-text">Basic Properties</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Virtual-Time-%E8%99%9A%E6%8B%9F%E6%97%B6%E9%97%B4"><span class="toc-text">Virtual Time(虚拟时间)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Abstract"><span class="toc-text">Abstract</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Definition-2"><span class="toc-text">Definition</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Characteristics"><span class="toc-text">Characteristics</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Time-Warp-Mechanism"><span class="toc-text">Time Warp Mechanism</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Comparison"><span class="toc-text">Comparison</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Physical-Clock-Synchronization-NTP"><span class="toc-text">Physical Clock Synchronization: NTP</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Motivation"><span class="toc-text">Motivation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Clock-synchronization"><span class="toc-text">Clock synchronization</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Terminology"><span class="toc-text">Terminology</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#The-Network-Time-Protocol-NTP"><span class="toc-text">The Network Time Protocol(NTP)</span></a></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>

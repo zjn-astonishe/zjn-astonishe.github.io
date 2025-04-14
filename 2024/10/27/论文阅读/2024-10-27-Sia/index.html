@@ -1,0 +1,535 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>Sia | ZJN_BLOG</title><meta name="keywords" content="论文阅读"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Sia: Heterogeneity-aware, goodput-optimized ML-cluster schedulingAbstract本文提出了一个分布式调度器——Sia，能够为弹性的资源自适应job高效地分配异构的深度学习集群资源，是一个支持混合(异构)并行Job弹性地扩展的集群调度器  Sia提出了一个新的调度公式(scheduling formulation)来扩大搜索空间的大小">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Sia">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Sia/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="Sia: Heterogeneity-aware, goodput-optimized ML-cluster schedulingAbstract本文提出了一个分布式调度器——Sia，能够为弹性的资源自适应job高效地分配异构的深度学习集群资源，是一个支持混合(异构)并行Job弹性地扩展的集群调度器  Sia提出了一个新的调度公式(scheduling formulation)来扩大搜索空间的大小">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2024-10-27T01:20:24.000Z">
+<meta property="article:modified_time" content="2025-04-14T03:05:11.078Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="论文阅读">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Sia/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Sia',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-04-14 11:05:11'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Sia</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-10-27T01:20:24.000Z" title="发表于 2024-10-27 09:20:24">2024-10-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-04-14T03:05:11.078Z" title="更新于 2025-04-14 11:05:11">2025-04-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">6.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>22分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Sia-Heterogeneity-aware-goodput-optimized-ML-cluster-scheduling"><a href="#Sia-Heterogeneity-aware-goodput-optimized-ML-cluster-scheduling" class="headerlink" title="Sia: Heterogeneity-aware, goodput-optimized ML-cluster scheduling"></a>Sia: Heterogeneity-aware, goodput-optimized ML-cluster scheduling</h1><h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文提出了一个分布式调度器——Sia，能够为弹性的资源自适应job高效地分配异构的深度学习集群资源，是一个支持混合(异构)并行Job弹性地扩展的集群调度器</p>
+<ul>
+<li>Sia提出了一个新的调度公式(scheduling formulation)来扩大搜索空间的大小搜索集群资源，合理地配置运行job的GPU类型和GPU数量。</li>
+<li>Sia提出了一个低分析开销(low-profiling-overhead)的方法为每个新的job引导(bootstrapping)吞吐量模型(throughput models)，用于评估可能的资源分配配置。</li>
+</ul>
+<p>实验结果表明，Sia的性能优于目前最先进的调度器，至少可以扩展到大小为2000个GPU的分布式集群，为每个job提供了更好的公平性，并且对调度器参数的初始化设置不太敏感</p>
+<h2 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h2><h3 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h3><p>大小可变的深度学习集群(DL clusters)被多个用户共享为多个不同的问题训练各自的深度学习模型。</p>
+<ul>
+<li>深度学习集群是由混合类型的GPU构成的</li>
+<li>调度器用来为job分配集群的资源</li>
+</ul>
+<h3 id="Sia"><a href="#Sia" class="headerlink" title="Sia"></a>Sia</h3><p>Sia是一个为自适应资源(resource-adaptive)的DL训练job和异构资源设计的调度器</p>
+<ul>
+<li>在每个调度轮次，Sia会考虑为当前job分配GPU数量和类型的可能性，评估这些job的goodput(包括了job的重新分配大小的花费)，选择在下一个轮次运行的最好的集群资源分配</li>
+<li>要实现非常有挑战性，有以上两个原因：<ul>
+<li>对于一个可变大小的集群来说，搜索空间很大</li>
+<li>不同的job对于不同的GPU类型和不同的GPU数量的性能反应不同，因为不同类型的GPU本身就具有不同的计算网络带宽比。GPU的多种类型，不同数量，可以有不同的组合，因此要遍历所有的分配情况是不现实的，昂贵且耗时</li>
+</ul>
+</li>
+<li>Sia解决上述挑战的方法是: <ul>
+<li>提出一个新的求解公式(solver formulation)以处理规模问题<ul>
+<li>Sia的新ILP公式: 即使负载(load)和集群(cluster)大小增加，能够有效找到所有待处理job的GPU类型、GPU计数和数据批量大小的配置方式</li>
+</ul>
+</li>
+<li>提出一个新方法在线学习(online-learning)每个job，每种GPU类型的吞吐量模型(throughput model)<ul>
+<li>Sia的吞吐量模型是关于GPU类型、GPU数量和数据批量大小的函数，能够避免大规模的分析(大规模分析可能会使得优秀的调度算法反而性能变坏)，实际就是处理批量大小数据花费的时间</li>
+<li>因为Sia对于每种GPU类型仅仅使用一个最小规模的配置文件(开销就低了)引导每个新job的吞吐量模型，然后再进行缩放/投影(scaling/projection)，最后在job运行的时候动态优化吞吐模型</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Contributions"><a href="#Contributions" class="headerlink" title="Contributions"></a>Contributions</h3><ul>
+<li>揭示目前最先进的调度器的不足之处，指出研究方向: 异构性(heterogeneity)和弹性(elastic)</li>
+<li>提出第一个能够弹性扩展，具有混合类型异构的，并行job的集群(cluster)调度器Sia<ul>
+<li>提出新的ILP公式，解决了异构GPU类型和job自适应的复合复杂性: 要兼顾GPU的不同类型、GPU的不同数量和不同的数据批量大小</li>
+<li>提出新的吞吐量模型，预先观察几个小批量在每个GPU类型的运行结果作为引导(bootstrap)，然后随着job按Sia的优化配置运行而且在运行过程中快速有效地改进</li>
+</ul>
+</li>
+<li>表明Sia在其目标领域中与最先进的调度器相匹配，并且在结合其域的复杂性方面优于它们，结果还显示了Sia的可扩展性(scalability)、公平性(fairness)和参数化鲁棒性(parameterization robustness)</li>
+</ul>
+<h2 id="DL-cluster-scheduling"><a href="#DL-cluster-scheduling" class="headerlink" title="DL cluster scheduling"></a>DL cluster scheduling</h2><p>深度学习(DL)训练job是以迭代的方式在多个周期根据数据集上的数据训练DNN模型。对于每个迭代周期中的每个小批量(minibatch)，优化器会根据小批量样本计算损失函数，以最小化损失函数为目的更新模型的参数</p>
+<ul>
+<li>对于耗时长的训练(如果不是整个训练)，minibatch的大小通常是固定的，大多数的DL jobs总共花费固定且可预测的时间处理一个minibatch</li>
+<li>jobs通常也是可抢占的，可以在处理任何minibatch后检查job的状态(包括模型和优化器的状态)，从checkpoint恢复jobs，而不会损失太多的进度</li>
+<li>易于扩展，因为梯度计算可以在单个节点上的多个GPU或多个节点进行并行化</li>
+</ul>
+<h3 id="Data-Parallelism"><a href="#Data-Parallelism" class="headerlink" title="Data Parallelism"></a>Data Parallelism</h3><p>大多数的training job使用的是同步的数据并行(synchronous data parallelism)，即给定一组GPU，每个GPU上都会运行一个完整的模型，而不同的GPU运行例如all-reduce算法根据不同的minibatch(与GPU本身的内存大小相关)的数据计算梯度，然后更新各自GPU上的模型的参数</p>
+<ul>
+<li>对于每个小批量的数据，梯度计算阶段在各个GPU内部独立完成，而在reduce阶段进行同步</li>
+</ul>
+<p>给定的DL job的扩展程度取决于job的特性</p>
+<ul>
+<li>计算强度</li>
+<li>模型参数的个数</li>
+<li>GPU的性能</li>
+<li>连接GPU的内部网络？(inter-GPU network, 和通信相关？)</li>
+</ul>
+<h3 id="Model-Parallelism"><a href="#Model-Parallelism" class="headerlink" title="Model Parallelism"></a>Model Parallelism</h3><p>在被训练的模型太大，一个GPU的内存无法容纳的时候，可以把模型分割到几个GPU上运行</p>
+<ul>
+<li>流水线(Pipeline Model Parallelism, PMP)</li>
+<li>Tensor Model Parallelism(TMP)</li>
+</ul>
+<h3 id="弹性和资源自适应的DL-jobs"><a href="#弹性和资源自适应的DL-jobs" class="headerlink" title="弹性和资源自适应的DL jobs"></a>弹性和资源自适应的DL jobs</h3><p>数据并行的jobs可以随着时间的推移弹性地重新调整整体batch_size的大小，通过checkpoint保留上下文，然后在不同数量的GPU上重新启动。(例如在更多的GPU上训练以扩大整体bacth_size)<br>数据并行的实现也可以不重新启动，通过拷贝原始配置进行缩放</p>
+<h3 id="异构资源"><a href="#异构资源" class="headerlink" title="异构资源"></a>异构资源</h3><p>GPU类型有很多种，在内存大小、计算和通信性能方面不同。<br>DL集群通常会包含多种GPU。</p>
+<ul>
+<li>因为集群是随着时间的推移进行部署和增长的，每次购买添加的新硬件时都可以选择最具成本效益的选项。</li>
+</ul>
+<h2 id="Related-work"><a href="#Related-work" class="headerlink" title="Related work"></a>Related work</h2><p>DL jobs作为请求提交到共享的集群中，调度器为job分配资源以实现集群范围的目标。目前许多调度器只允许指定固定数量的相同类型GPU的请求，忽略了弹性、资源自适应和异构性。</p>
+<h3 id="异构感知-Heterogeneity-aware-的调度器"><a href="#异构感知-Heterogeneity-aware-的调度器" class="headerlink" title="异构感知(Heterogeneity-aware)的调度器"></a>异构感知(Heterogeneity-aware)的调度器</h3><p>考虑集群的不同GPU类型，但现有的调度器只适用于刚性(rigid)job，无资源的自适应</p>
+<ul>
+<li>rigid job必须使用用户指定数量的GPU运行，不允许弹性缩放，也不能自适应地分配资源(也就是非动态的分配)，做其他调整<br>其中的代表是Gavel，使用一个可以扩展到大集群的快速线性规划公式。但不支持job的自适应，只在job提交者指定的小批量大小和GPU数量的情况下优化分配的GPU的类型。</li>
+<li>如果批量太小，这种方法可能会导致频繁更新、更强大的GPU利用率不足等问题</li>
+<li>当集群里的job数量拥塞时，会频繁切换运行的job，使得将GPU时间浪费在checkpoint的恢复操作上<br>这是因为Gavel用的是填充有<code>(job_id, GPU_type)</code>对的吞吐量矩阵(throughput matrix)表示调度选项，如果简单地扩展条目为<code>(job_id, GPU_type, num_GPUs, minibatch_size)</code>，有个问题:</li>
+<li>求解吞吐量矩阵的非零解，需要对每个job进行大量多余分析，优化程序会很大，无法迅速解决问题</li>
+</ul>
+<h3 id="自适应感知-Adaptivity-aware-的调度器"><a href="#自适应感知-Adaptivity-aware-的调度器" class="headerlink" title="自适应感知(Adaptivity-aware)的调度器"></a>自适应感知(Adaptivity-aware)的调度器</h3><p>考虑job在不同数量的GPU上执行(非刚性，调整批量大小batch_size)，但这些GPU都是同一类型的，不考虑异构性。<br>其中的代表是Pollux，使用每个Job的吞吐量模型为其设置GPU数量和批量大小，并根据更新的job的行为和job的队列信息在每个调度周期重新考虑所有的分配(弹性分配，避免未使用或过度使用GPU资源)。</p>
+<ul>
+<li>每个作业的goodput模型由两个组件组成<ul>
+<li>一个是统计效率模型(基于梯度噪声标度Gradient Noise Scale的每个样本的训练进度，训练每个样本的速度)，批量大小的函数</li>
+<li>一个是吞吐量模型(每秒处理的样本数量)，GPU数量和批量大小的函数。<ul>
+<li>通过放大、测量每个尝试的GPU数量计数并为其他计数插值，可以了解每个job如何随着GPU数量缩放</li>
+<li>每个job模型采用遗传算法搜索所有当前job的资源分配空间和相应的批量大小，通过公平性地加权以最大化集群范围内的总产出<ul>
+<li>遗传算法对于同构的GPU集群的扩展都非常困难，何况对异构GPU集群的扩展</li>
+<li>因为对于每个<code>(job, GPU_count)</code>对，要考虑将此作业放置在所有节点的可能性。而可能的解的数量和节点数量及节点内GPU的数量呈指数关系。(1000多个GPU的集群，遗传算法需要几十分钟才能完成)</li>
+</ul>
+</li>
+<li>但是无预分析(no-pre-profiling)的吞吐量模型阻碍了GPU的异构性</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>在同构系统中，Pollux针对整个资源空间进行优化，你每个job的可选情况复杂度为$O(N^R)$<ul>
+<li>假设一个job需要R个GPU，考虑全局情况，则每个GPU都有N个节点选择。所以一共为$O(N^R)$</li>
+</ul>
+</li>
+</ul>
+<h3 id="同构集群上刚性job的调度器"><a href="#同构集群上刚性job的调度器" class="headerlink" title="同构集群上刚性job的调度器"></a>同构集群上刚性job的调度器</h3><p>要求job的提交者为每个job指定GPU数量和相关配置，调度器不会根据当前负载或当前job的可扩展性/运行效率调整分配的GPU数量，也不会考虑GPU类型的差异(假设所有GPU都是相同种类)。效率较低。<br>现在有些能够调整GPU数量提高GPU利用率，但不会同时调整批量大小和GPU数量、类型。代表性的是Shockwave</p>
+<h3 id="非集群调度器的并行优化器"><a href="#非集群调度器的并行优化器" class="headerlink" title="非集群调度器的并行优化器"></a>非集群调度器的并行优化器</h3><p>为单独的job孤立地考虑并选择配置，而非集群调度器，即只考虑个体job运行效率，而不考虑整体集群的效率</p>
+<h2 id="Sia-Design-and-Implementation"><a href="#Sia-Design-and-Implementation" class="headerlink" title="Sia Design and Implementation"></a>Sia Design and Implementation</h2><p>Sia是一个抢占式的基于轮次的调度器，优化一组job的资源分配，以最大限度地提高集群范围内的goodput指标(该指标包含统计效率模型和吞吐量模型，具体见<a href="#自适应感知adaptivity-aware的调度器">自适应感知(Adaptivity-aware)的调度器</a>)。使用checkpoint-restore的抢占机制优化自适应的job</p>
+<h3 id="process"><a href="#process" class="headerlink" title="process"></a>process</h3><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/Sia%20Process.png" alt="img"></p>
+<ul>
+<li>用户提交一个job给Sia的队列Queue，记为J</li>
+<li>Sia的Profiler宣告本次执行的最大的批量大小(max_bsz)和最大的GPU数量(max_ngpus)。接着配置J使用小批量数据分别在各个类型的一块GPU运行</li>
+<li>Sia的Goodput Estimator引导一个吞吐量模型评估J在各个类型的一块GPU上运行的性能(评估用的是statistical efficiency model和throughput model)<ul>
+<li>Goodput Estimator为GPU内存容量，互连的速度和吞吐量进行建模</li>
+</ul>
+</li>
+<li>J会一直停留在队列Queue中，直到Sia分配一些GPU给它</li>
+<li>Sia的Policy根据来自Goodput Estimator的goodput评估值，在集群的job之间找到最佳的集群资源划分方案</li>
+<li>Sia的Placer根据Policy给出的配置方案将对应的资源分配给对应的job，并尝试减少由于资源碎片化而导致的不必要的job的迁移<ul>
+<li>将分配分为策略和实际两步进行，能够限制分配的放置空间，也就是减少碎片化。需要遵循三条规则：<ul>
+<li>部分节点(这些节点被请求的GPU数量少于其拥有的最大GPU数量?)的分配不得在两个节点上拆分(即节点本身满足资源要求，就不能强行拆分到不同节点)</li>
+<li>整个节点分配必须占用整个节点(也是不能随便拆分)</li>
+<li>如果不存在满足以上两个规则的位置，则拿下一个job再重启继续尝试分配(这种情况非常罕见，通常不超过3次)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Sia的Adaptive Executors负责运行job，支持:<ul>
+<li>透明的checkpoint-restore机制，用于低开销的job抢占和资源扩展</li>
+<li>自适应的批量大小，以最大化统计效率。当统计效率要求比GPU内存有限的支持更大的批量大小时，会使用梯度累计算法(gradient accumulation)</li>
+<li>频繁报告当前分配下模型的梯度和吞吐量统计数据(默认为30s一次)</li>
+<li>每个job最开始是在一块GPU上运行的，然后通过每个调度轮扩大为在2倍数量的GPU上运行(当然有最低运行要求的job，会从要求的最小GPU数量开始运行扩大)。每个job也可能被缩小规模到最低运行要求以便在集群中job拥塞的时候容纳更多的joib</li>
+</ul>
+</li>
+<li>J在Adaptive Executors开始执行后，Goodput Estimator会使用Adaptive Executors报告J的梯度和吞吐量统计数据更新J在当前资源配置下的goodput model</li>
+<li>在下一轮调度前，Sia的Policy会根据Goodput Estimator反馈的更新后J在所有GPU类型上的goodput估计值继续寻找最佳的集群资源划分方案</li>
+<li>不断循环，直到完成或终止</li>
+</ul>
+<h3 id="Bootstrapping-of-throughput-models"><a href="#Bootstrapping-of-throughput-models" class="headerlink" title="Bootstrapping of throughput models"></a>Bootstrapping of throughput models</h3><p>为每种类型的GPU构建每个job的吞吐量模型(作为GPU数量和批量大小的函数)的传统方法是运行每种GPU的多GPU分配方案，收集计算和通信时间。这种分析方法的开销随着GPU类型数量和每个节点拥有的GPU的数量都是线性增长的<br>Sia则以最少的分析信息开始，根据观察到的分配进行改进。对于每个job，Sia为每种GPU类型学习一个吞吐量模型和为job学习一个统计效率模型(批量大小的函数)。Sia首先分配各种类型的GPU给最低数量要求给job($\geq 1$)，从小的批量大小开始，不断提高批量大小直到达到GPU内存限制(通常是10倍)。每个类型的GPU在这个过程花费$\lt 20$ GPU seconds。就能获得：</p>
+<ul>
+<li>不同的GPU类型和批量大小组合的计算时间</li>
+<li>比较不同GPU类型的计算时间<br>假设计算时间和GPU数量增长是独立的，无关系的，因为采用的是采用all-reduce的数据并行技术。所以整个集群的时间分为计算时间和通信时间，计算时间只和单个GPU的计算时间相关</li>
+</ul>
+<p>Sia会为某种GPU类型在2个GPU上运行，然后计算吞吐量模型结果。与单个GPU上运行的吞吐量模型结果的两倍的差值便能得到耗费在通信的时间<br>根据在该类型GPU上测得的通信时间可以给其他类型GPU利用，因为假设是通信时间与计算时间无关，即通信时间与GPU类型无关。也就是说，已知N个某类型GPU的表现，则可以根据不同类型的GPU在单个GPU上的表现的比值来估计N个其他类型GPU的表现(实验也佐证了可用性)，用一个公式表示：</p>
+<ul>
+<li>$est-xput_B(N) = \frac{xput_B(1)}{xput_A(1)}*xput_A(N)$<br>不过需要注意的是，这只是对没有运行的GPU类型的粗略的估计，如果已经运行了某类型的GPU，则应该使用在线配置(online profiling)的结果准确预测通信时间</li>
+</ul>
+<h3 id="Configurations"><a href="#Configurations" class="headerlink" title="Configurations"></a>Configurations</h3><p>配置由一系列的资源组成，如CPU, GPU, Network, etc，可以表示为<code>(n, r, t)</code>，其中<code>n</code>表示节点数量，<code>r</code>表示资源数量，<code>t</code>表示资源类型。</p>
+<ul>
+<li>例如<code>(2, 16, T4)</code>表示的是2个节点包含16个T4 GPU<br>为了减少资源争用，避免分布式作业共享节点。配置集合可以划分为两部分：</li>
+<li>单节点分配集合: 不会跨节点分配资源，${(1, 2^0, X), (1, 2^1, X), …, (1, R, X)}\bigcup\quad\leftarrow$ single-node<ul>
+<li>该分配方式限制每次都分配一个节点内2的倍数的GPU，直到节点拥有的最多GPU数量$R$。如果$R$不是2的幂，则可以把$R$拆分成2的幂的和，即把一个物理节点拆分成多个虚拟节点</li>
+</ul>
+</li>
+<li>多节点分配集合: 需要跨节点分配资源，${(2, 2R, X), …, (N, N\cdot R, X), n\in N}\quad\leftarrow$ multi-node<ul>
+<li>该分配方式要求每个节点的GPU都必须完全被利用，即遵守第二条规则(详见<a href="#process">process</a>)<br>假设集群是同构的，Sia在优化配置过程中考虑的复杂度是$O(N+log_2R)$</li>
+</ul>
+</li>
+<li>因为不需要考虑所有的情况。</li>
+<li>假设一个job需要R个GPU，每个节点都能满足该要求，且Sia限制job不能在节点资源未得到完全利用的情况下跨越其他节点，则只需选定在哪个节点运行——有$N$种情况。</li>
+<li>Sia从1个GPU开始，每个迭代轮次将分配的GPU数量翻倍，即共有$log_2R$种配置</li>
+</ul>
+<h3 id="Scheduler-objective"><a href="#Scheduler-objective" class="headerlink" title="Scheduler objective"></a>Scheduler objective</h3><h4 id="Valid-Configurations"><a href="#Valid-Configurations" class="headerlink" title="Valid Configurations"></a>Valid Configurations</h4><p>即可用的配置，可用于分配给设备的配置。具体可见<a href="#Configuration">Configuration</a>。在一个调度轮次，一个job要么不被分配资源，要么按照列举的可用配置分配资源</p>
+<h4 id="Goodput-Estimation"><a href="#Goodput-Estimation" class="headerlink" title="Goodput Estimation"></a>Goodput Estimation</h4><p>定义了一个大小为$|J|\times|C|$(每个job的每种配置)的goodput矩阵$G$，$G_{ij}$表示的是$J_i$使用$c_j$给定配置的资源估计得到的goodput</p>
+<ul>
+<li>对于这个矩阵的每一行，即表示每一个job，可以直接对比矩阵的值来确定哪种配置更加优秀</li>
+<li>但对于这个矩阵的每一列，即表示每一种配置，不可以直接对比矩阵的值来说明该配置更适合哪个job去运行(需要简单的行归一化)</li>
+</ul>
+<h4 id="Normalized-goodput-matrix"><a href="#Normalized-goodput-matrix" class="headerlink" title="Normalized goodput matrix"></a>Normalized goodput matrix</h4><p>对于最低GPU数量要求为$N_i^{min}$的$J_i$，有公式: </p>
+<ul>
+<li>$G<em>{ij}\leftarrow N_i^{min}\cdot\frac{G</em>{ij}}{min<em>jG</em>{ij}}$<ul>
+<li>$min<em>jG</em>{ij}$: $J_i$所有配置的goodput估计值中的最小值</li>
+</ul>
+</li>
+<li>即用矩阵每行最小值进行归一化，有两个好处：<ul>
+<li>可以把$G$解释为$J$的效用矩阵(utility-matrix)，每一个元素的值都说明某种配置对某个job的效用</li>
+<li>对于每种配置，可以比较其对每种job的效用<br>每个新运行的job都会为矩阵$G$添加一个新的行，每个已完成的job都会在矩阵$G$删除对应行。矩阵$G$只记录活跃的job，且其中的值也会随着goodput的变化而变化</li>
+</ul>
+</li>
+</ul>
+<h4 id="Scheduler-objective-1"><a href="#Scheduler-objective-1" class="headerlink" title="Scheduler objective"></a>Scheduler objective</h4><p>定义了一个大小与$G$相同的二进制矩阵$A$，其中$A_{ij}==1$表明下一轮次J_i选择的配置为$c_j$<br>Sia调度的目标是为每个job选择配置，使得所有job的归一化goodput之和最大</p>
+<ul>
+<li>不是每个job都挑选归一化goodput值最大是因为可能出现多对一的情况，但实际是一对一的<br>于是对Sia的调度目标建模得到：</li>
+<li>$\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot G_{ij} + \lambda(1-\lVert A_i\rVert_1))$<ul>
+<li>$\lVert v\rVert_1$表示相邻$v$的L1范式，即求和后的绝对值</li>
+<li>这是一个二进制整数线性规划问题，有以下限制:<ul>
+<li>每个job最多选择一种配置: $\lVert A_i\rVert \leq 1$</li>
+<li>被分配的GPU数量不能超过对应类型GPU的可用数量</li>
+</ul>
+</li>
+<li>外层的求和是对所有job选择的配置的goodput估计值求和，max说明目标把该求和最大化</li>
+<li>内层对包含两个部分<ul>
+<li>前者为一整行求和，由于$A$矩阵每一行最多只有一个非零值，因此实际是说明$J_i$选择的配置的goodput。</li>
+<li>后者为惩罚项，当$J_i$不选择任何一种配置的时候，该项为非0，否则为0。惩罚项也许是负数，即对不分配资源做出惩罚，是减少调度器队列中的job的一种激励，使得Sia为集群中的每个job至少分配一个GPU</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="Restart-Factor-重启参数"><a href="#Restart-Factor-重启参数" class="headerlink" title="Restart Factor(重启参数)"></a>Restart Factor(重启参数)</h4><p>频繁地重新分配资源会带来频繁地重启，而频繁重启对性能有害，代价昂贵。<br>因此设置了一个重启参数$r_i$，用来评估是否要重启job(重新分配资源)</p>
+<ul>
+<li>$r_i=\frac{T_i-N_i\cdot S_i}{T_i+S_i}$<ul>
+<li>$J_i$: job</li>
+<li>$T_i$: job已经运行的时间</li>
+<li>$S_i$: 每次浪费在重启操作上的GPU seconds</li>
+<li>$N_i$: 先前已经重启过的次数(已经重启过的次数越多，再次重启的可能性就越低)<br>最好只在如果不重启(重新分配资源)会使得调度目标的goodput最佳值大幅度下降时，才会重启</li>
+</ul>
+</li>
+</ul>
+<h4 id="Balancing-goodput-with-fairness"><a href="#Balancing-goodput-with-fairness" class="headerlink" title="Balancing goodput with fairness"></a>Balancing goodput with fairness</h4><p>用一个参数$p$来平衡job的goodput。让每个job都能获得相对公平的资源分配。则加上重启参数$r_i$公式变为</p>
+<ul>
+<li>$\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot G</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$</li>
+<li>$\displaystyle\min<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot G</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\lt 0$</li>
+<li>实验发现$p$在$-1.0~1.0$之间能够在获得稳定的公平性的同时对性能指标最小的负面影响，其中$p=-0.5$效果最好</li>
+</ul>
+<h4 id="Support-for-limited-adaptivity-支持有限制的自适应性"><a href="#Support-for-limited-adaptivity-支持有限制的自适应性" class="headerlink" title="Support for limited adaptivity(支持有限制的自适应性)"></a>Support for limited adaptivity(支持有限制的自适应性)</h4><p>大的数据规模使模型有高的吞吐量和使GPU有高利用率，但也可能导致训练模型的泛化误差(generalization gap)。因此Sia页支持对不同类型的job使用不同程度的自适应性。</p>
+<ul>
+<li>strong-scaling(强扩展) jobs: 固定的批量大小，但允许优化GPU数量和类型<ul>
+<li>优化的目标函数公式: $\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot T</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$(因为对于固定的批量大小，throughput和goodput成正比，不用考虑统计效率)</li>
+</ul>
+</li>
+<li>rigid(刚性) job: 固定的批量大小和GPU数量，只允许优化GPU类型<ul>
+<li>优化的目标函数公式: $\displaystyle\max<em>B\sum</em>{i=1}^{|J<em>R|}(\sum</em>{g=1}^{|N<em>g|}B</em>{ig}\cdot (r<em>i\cdot T</em>{ig})^p + \lambda(1-\lVert B_{ig}\rVert_1))\quad p\gt 0$(固定了GPU数量，配置的方案只需要考虑GPU的类型)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Preemption-and-reservation-抢占和预订"><a href="#Preemption-and-reservation-抢占和预订" class="headerlink" title="Preemption and reservation(抢占和预订)"></a>Preemption and reservation(抢占和预订)</h4><p>Sia假设所有的job都是抢占式的，但也支持一小部分的job是非抢占式的(只要它们的总需求能够得到满足)。在分配资源的时候，保证这些非抢占式的job被先分配资源，每一轮调度都要保证非抢占(在公式中为每个非抢占式的job加入限制项，促进资源分配给它们)。</p>
+<p>如果DL训练job的资源分配发生改变，Sia只能在当前小批量处理完成后才抢占该作业进行重新分配(不会有正在进行的通信导致结果丢失等问题)</p>
+<p>Reservation预定策略可以为设置了该策略的队列中的job预先保留一部分计算资源，不给其他job使用。原理和对非抢占式的处理相似</p>
+<h4 id="Checkpoint-restore"><a href="#Checkpoint-restore" class="headerlink" title="Checkpoint-restore"></a>Checkpoint-restore</h4><p>Sia会在每一轮调度结束后，都会为最新的模型参数、数据加载器(数据采样器和迭代器的状态)和优化器的状态(如Adam的梯度统计数据)建立checkpoint，并存储在磁盘中<br>如果DL训练job的分配发生变化，则:</p>
+<ul>
+<li>在该轮调度结束完成checkpoint保存</li>
+<li>释放分配给job的所有资源</li>
+<li>在新的要分配的资源上，为每个GPU启动一个Adaptive Executors</li>
+<li>从磁盘上的checkpoint在新分配的资源上恢复训练状态，继续模型训练</li>
+</ul>
+<p>checkpoint-restore还可以用于将job从故障中恢复，即在每个轮次出了故障，从上次的checkpoint重新恢复</p>
+<h4 id="Support-for-other-parallelization-techniques-其他的并行技术"><a href="#Support-for-other-parallelization-techniques-其他的并行技术" class="headerlink" title="Support for other parallelization techniques(其他的并行技术)"></a>Support for other parallelization techniques(其他的并行技术)</h4><p>扩展Sia的吞吐量模型，使其支持使用流水线和数据并行的job，允许Sia调度拥有几十亿参数模型的job</p>
+<ul>
+<li>流水线并行属于模型并行，策略是把一个大模型拆分到多个GPU上。</li>
+<li>数据并行用来扩展训练规模，即同一时间可以训练更多的数据</li>
+</ul>
+<p>假设模型的每个部分可以映射到$P$个GPU上($P\geq 1$)，有$N$个数据并行副本的job实际需要$N\times P$个GPU。因为每个数据并行副本都要在同一时间单独完整地过一遍模型，也就需要$N$个模型，而模型被拆分到了P个GPU上，所以一共需要$N\times P$个GPU<br>N条流水线上的副本会使用梯度all-reduce算法进行同步，完成一次训练迭代</p>
+<ul>
+<li>all-reduce实际目的是要汇总所有计算出来的梯度做个平均再分发给各个并行部分去更新各自参数继续训练</li>
+</ul>
+<p>假设给定mini-batch_size为$M$，表示一次迭代要处理的总的数据数量。给定micro-batch为$m$，表示每P个GPU(模型每个部分)一次迭代能处理的数据数量。</p>
+<ul>
+<li>则模型每一部分P个GPU上的副本都要在本地用$\frac{M}{mN}$个micro-batch计算梯度。<ul>
+<li>数据并行，所以一个模型处理$\frac{M}{N}$的数据</li>
+<li>模型并行，所以模型的每个组件(拥有$P$个GPU)需要处理$\frac{\frac{M}{N}}{m}$的数据</li>
+</ul>
+</li>
+</ul>
+<p>现在的混合并行优化器(hybrid-parallel, 即混合了模型并行和数据并行)非常耗时，这属于未来可以研究的方向</p>
+<h4 id="Scheduling-other-workload-types-调度其他类型的工作负载"><a href="#Scheduling-other-workload-types-调度其他类型的工作负载" class="headerlink" title="Scheduling other workload types(调度其他类型的工作负载)"></a>Scheduling other workload types(调度其他类型的工作负载)</h4><p>Sia可以不止用于调度深度学习训练的job，还可以用于其他类型的job(例如inference推理)</p>
+<h3 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h3><p>实现用的是开源的AdaptDL框架(基于PyTorch，提供对动态调整批量大小和GPU数量的原生支持)，只是用Sia替换了本身的调度器，且重构了框架的数据加载器(data-loader)<br>采用可配置的学习率缩放规则(configurable learning rate scaling rule)，根据批量大小缩放训练的学习率(批量大学习率大，批量小学习率小)</p>
+<ul>
+<li>使用AdamW优化器的模型，采用平方根学习率缩放规则(即缩放的步长为平方或平方根)</li>
+<li>使用SGD优化器的模型，采用AdaScale自适应缩放规则(训练一个检测器来检测学习率的效果，从而决定如何缩放学习率)</li>
+</ul>
+<p>Sia的Policy像一个Kubernetes服务一样运行，在每轮调度开始的时候，根据最近的goodput模型的结果用公式优化资源分配(详细见<a href="#scheduler-objective">Scheduler objective</a>)。</p>
+<ul>
+<li>将公式看作是混合整数线性规划问题(Mixed-Integer Linear Program)，用来自CVXPY包的GLPK_MI求解器求解</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Ray%20conclusion/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Ray conclusion</div></div></a></div><div class="next-post pull-right"><a href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">术语和基本算法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Ray%20conclusion/" title="Ray conclusion"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-27</div><div class="title">Ray conclusion</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Sia-Heterogeneity-aware-goodput-optimized-ML-cluster-scheduling"><span class="toc-text">Sia: Heterogeneity-aware, goodput-optimized ML-cluster scheduling</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Abstract"><span class="toc-text">Abstract</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Background"><span class="toc-text">Background</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sia"><span class="toc-text">Sia</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Contributions"><span class="toc-text">Contributions</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DL-cluster-scheduling"><span class="toc-text">DL cluster scheduling</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Data-Parallelism"><span class="toc-text">Data Parallelism</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Model-Parallelism"><span class="toc-text">Model Parallelism</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%B9%E6%80%A7%E5%92%8C%E8%B5%84%E6%BA%90%E8%87%AA%E9%80%82%E5%BA%94%E7%9A%84DL-jobs"><span class="toc-text">弹性和资源自适应的DL jobs</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%9E%84%E8%B5%84%E6%BA%90"><span class="toc-text">异构资源</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Related-work"><span class="toc-text">Related work</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BC%82%E6%9E%84%E6%84%9F%E7%9F%A5-Heterogeneity-aware-%E7%9A%84%E8%B0%83%E5%BA%A6%E5%99%A8"><span class="toc-text">异构感知(Heterogeneity-aware)的调度器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%87%AA%E9%80%82%E5%BA%94%E6%84%9F%E7%9F%A5-Adaptivity-aware-%E7%9A%84%E8%B0%83%E5%BA%A6%E5%99%A8"><span class="toc-text">自适应感知(Adaptivity-aware)的调度器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%8C%E6%9E%84%E9%9B%86%E7%BE%A4%E4%B8%8A%E5%88%9A%E6%80%A7job%E7%9A%84%E8%B0%83%E5%BA%A6%E5%99%A8"><span class="toc-text">同构集群上刚性job的调度器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9D%9E%E9%9B%86%E7%BE%A4%E8%B0%83%E5%BA%A6%E5%99%A8%E7%9A%84%E5%B9%B6%E8%A1%8C%E4%BC%98%E5%8C%96%E5%99%A8"><span class="toc-text">非集群调度器的并行优化器</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sia-Design-and-Implementation"><span class="toc-text">Sia Design and Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#process"><span class="toc-text">process</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Bootstrapping-of-throughput-models"><span class="toc-text">Bootstrapping of throughput models</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Configurations"><span class="toc-text">Configurations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Scheduler-objective"><span class="toc-text">Scheduler objective</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Valid-Configurations"><span class="toc-text">Valid Configurations</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Goodput-Estimation"><span class="toc-text">Goodput Estimation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Normalized-goodput-matrix"><span class="toc-text">Normalized goodput matrix</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Scheduler-objective-1"><span class="toc-text">Scheduler objective</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Restart-Factor-%E9%87%8D%E5%90%AF%E5%8F%82%E6%95%B0"><span class="toc-text">Restart Factor(重启参数)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Balancing-goodput-with-fairness"><span class="toc-text">Balancing goodput with fairness</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Support-for-limited-adaptivity-%E6%94%AF%E6%8C%81%E6%9C%89%E9%99%90%E5%88%B6%E7%9A%84%E8%87%AA%E9%80%82%E5%BA%94%E6%80%A7"><span class="toc-text">Support for limited adaptivity(支持有限制的自适应性)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Preemption-and-reservation-%E6%8A%A2%E5%8D%A0%E5%92%8C%E9%A2%84%E8%AE%A2"><span class="toc-text">Preemption and reservation(抢占和预订)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Checkpoint-restore"><span class="toc-text">Checkpoint-restore</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Support-for-other-parallelization-techniques-%E5%85%B6%E4%BB%96%E7%9A%84%E5%B9%B6%E8%A1%8C%E6%8A%80%E6%9C%AF"><span class="toc-text">Support for other parallelization techniques(其他的并行技术)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Scheduling-other-workload-types-%E8%B0%83%E5%BA%A6%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%B7%A5%E4%BD%9C%E8%B4%9F%E8%BD%BD"><span class="toc-text">Scheduling other workload types(调度其他类型的工作负载)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Implementation"><span class="toc-text">Implementation</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>

@@ -1,0 +1,787 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>分布式系统简介 | ZJN_BLOG</title><meta name="keywords" content="高级分布式系统"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="分布式系统简介定义 Autonomous processors communicating over a communication network No common physical clock No shared memory Geographical seperation Autonomy and heterogeneity(异构)   分布式系统：物理分布，逻辑集中；个体独立，整体统一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式系统简介">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2024/09/21/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-21-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="分布式系统简介定义 Autonomous processors communicating over a communication network No common physical clock No shared memory Geographical seperation Autonomy and heterogeneity(异构)   分布式系统：物理分布，逻辑集中；个体独立，整体统一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2024-09-21T06:20:15.000Z">
+<meta property="article:modified_time" content="2024-11-09T04:33:57.467Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="高级分布式系统">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2024/09/21/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-21-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '分布式系统简介',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-11-09 12:33:57'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">分布式系统简介</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-09-21T06:20:15.000Z" title="发表于 2024-09-21 14:20:15">2024-09-21</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-09T04:33:57.467Z" title="更新于 2024-11-09 12:33:57">2024-11-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">4.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>19分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="分布式系统简介"><a href="#分布式系统简介" class="headerlink" title="分布式系统简介"></a>分布式系统简介</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
+<li>Autonomous processors communicating over a communication network<ul>
+<li>No common physical clock</li>
+<li>No shared memory</li>
+<li>Geographical seperation</li>
+<li>Autonomy and heterogeneity(异构)</li>
+</ul>
+</li>
+<li>分布式系统：物理分布，逻辑集中；个体独立，整体统一<ul>
+<li>若干独立自主计算机的集合(硬件)</li>
+<li>这些计算机对于用户来说像是单个耦合系统(软件)</li>
+</ul>
+</li>
+<li>A distributed system is one in which the failure of a computer you didn’t even know existed can render your own computer unusable(不知道存在让自己计算机无法使用的故障计算机)——Leslie Lamport</li>
+</ul>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>自主性<ul>
+<li>计算节点硬件或软件进程是独立的</li>
+</ul>
+</li>
+<li>耦合性<ul>
+<li>用户或者应用程序感觉系统是一个系统——节点之间需要相互协作</li>
+</ul>
+</li>
+</ul>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><ul>
+<li>使资源可访问：让用户方便地访问资源<ul>
+<li>资源访问共享<ul>
+<li>基于云的存储和文件系统</li>
+<li>基于P2P的流媒体系统</li>
+<li>共享邮件系统(外包邮件系统)</li>
+<li>共享的Web支撑系统(CDN)</li>
+</ul>
+</li>
+<li>The network is the computer</li>
+</ul>
+</li>
+<li>透明性：隐藏资源在网络上的分布(隐藏进程和资源在多台计算机分布这一事实)，分布式透明性是一个较好的属性，但是需要区别对待<ul>
+<li>访问：隐藏数据表示形式的不同以及资源访问方式的不同</li>
+<li>位置：隐藏资源所在位置</li>
+<li>迁移：异常资源是否移动到另一个位置</li>
+<li>重定位：隐藏资源是否在使用过程中移动到另一个位置</li>
+<li>复制：隐藏是否对资源进行复制</li>
+<li>并发：隐藏资源是否由相互竞争的用户共享</li>
+<li>故障：隐藏资源的故障和修复</li>
+<li>持久化：隐藏数据在主存和磁盘</li>
+<li>完全的透明性是不可取的，也是难以实现的：<ul>
+<li>可能掩盖通信的性能问题</li>
+<li>完全隐藏网络和节点的失效是不可能<ul>
+<li>不能区分失效和性能变慢的节点</li>
+<li>不能确定系统失效之前的操作是什么</li>
+</ul>
+</li>
+<li>完全的透明性可能牺牲性能，暴露系统分布特征</li>
+<li>保证复制节点与主节点的一致性需要时间</li>
+<li>为了容错需要立即将内存修改的内容同步到磁盘上</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>开放性：访问接口的标准化，系统根据一系列准则提供服务，准则描述了所提供服务的语法和语义(标准化)<ul>
+<li>系统应该具有良好定义的接口</li>
+<li>系统应该容易实现互操作性</li>
+<li>系统应该支持可移植性</li>
+<li>系统应该容易实现可扩展性</li>
+<li>策略与机制：机制是提供的功能，策略是如何用这些功能 <ul>
+<li>两者严格分离：需要设计合适的机制，导致出现很多配置参数和复杂的管理</li>
+<li>两者耦合：硬编码某些策略可以简化管理和配置参数，但迁移性灵活性不好，不同的系统要不同的策略</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>可扩展性：系统在规模、地域、管理上的可扩展性<ul>
+<li>规模可扩展性(大部分系统关心)：用户数量和进程数量增加<ul>
+<li>多个服务器独立并行运行</li>
+</ul>
+</li>
+<li>地理可扩展性：节点之间的物理位置距离扩大</li>
+<li>管理可扩展性：管理域的数量</li>
+</ul>
+</li>
+</ul>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><ul>
+<li>局域网</li>
+<li>分布式数据库</li>
+<li>搜索集群</li>
+<li>大规模深度学习系统</li>
+<li>大规模微服务系统</li>
+</ul>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/software%20components%20at%20each%20process.png" alt="img"></p>
+<h2 id="Motivation-for-Distributed-System"><a href="#Motivation-for-Distributed-System" class="headerlink" title="Motivation for Distributed System"></a>Motivation for Distributed System</h2><ul>
+<li>Inherently distributed computation(分布式计算本就是固有的特征)</li>
+<li>Resource sharing</li>
+<li>Access to remote resources</li>
+<li>Increased performance / cost ratio(提升性价比)</li>
+<li>Reliability<ul>
+<li>availability</li>
+<li>integrity</li>
+<li>fault-tolerance</li>
+</ul>
+</li>
+<li>Scalability</li>
+<li>Modularity and incremental expandability</li>
+</ul>
+<h2 id="Parallel-Systems"><a href="#Parallel-Systems" class="headerlink" title="Parallel Systems"></a>Parallel Systems</h2><h3 id="Multiprocessor-systems"><a href="#Multiprocessor-systems" class="headerlink" title="Multiprocessor systems"></a>Multiprocessor systems</h3><ul>
+<li>direct access to shared memory, UMA model, like Omega, Butterfly, Clos, Shuffle-exchange networks(可直接访问内存的多处理器系统)</li>
+<li>Interconnection network <ul>
+<li>bus(总线)</li>
+<li>multi-stage switch(多阶段开关)</li>
+</ul>
+</li>
+<li>Interconnection generation function(互联功能), routing function(输出功能)</li>
+<li>UMA Models(Uniform memory access)<ul>
+<li>the processors may locally cache data from memory<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/UMA.png" alt="img"></li>
+</ul>
+</li>
+<li>Omega<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Omega.png" alt="img"><ul>
+<li>n processors, nmemory banks</li>
+<li>log n stages: with n/2 switches of size 2x2 in each stage(图中小方块)</li>
+<li>Interconnection function: Output i of a stage connected to input j of next stage:<script type="math/tex; mode=display">
+j = 
+\begin{cases}
+2i\quad for\quad 0 \leq i \leq n/2 - 1\\
+2i+1-n\quad for\quad n/2 \leq i \leq n - 1
+\end{cases}</script></li>
+<li>Routing function: in any stage s at any switch: <ul>
+<li>to route to dest. j(要输出到内存编号的最后一位是0还是1？)<ul>
+<li>if $(s+1)^th$ MSB of $j = 0$ then route on upper wire</li>
+<li>else $[(s+1)^th]$ MSB of $j =1$ then route on lower wire</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Butterfly<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Butterfly.png" alt="img"></li>
+<li>Nvidia NVlink<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Nvidia%20NVlink.png" alt="img"></li>
+<li>Interconnection Topologies for Multiprocessors<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Interconnection%20Topologies%20for%20Multiprocessors.png" alt="img"></li>
+</ul>
+<h3 id="Multicomputer-parallel-systems"><a href="#Multicomputer-parallel-systems" class="headerlink" title="Multicomputer parallel systems"></a>Multicomputer parallel systems</h3><ul>
+<li>no direct access to shared memory, NUMA model, like NYU Ultracomputer, CM* Connection Machine, IBM Blue gene, 天河二号(不能直接访问内存的多计算机并行系统)<ul>
+<li>NUMA(Non-uniform memory access)<ul>
+<li>the processors may locally cache data from memory<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/NUMA.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Array-processors"><a href="#Array-processors" class="headerlink" title="Array processors"></a>Array processors</h3><ul>
+<li>colocated, tightly coupled, common system clock, like Niche market, DSP applications(处理器阵列)</li>
+</ul>
+<h2 id="Flynn’s-Taxonomy-费林分类法"><a href="#Flynn’s-Taxonomy-费林分类法" class="headerlink" title="Flynn’s Taxonomy(费林分类法)"></a>Flynn’s Taxonomy(费林分类法)</h2><ul>
+<li>SISD: Single Instruction Stream Single Data Stream(traditional)</li>
+<li>SIMD: Single Instruction Stream Multiple Data Stream<ul>
+<li>scientific applications, applications on large arrays</li>
+<li>vector processors矢量处理器, systolic arrays脉动阵列, Pentium/SSE, DSP chips</li>
+</ul>
+</li>
+<li>MISD: Multiple Instruction Stream Single Data Stream<ul>
+<li>visualization(用于可视化)</li>
+</ul>
+</li>
+<li>MIMD: Multiple Instruction Stream Multiple Data Stream<ul>
+<li>distributed systems, vast majority of parallel systems<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Flynn&#39;s%20Taxonomy.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h2 id="Some-Terminology-一些术语"><a href="#Some-Terminology-一些术语" class="headerlink" title="Some Terminology(一些术语)"></a>Some Terminology(一些术语)</h2><ul>
+<li>Coupling(联轴器)<ul>
+<li>Interdependency/binding among modules(模块间的相互依赖或绑定), whether hardware or software(e.g., OS, middleware)</li>
+</ul>
+</li>
+<li>Parallelism: T(1) / T(n)<ul>
+<li>Function of program and system</li>
+</ul>
+</li>
+<li>Concurrency(并发性) of a program<ul>
+<li>Measures productive CPU time vs. waiting for synchronization operations(CPU运行的时间与等待同步操作的时间的比例)</li>
+</ul>
+</li>
+<li>Granularity of a program<ul>
+<li>Amt. of computation vs. amt. of communication</li>
+<li>Fine-grained program suited for tightly-coupled system(细粒度程序适合紧密耦合的系统)</li>
+</ul>
+</li>
+<li>Message-passing and Shared Memory<ul>
+<li>Emulating MP over SM(共享内存模拟消息传递)<ul>
+<li>Partition shared address space(部分共享地址空间)</li>
+<li>Send/Receive emulated by writing/reading from special mailbox per pair of processes(向特殊的mailbox读写模拟收发)</li>
+</ul>
+</li>
+<li>Emulating SM over MP(消息传递模拟共享内存)<ul>
+<li>Model each shared object as a process(开一个共享进程)</li>
+<li>Write to shared object emulated by sending message to owner process for the object(向该进程发送消息模拟写共享内存)</li>
+<li>Read from shared object emulated by sending query to owner of shared object(向该进程接收消息模拟读共享内存)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="分布式系统与其他系统的关系"><a href="#分布式系统与其他系统的关系" class="headerlink" title="分布式系统与其他系统的关系"></a>分布式系统与其他系统的关系</h2><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E4%B8%8E%E5%85%B6%E4%BB%96%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB.png" alt="img"></p>
+<h2 id="Classification-of-Primitives-分类原语"><a href="#Classification-of-Primitives-分类原语" class="headerlink" title="Classification of Primitives(分类原语)"></a>Classification of Primitives(分类原语)</h2><h3 id="Synchronous-and-Asynchronous-同步和异步"><a href="#Synchronous-and-Asynchronous-同步和异步" class="headerlink" title="Synchronous and Asynchronous(同步和异步)"></a>Synchronous and Asynchronous(同步和异步)</h3><ul>
+<li>Synchronous(sned/receive, 读写都有同步的)<ul>
+<li>Handshake between sender and receiver(收发间需要握手)</li>
+<li>Send completes when Receive completes(接收完成后发送才完成)</li>
+<li>Receive completes when data copied into buffer(数据完全拷贝进入缓存后接收才完成，所以发送是最后完成的？)</li>
+</ul>
+</li>
+<li>Asynchronous(only send, 只有发送才是异步的)<ul>
+<li>Control returns to process when data copied out of user-specified buffer(发送不用等接收完成才返回，只用在发送的数据从用户指定的缓存区复制出去后就可返回)</li>
+</ul>
+</li>
+<li>Messgae-passing System<ul>
+<li>Asynchronous Executions:<ul>
+<li>there is no processor synchrony(处理器不同步) and there is no bound on the drift rate of processor clocks(时钟漂移率也没有限制，时钟漂移是抖动的另一种形式：当抖动频率小于10Hz的时候把这样的抖动叫做漂移。抖动即在时钟信号短时间内的波动。)</li>
+<li>message delays(transmission + propagation times) are finite but unbounded(消息延迟包括传输和传播时间，有限但无界)</li>
+<li>there is no upper bound on the time taken by a process to execute a step(进程执行一个步骤所花费的时间没有上限)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Asynchronous%20Executions.png" alt="img"><ul>
+<li>The arrows denote the message </li>
+<li>The tail and head of an arrow mark the send and receive event for that message, denoted by a circle and vertical line, respectively(圆圈是发送事件，垂直线是接收事件)</li>
+<li>Non-communication events, also termed as internal events, are shown by shaded circles(非通信的内部事件，有黑圈表示)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Synchronous Executions<ul>
+<li>processors are synchronized and the clock drift rate between any two processors is bounded(处理器同步，任意两个处理器的时钟漂移率是绑定的)</li>
+<li>message delivery(transmission + delivery) times are such that they occur in one logical step or round</li>
+<li>there is a known upper bound on the time taken by a process to execute a step(一个进程执行一个步骤所花费的时间有一个已知的上限)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Synchronous%20Executions.png" alt="img"><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Sync_Execution(<span class="type">int</span> k, n)  <span class="comment">// k rounds, n processes</span></span><br><span class="line"><span class="keyword">for</span> r = <span class="number">1</span> to k <span class="keyword">do</span></span><br><span class="line">  proc i sends msg to (i+<span class="number">1</span>) mod n and (i - <span class="number">1</span>) mod n;</span><br><span class="line">  each proc i receives msg <span class="title function_">from</span> <span class="params">(i+<span class="number">1</span>)</span> mod n <span class="title function_">and</span> <span class="params">(i<span class="number">-1</span>)</span> mod n;</span><br><span class="line">  compute app-specific function on received values</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Comparison<ul>
+<li>Difficul to build a truly synchronous system, can simulate this abstraction(非常困难构建一个真正的同步系统，但可以模拟同步系统)</li>
+<li>Virtual synchrony(虚拟同步):<ul>
+<li>async exection, processes synchronize as per application requirement(异步执行，进程根据应用程序要求同步)</li>
+<li>execute in rounds/steps</li>
+</ul>
+</li>
+<li>Emulations:<ul>
+<li>Async program on sync system: trivial(Async is special case of Sync，同步系统中的异步程序，异步是同步的一种特例)</li>
+<li>Sync program on async system: tool called synchronzier(异步系统的同步程序，比较困难)<br><img src="https://github.com/zjn-astonishe/image/blob/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/system%20emulations.png?raw=true" alt="img"><ul>
+<li>Assumption: failure-free system</li>
+<li>System A emulated by system B(B模拟出了A，则):<ul>
+<li>if not solvable in B, not solvable in A(无法在B中解决的问题，A中也不能解决)</li>
+<li>if solvable in A, solvable in B(能在A中解决的问题，在B中一定能解决)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Blocking-and-Nonblocking-阻塞和非阻塞"><a href="#Blocking-and-Nonblocking-阻塞和非阻塞" class="headerlink" title="Blocking and Nonblocking(阻塞和非阻塞)"></a>Blocking and Nonblocking(阻塞和非阻塞)</h3><ul>
+<li>Blocking(send/receive)<ul>
+<li>Control returns to invoking process after processing of primitive(whether sync or async) completes(需要在原语执行完成后才返回)</li>
+</ul>
+</li>
+<li>Nonblocking(send/receive)<ul>
+<li>Control returns to process immediately after invocation(调用结束后直接返回)</li>
+<li>Send: even before data copied out of user buffer(甚至在数据从用户缓冲区复制出来之前)</li>
+<li>Receive: even before data may have arrived from sender(甚至在数据从发送者到达之前)</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// When the Wait can returns, at least one of its parameters is posted</span></span><br><span class="line">Send(X, destination, handle_k)  <span class="comment">// handle_k is a return parameter, returns a system-generated handle</span></span><br><span class="line"><span class="comment">// because it is non-blocking, later to check for status of completion of call, keep checking(loop or periodically) if handle has been posted(不断检查是否已经返回)</span></span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line"><span class="comment">// Issue Wait(handle_1, handle_2, ...) call with list of handles</span></span><br><span class="line">Wait(handle_1, handle_2, ..., handle_k, ...handle_m)  <span class="comment">// Wait always blocks until one of the stipulated handles is posted</span></span><br></pre></td></tr></table></figure>
+<h3 id="Combination-of-Blocking-Nonblocking-Synchronous-Asynchronous-send-receive-primities"><a href="#Combination-of-Blocking-Nonblocking-Synchronous-Asynchronous-send-receive-primities" class="headerlink" title="Combination of Blocking/Nonblocking, Synchronous/Asynchronous, send/receive primities"></a>Combination of Blocking/Nonblocking, Synchronous/Asynchronous, send/receive primities</h3><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/primities.png" alt="img"></p>
+<h2 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h2><h3 id="System-Perspective"><a href="#System-Perspective" class="headerlink" title="System Perspective"></a>System Perspective</h3><ul>
+<li>Communication mechanisms<ul>
+<li>Remote Procedure Call(RPC，远程过程调用)</li>
+<li>Remote Object Invocation(ROI，远程对象调用)</li>
+<li>Message-Oriented communication(面向消息的通信) vs. Stream-oriented communication(面向流的通信)</li>
+</ul>
+</li>
+<li>Processes: <ul>
+<li>Code migration(代码迁移)</li>
+<li>process/thread management at clients and servers(客户端和服务端的进程/线程管理)</li>
+<li>deign of software and mobile agents(设计软件和移动用户)</li>
+</ul>
+</li>
+<li>Naming:<ul>
+<li>Easy to use identifiers(容易使用标识符) needed to locate resources and processes transparently and scalably(透明和可扩展地运行，定位资源)</li>
+</ul>
+</li>
+<li>Synchronization(同步)</li>
+<li>Data storage and access(存储数据和访问数据)<ul>
+<li>Schemes for data storage, search, and lookup should be fast and scalable across network(数据的存储、搜索和查找方案应该快速且可跨网络扩展)</li>
+<li>Revisit file system design(需要重新审视对文件系统的设计)</li>
+</ul>
+</li>
+<li>Consistency and replication(一致性和复制)<ul>
+<li>Replication for fast access, scalability, avoid bottlenecks(为了快速访问和可扩展性要进行复制)</li>
+<li>Reuire consistency management among replicas(副本之间要有一致性管理)</li>
+</ul>
+</li>
+<li>Fault-tolerance(容错):<ul>
+<li>correct and efficient operation despite link, node, process failures(即使链路、节点、流程出现故障，依然能正确有效运行)</li>
+</ul>
+</li>
+<li>Distributed systems security(安全)<ul>
+<li>Secure channels(信道安全)</li>
+<li>access control(访问安全)</li>
+<li>key management(key generation and key distribution，密钥管理：设计生成和分发)</li>
+<li>authorization(认证)</li>
+<li>secure group management(组管理)</li>
+</ul>
+</li>
+<li>Scalability and modularity of algorithms, data, services(可扩展性和模块化)</li>
+<li>Some experimental systems<ul>
+<li>Globe</li>
+<li>Globus</li>
+<li>Grid</li>
+<li>PlanetLab</li>
+</ul>
+</li>
+<li>API for communications, services: ease of use(容易使用的API)</li>
+<li>Transparency: hiding implementation policies from user<ul>
+<li>Access: hide differences in data rep across systems, provide uniform operations to access resources</li>
+<li>Location: locations of resources are transparent(要访问的资源在哪用户是不知道的)</li>
+<li>Migration: relocate resources without renaming</li>
+<li>Relocation: relocate resources as they are being accessed</li>
+<li>Replication: hide replication from the users</li>
+<li>Concurrency(并发，互斥？): mask the use of shared resources</li>
+<li>Failure: reliable and fault-tolerant operation</li>
+</ul>
+</li>
+</ul>
+<h3 id="Algorithm-Design"><a href="#Algorithm-Design" class="headerlink" title="Algorithm/Design"></a>Algorithm/Design</h3><ul>
+<li>Useful execution models and frameworks: to reason with and design correct distributed programs(模型和框架，推理和设计正确的分布式模型)<ul>
+<li>Interleaving model(交错模型)</li>
+<li>Partial order model(部分顺序模型)</li>
+<li>Input/Output automata(输入/输出自动机)</li>
+<li>Temporal Logic of Actions(行动的时间逻辑)</li>
+</ul>
+</li>
+<li>Dynamic distributed graph algorithms(动态分布式图算法) and routing algorithms(路由算法)<ul>
+<li>System topology: distributed graph, with only local neighborhood knowledge(只有本地邻域的知识构建分布式图，系统拓扑)</li>
+<li>Graph algorithms: building blocks for group communication, data dissemination, object location(图算法：为组通信、数据传播、对象定位构建块)</li>
+<li>Algorithms need to deal with dynamically changing graphs(解决动态变化的图)</li>
+<li>Algorithm effiency: also impacts resource consumption, latency, traffic, congestion(影响资源消耗、延迟、流量和拥塞)</li>
+</ul>
+</li>
+<li>Time and global state(时间和全局的状态)<ul>
+<li>3D space, 1D time</li>
+<li>Physical time(clock) accuracy，物理时间的精度</li>
+<li>Logical time captures inter-process dependencies and tracks relative time progression，逻辑时间捕获进程间的依赖关系并跟踪相对时间进程</li>
+<li>Global state observation: inherent distributed nature of system(全球状态观测，系统固有的分布式特性)</li>
+<li>Concurrency measures(并发度量): concurrency depends on program logic, execution speeds within logical threads, communication speeds(程序逻辑、逻辑线程内的执行速度、通信速度)</li>
+</ul>
+</li>
+<li>Synchronization/coordination mechanisms(同步和协作机制)<ul>
+<li>Physical clock synchronization: hardware drift needs correction(硬件漂移需要校正，让物理时钟同步)</li>
+<li>Leader election: select a distinguished process, due to inherent symmetry(选择一个较好的进程作为领导者)</li>
+<li>Mutual exclusion: coordinate access to critical resources(相互排斥，协调关键资源的获取)</li>
+<li>Distributed deadlock detection and resolution: need to observe global state; avoid duplicate detection(避免重复检测), unnecessary aborts(不必要的中止)</li>
+<li>Termination detection(终止检测): global state of quiescence(全局静止状态); no CPU processing(无CPU处理) and no in-transit messages(无传输中的消息)</li>
+<li>Garbage collection: Reclaim objects no longer pointed to by any process(回收不再被任何进程指向的对象)</li>
+</ul>
+</li>
+<li>Group communication, multicast, and ordered message delivery(组通信、多播和有序消息传递)<ul>
+<li>Group: processes sharing a context, collaborating(共享上下文、协作的流程)</li>
+<li>Multiple joins, leaves, fails</li>
+<li>Concurrent sends: semantics of delivery order(并发发送：交付顺序)</li>
+</ul>
+</li>
+<li>Monitoring distributed events and predicates(监视分布式的事件和预测)<ul>
+<li>Predicate: condition on global system state(全局系统状态条件)</li>
+<li>Debugging, environmental sensing, industrial process control, analyzing event streams(事件流分析)</li>
+</ul>
+</li>
+<li>Distributed program design and verification tools</li>
+<li>Debugging distributed programs</li>
+<li>Data replication, consistency models, and caching<ul>
+<li>Fast, scalable access;</li>
+<li>coordinate replica updates;</li>
+<li>optimize replica placement</li>
+</ul>
+</li>
+<li>World Wide Web design: caching, searching, scheduling<ul>
+<li>Global scale distributed system; end-users</li>
+<li>Read-intensive; prefetching over caching</li>
+<li>Object search and navigation are resource-intensive</li>
+<li>User-perceived latency</li>
+</ul>
+</li>
+<li>Distributed shared memory abstraction(共享内存抽象)<ul>
+<li>Wait-free algorithm design(无等待算法设计): process completes execution, irrespective of actions of other processes, i.e., n - 1 fault-resilience</li>
+<li>Mutual exclusion(相互排斥)<ul>
+<li>Bakery algorithm, semaphores(信号量), based on atomic hardware primitives, fast algorithms when contention-free access</li>
+</ul>
+</li>
+<li>Register constructions<ul>
+<li>Revisit assumptions about memory access</li>
+<li>What behavior under concurrent unrestricted access to memory? 并发无限制访问内存Foundation for future architectures, decoupled with technology (semiconductor, biocomputing, quantum …)</li>
+</ul>
+</li>
+<li>Consistency models:<ul>
+<li>coherence versus access cost trade-off(一致性和访问成本相比)</li>
+<li>Weaker models(弱模型) than strict consistency of uniprocessors(单一处理器的严格一致性)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Reliable and fault-tolerant distributed systems<ul>
+<li>Consensus algorithms(共识算法): processes reach agreement in spite of faults (under various fault models)，尽管存在故障流程仍能达成一致</li>
+<li>Replication and replica management(复制和副本管理)</li>
+<li>Voting and quorum(法定人数) systems</li>
+<li>Distributed databases, commit: ACID properties</li>
+<li>Self-stabilizing systems: ”illegal” system state changes to ”legal” state; requires built-in redundancy(内置冗余)</li>
+<li>Checkpointing and recovery algorithms: roll back and restart from earlier ”saved” state(回滚并从之前的“已保存”状态重新启动)</li>
+</ul>
+</li>
+<li>Failure detectors(故障检测器):<ul>
+<li>Difficult to distinguish a ”slow” process/message from a failed process/ never sent message(很难区分 “缓慢进程、消息和失败进程、从未发送的消息)</li>
+<li>algorithms that ”suspect” a process as having failed and converge on a determination of its up/down status</li>
+</ul>
+</li>
+<li>Load balancing(负载平衡，动态减少延迟和动态提高吞吐量): to reduce latency, increase throughput, dynamically. E.g., server farms<ul>
+<li>Computation migration(计算迁移): relocate processes to redistribute workload(重新分配工作负载)</li>
+<li>Data migration(数据迁移): move data, based on access patterns(访问模式)</li>
+<li>Distributed scheduling(分布式调度): across processors(跨处理器)</li>
+</ul>
+</li>
+<li>Real-time scheduling: difficult without global view, network delays make task harder(实时调度：没有全局视图会很困难，网络延迟会导致任务更困难)</li>
+<li>Performance modeling and analysis: Network latency to access resources must be reduced(性能建模和分析：必须减少访问资源的网络延迟)<ul>
+<li>Metrics: theoretical measures for algorithms, practical measures for systems(度量：算法的理论度量，系统的实际度量)</li>
+<li>Measurement methodologies and tools(测量方法和工具)</li>
+</ul>
+</li>
+<li>系统设计<ul>
+<li>正确的接口设计和抽象</li>
+<li>如何换分功能和可扩展性</li>
+</ul>
+</li>
+<li>一致性<ul>
+<li>如何一致共享数据</li>
+</ul>
+</li>
+<li>容错<ul>
+<li>如何保障系统在出现部分失效的情况下继续正常运行</li>
+</ul>
+</li>
+<li>不同的部署场景<ul>
+<li>集群、广域分布、传感网络</li>
+</ul>
+</li>
+<li>实现<ul>
+<li>如何最大化并行，突破性能瓶颈，平衡负载</li>
+</ul>
+</li>
+</ul>
+<h3 id="Applications-and-Emerging"><a href="#Applications-and-Emerging" class="headerlink" title="Applications and Emerging"></a>Applications and Emerging</h3><ul>
+<li>Mobile systems(移动系统)<ul>
+<li>Wireless communication(无线通信): unit disk model(磁盘单元); broadcast medium(MAC，广播媒体), power management(能源管理) etc.</li>
+<li>CS perspective: routing(路由), location management(位置管理), channel allocation(信道分配), localization(定位) and position estimation(位置估计), mobility management(移动管理)</li>
+<li>Base station model(基站模型)(cellular model，蜂窝模型)</li>
+<li>Ad-hoc network model(rich in distributed garph theory problems)</li>
+</ul>
+</li>
+<li>Sensor networks(传感器网络): Processor with electro-mechanical interface(机电接口)</li>
+<li>Ubiquitous or pervasive computing(普适计算)<ul>
+<li>Processors embedded in and seamlessly pervading environment(嵌入并无缝渗透环境的处理器)</li>
+<li>Wireless sensor and actuator mechanisms(执行机制); self-organizing(自组织); network-centric(网络中心化), resource-constrained(资源受限)</li>
+<li>E.g., intelligent home, smart workplace</li>
+</ul>
+</li>
+<li>Peer-to-peer computing(点对点计算):<ul>
+<li>No hierarchy(没有等级制度); symmetric role(对称角色); self-organizing(自组织); efficient object storage and lookup(高效的对象存储和查找); scalable(可扩展性); dynamic reconfig(动态重新配置)</li>
+</ul>
+</li>
+<li>Publish/subscribe(发布和订阅), content distribution(内容分发)<ul>
+<li>Filtering information to extract that of interest(过滤信息，只提取自己感兴趣的)</li>
+</ul>
+</li>
+<li>Distributed agents(分布式代理)<ul>
+<li>Processes that move and cooperate to perform specific tasks(处理器移动和协作执行特定的任务); coordination, controlling mobility(控制移动性), software design and interfaces</li>
+</ul>
+</li>
+<li>Distributed data mining(分布式数据挖掘)<ul>
+<li>Extract patterns/trends of interest(提取感兴趣的模式/趋势)</li>
+<li>Data not available in a single repository(数据在单个存储库不可用)</li>
+</ul>
+</li>
+<li>Grid computing(网格计算)<ul>
+<li>Grid of shared computing resources; use idle CPU cycles</li>
+<li>Issues: scheduling, QOS guarantees, security of machines and jobs</li>
+</ul>
+</li>
+<li>Security(安全)<ul>
+<li>Confidentiality(机密性), authentication(身份验证), availability(可用性) in a distributed setting</li>
+<li>Manage wireless, peer-to-peer, grid environments<ul>
+<li>Issues: e.g., lack of trust, broadcast media, resource-constrained, lack of structure</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="理解的谬误"><a href="#理解的谬误" class="headerlink" title="理解的谬误"></a>理解的谬误</h2><ul>
+<li>The network is reliable(网络不一定是可靠的)</li>
+<li>Latency is ZERO(肯定有延迟)</li>
+<li>Bandwidth is infinite(带宽是有限的)</li>
+<li>The network is secure(网络不一定安全)</li>
+<li>Topology doesn’t change(拓扑会动态改变)</li>
+<li>There is only one administrator(不止一个管理员)</li>
+<li>Transport costs(传输有代价)</li>
+<li>The network is nomogeneous(网络有一定规则)</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/09/13/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2024-09-13-Multimedia/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Multimedia</div></div></a></div><div class="next-post pull-right"><a href="/2024/09/25/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/2024-09-25-%E5%9F%BA%E5%87%86%E8%AF%84%E6%B5%8B%E9%9B%86/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">基准评测集</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/09/28/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-28-%E5%88%86%E5%B8%83%E5%BC%8F%E8%AE%A1%E7%AE%97%E6%A8%A1%E5%9E%8B/" title="分布式计算模型"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-28</div><div class="title">分布式计算模型</div></div></a></div><div><a href="/2024/09/29/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-29-%E9%80%BB%E8%BE%91%E6%97%B6%E9%97%B4/" title="逻辑时间"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-09-29</div><div class="title">逻辑时间</div></div></a></div><div><a href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="title">术语和基本算法</div></div></a></div><div><a href="/2024/10/25/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-10-25-%E5%85%A8%E5%B1%80%E7%8A%B6%E6%80%81%E5%8F%8A%E5%BF%AB%E7%85%A7%E7%AE%97%E6%B3%95/" title="全局状态及快照算法"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-25</div><div class="title">全局状态及快照算法</div></div></a></div><div><a href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-01-11</div><div class="title">消息序和组通信</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">50</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">27</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B"><span class="toc-text">分布式系统简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-text">定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%89%B9%E6%80%A7"><span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%9B%AE%E6%A0%87"><span class="toc-text">目标</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A1%88%E4%BE%8B"><span class="toc-text">案例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%9E%B6%E6%9E%84"><span class="toc-text">架构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Motivation-for-Distributed-System"><span class="toc-text">Motivation for Distributed System</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Parallel-Systems"><span class="toc-text">Parallel Systems</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Multiprocessor-systems"><span class="toc-text">Multiprocessor systems</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Multicomputer-parallel-systems"><span class="toc-text">Multicomputer parallel systems</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Array-processors"><span class="toc-text">Array processors</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Flynn%E2%80%99s-Taxonomy-%E8%B4%B9%E6%9E%97%E5%88%86%E7%B1%BB%E6%B3%95"><span class="toc-text">Flynn’s Taxonomy(费林分类法)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Some-Terminology-%E4%B8%80%E4%BA%9B%E6%9C%AF%E8%AF%AD"><span class="toc-text">Some Terminology(一些术语)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E4%B8%8E%E5%85%B6%E4%BB%96%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-text">分布式系统与其他系统的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Classification-of-Primitives-%E5%88%86%E7%B1%BB%E5%8E%9F%E8%AF%AD"><span class="toc-text">Classification of Primitives(分类原语)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Synchronous-and-Asynchronous-%E5%90%8C%E6%AD%A5%E5%92%8C%E5%BC%82%E6%AD%A5"><span class="toc-text">Synchronous and Asynchronous(同步和异步)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Blocking-and-Nonblocking-%E9%98%BB%E5%A1%9E%E5%92%8C%E9%9D%9E%E9%98%BB%E5%A1%9E"><span class="toc-text">Blocking and Nonblocking(阻塞和非阻塞)</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Combination-of-Blocking-Nonblocking-Synchronous-Asynchronous-send-receive-primities"><span class="toc-text">Combination of Blocking&#x2F;Nonblocking, Synchronous&#x2F;Asynchronous, send&#x2F;receive primities</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Challenges"><span class="toc-text">Challenges</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#System-Perspective"><span class="toc-text">System Perspective</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Algorithm-Design"><span class="toc-text">Algorithm&#x2F;Design</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Applications-and-Emerging"><span class="toc-text">Applications and Emerging</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%90%86%E8%A7%A3%E7%9A%84%E8%B0%AC%E8%AF%AF"><span class="toc-text">理解的谬误</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/14/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-14-OS%20Agents%20%E7%AC%94%E8%AE%B0/" title="OS Agents 笔记">OS Agents 笔记</a><time datetime="2025-04-14T03:05:57.000Z" title="发表于 2025-04-14 11:05:57">2025-04-14</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/08/MCP/2025-04-08-MCP/" title="MCP">MCP</a><time datetime="2025-04-08T07:31:07.000Z" title="发表于 2025-04-08 15:31:07">2025-04-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/" title="算法分析与问题的计算复杂度">算法分析与问题的计算复杂度</a><time datetime="2025-03-10T11:53:48.000Z" title="发表于 2025-03-10 19:53:48">2025-03-10</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%B6%88%E6%81%AF%E5%BA%8F%E5%92%8C%E7%BB%84%E9%80%9A%E4%BF%A1/" title="消息序和组通信">消息序和组通信</a><time datetime="2025-01-11T11:43:17.000Z" title="发表于 2025-01-11 19:43:17">2025-01-11</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/01/11/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2025-01-11-%E6%9C%AF%E8%AF%AD%E5%92%8C%E5%9F%BA%E6%9C%AC%E7%AE%97%E6%B3%95/" title="术语和基本算法">术语和基本算法</a><time datetime="2025-01-11T11:42:55.000Z" title="发表于 2025-01-11 19:42:55">2025-01-11</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 6,height:window.screen.height / 2.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>
