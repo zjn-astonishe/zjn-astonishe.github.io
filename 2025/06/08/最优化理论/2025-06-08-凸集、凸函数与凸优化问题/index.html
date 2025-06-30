@@ -1,0 +1,479 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>凸集、凸函数与凸优化问题 | ZJN_BLOG</title><meta name="keywords" content="最优化"><meta name="author" content="ZJN"><meta name="copyright" content="ZJN"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="凸集、凸函数与凸优化问题绪论定义 最优化(optimization)是一门运用数学方法研究各种问题的优化途径和方案，为决策者提供科学决策的学科。 研究范式: 收集有关数据和资料，了解问题背景和需求。 建立恰当的最优化问题的数学模型: 包括: 确定的变量。 需要优化的目标函数。 解需要满足的约束条件。   公式: minimize\qquad f(x)\\ subject\quad to\quad">
+<meta property="og:type" content="article">
+<meta property="og:title" content="凸集、凸函数与凸优化问题">
+<meta property="og:url" content="http://zjn-astonishe.github.io/2025/06/08/%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/2025-06-08-%E5%87%B8%E9%9B%86%E3%80%81%E5%87%B8%E5%87%BD%E6%95%B0%E4%B8%8E%E5%87%B8%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="ZJN_BLOG">
+<meta property="og:description" content="凸集、凸函数与凸优化问题绪论定义 最优化(optimization)是一门运用数学方法研究各种问题的优化途径和方案，为决策者提供科学决策的学科。 研究范式: 收集有关数据和资料，了解问题背景和需求。 建立恰当的最优化问题的数学模型: 包括: 确定的变量。 需要优化的目标函数。 解需要满足的约束条件。   公式: minimize\qquad f(x)\\ subject\quad to\quad">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
+<meta property="article:published_time" content="2025-06-08T03:23:03.000Z">
+<meta property="article:modified_time" content="2025-06-12T02:16:58.071Z">
+<meta property="article:author" content="ZJN">
+<meta property="article:tag" content="最优化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://zjn-astonishe.github.io/2025/06/08/%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/2025-06-08-%E5%87%B8%E9%9B%86%E3%80%81%E5%87%B8%E5%87%BD%E6%95%B0%E4%B8%8E%E5%87%B8%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"簡"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":false,"highlightHeightLimit":800},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"作者: ZJN","link":"链接: ","source":"来源: ZJN_BLOG","info":"著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。"}},
+  lightbox: 'fancybox',
+  Snackbar: {"chs_to_cht":"你已切换为繁体","cht_to_chs":"你已切换为简体","day_to_night":"你已切换为深色模式","night_to_day":"你已切换为浅色模式","bgLight":"#000000","bgDark":"#1f1f1f","position":"bottom-left"},
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery@2/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: true,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '凸集、凸函数与凸优化问题',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2025-06-12 10:16:58'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">56</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">25</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">凸集、凸函数与凸优化问题</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-08T03:23:03.000Z" title="发表于 2025-06-08 11:23:03">2025-06-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-06-12T02:16:58.071Z" title="更新于 2025-06-12 10:16:58">2025-06-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E6%9C%80%E4%BC%98%E5%8C%96/">最优化</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">2.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>12分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="凸集、凸函数与凸优化问题"><a href="#凸集、凸函数与凸优化问题" class="headerlink" title="凸集、凸函数与凸优化问题"></a>凸集、凸函数与凸优化问题</h1><h2 id="绪论"><a href="#绪论" class="headerlink" title="绪论"></a>绪论</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><ul>
+<li>最优化(optimization)是一门运用数学方法研究各种问题的优化途径和方案，为决策者提供科学决策的学科。</li>
+<li>研究范式:<ul>
+<li>收集有关数据和资料，了解问题背景和需求。</li>
+<li>建立恰当的最优化问题的数学模型:<ul>
+<li>包括:<ul>
+<li>确定的变量。</li>
+<li>需要优化的目标函数。</li>
+<li>解需要满足的约束条件。</li>
+</ul>
+</li>
+<li>公式:<ul>
+<li><script type="math/tex; mode=display">minimize\qquad f(x)\\ subject\quad to\quad x\in \Omega</script></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>分析和研究模型的相关理论性质，选择或设计合适的优化算法，分析算法的理论性质，考察算法的计算性能。</li>
+</ul>
+</li>
+</ul>
+<h3 id="应用案例"><a href="#应用案例" class="headerlink" title="应用案例"></a>应用案例</h3><ul>
+<li>营养搭配问题<br><img src="" alt="img"></li>
+<li>最小二乘回归问题(Least Squares Regression Problem)<br><img src="" alt="img"></li>
+<li>鲁棒主成分分析(Robust Principal Component Analysis)<ul>
+<li>假设一个数据矩阵$M\in R^{m\times n}$: $M = L_0 + S_0$<ul>
+<li>可由以下凸优化问题的解恢复:<ul>
+<li>$\min<em>{L, S} \parallel L\parallel </em>* + \lambda\parallel S\parallel_1$<ul>
+<li>最小化核范数(nuclear norm)$\parallel L\parallel_*$用于诱导矩阵L的低秩性，是对$rank(L)$的“最佳”凸逼近。</li>
+<li>最小化$\ell_1$范数$\parallel S\parallel_1$用于诱导矩阵S的稀疏性。$\parallel S\parallel_1$是$\parallel S\parallel_0$的“最佳”凸逼近，其中$\parallel S\parallel_0$表示矩阵S中非零元素的个数，$\parallel S\parallel_1$表示元素绝对值的和。</li>
+<li>$\lambda$用于控制低秩和稀疏部分之间的权衡。</li>
+</ul>
+</li>
+<li>$s.t.\quad L + S = M$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>旨在通过$M$同时恢复低秩矩阵$L_0$和稀疏矩阵$S_0$。</li>
+<li>例如给定一个监控视频帧序列，将视频帧拉伸成向量作为矩阵M的每一列。低秩矩阵刻画视频中变化平稳的背景，稀疏矩阵刻画视频中少量移动的物体。</li>
+</ul>
+</li>
+</ul>
+<h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="向量和矩阵"><a href="#向量和矩阵" class="headerlink" title="向量和矩阵"></a>向量和矩阵</h3><ul>
+<li>范数<ul>
+<li>称一个从向量空间$\mathbb{R}^n$到实数域$\mathbb{R}$的非负函数$\parallel\cdot\parallel$为范数，需满足:<ul>
+<li>正定性: $\parallel v\parallel\ge 0, \forall v\in\mathbb{R}^n$，且$\parallel v\parallel=0$当且仅当$v=0$。</li>
+<li>齐次性: $\parallel\alpha v\parallel = \mid\alpha\mid\parallel v\parallel, \forall v\in\mathbb{R}^n, \alpha\in\mathbb{R}$。</li>
+<li>三角不等式: $\parallel v+w\parallel\le \parallel v\parallel + \parallel w\parallel, \forall v, w\in \mathbb{R}^n$。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>对于给定向量$x, y\in\mathbb{R}^n$，</p>
+<ul>
+<li>$x\le y$: 表示$x_i\le y_i, i=1, 2, …, n$</li>
+<li>内积: $<x, y>=x^Ty=\sum_{i=1}^{n}x_iy_i$</li>
+<li>$\ell<em>2$范数: $\parallel x\parallel_2 = (\sum</em>{i=1}^n\mid x_i\mid^2)^\frac{1}{2}$，可省略下标。</li>
+<li>$\ell<em>1$范数: $\parallel x\parallel_1 = \sum</em>{i=1}^n\mid x_i\mid$</li>
+<li>$\ell<em>\infin$范数: $\parallel x\parallel</em>\infin = \max_{1\le i\le n}\mid x_i\mid$</li>
+<li>$\ell<em>p$范数($p\ge 1$): $\parallel x\parallel_p = (\sum</em>{i=1}^n\mid x_i\mid^p)^\frac{1}{p}$</li>
+<li>$\ell_0$“范数”$\parallel x\parallel_0$: 向量x的所有分量中非零元素的个数(并非真正的范数)。</li>
+</ul>
+</li>
+<li><p>对任意的$x\in \mathbb{R}^n$: $\parallel x\parallel<em>\infin\le\parallel x\parallel_2\le\parallel x\parallel_1\le n\parallel x\parallel</em>\infin$</p>
+</li>
+<li>柯西-施瓦兹不等式: 对任意的$x, y\in \mathbb{R}^n$，有$-\parallel x\parallel\parallel y\parallel\le<x, y>\le\parallel x\parallel\parallel y\parallel$</li>
+<li>赫尔德不等式: $\mid x^Ty\mid \le \parallel x\parallel<em>p\parallel y\parallel_q = (\sum</em>{i=1}^{n}\mid x<em>i\mid^p)^\frac{1}{p}(\sum</em>{i=1}^{n}\mid y_i\mid^q)^\frac{1}{q}$<ul>
+<li>其中$p, q$是大于1的实数，且满足$\frac{1}{p} + \frac{1}{q} = 1$</li>
+</ul>
+</li>
+<li><p>闵可夫斯基不等式: 对任意的$x, y\in \mathbb{R}^n, p\in [1, \infin)$，有$\parallel x+y\parallel<em>p\le\parallel x\parallel_p + \parallel y\parallel_p =(\sum</em>{i=1}^{n}\mid x<em>i\mid^p)^\frac{1}{p}(\sum</em>{i=1}^{n}\mid y_i\mid^p)^\frac{1}{p}$</p>
+</li>
+<li><p>对任意的$A = (a<em>{ij})\in\mathbb{R}^{m\times n}$和$B = (b</em>{ij})\in\mathbb{R}^{m\times n}$</p>
+<ul>
+<li>内积: $<A, B>=tr(AB^T)=\sum<em>{i=1}^{m}\sum</em>{j=1}^{n}a<em>{ij}b</em>{ij}$</li>
+<li>Frobenius范数: $\parallel A\parallel<em>F = \sqrt{\sum</em>{i, j}\mid a_{ij}\mid^2} = \sqrt{tr(A^TA)}$ </li>
+<li>诱导范数: $\parallel A\parallel\triangleq \sup<em>{\parallel x\parallel=1}\parallel Ax\parallel=\sup</em>{\parallel x\parallel\neq 0}\frac{\parallel Ax\parallel}{\parallel x\parallel}$</li>
+<li>诱导$\ell<em>2$范数: $\parallel A\parallel_2 = \sqrt{\lambda</em>{max}(A^TA)}$</li>
+<li>诱导$\ell<em>1$范数: $\parallel A\parallel_1=\max</em>{1\le j\le n}\sum<em>{i=1}^{n}\mid a</em>{ij}\mid$</li>
+<li>诱导$\ell<em>\infin$范数:  $\parallel A\parallel</em>\infin=\max<em>{1\le i\le n}\sum</em>{j=1}^{n}\mid a_{ij}\mid$</li>
+<li>核范数: $\parallel A\parallel<em>*\sum</em>{i=1}^{r}\sigma_i$，其中${\sigma_i}$为A的非零奇异值，$r=rank(A)$。</li>
+</ul>
+</li>
+<li>对任意的$A, B\in\mathbb{R}^{n\times n}$和$x\in\mathbb{R}^n$，有: $\parallel AB\parallel\le\parallel A\parallel\parallel B\parallel, \parallel Ax\parallel\le\parallel A\parallel\parallel x\parallel$</li>
+<li>对于$A\in\mathbb{R}^{n\times n}$:<ul>
+<li>如果$A^T=A$，则是对称的。</li>
+<li>如果$A^T=A$且对于任意的$x\neq 0, x^TAx\gt 0$，则是对称正定的($A\succ 0$)。</li>
+<li>如果$A^T=A$且对于任意的$x\in\mathbb{R}^n, x^TAx\ge 0$，则是对称半正定的($A\succeq 0$)。</li>
+</ul>
+</li>
+</ul>
+<h3 id="梯度和海瑟矩阵"><a href="#梯度和海瑟矩阵" class="headerlink" title="梯度和海瑟矩阵"></a>梯度和海瑟矩阵</h3><ul>
+<li>梯度(Gradient)<ul>
+<li>给定函数$f:\mathbb{R}^n\rightarrow\mathbb{R}$，且$f$在点$x$的一个邻域内有意义，若存在向量$g\in\mathbb{R}^n$，满足$\lim_{d\rightarrow 0}\frac{f(x+d)-f(x)-g^Td}{\parallel d\parallel} = 0$，其中$\parallel\cdot\parallel$是任意的向量范数，就称$f$在点$x$处可微(弗雷歇可微)。此时，称$g$为$f$在点$x$处的梯度，记作$\nabla f(x)$。如果对区域$D$上的每一个点$x$都有$\nabla f(x)$存在，则称$f$在$D$上可微。</li>
+<li>若$f$在点$x$处可微，在上式中令$d=\epsilon e_i$，其中$e_i$是第$i$个分量为1的单位向量，可知$\nabla f(x)$的第$i$个分量即为$\frac{\partial f(x)}{\partial x_i}$，有$\nabla f(x) = (\frac{\partial f(x)}{\partial x_1}, \frac{\partial f(x)}{\partial x_2}, \cdots, \frac{\partial f(x)}{\partial x_n})^T$</li>
+</ul>
+</li>
+<li>海瑟矩阵(Hessian)<ul>
+<li>如果函数$f:\mathbb{R}^n\rightarrow\mathbb{R}$在点$x$处的二阶偏导数$\frac{\partial^2 f}{\partial x_i\partial x_j}(x), i, j=1, 2, \cdots, n$都存在，则$\nabla^2 f(x)=\left[<br>\begin{matrix}<br>\frac{\partial^2 f(x)}{\partial x_1^2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_n}\<br>\frac{\partial^2 f(x)}{\partial x_2\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_2^2} &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_n} \<br>\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots<br>\<br>\frac{\partial^2 f(x)}{\partial x_n\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_n^2}<br>\end{matrix}<br>\right]$称为$f$在点$x$处的海瑟矩阵。</li>
+<li>当$\nabla^2f(x)$在区域$D$上的每个点$x$处都存在，且$\nabla^2f(x)$在区域$D$上连续，则$f$在$D$上二阶(次)连续可微，此时的海瑟矩阵是对称矩阵。</li>
+<li>例子: <ul>
+<li>给定对称矩阵$Q\in\mathbb{R}^{n\times n}$，向量$q\in\mathbb{R}^n$，以及数$r\in\mathbb{R}$，考虑二次函数$f(x)=\frac{1}{2}x^TQx+q^Tx+r$，则$\nabla f(x)=Qx+q, \nabla^2 f(x)=Q$。</li>
+<li>给定对称矩阵$A\in\mathbb{R}^{m\times n}$，向量$b\in\mathbb{R}^m$，考虑函数$f(x)=\frac{1}{2}\parallel Ax-b\parallel^2$，则$\nabla f(x)=A^T(Ax-b), \nabla^2 f(x)=A^TA$。</li>
+<li>先对转置算子求导。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>泰勒展开定理(Taylor)<ul>
+<li>若$f:\mathbb{R}^n\rightarrow\mathbb{R}$连续可微，有$f(x+d)=f(x)+\nabla f(x)^Td+o(\parallel d\parallel)$</li>
+<li>且存在$t\in (0, 1)$，使得$f(x+d)=f(x)+\nabla f(x+td)^Td$</li>
+<li>若$f$二阶次连续可微，有二阶展开式: $f(x+d)=f(x)+\nabla f(x)^Td+\frac{1}{2}d^T\nabla^2f(x)d+o(\parallel d\parallel^2)$，且存在$\gamma\in (0, 1)$，$f(x+d)=f(x)+\nabla f(x)^Td+\frac{1}{2}d^T\nabla^2f(x+\gamma d)d$</li>
+</ul>
+</li>
+</ul>
+<h3 id="最优化问题的基本概念"><a href="#最优化问题的基本概念" class="headerlink" title="最优化问题的基本概念"></a>最优化问题的基本概念</h3><h4 id="基本数学模型"><a href="#基本数学模型" class="headerlink" title="基本数学模型"></a>基本数学模型</h4><script type="math/tex; mode=display">minimize\qquad f(x) \\ subject\quad to\quad x\in\Omega</script><ul>
+<li>决策变量: $x=(x_1, …, x_n)^T$</li>
+<li>目标函数: $f:\Omega\rightarrow\mathbb{R}$</li>
+<li>可行域(决策集): $\Omega\subset\mathbb{R}^n$，$\Omega$中的所有点或者说是满足约束条件的点为可行点。<ul>
+<li>若$\Omega=\mathbb{R}^n$，则为无约束优化问题。否则为约束优化问题。<ul>
+<li>$\Omega:={x\in\mathbb{R}^n:h(x)=0, c(x)\le 0}$<ul>
+<li>$h(x)=(h_1(x), …, h_m(x))^T$，$h_i(x)=0, i=1, 2, …, m$为等式约束。</li>
+<li>$c(x)=(c_1(x), …, c_S(x))^T$，$c_j(x)\le 0, j=1, 2, …, s$为不等式约束。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>对$x^<em>\in\Omega$，若对任意的$x\in\Omega$，都有$f(x^</em>)\le f(x)$，则$x^<em>$是问题的全局最优解，对应的目标函数值为全局最优值。$$x^</em>\in \arg\min_{x\in\Omega}f(x)$$<ul>
+<li>若存在$x^<em>$点的邻域$\mathcal{B}(x^</em>, \delta)={x:\parallel x-x^<em>\parallel\le\delta}$使得对任意的$x\in\Omega\bigcap\mathcal{B}(x^</em>, \delta)$，有$f(x^<em>)\le f(x)$，则$x^</em>$为局部最优解。</li>
+<li>若还满足对任意的$x\in\Omega\bigcap\mathcal{B}(x^<em>, \delta), x\neq{x^</em>}$，有$f(x^<em>)\lt f(x)$，则$x^</em>$为严格局部最优解。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>求解方法<ul>
+<li>解析方法。</li>
+<li>图解法。</li>
+<li>遍历法。</li>
+<li>迭代算法:<ul>
+<li>取初始点$x_0\in\mathbb{R}^n$以及其他相关参数，令$k=0$。</li>
+<li>验证停机准则。</li>
+<li>求$x^k$点处的搜索方向$d^k\in\mathbb{R}^n$，要求$d^k$是$f_0$在点$x^k$处的下降方向(使得$f_0$从点$x^k$处沿着该方向在一定范围内函数值可以下降)，满足$(\nabla f_0(x^k))^Td^k\lt 0$</li>
+<li>计算迭代步长$\alpha_k\gt 0$，通常要求$f_0(x^k+\alpha_kd^k)\lt f_0(x^k)$</li>
+<li>产生下一个迭代点: 令$x^{k+1}:=x^k+\alpha_kd^k, k:=k+1$，转到验证停机准则。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h4><ul>
+<li>约束优化和无约束优化。</li>
+<li>连续优化和非连续优化。<ul>
+<li>线性规划: 若$f, h, c$都是线性的。</li>
+<li>非线性规划: 若$f, h, c$至少有一个是非线性的。</li>
+<li>二次规划: 若$f$是二次函数，$h, c$是线性函数。</li>
+</ul>
+</li>
+<li>凸优化和非凸优化。<ul>
+<li>凸优化: 目标函数是凸函数，可行域为凸集。</li>
+<li>非凸优化: 目标函数或可行域至少有一个是非凸的。</li>
+</ul>
+</li>
+<li>光滑优化和非光滑优化。</li>
+<li>确定优化和不确定优化。</li>
+<li>鲁棒优化和随机优化。</li>
+</ul>
+<h4 id="算法评价标准"><a href="#算法评价标准" class="headerlink" title="算法评价标准"></a>算法评价标准</h4><ul>
+<li>若$\lim_{k\rightarrow\infin}\parallel x^k-x^<em>\parallel=0$，则称${x^k}$收敛于$x^</em>$。</li>
+<li>聚点: 若存在${x^k}$的一个子序列收敛于$x^<em>$，则称$x^</em>$是${x^k}$的一个聚点。</li>
+<li>全局收敛性: 从任意的初始点出发，算法产生的迭代序列${x^k}$都收敛于问题的一个最优点或稳定点。</li>
+<li>局部收敛性: 算法只有在初始点与最优点比较靠近时才能保证迭代序列${x^k}$收敛于问题的一个最优点或稳定点。</li>
+<li>收敛速度: 假设算法产生的迭代序列${x^k}$收敛于$x^*$<ul>
+<li>若存在$r\in(0, 1)$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}\le r$，则${x^k}$是Q(quotient)-线性收敛于$x^*$</li>
+<li>若$\lim_{k\rightarrow\infin}\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}=0$，则${x^k}$是Q(quotient)-超线性收敛于$x^*$</li>
+<li>若存在$p\gt 1$和一个正数$\gamma$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel^p}\le \gamma$，则${x^k}$是Q-p阶收敛于$x^<em>$，或者称为p-阶收敛于${x^</em>}$，最常见是Q-2阶收敛。</li>
+</ul>
+</li>
+<li><p>弱化收敛速度标准</p>
+<ul>
+<li>若存在一个Q-线性收敛于0的非负序列${v_k}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则${x^k}$是R(root)-线性收敛于$x^</em>$。</li>
+<li>若存在一个Q-超线性收敛于0的非负序列${v_k}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则${x^k}$是R(root)-超线性收敛于$x^</em>$。</li>
+</ul>
+</li>
+<li><p>其他算法评价标准:</p>
+<ul>
+<li>二次终止性。</li>
+<li>稳定性。</li>
+<li>计算复杂性。</li>
+<li>调参复杂度。</li>
+<li>存储消耗。</li>
+<li>数值效果。</li>
+</ul>
+</li>
+</ul>
+<h2 id="三种组合"><a href="#三种组合" class="headerlink" title="三种组合"></a>三种组合</h2><ul>
+<li>给定$x_1, x_2, …, x_m\in\mathbb{R}^n$，同样的加权组合，不同的权重要求。</li>
+</ul>
+<h3 id="凸集-convex-set"><a href="#凸集-convex-set" class="headerlink" title="凸集(convex set)"></a>凸集(convex set)</h3><ul>
+<li>如果过集合C中</li>
+</ul>
+<h4 id="凸组合"><a href="#凸组合" class="headerlink" title="凸组合"></a>凸组合</h4><h4 id="凸包"><a href="#凸包" class="headerlink" title="凸包"></a>凸包</h4><h3 id="仿射集"><a href="#仿射集" class="headerlink" title="仿射集"></a>仿射集</h3><h4 id="仿射组合"><a href="#仿射组合" class="headerlink" title="仿射组合"></a>仿射组合</h4><h4 id="仿射包"><a href="#仿射包" class="headerlink" title="仿射包"></a>仿射包</h4><h3 id="凸锥"><a href="#凸锥" class="headerlink" title="凸锥"></a>凸锥</h3><h4 id="凸锥组合"><a href="#凸锥组合" class="headerlink" title="凸锥组合"></a>凸锥组合</h4><h4 id="凸锥包"><a href="#凸锥包" class="headerlink" title="凸锥包"></a>凸锥包</h4><h2 id="凸函数"><a href="#凸函数" class="headerlink" title="凸函数"></a>凸函数</h2><h2 id="凸优化问题"><a href="#凸优化问题" class="headerlink" title="凸优化问题"></a>凸优化问题</h2></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%9C%80%E4%BC%98%E5%8C%96/">最优化</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/04/29/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-29-Hammer%E7%AC%94%E8%AE%B0/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Hammer笔记</div></div></a></div><div class="next-post pull-right"><a href="/2025/06/09/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-09-Agentic%20Workflow/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Agentic Workflow</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">56</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">25</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%87%B8%E9%9B%86%E3%80%81%E5%87%B8%E5%87%BD%E6%95%B0%E4%B8%8E%E5%87%B8%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98"><span class="toc-text">凸集、凸函数与凸优化问题</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%BB%AA%E8%AE%BA"><span class="toc-text">绪论</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9A%E4%B9%89"><span class="toc-text">定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="toc-text">应用案例</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-text">基础知识</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%90%91%E9%87%8F%E5%92%8C%E7%9F%A9%E9%98%B5"><span class="toc-text">向量和矩阵</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A2%AF%E5%BA%A6%E5%92%8C%E6%B5%B7%E7%91%9F%E7%9F%A9%E9%98%B5"><span class="toc-text">梯度和海瑟矩阵</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%80%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="toc-text">最优化问题的基本概念</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E6%9C%AC%E6%95%B0%E5%AD%A6%E6%A8%A1%E5%9E%8B"><span class="toc-text">基本数学模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%86%E7%B1%BB"><span class="toc-text">分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%AE%97%E6%B3%95%E8%AF%84%E4%BB%B7%E6%A0%87%E5%87%86"><span class="toc-text">算法评价标准</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E7%A7%8D%E7%BB%84%E5%90%88"><span class="toc-text">三种组合</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%B8%E9%9B%86-convex-set"><span class="toc-text">凸集(convex set)</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%B8%E7%BB%84%E5%90%88"><span class="toc-text">凸组合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%B8%E5%8C%85"><span class="toc-text">凸包</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%BF%E5%B0%84%E9%9B%86"><span class="toc-text">仿射集</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%BF%E5%B0%84%E7%BB%84%E5%90%88"><span class="toc-text">仿射组合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%BF%E5%B0%84%E5%8C%85"><span class="toc-text">仿射包</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%87%B8%E9%94%A5"><span class="toc-text">凸锥</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%B8%E9%94%A5%E7%BB%84%E5%90%88"><span class="toc-text">凸锥组合</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%87%B8%E9%94%A5%E5%8C%85"><span class="toc-text">凸锥包</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%B8%E5%87%BD%E6%95%B0"><span class="toc-text">凸函数</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%87%B8%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98"><span class="toc-text">凸优化问题</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/30/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-30-LLM%20Agent%20Memory/" title="LLM Agent Memory">LLM Agent Memory</a><time datetime="2025-06-30T08:03:23.000Z" title="发表于 2025-06-30 16:03:23">2025-06-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/29/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-29-LLM%20Agent%20Serving/" title="LLM Agent Serving">LLM Agent Serving</a><time datetime="2025-06-29T03:22:18.000Z" title="发表于 2025-06-29 11:22:18">2025-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/09/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-09-Agentic%20Workflow/" title="Agentic Workflow">Agentic Workflow</a><time datetime="2025-06-09T06:24:58.000Z" title="发表于 2025-06-09 14:24:58">2025-06-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/08/%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/2025-06-08-%E5%87%B8%E9%9B%86%E3%80%81%E5%87%B8%E5%87%BD%E6%95%B0%E4%B8%8E%E5%87%B8%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/" title="凸集、凸函数与凸优化问题">凸集、凸函数与凸优化问题</a><time datetime="2025-06-08T03:23:03.000Z" title="发表于 2025-06-08 11:23:03">2025-06-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/29/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-29-Hammer%E7%AC%94%E8%AE%B0/" title="Hammer笔记">Hammer笔记</a><time datetime="2025-04-29T11:33:05.000Z" title="发表于 2025-04-29 19:33:05">2025-04-29</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+  if (typeof pangu === 'object') pangu.autoSpacingPage()
+  else {
+    getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
+      .then(() => {
+        pangu.autoSpacingPage()
+      })
+  }
+}
+
+function panguInit () {
+  if (true){
+    GLOBAL_CONFIG_SITE.isPost && panguFn()
+  } else {
+    panguFn()
+  }
+}
+
+document.addEventListener('DOMContentLoaded', panguInit)</script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><div class="aplayer no-destroy" data-id="7307479551" data-server="netease" data-type="playlist" data-fixed="true" data-mini="true" data-listFolded="false" data-order="list" data-preload="auto" data-autoplay="true" data-volume=0.2></div><div class="Canvas" style="position:fixed; right:0px; bottom:0px;" id="L2dCanvas"></div><script src="https://cdn.jsdelivr.net/npm/promise-polyfill@8/dist/polyfill.min.js"> </script><script src="https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pixi.js@4.6.1/dist/pixi.min.js"></script><script src="https://cdn.jsdelivr.net/gh/zjn-astonishe/CDN@1.2.9/live2dv3.min.js"></script><script>window.onload=()=>{new l2dViewer({width:window.screen.width / 18,height:window.screen.height / 7.5,el:document.getElementById('L2dCanvas'),basePath:'https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.2',modelName:'lafei_4',mobileLimit:true,sizeLimit:true })}</script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/canvas-nest.min.js"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/gh/metowolf/MetingJS@1.2/dist/Meting.min.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax/pjax.min.js"></script><script>let pjaxSelectors = ["title","#config-diff","#body-wrap","#rightside-config-hide","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener scroll 
+  window.tocScrollFn && window.removeEventListener('scroll', window.tocScrollFn)
+  window.scrollCollect && window.removeEventListener('scroll', scrollCollect)
+
+  typeof preloader === 'object' && preloader.initLoading()
+  document.getElementById('rightside').style.cssText = "opacity: ''; transform: ''"
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof chatBtnFn === 'function' && chatBtnFn()
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+
+  typeof preloader === 'object' && preloader.endLoading()
+})
+
+document.addEventListener('pjax:error', (e) => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script></div></body></html>
