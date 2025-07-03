@@ -1801,6 +1801,105 @@
       </tags>
   </entry>
   <entry>
+    <title>usbip和Linux系统</title>
+    <url>/2023/02/13/USBIP/2023-02-13-usbip%E5%92%8Clinux%E7%B3%BB%E7%BB%9F/</url>
+    <content><![CDATA[<h1 id="1-Linux系统的USB总线"><a href="#1-Linux系统的USB总线" class="headerlink" title="1. Linux系统的USB总线"></a>1. Linux系统的USB总线</h1><p>Linux系统中的<code>/proc</code>和<code>/sys</code>两个文件系统包含了很多有用的信息。</p>
+<h2 id="ls-sys-class-udc"><a href="#ls-sys-class-udc" class="headerlink" title="ls /sys/class/udc"></a>ls /sys/class/udc</h2><p>该命令能查看系统注册了的udc驱动(与gadget驱动相关)。</p>
+<h2 id="cat-proc-devices"><a href="#cat-proc-devices" class="headerlink" title="cat /proc/devices"></a>cat /proc/devices</h2><p>该命令能查看当前系统注册了哪些驱动，Linux系统会为每个已注册的设备驱动分配一个”主设备号”。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">字符设备</span></span><br><span class="line">Character devices:</span><br><span class="line"> 1 mem</span><br><span class="line"> 4 /dev/vc/0</span><br><span class="line"> 4 tty</span><br><span class="line"> 4 ttyS</span><br><span class="line"> 5 /dev/tty</span><br><span class="line"> ...</span><br><span class="line"> 180 usb</span><br><span class="line"> 189 usb_device</span><br><span class="line"> ...</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">块设备</span></span><br><span class="line">Block devices:</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+<p>其中和USB相关的是<code>180 usb</code>和<code>189 usb_device</code>，但所代表的驱动是有区别的。</p>
+<p>而且不是所有USB设备驱动(USB接口驱动)都会分配一个主设备号，有些挂接在一些子系统内，如USB HID键鼠设备挂接在input子系统内。</p>
+<h2 id="ls-sys-bus-usb-devices"><a href="#ls-sys-bus-usb-devices" class="headerlink" title="ls /sys/bus/usb/devices"></a>ls /sys/bus/usb/devices</h2><p>该命令列举了Linux系统中USB类型设备的许多信息。每插入一个USB设备，<code>/sys/bus/usb/devices</code>下就有新的文件夹生成。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1-0:1.0  2-2      3-0:1.0  3-1:1.0  3-3:1.0  3-4:1.0  usb1  usb3</span><br><span class="line">2-0:1.0  2-2:1.0  3-1      3-3      3-4      4-0:1.0  usb2  usb4</span><br></pre></td></tr></table></figure>
+<p>其中的<code>usb1</code>、<code>usb2</code>、<code>usb3</code>和<code>usb4</code>代表Linux系统注册了4条USB总线，有4个USB主机控制器，不同的数字则是总线号，用于区分不同总线。</p>
+<p>其中的<code>3-3:1.0</code>代表USB总线号为3，devpath为3，配置号为1，接口号为0 —— <strong>3号总线的3号端口的设备，使用的是1号配置，接口号为0</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cat 3-3:1.0/bInterfaceClass</span><br><span class="line">09</span><br></pre></td></tr></table></figure>
+<p>运行上述命令查询后可知，<code>3-3:1.0</code>代表的是一个Hub设备(09代表，08代表mass storage class —— U盘)。当Hub设备的端口上又接入USB设备，则利用devpath。顶级设备的devpath就是其连在Root Hub上的端口号，次级设备就是其父Hub的devpath后面加上其端口号。例如：<code>3-3:1.0</code>是与一个Hub，它的1号端口挂载的设备就可以是<code>3-3.1:1.0</code>，2号端口挂载的设备就可以是<code>3-3.2:1.0</code>。</p>
+<h1 id="2-usbip驱动"><a href="#2-usbip驱动" class="headerlink" title="2. usbip驱动"></a>2. usbip驱动</h1><p>usbip驱动提供了Linux下USB透传(bypass)的功能，或者说是usb over tcp。利用以太网，将USB设备共享到另外一端。</p>
+<h2 id="组成架构"><a href="#组成架构" class="headerlink" title="组成架构"></a>组成架构</h2><p>其架构如下图：</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/Linux_Share/master/Image/image/usbip/usbip%E6%9E%B6%E6%9E%84.png" alt="usbip架构图"></p>
+<p>usbip分为两端：server端和client端，分别运行在不同的Linux主机中：</p>
+<ul>
+<li>server端：运行server端驱动的PC插入USB设备，负责共享。</li>
+<li>client端：client端PC可以attach到server端PC插入的USB设备。此时，client端PC会以为真的有一个USB设备插入，可对其进行访问、修改等操作，效果跟在本机上直接插入USB设备无异。</li>
+</ul>
+<p>这便是USB共享或USB延长器的功效。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h3><p>因为Ubuntu 16.04的内核版本是Linux 4.4以上，所以usbip的用户态工具不能使用<code>apt-get install</code>来安装，否则得到的是配套旧版本的usbip驱动。</p>
+<p>正确的方式是运行<code>uname -a</code>查看Ubuntu当前使用的是什么版本的kernel，然后在”<a href="https://www.kernel.org">The Linux Kernel Archives</a>“下找到对应版本的kernel版本，下载源码并解压。</p>
+<p>进入源码的根目录下<code>tools/usb/usbip</code>，准备编译。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install autoconf automake libtool libudev-dev</span><br></pre></td></tr></table></figure>
+<p>运行以上命令安装编译依赖环境，然后就可以在目录下运行<code>./autogen.sh</code>生成<code>configure</code>了。最后运行以下命令完成编译和安装。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>安装完成后，需要到”<a href="http://www.linux-usb.org/usb.ids">Linux USB</a>“下载包含了各种厂商的VID和描述信息的USB数据库——<code>usb.ids</code>文件并放入<code>/usr/share/hwdata/</code>目录。</p>
+<h3 id="非源码安装"><a href="#非源码安装" class="headerlink" title="非源码安装"></a>非源码安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic linux-cloud-tools-generic</span><br></pre></td></tr></table></figure>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><h3 id="在server端PC上"><a href="#在server端PC上" class="headerlink" title="在server端PC上"></a>在server端PC上</h3><ul>
+<li>加载驱动</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe usbip-host</span><br></pre></td></tr></table></figure>
+<ul>
+<li>运行<code>usbipd</code>程序，该守护进程用于建立TCP socket连接等。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbipd -D</span><br></pre></td></tr></table></figure>
+<ul>
+<li>server端的PC上插入一个USB设备，运行以下命令列举出设备，用于查看busid</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -l</span><br><span class="line"> - busid 3-2 (0781:557d)</span><br><span class="line">   SanDisk Corp. : Cruzer Force (0781:557d)</span><br></pre></td></tr></table></figure>
+<p>找到busid是3-2的SanDisk Crop(U盘)为将要共享的设备。</p>
+<ul>
+<li>运行以下命令绑定要共享的设备：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbip bind -b 3-2</span><br><span class="line">usbip: info: bind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果不想再将设备进行共享，则运行以下命令：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip unbind -b 3-2</span><br><span class="line">usbip: info: unbind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
+<h3 id="在client端PC上-Linux端"><a href="#在client端PC上-Linux端" class="headerlink" title="在client端PC上(Linux端)"></a>在client端PC上(Linux端)</h3><ul>
+<li>加载驱动，Ubuntu自带</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe vhci-hcd</span><br></pre></td></tr></table></figure>
+<ul>
+<li>列举出server端已经导出的USB设备</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -r &lt;server ip&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>将server端已经导出的USB设备attach到本地</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip attach -r &lt;server ip&gt; -b &lt;busid&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>断开attach到本地的USB设备</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip detach -p &lt;port&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="在client端PC上-Windows端"><a href="#在client端PC上-Windows端" class="headerlink" title="在client端PC上(Windows端)"></a>在client端PC上(Windows端)</h3><p>笔者近期主要工作，参考自以下两个开源项目：</p>
+<ul>
+<li><a href="https://github.com/vadimgrn/usbip-win2">usbip-win2</a></li>
+<li><a href="https://github.com/cezanne/usbip-win">usbip-win</a></li>
+</ul>
+<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><ul>
+<li>兼容性：USB摄像头支持得不好，笔者在测试时发现摄像头会出现无法使用或者使用过程中热插拔导致应用卡死等问题。</li>
+<li>稳定性问题：热插拔USB或插拔网线出问题。以Windows端的client为例，在进行快速热插拔时，会出现设备重复的问题。因为server端拔掉设备后，并没有通知client端设备已经断开连接，需要client端自己发现，然而在client端删去该设备在本机上的信息之前，server端又将该设备插回原位，继而导致client端误以为其还在连接中，而server端则认为其还未进行连接。那么client端就会出现两个一模一样的设备，如果再进行操作的话，就会出现蓝屏等问题，只能通过重启客户端解决。</li>
+<li>缺乏长期测试，没有广泛用于真实产品。由于其兼容性和稳定性问题，目前usbip还未达到能成熟地进行商业化、产品化的程度。</li>
+</ul>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><ul>
+<li>如今市场上的USB网线延长器(过交换机的那种)利用的是链路层的以太网帧传输USB数据，是通过硬件实现的，其兼容性和稳定性更好。<ul>
+<li><a href="http://www.usb-over-network.com/">usb over network</a></li>
+<li><a href="https://www.virtualhere.com/home">VirtualHere</a></li>
+</ul>
+</li>
+<li>从USB协议规范可知：USB对时间要求高，状态转移大多数与超时相关。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>usbip</category>
+        <category>USB驱动</category>
+        <category>Linux系统</category>
+      </categories>
+      <tags>
+        <tag>usbip</tag>
+        <tag>USB驱动</tag>
+        <tag>Linux系统</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Linux内核的I2C子系统详解</title>
     <url>/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E9%A9%B1%E5%8A%A8/</url>
     <content><![CDATA[<h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>为了提高代码的重用性，解决驱动代码和设备信息耦合的问题，Linux提出了总线、设备、驱动模型。</p>
@@ -1901,105 +2000,6 @@
       <tags>
         <tag>Linux设备驱动</tag>
         <tag>RK3568</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>usbip和Linux系统</title>
-    <url>/2023/02/13/USBIP/2023-02-13-usbip%E5%92%8Clinux%E7%B3%BB%E7%BB%9F/</url>
-    <content><![CDATA[<h1 id="1-Linux系统的USB总线"><a href="#1-Linux系统的USB总线" class="headerlink" title="1. Linux系统的USB总线"></a>1. Linux系统的USB总线</h1><p>Linux系统中的<code>/proc</code>和<code>/sys</code>两个文件系统包含了很多有用的信息。</p>
-<h2 id="ls-sys-class-udc"><a href="#ls-sys-class-udc" class="headerlink" title="ls /sys/class/udc"></a>ls /sys/class/udc</h2><p>该命令能查看系统注册了的udc驱动(与gadget驱动相关)。</p>
-<h2 id="cat-proc-devices"><a href="#cat-proc-devices" class="headerlink" title="cat /proc/devices"></a>cat /proc/devices</h2><p>该命令能查看当前系统注册了哪些驱动，Linux系统会为每个已注册的设备驱动分配一个”主设备号”。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">字符设备</span></span><br><span class="line">Character devices:</span><br><span class="line"> 1 mem</span><br><span class="line"> 4 /dev/vc/0</span><br><span class="line"> 4 tty</span><br><span class="line"> 4 ttyS</span><br><span class="line"> 5 /dev/tty</span><br><span class="line"> ...</span><br><span class="line"> 180 usb</span><br><span class="line"> 189 usb_device</span><br><span class="line"> ...</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">块设备</span></span><br><span class="line">Block devices:</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
-<p>其中和USB相关的是<code>180 usb</code>和<code>189 usb_device</code>，但所代表的驱动是有区别的。</p>
-<p>而且不是所有USB设备驱动(USB接口驱动)都会分配一个主设备号，有些挂接在一些子系统内，如USB HID键鼠设备挂接在input子系统内。</p>
-<h2 id="ls-sys-bus-usb-devices"><a href="#ls-sys-bus-usb-devices" class="headerlink" title="ls /sys/bus/usb/devices"></a>ls /sys/bus/usb/devices</h2><p>该命令列举了Linux系统中USB类型设备的许多信息。每插入一个USB设备，<code>/sys/bus/usb/devices</code>下就有新的文件夹生成。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1-0:1.0  2-2      3-0:1.0  3-1:1.0  3-3:1.0  3-4:1.0  usb1  usb3</span><br><span class="line">2-0:1.0  2-2:1.0  3-1      3-3      3-4      4-0:1.0  usb2  usb4</span><br></pre></td></tr></table></figure>
-<p>其中的<code>usb1</code>、<code>usb2</code>、<code>usb3</code>和<code>usb4</code>代表Linux系统注册了4条USB总线，有4个USB主机控制器，不同的数字则是总线号，用于区分不同总线。</p>
-<p>其中的<code>3-3:1.0</code>代表USB总线号为3，devpath为3，配置号为1，接口号为0 —— <strong>3号总线的3号端口的设备，使用的是1号配置，接口号为0</strong>。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cat 3-3:1.0/bInterfaceClass</span><br><span class="line">09</span><br></pre></td></tr></table></figure>
-<p>运行上述命令查询后可知，<code>3-3:1.0</code>代表的是一个Hub设备(09代表，08代表mass storage class —— U盘)。当Hub设备的端口上又接入USB设备，则利用devpath。顶级设备的devpath就是其连在Root Hub上的端口号，次级设备就是其父Hub的devpath后面加上其端口号。例如：<code>3-3:1.0</code>是与一个Hub，它的1号端口挂载的设备就可以是<code>3-3.1:1.0</code>，2号端口挂载的设备就可以是<code>3-3.2:1.0</code>。</p>
-<h1 id="2-usbip驱动"><a href="#2-usbip驱动" class="headerlink" title="2. usbip驱动"></a>2. usbip驱动</h1><p>usbip驱动提供了Linux下USB透传(bypass)的功能，或者说是usb over tcp。利用以太网，将USB设备共享到另外一端。</p>
-<h2 id="组成架构"><a href="#组成架构" class="headerlink" title="组成架构"></a>组成架构</h2><p>其架构如下图：</p>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/Linux_Share/master/Image/image/usbip/usbip%E6%9E%B6%E6%9E%84.png" alt="usbip架构图"></p>
-<p>usbip分为两端：server端和client端，分别运行在不同的Linux主机中：</p>
-<ul>
-<li>server端：运行server端驱动的PC插入USB设备，负责共享。</li>
-<li>client端：client端PC可以attach到server端PC插入的USB设备。此时，client端PC会以为真的有一个USB设备插入，可对其进行访问、修改等操作，效果跟在本机上直接插入USB设备无异。</li>
-</ul>
-<p>这便是USB共享或USB延长器的功效。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h3><p>因为Ubuntu 16.04的内核版本是Linux 4.4以上，所以usbip的用户态工具不能使用<code>apt-get install</code>来安装，否则得到的是配套旧版本的usbip驱动。</p>
-<p>正确的方式是运行<code>uname -a</code>查看Ubuntu当前使用的是什么版本的kernel，然后在”<a href="https://www.kernel.org">The Linux Kernel Archives</a>“下找到对应版本的kernel版本，下载源码并解压。</p>
-<p>进入源码的根目录下<code>tools/usb/usbip</code>，准备编译。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install autoconf automake libtool libudev-dev</span><br></pre></td></tr></table></figure>
-<p>运行以上命令安装编译依赖环境，然后就可以在目录下运行<code>./autogen.sh</code>生成<code>configure</code>了。最后运行以下命令完成编译和安装。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>安装完成后，需要到”<a href="http://www.linux-usb.org/usb.ids">Linux USB</a>“下载包含了各种厂商的VID和描述信息的USB数据库——<code>usb.ids</code>文件并放入<code>/usr/share/hwdata/</code>目录。</p>
-<h3 id="非源码安装"><a href="#非源码安装" class="headerlink" title="非源码安装"></a>非源码安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic linux-cloud-tools-generic</span><br></pre></td></tr></table></figure>
-<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><h3 id="在server端PC上"><a href="#在server端PC上" class="headerlink" title="在server端PC上"></a>在server端PC上</h3><ul>
-<li>加载驱动</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe usbip-host</span><br></pre></td></tr></table></figure>
-<ul>
-<li>运行<code>usbipd</code>程序，该守护进程用于建立TCP socket连接等。</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbipd -D</span><br></pre></td></tr></table></figure>
-<ul>
-<li>server端的PC上插入一个USB设备，运行以下命令列举出设备，用于查看busid</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -l</span><br><span class="line"> - busid 3-2 (0781:557d)</span><br><span class="line">   SanDisk Corp. : Cruzer Force (0781:557d)</span><br></pre></td></tr></table></figure>
-<p>找到busid是3-2的SanDisk Crop(U盘)为将要共享的设备。</p>
-<ul>
-<li>运行以下命令绑定要共享的设备：</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbip bind -b 3-2</span><br><span class="line">usbip: info: bind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果不想再将设备进行共享，则运行以下命令：</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip unbind -b 3-2</span><br><span class="line">usbip: info: unbind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
-<h3 id="在client端PC上-Linux端"><a href="#在client端PC上-Linux端" class="headerlink" title="在client端PC上(Linux端)"></a>在client端PC上(Linux端)</h3><ul>
-<li>加载驱动，Ubuntu自带</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe vhci-hcd</span><br></pre></td></tr></table></figure>
-<ul>
-<li>列举出server端已经导出的USB设备</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -r &lt;server ip&gt;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>将server端已经导出的USB设备attach到本地</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip attach -r &lt;server ip&gt; -b &lt;busid&gt;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>断开attach到本地的USB设备</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip detach -p &lt;port&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="在client端PC上-Windows端"><a href="#在client端PC上-Windows端" class="headerlink" title="在client端PC上(Windows端)"></a>在client端PC上(Windows端)</h3><p>笔者近期主要工作，参考自以下两个开源项目：</p>
-<ul>
-<li><a href="https://github.com/vadimgrn/usbip-win2">usbip-win2</a></li>
-<li><a href="https://github.com/cezanne/usbip-win">usbip-win</a></li>
-</ul>
-<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><ul>
-<li>兼容性：USB摄像头支持得不好，笔者在测试时发现摄像头会出现无法使用或者使用过程中热插拔导致应用卡死等问题。</li>
-<li>稳定性问题：热插拔USB或插拔网线出问题。以Windows端的client为例，在进行快速热插拔时，会出现设备重复的问题。因为server端拔掉设备后，并没有通知client端设备已经断开连接，需要client端自己发现，然而在client端删去该设备在本机上的信息之前，server端又将该设备插回原位，继而导致client端误以为其还在连接中，而server端则认为其还未进行连接。那么client端就会出现两个一模一样的设备，如果再进行操作的话，就会出现蓝屏等问题，只能通过重启客户端解决。</li>
-<li>缺乏长期测试，没有广泛用于真实产品。由于其兼容性和稳定性问题，目前usbip还未达到能成熟地进行商业化、产品化的程度。</li>
-</ul>
-<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><ul>
-<li>如今市场上的USB网线延长器(过交换机的那种)利用的是链路层的以太网帧传输USB数据，是通过硬件实现的，其兼容性和稳定性更好。<ul>
-<li><a href="http://www.usb-over-network.com/">usb over network</a></li>
-<li><a href="https://www.virtualhere.com/home">VirtualHere</a></li>
-</ul>
-</li>
-<li>从USB协议规范可知：USB对时间要求高，状态转移大多数与超时相关。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>usbip</category>
-        <category>USB驱动</category>
-        <category>Linux系统</category>
-      </categories>
-      <tags>
-        <tag>usbip</tag>
-        <tag>USB驱动</tag>
-        <tag>Linux系统</tag>
       </tags>
   </entry>
   <entry>
@@ -3806,8 +3806,9 @@
 <h3 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h3><h4 id="LLM的生成式推理"><a href="#LLM的生成式推理" class="headerlink" title="LLM的生成式推理"></a>LLM的生成式推理</h4><p>在处理输入请求时，LLM 推理包括两个阶段：预填充(prefill)和解码(decoding)。</p>
 <ul>
 <li>预填充阶段处理整个请求，以计算 KV 缓存（Key-Value cache，用于存储每一层的 attention keys 和 values 以避免冗余计算），并在单个步骤中生成初始响应 token。</li>
-<li>解码阶段然后利用先前的上下文或 KV 缓存，一次生成一个后续 token。<br>这些阶段具有不同的资源利用模式：预填充是计算密集型的（compute-bound），而解码是内存 I/O 密集型的（memory I/O-bound）。传统的 LLM 推理引擎将这两个阶段都放在同一个 GPU 组上以最大化资源利用率，尽管它们的计算特性不同。但这种方式会造成两个阶段互相干扰，且资源分配和并行策略紧密耦合。现在更提倡对两个阶段分离解耦放在不同的GPU上，详见(<a href="https://hub.baai.ac.cn/view/37129">LLM Serving有效吞吐量的最大化实现</a>)。</li>
+<li>解码阶段然后利用先前的上下文或 KV 缓存，一次生成一个后续 token。</li>
 </ul>
+<p>这些阶段具有不同的资源利用模式：预填充是计算密集型的（compute-bound），而解码是内存 I/O 密集型的（memory I/O-bound）。传统的 LLM 推理引擎将这两个阶段都放在同一个 GPU 组上以最大化资源利用率，尽管它们的计算特性不同。但这种方式会造成两个阶段互相干扰，且资源分配和并行策略紧密耦合。现在更提倡对两个阶段分离解耦放在不同的GPU上，详见(<a href="https://hub.baai.ac.cn/view/37129">LLM Serving有效吞吐量的最大化实现</a>)。</p>
 <h4 id="Inference-and-serving-goal"><a href="#Inference-and-serving-goal" class="headerlink" title="Inference and serving goal"></a>Inference and serving goal</h4><p>有两个关键指标用于评估LLM服务的性能: 吞吐量和推理延迟。</p>
 <ul>
 <li>吞吐量(Throughput): 衡量在给定时间内生成的 token 数量。</li>
@@ -3988,8 +3989,9 @@
 <ul>
 <li>适中的token budget(512)可以降低端到端延迟的中位数。</li>
 <li>较大的token budget(1024)可以改善预填充时延。</li>
-<li>当token budget较小(128)的时候，由于迭代过程中重复的cross-attention，开销会显著增加(即时延会增加)。<br>设计调度算法时，不仅要考虑 token_budget，还要考虑 prefill 长度的分布以及目标工作负载的服务级别目标(SLO，即系统需要满足特定的延迟要求)。</li>
+<li>当token budget较小(128)的时候，由于迭代过程中重复的cross-attention，开销会显著增加(即时延会增加)。</li>
 </ul>
+<p>设计调度算法时，不仅要考虑 token_budget，还要考虑 prefill 长度的分布以及目标工作负载的服务级别目标(SLO，即系统需要满足特定的延迟要求)。</p>
 <h3 id="Future-Directions"><a href="#Future-Directions" class="headerlink" title="Future Directions"></a>Future Directions</h3><ul>
 <li>各种负载情况下，基于TBT、TTFT、TPOT等性能指标下的最优调度策略。</li>
 <li>更长上下文或测试时工作负载的KV cache内存管理。</li>
@@ -4155,7 +4157,6 @@
 </li>
 </ul>
 </li>
-<li></li>
 </ul>
 <h4 id="Load-Balancer"><a href="#Load-Balancer" class="headerlink" title="Load Balancer"></a>Load Balancer</h4><p>随着负载的增加，部署多个引擎副本是必要的。但是不考虑数据局部性的话会导致次优性能。</p>
 <ul>
@@ -4174,7 +4175,7 @@
 </ul>
 <h3 id="Future-Work"><a href="#Future-Work" class="headerlink" title="Future Work"></a>Future Work</h3><h4 id="Graph-Optimization"><a href="#Graph-Optimization" class="headerlink" title="Graph Optimization"></a>Graph Optimization</h4><p>Autellix是假设完全没有先验知识的，虽然效果不错，但是通过实验也可以看到和拥有完全先验知识的SRPT算法有不小的差距。当然，完全先验知识是不现实的，但可以考虑像编译器的分支预测和推测执行一样的思路，预测LLM调用。</p>
 <h4 id="Post-Training"><a href="#Post-Training" class="headerlink" title="Post-Training"></a>Post-Training</h4><p>后训练，如Deepseek-R1和OpenAI的o1/o3模型，端到端强化学习进行后训练，优化思维过程。在此过程中，如果使用分布式强化学习系统加速，交替进行分布式在线采样和训练，则非常适用Autellix框架(能够减少批次采样的总完成时间)。</p>
-<h2 id="Cost-Efficient-Serving-of-LLM-Agents-via-Test-Time-Plan-Caching"><a href="#Cost-Efficient-Serving-of-LLM-Agents-via-Test-Time-Plan-Caching" class="headerlink" title="Cost-Efficient Serving of LLM Agents via Test-Time Plan Caching"></a>Cost-Efficient Serving of LLM Agents via Test-Time Plan Caching</h2><h2 id="Tempo-Application-aware-LLM-Serving-with-Mixed-SLO-Requirements"><a href="#Tempo-Application-aware-LLM-Serving-with-Mixed-SLO-Requirements" class="headerlink" title="Tempo: Application-aware LLM Serving with Mixed SLO Requirements"></a>Tempo: Application-aware LLM Serving with Mixed SLO Requirements</h2>]]></content>
+<h2 id="Tempo-Application-aware-LLM-Serving-with-Mixed-SLO-Requirements"><a href="#Tempo-Application-aware-LLM-Serving-with-Mixed-SLO-Requirements" class="headerlink" title="Tempo: Application-aware LLM Serving with Mixed SLO Requirements"></a>Tempo: Application-aware LLM Serving with Mixed SLO Requirements</h2><h2 id="Cost-Efficient-Serving-of-LLM-Agents-via-Test-Time-Plan-Caching"><a href="#Cost-Efficient-Serving-of-LLM-Agents-via-Test-Time-Plan-Caching" class="headerlink" title="Cost-Efficient Serving of LLM Agents via Test-Time Plan Caching"></a>Cost-Efficient Serving of LLM Agents via Test-Time Plan Caching</h2>]]></content>
       <categories>
         <category>论文阅读</category>
       </categories>
@@ -4185,7 +4186,80 @@
   <entry>
     <title>LLM Agent Memory</title>
     <url>/2025/06/30/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-30-LLM%20Agent%20Memory/</url>
-    <content><![CDATA[<h1 id="LLM-Agent-Memory"><a href="#LLM-Agent-Memory" class="headerlink" title="LLM Agent Memory"></a>LLM Agent Memory</h1><h2 id="MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents"><a href="#MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents" class="headerlink" title="MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents"></a>MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents</h2>]]></content>
+    <content><![CDATA[<h1 id="LLM-Agent-Memory"><a href="#LLM-Agent-Memory" class="headerlink" title="LLM Agent Memory"></a>LLM Agent Memory</h1><h2 id="Agent-Workflow-Memory"><a href="#Agent-Workflow-Memory" class="headerlink" title="Agent Workflow Memory"></a>Agent Workflow Memory</h2><h3 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h3><p>Agent提取和学习在类似任务和环境中共享的可重用任务工作流，模仿人类从过去的成功和失败中学习经验指导未来的活动，随着时间的推移对任务上下文或环境发生变化进行适应。</p>
+<h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>AWM从一组基本的内置动作开始，并以流式方式解决新任务，不断地从手头的任务中归纳出工作流，例如，从最初的几个例子中学习“通过名称查找地点”这个动作。然后，AWM继续基于新的经验和先前获得的工作流来构建更复杂的工作流。例如，“通过名称查找地点”工作流一旦被归纳出来，就可以有效地充当子目标，以构建更复杂的“获取地点的邮政编码”工作流。这种持续学习机制会产生滚雪球效应，从而归纳和应用日益复杂的工作流。</p>
+<p>AWM可以在离线和在线两种场景中运行，分别对应有标注示例可用和无标注示例可用的情况。</p>
+<ul>
+<li>离线: 当任务拥有高质量的标注示例的时候，以离线方式运行，从标注示例中提取可复用的workflows，并整合到memory中，以辅助测试时的推理。</li>
+<li>在线: 如果不存在任何标注示例，则在无监督的环境中运行，评估模块迭代地从自我生成的过去预测中归纳出workflows，并判断预测是否正确。<ul>
+<li>就是要加个评估模块。</li>
+</ul>
+</li>
+</ul>
+<h3 id="AWM建模"><a href="#AWM建模" class="headerlink" title="AWM建模"></a>AWM建模</h3><h4 id="Problem-Statement"><a href="#Problem-Statement" class="headerlink" title="Problem Statement"></a>Problem Statement</h4><p>考虑Agent是由大语言模型骨架$L$和记忆$M$组成。</p>
+<ul>
+<li>基础记忆是包含”CLICK”和”TYPE”等内置操作的文档。</li>
+<li>记忆作为系统prompt或主prompt上下文中的辅助信息。</li>
+</ul>
+<p>Agent需解决由自然语言指令$q$指定的任务。其在由转移函数$T$定义的环境中执行操作。</p>
+<ul>
+<li>对于每个时间步$t_i$，环境状态$s_i$给出观察结果$o_i$，然后将其传递到模型$L$中。</li>
+<li>通过$L(q, M, o<em>i)\rightarrow a_i$生成动作$a_i$后，在环境中执行，于是得到环境转移$T(s_i, a_i)\rightarrow s</em>{i+1}$。</li>
+<li>以上观察-行动的循环会一直迭代，直到模型预测停止动作$a_i=STOP$，或者达到任务终止条件(例如: 预定的最大步数)。</li>
+</ul>
+<p>每个完成的任务构成一次经验$e$，包含一条自然语言指令$q$和一个尝试解决任务的步骤轨迹$(P, O)$。</p>
+<ul>
+<li>每个步骤${p_i|p_i\in P}$包含从当前状态获得的Agent观察结果${o_i|o_i\in O}$。</li>
+</ul>
+<p>目标是从过去或收集的经验集合$\mathcal{E}={e<em>i}</em>{i=1}^m$中，通过归纳模块$I$归纳出有用的工作流程$\mathcal{W}={w}$，即有$I(\mathcal{E})\rightarrow \mathcal{W}$。</p>
+<p>然后会将归纳出的工作流程添加到Agent的记忆$M$中，作为后续任务解决的指导。即$M\bigcup \mathcal{W} \rightarrow M_w$</p>
+<h4 id="Workflow-Representation"><a href="#Workflow-Representation" class="headerlink" title="Workflow Representation"></a>Workflow Representation</h4><p><img src="" alt="img"></p>
+<p>Workflow由两个组件构成:</p>
+<ul>
+<li>Workflow的文本描述$d$。本质上是对Workflow的功能摘要，通过从经验指令$p$中启发式地提取或使用模型$L$总结。</li>
+<li>Workflow的轨迹$\mathcal{T}$。即完成Workflow所需执行的一系列步骤$(p_1, p_2, …)$。每个步骤$p_i$包含3个部分:<ul>
+<li>当前环境状态的自然语言描述。</li>
+<li>Agent阐述的推理过程: 基于观察结果(环境状态)决定下一步要执行哪个动作的思考过程。</li>
+<li>可执行动作: 在环境中实际执行的操作，表示为可执行的程序指令。例如: 点击: “click(‘element_id’)”, 输入文本: “type(‘element_id’, ‘text’)”, 终止: “stop()”。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Inducing-and-using-Workflow"><a href="#Inducing-and-using-Workflow" class="headerlink" title="Inducing and using Workflow"></a>Inducing and using Workflow</h4><p>AWM的核心是一个归纳模块$I$，从一个或多个过去的Agent经验$\mathcal{E}={e<em>i}</em>{i=1}^m$中归纳出一组工作流$\mathcal{W}$。</p>
+<ul>
+<li>每个经验$e=(q, P^e)$包含一个自然语言指令$q$和一个为了解决指令$q$由一系列步骤$P^e={p_1^e, …, p_n^e}$组成的动作轨迹$\mathcal{T}$。</li>
+</ul>
+<p>工作流的归纳模块通过接收经验$\mathcal{E}$并产生一组工作流$\mathcal{W}$来运作:$I(\mathcal{E})\rightarrow\mathcal{W}={w}={(d_j, P_j^d)}$</p>
+<ul>
+<li>基于LLM的工作流归纳:<ul>
+<li>从一个或多个输入经验中提取公共子程序作为prompt输入LLM从而生成归纳$I$。</li>
+<li>与指定具体、重复性较低的任务指令(例如，“在Amazon上购买猫粮并送到我的地址”)不同，特意提示模型以更精细的粒度归纳工作流。<ul>
+<li>子任务“在Amazon上搜索产品”经常作为多个类似指令的一部分重新出现。</li>
+<li>同时，没有给出特定于示例的值(例如，“猫粮”)，而是通过抽象出特定于示例的上下文来增强工作流的通用性，即通过在工作流归纳提示中指定，将“猫粮”替换为更通用的名称“{product-name}”。这些工作流被分割(基于模型输出中的双行换行符，即换行后空一行)，并单独存储在工作流内存中。</li>
+</ul>
+</li>
+<li>在工作流$\mathcal{W}$被归纳出来之后，会被整合到Agent的辅助记忆中，表示为$M+\mathcal{W}\rightarrow M_w$，其中$M$代表原始智能体的记忆，而$M_w$代表通过归纳工作流增强后的Agent记忆。<ul>
+<li>当下一次要解决给定的指令$q$时，Agent通过$L(q, M_w, o)=L(q, M+\mathcal{W}, o)\rightarrow a$产生一系列动作。</li>
+</ul>
+</li>
+<li>离线场景<ul>
+<li>当有额外的标准经验可用时(例如人工标注的数据或模型合成的数据)，采用离线模式运行，执行工作流归纳和利用两个独立的过程。<ul>
+<li>首先将所有的训练示例连接成一个prompt，并发送到LLM，以在训练时创建一组工作流: $I(\mathcal{E}<em>{train})\rightarrow \mathcal{W}</em>{offline}$。</li>
+<li>其次，AWM在推理时将所有归纳的工作流整合到Agent的记忆中，以解决测试指令。表示为$L(q, M+W<em>{offline}, o</em>{test<em>i})\rightarrow a</em>{test_i}$。</li>
+<li>由于工作流在测试时推理之前被已经被完全归纳，因此Agent使用相同的工作流记忆$\mathcal{W}_{offline}$来解决每个测试。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>在线场景<ul>
+<li>没有额外的标准经验时，采用在线模式无监督运行。在这种环境中，只需处理测试的数据。在每次测试数据完成推理后，执行归纳整合，然后将经验利用到下一个测试数据的推理中。</li>
+<li>具体来说，Agent从默认记忆$M$开始，给定传递给Agent的第$t$个测试指令$q<em>t$，Agent尝试通过生成动作轨迹$(p_t1, p_t2, …)$解决任务，于是构成了经验$e_t=(q_t, {p_t})$。并采用一个基于LLM的评估模型输出一个二元标签$L</em>{eval}(e<em>t)\in{0, 1}$。该标签用于判断$e_t$是否成功解决了$q_t$。如果成功解决，则为1，将其转化为工作流$I(e_t)\rightarrow{w_t}$，并将${w_t}$添加到Agent的记忆中$M_t+{w_t}\rightarrow M</em>{t+1}$，用于辅助处理第$t+1$条指令。</li>
+<li>整个流程是通过迭代地预测动作并从流式测试指令中归纳工作流来继续这个记忆更新过程，直到所有测试都处理完毕。评估所有测试的预测动作轨迹${p_t}$的成功率，并报告平均分数。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents"><a href="#MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents" class="headerlink" title="MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents"></a>MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents</h2>]]></content>
       <categories>
         <category>论文阅读</category>
       </categories>
@@ -4749,6 +4823,622 @@
       <tags>
         <tag>剑指Offer</tag>
         <tag>基础知识</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>算法分析与问题的计算复杂度</title>
+    <url>/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/</url>
+    <content><![CDATA[<h1 id="算法分析与问题的计算复杂度"><a href="#算法分析与问题的计算复杂度" class="headerlink" title="算法分析与问题的计算复杂度"></a>算法分析与问题的计算复杂度</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="解决一个计算问题的过程"><a href="#解决一个计算问题的过程" class="headerlink" title="解决一个计算问题的过程"></a>解决一个计算问题的过程</h3><ul>
+<li>是否可计算</li>
+<li>是否能行可计算(在有限的复杂度内完成计算)</li>
+<li>算法设计与分析</li>
+<li>用计算机语言实现算法</li>
+<li>软件系统</li>
+</ul>
+<h3 id="可计算理论"><a href="#可计算理论" class="headerlink" title="可计算理论"></a>可计算理论</h3><ul>
+<li>计算模型</li>
+<li>可计算问题与不可计算问题</li>
+<li>计算模型的等价性——图灵/Church命题</li>
+</ul>
+<h3 id="计算复杂性理论"><a href="#计算复杂性理论" class="headerlink" title="计算复杂性理论"></a>计算复杂性理论</h3><p>在给定的计算模型下研究问题的复杂性</p>
+<ul>
+<li>固有复杂性</li>
+<li>上界</li>
+<li>下界</li>
+<li>平均</li>
+<li>复杂性问题的分类: P=NP?</li>
+<li>抽象复杂性研究</li>
+</ul>
+<h3 id="算法设计和分析"><a href="#算法设计和分析" class="headerlink" title="算法设计和分析"></a>算法设计和分析</h3><ul>
+<li>可计算问题的算法的设计与分析</li>
+<li>设计高效算法，分析算法性能，两者交互验证<ul>
+<li>设计算法的理论、方法和技术(设计正确高效的算法)</li>
+<li>分析算法的理论、方法和技术(判断算法是否足够高效)</li>
+</ul>
+</li>
+</ul>
+<h3 id="算法的定义"><a href="#算法的定义" class="headerlink" title="算法的定义"></a>算法的定义</h3><p>算法是一个满足下列条件的计算: </p>
+<ul>
+<li>输入: 有一个满足给定约束条件的输入</li>
+<li>输出: 满足给定约束条件的结果</li>
+<li>有穷性/终止性: 有限步内必须终止</li>
+<li>可行性: 每一个动作都能够被精确地机械执行<ul>
+<li>反例: 将大元素放数组后，小元素放数组前。但是无法精确执行，因为没有确定一个元素是大元素还是小元素的指标</li>
+</ul>
+</li>
+</ul>
+<h3 id="计算机问题求解的实例——补丁与bug问题"><a href="#计算机问题求解的实例——补丁与bug问题" class="headerlink" title="计算机问题求解的实例——补丁与bug问题"></a>计算机问题求解的实例——补丁与bug问题</h3><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>错误就是人们所说的bug。用户在试用软件时总是希望其错误越少越好，最好是没有错误的。但是推出一个没有错误的软件几乎不可能，所以很多软件公司都在疯狂地发放补丁(有时这种补丁甚至是收费的)。T公司就是其中之一。上个月，T公司推出了一个新的字处理软件，随后发放了一批补丁。最近T公司发现其发放的补丁有致命的问题，那就是一个补丁在排除某些错误的同时，往往会加入另一些错误，此字处理软件中只可能出现n个特定的错误，这n个错误是由软件本身决定的。T公司目前共发放了m个补丁，对于每一个补丁，都有特定的适用环境，某个补丁只有在当前软件中包含某些错误而同时又不不包含另一些错误时才可以使用，如果它被使用，它将修复某些错误而同时加入某些错误。另外，使用每个补丁都要耗一定的时间(即补丁程序的运行时间)。</p>
+<p>现在T公司的问题很简单: 其字处理软件的初始版本不幸地包含了全部n个错误，有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
+<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><p>T公司的T公司的字处理软件中可能出现的n个错误为集合$B={b<em>1, b_2, ···, b_n}$中的元素，T公司目前共发放了m个补丁，记为；$P={p_1, p_2, ···, p_m}$。对于每一个补丁$P_i$，假设存在错误集合: $B</em>{i+}$，$B<em>{i-}$，当软件包含了$B</em>{i+}$中的所有错误，而没有包含$B<em>{i-}$中的任何错误时，补丁$P_i$才可以被使用，否则不能使用，显然$B</em>{i+}$，$B<em>{i-}$交集为空。补丁$P_i$将修复某些错误而同时加入某些错误，设错误集合$F</em>{i+}$，$F<em>{i-}$使用过补丁$P_i$之后，$F</em>{i-}$中的任何错误都不会在软件中出现，而软件将包含$F<em>{i+}$中的所有错误，同样$F</em>{i+}$，$F_{i-}$交集为空。另外，使用每个补丁都要耗一定的时间$T_i$。</p>
+<p>现在T公司的字处理软件的初始版本不幸地包含了全部n个错误，试编写程序判断有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
+<h4 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h4><p>把n个bug的状态(存在和不存在)的组合用一个0-1字符串(模式串)表示，执行一个补丁本质上就是模式串的转换。<br>模式串可以作为一个图的定点，那么补丁就是图中的边。于是问题则转换为从全1模式串${1, 1, …, 1}$到全0模式串${0, 0, …, 0}$的转换。</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/bug%E4%B8%8E%E8%A1%A5%E4%B8%81%E9%97%AE%E9%A2%98.png" alt="img"></p>
+<h4 id="设计最短路径算法"><a href="#设计最短路径算法" class="headerlink" title="设计最短路径算法"></a>设计最短路径算法</h4><ul>
+<li>Dijkstra最短路径算法求解</li>
+</ul>
+<h2 id="寻找最优算法的途径"><a href="#寻找最优算法的途径" class="headerlink" title="寻找最优算法的途径"></a>寻找最优算法的途径</h2><ul>
+<li>设计算法A，求$W(n)$，得到算法类最坏情况下时间复杂度的一个上界</li>
+<li>寻找函数$F(n)$，使得对任何算法都存在一个规模为n的输入，并且该算法在这个输入下至少要做$F(n)$次基本运算，得到该算法类最坏情况下时间复杂度的一个下界<ul>
+<li>给定问题和基本运算后就能确定一个算法类</li>
+</ul>
+</li>
+<li>如果$W(n)=F(n)$或$W(n)=\Theta(F(n))$，则A是最优的，下界是紧的</li>
+<li>如果$W(n)\gt F(n)$，A不是最优的或者$F(n)$的下界过低。需要: <ul>
+<li>改进原算法A或设计新的算法A’，使得$W’(n)\lt W(n)$</li>
+<li>重新证明新下界$F’(n)$，使得$F’(n)\gt F(n)$</li>
+<li>重复以上两个步骤，直到最终得到$W’(n)=F’(n)$或者$W’(n)=\Theta(F’(n))$</li>
+</ul>
+</li>
+</ul>
+<h3 id="平凡下界"><a href="#平凡下界" class="headerlink" title="平凡下界"></a>平凡下界</h3><ul>
+<li>算法的输入规模和输出规模是其平凡下界<ul>
+<li>n阶置换: 求解的时间复杂度下界为$\Omega(n!)$</li>
+<li>求n次实系数多项式在给定x时的值: 求解的时间复杂度下界为$\Omega(n)$</li>
+<li>两个n阶矩阵的乘积: 求解的时间复杂度下界为$\Omega(n^2)$</li>
+<li>货郎问题: 求解的时间复杂度下界为$\Omega(n^2)$</li>
+</ul>
+</li>
+</ul>
+<h3 id="以找最大问题为例"><a href="#以找最大问题为例" class="headerlink" title="以找最大问题为例"></a>以找最大问题为例</h3><ul>
+<li>获得某基本运算的算法类的上界<ul>
+<li>以比较作为基本运算的算法类的上界为: n-1</li>
+</ul>
+</li>
+<li>所设计算法的复杂度<ul>
+<li>在n个数的数组中找最大的数，以比较做基本运算的算法类中的任何算法在最坏情况下至少要做n-1次比较<ul>
+<li>因为最大的数是唯一的，其他n-1个数必须在比较后被淘汰，一次比较至多淘汰一个数，所以至少需要n-1次比较</li>
+</ul>
+</li>
+<li>下界为: n-1</li>
+</ul>
+</li>
+<li>于是所设计的算法便是最优算法</li>
+</ul>
+<h2 id="决策树-Decision-Tree"><a href="#决策树-Decision-Tree" class="headerlink" title="决策树(Decision Tree)"></a>决策树(Decision Tree)</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>决策树是一棵二叉树。<ul>
+<li>在二叉树的t层至多$2^t$个结点，根节点是第0层</li>
+<li>深度为d的二叉树至多$2^{d+1}-1$个结点</li>
+<li>n个结点的二叉树的深度至少为$\lfloor logn\rfloor$</li>
+<li>设t为二叉树的树叶个数，d为树的深度，如果树的每个内结点都有2个儿子结点，则$t\lt 2^d$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E4%BA%8C%E5%8F%89%E6%A0%91%E6%80%A7%E8%B4%A8%E5%BD%92%E7%BA%B3%E6%B3%95.png" alt="img"></li>
+</ul>
+</li>
+<li>对于给定问题(以比较运算作为基本运算)规定一个决策树的构造规则。求解这个问题的不同算法所构造的决策树结构不一样。<ul>
+<li>一个问题决定了一类决策树，具有相同的构造规则，决定了求解该问题的一个算法类。</li>
+</ul>
+</li>
+<li>给定一个算法的决策树，对于任何输入实例，算法将从树根开始，沿一条路径向下，在每个结点做一次基本操作(例如比较操作)，然后根据比较结果到达某个儿子节点或者在该节点直接停机。对于给定实例的计算恰好对应了一条从树根到树叶或者某个内部结点的路径。</li>
+</ul>
+<h3 id="输入规模"><a href="#输入规模" class="headerlink" title="输入规模"></a>输入规模</h3><ul>
+<li>给定一个算法，对于不同的输入，算法将在对应决策树的某个结点(树叶或者内部结点)停机，将该结点标记为输入，问题的输入规模对应于决策树的结点总数或者叶结点数。</li>
+</ul>
+<h3 id="时间复杂度-确定问题的难度"><a href="#时间复杂度-确定问题的难度" class="headerlink" title="时间复杂度(确定问题的难度)"></a>时间复杂度(确定问题的难度)</h3><ul>
+<li>最坏情况下的时间复杂度对应于决策树的深度。</li>
+<li>平均情况下的时间复杂度对应于决策树的平均路径长度。</li>
+</ul>
+<h2 id="检索算法的时间复杂度分析"><a href="#检索算法的时间复杂度分析" class="headerlink" title="检索算法的时间复杂度分析"></a>检索算法的时间复杂度分析</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>检索问题是给定按递增顺序排列的数组L(项数$n\gt 1$)和数x，如果x在L中，输出x的下标，否则输出0</p>
+<h3 id="顺序检索算法时间复杂度"><a href="#顺序检索算法时间复杂度" class="headerlink" title="顺序检索算法时间复杂度"></a>顺序检索算法时间复杂度</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 顺序检索算法</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">search_inde</span><span class="params">(<span class="type">int</span>* L, <span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> j = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">while</span>(j &lt;= <span class="built_in">len</span>(L) &amp;&amp; L[j] != x)</span><br><span class="line">    j += <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span>(j &gt; <span class="built_in">len</span>(L))</span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设x在L每个位置(n)和空隙(n+1)的概率都是$\frac{1}{2n+1}$。</p>
+<ul>
+<li><p>最坏复杂度: $W(n) = n$</p>
+</li>
+<li><p>平均复杂度: $A(n) = \frac{[(1+2+…+n)+n(n+1)]}{(2n+1)} \approx \frac{3n}{4}$</p>
+</li>
+</ul>
+<h3 id="二分检索算法时间复杂度"><a href="#二分检索算法时间复杂度" class="headerlink" title="二分检索算法时间复杂度"></a>二分检索算法时间复杂度</h3><ul>
+<li>最坏复杂度: $W(n) = \lfloor log n\rfloor + 1, n\gt 1$<ul>
+<li>$W(n) = 1 + W(\lfloor \frac{n}{2} \rfloor) = 1 + \lfloor log\lfloor \frac{n}{2} \rfloor \rfloor + 1 = 1 = \lfloor log\lfloor n \rfloor \rfloor - 1 + 1$(对数除法运算法则)</li>
+</ul>
+</li>
+<li>平均复杂度: <ul>
+<li>令$n=2^k - 1$，$S_t, 1\lt t\lt k$为算法做t次比较时的输入个数 $k \lt logn$</li>
+<li>$S_1 = 1 = 2^0, S_2 = 2 = 2^1, S_3 = 2^2, …, S_t=2^{t-1}, …, S_k=2^{k-1} + n + 1$(n+1)为缝隙中情况</li>
+<li>$A(n) = \frac{1S<em>1 + 2S_2 + … + kS_k}{2n+1} = \frac{\sum</em>{t=1}^{k}t2^{t-1}+k(n+1)}{2n+1}=\frac{(k-1)2^k + 1 + k(n+1)}{2n+1}\approx \frac{k-1}{2} + \frac{k}{2} = k - \frac{1}{2} = \lfloor logn \rfloor + \frac{1}{2}$<ul>
+<li>$\sum<em>{t=1}^{k}t2^{t-1}$拆分为$\sum</em>{t=1}^{k}t2^{t} - \sum<em>{t=1}^{k}t2^{t-1} = \sum</em>{t=1}^{k}t2^t - \sum_{t=0}^{k-1}(t+1)2^t$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h3><p>对于给定输入规模n, 决策树是一棵二叉树, 其结点被标记为 1, 2, … , n, 且标记规则是:</p>
+<ul>
+<li>首先与 x 比较的 L 的项的下标标记为树根。</li>
+<li>假设某结点被标记为 i:<ul>
+<li>i 的左儿子是：当 $x &lt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
+<li>i 的右儿子是：当 $x &gt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
+</ul>
+</li>
+<li>若 $x &lt; L(i)$ 时算法停止, 则 i 没有左儿子</li>
+<li>若 $x &gt; L(i)$ 时算法停止, 则 i 没有右儿子</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E6%A3%80%E7%B4%A2%E7%AE%97%E6%B3%95%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
+<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li>给定输入，算法将从根开始，沿一条路径前进，直到某个结点为止。所执行的基本运算次数是这条路径的结点个数，最坏情况下的基本运算次数是树的深度+1。<ul>
+<li>对于任何一个搜索算法存在某个规模为 n 的输入使得该算法至少要做 $\lfloor logn \rfloor + 1$次比较。</li>
+</ul>
+</li>
+<li>对于有序表搜索问题, 在以比较作为基本运算的算法类中, 二分法在最坏情况下是最优的.</li>
+</ul>
+<h2 id="排序算法的时间复杂度分析"><a href="#排序算法的时间复杂度分析" class="headerlink" title="排序算法的时间复杂度分析"></a>排序算法的时间复杂度分析</h2><h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// bubbleSort</span></span><br><span class="line"><span class="comment">// 交换只发生在相邻的元素之间</span></span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">bubbleSort</span><span class="params">(<span class="type">int</span>* L, n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> index = n;</span><br><span class="line">  <span class="keyword">while</span>(index &gt; <span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    k = index - <span class="number">1</span>;</span><br><span class="line">    index = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">1</span>; j &lt;= k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(L[j] &gt; L[j+<span class="number">1</span>])</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">int</span> tmp = L[j];</span><br><span class="line">        L[j] = L[j+<span class="number">1</span>];</span><br><span class="line">        L[j+<span class="number">1</span>] = tmp;</span><br><span class="line">        index = j;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="置换与逆序"><a href="#置换与逆序" class="headerlink" title="置换与逆序"></a>置换与逆序</h4><ul>
+<li>逆序<ul>
+<li>令$L={1, 2, …, n}$，排序的任何输入为L上的置换。在置换$a_1a_2…a_n$中若$i<j$，但$a_i>a_j$，则称($a_i, a_j$)为该置换的一个逆序。</li>
+</ul>
+</li>
+<li>逆序序列<ul>
+<li>在$i$的右边，并且小于i的元素的个数记作$b_i$，$i=1, 2, …, n$。</li>
+<li>($b_1, b_2, …, b_n$)为置换的逆序序列。<ul>
+<li>总共可以有$n!$个不同的逆序序列(1, 2, 3, …, n个)。</li>
+<li>置换与逆序序列构成一一对应。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>逆序数<ul>
+<li>置换中的逆序总数($\sum_{i=1}^{n}b_i$)</li>
+</ul>
+</li>
+<li><p>实例</p>
+<ul>
+<li>3, 1, 6, 5, 8, 7, 2, 4</li>
+<li>逆序数: 12</li>
+<li><p>降序逆序序列: </p>
+<p>1|2|3|4|5|6|7|8<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>0|0|2|0|2|3|2|3</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li>最坏复杂度<ul>
+<li>$W(n) = O(n^2)$，至多巡回$O(n)$次，每次$O(n)$</li>
+<li>对换只发生在相邻元素之间，每次相邻元素交换只消除1个逆序，比较次数不少于逆序数，而最大逆序数为$\frac{n(n-1)}{2}$，于是$W(n)=\Omega(n^2)$</li>
+</ul>
+</li>
+<li>平均复杂度<ul>
+<li>假设各种输入是等可能的，置换$\alpha$的逆序序列是($b_1, b_2, …, b_n$)，置换$\alpha’$的逆序序列为($0-b_1, 1-b_2, …, n-1-b_n$)，$\alpha$和$\alpha’$的逆序数之和为$\frac{n(n-1)}{2}$。将$n!$种不同的置换分成$\frac{n!}{2}$组，每组的逆序之和为$\frac{n(n-1)}{2}$<ul>
+<li>$\alpha’$是补集置换，记录的是顺序数，因为经过置换后，其顺序数的逆序贡献等价于原置换的逆序数的逆序贡献。</li>
+</ul>
+</li>
+<li>平均逆序数为$\frac{n(n-1)}{4}$</li>
+<li>平均交换次数为$\Omega(\frac{n(n-1)}{4})$</li>
+</ul>
+</li>
+<li>因此均为$\Theta(n^2)$</li>
+</ul>
+<h3 id="快速排序与二分归并排序"><a href="#快速排序与二分归并排序" class="headerlink" title="快速排序与二分归并排序"></a>快速排序与二分归并排序</h3><h4 id="复杂度分析-2"><a href="#复杂度分析-2" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li>快速排序<ul>
+<li>最坏情况: $O(n^2)$</li>
+<li>平均情况: $O(nlogn)$</li>
+</ul>
+</li>
+<li>二分归并排序<ul>
+<li>最坏情况: $O(nlogn)$</li>
+<li>平均情况: $O(nlogn)$</li>
+</ul>
+</li>
+</ul>
+<h3 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h3><h4 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h4><p>设T是一棵深度为d的二叉树，结点为L中的元素。若能满足以下条件，则为堆:</p>
+<ul>
+<li>所有内结点(可能一点除外)的度数为2</li>
+<li>所有树叶至多在相邻的两层</li>
+<li>d-1层的所有树叶在内结点的右边</li>
+<li>d-1层最右边的内结点可能度数为1(只有左儿子，没有右儿子)</li>
+<li>每个结点的元素不小于儿子的元素(不满足这条的称作堆结构或者伪堆)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86.png" alt="img"></p>
+<h4 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h4><ul>
+<li>根据二叉树的性质和堆的定义<ul>
+<li>$left(i)=2i$</li>
+<li>$right(i)=2i+1$</li>
+</ul>
+</li>
+<li><p>n个结点的堆恰好有$\lceil \frac{n}{2}\rceil$片树叶<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E2.png" alt="img"></p>
+</li>
+<li><p>结点的高度: 结点到树叶的距离</p>
+<ul>
+<li>同一高度的结点分布在树的不同层<ul>
+<li>结点的深度: 结点到树根的距离</li>
+</ul>
+</li>
+<li>同一深度的结点分布在树的同一层</li>
+</ul>
+</li>
+</ul>
+<h4 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h4><ul>
+<li><p>整理</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%AE%9E%E4%BE%8B.png" alt="img"></p>
+</li>
+<li><p>建堆</p>
+<ul>
+<li>从下往上整理，堆有n个结点，树叶有$\lceil\frac{n}{2}\rceil$片，最大的内结点标号为$n-\lceil\frac{n}{2}\rceil=\lfloor\frac{n}{2}\rfloor$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%AE%9E%E4%BE%8B.png" alt="img"></li>
+</ul>
+</li>
+<li><p>排序</p>
+<ul>
+<li>建堆后从后往前每个结点下沉<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="复杂度分析-3"><a href="#复杂度分析-3" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li><p>整理</p>
+<ul>
+<li>每次调用为$O(1)$，子堆大小至多为原来的$\frac{2}{3}$<ul>
+<li><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6.png" alt="img"></li>
+</ul>
+</li>
+<li>递推不等式$T(n)\lt T(\frac{2n}{3}) + \Theta(1)$<ul>
+<li>$T(n) = \Theta(logn)$($T(h) = \Theta(h)$)<ul>
+<li>h为结点i的高度(距离树叶的最大距离)，n为以i为根的子树的结点数。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>建堆</p>
+<ul>
+<li>按照高度来计数结点数，乘以$O(h)$，再求和。</li>
+<li>而整理的复杂度依赖于所整理结点的高度。</li>
+<li>$T(n) = \sum_{\lfloor logn \rfloor}^{h=0}高为h的结点数 \times O(h)$<ul>
+<li>n个元素的堆高度为h的层至多存在$\lceil\frac{n}{2^{h+1}}\rceil$个结点(归纳法证明)。<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B01.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B02.png" alt="img"></li>
+</ul>
+</li>
+<li>n个结点的建堆算法的时间复杂度是$O(n)$<ul>
+<li>对高为h的结点调用整理算法的时间是$O(h)$: $T(n) = \sum<em>{h=0}^{\lfloor logn \rfloor}\lceil\frac{n}{2^{h+1}}\rceil O(h) = O(n\sum</em>{h=0}^{\infin}\frac{h}{2^{h+1}} = O(n)$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>排序</p>
+<ul>
+<li>$O(nlogn)$<ul>
+<li>建堆复杂度为$O(n)$</li>
+<li>整理需要n-1次，每次$O(logn)$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="排序问题的决策树"><a href="#排序问题的决策树" class="headerlink" title="排序问题的决策树"></a>排序问题的决策树</h3><p>考虑以比较运算作为基本运算的排序算法类<br>任取算法，输入$L={x_1, x_2, …, x_n}$</p>
+<ul>
+<li>第一次比较的元素为$x_i, x_j$，作为决策树根为$(i, j)$</li>
+<li><p>假设结点k已经标记为$(m, n)$</p>
+<ul>
+<li>$x_m &lt; x_n$: <ul>
+<li>如果算法结束了，则将k的左儿子标记为输出。</li>
+<li>如果下一步是比较$x_p, x_q$，则k的左儿子标记为$(p, q)$</li>
+</ul>
+</li>
+<li>$x_m &gt; x_n$<ul>
+<li>如果算法结束了，则将k的右儿子标记为输出</li>
+<li>如果下一步是比较$x_p, x_q$，则k的右儿子标记为$(p, q)$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>任意输入对应了决策树中从树根到树叶的一条路径，算法最坏情况下的比较次数则为树的深度。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E7%9A%84%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
+<ul>
+<li>删除非二叉的内结点(灰色结点)，得到的二叉树为B-树，其深度肯定不超过决策树的深度，有$n!$片树叶</li>
+</ul>
+<ul>
+<li>设t为B-树中的树叶数，d为树的深度，$t\lt 2^d$(归纳法证明)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/B%E6%A0%91%E5%8F%B6%E5%AD%90%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%85%B3%E7%B3%BB.png" alt="img"></li>
+</ul>
+<h4 id="最坏情况复杂度的下界"><a href="#最坏情况复杂度的下界" class="headerlink" title="最坏情况复杂度的下界"></a>最坏情况复杂度的下界</h4><ul>
+<li>对于给定的n，任何通过比较对n个元素排序的算法的决策树的深度至少为$\lceil logn!\rceil$(从上两条结论得到)</li>
+<li>任何通过比较对n个元素排序的算法在最坏情况下的时间复杂度是$\lceil logn! \rceil$，可近似为$nlogn - 1.5n$<ul>
+<li>最坏情况下的比较次数是树的深度。</li>
+<li>证明思路: 用对数乘加变换<ul>
+<li>$log n! = \sum<em>{j=1}^{n}log j \gt \int_1^n logx dx = loge\int</em>{1}^{n}lnx dx = loge(nlnn - n + 1) = nlogn - nloge + loge \approx nlogn - 1.5n$<ul>
+<li>$x = e^{lnx}$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>堆排序算法在最坏情况阶达到最优。<ul>
+<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{1}^{n}logxdx=nlnn - n + 1 = \Omega(nlogn)$</li>
+<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{2}^{n+1}logxdx=O(nlogn)$</li>
+</ul>
+</li>
+</ul>
+<h4 id="平均情况复杂度的下界"><a href="#平均情况复杂度的下界" class="headerlink" title="平均情况复杂度的下界"></a>平均情况复杂度的下界</h4><ul>
+<li>epl(T): 假设所有的输入等概率分布，令epl(T)表示B-树中从根到树叶的所有路径长度之和，$\frac{epl(T)}{n!}$的最小值对应平均情况时间复杂性的下界。<ul>
+<li>分析具有最小epl(T)值的树的结构求得最小值。</li>
+</ul>
+</li>
+<li>在具有t片树叶的所有B-树中，树叶分布在两个相邻层上的树的epl值最小。<ul>
+<li>反证法?: 假设树T的深度为d，假设树叶x在第k层，$k&lt;d-1$。取d-1层的某个结点y，y有两个儿子是第d层的树叶，y的两个儿子作为x的儿子得到树T’<ul>
+<li>$epl(T)-epl(T’)=(2d+k) - (d-1) + 2(k+1) = d-k-1 &gt; 0$</li>
+<li>T’的树叶相距层数小于T的树叶相距层数，且T’的epl值小于T的epl值</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>epl的下界</p>
+<ul>
+<li>具有t片树叶且epl值最小的B-树T满足: $epl(T) = t\lfloor logt\rfloor + 2(t-2^{\lfloor logt \rfloor})$<ul>
+<li>$d\gt \lceil logt\rceil$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>在输入等概分布下任何通过比较对n个项排序的算法平均比较次数至少为$\lfloor log n!\rfloor$，近似为$nlogn - 1.5n$</p>
+<ul>
+<li>算法类中任何算法的平均比较次数是该算法决策树T的$\frac{epl(T)}{n!}$<ul>
+<li>$A(n)\gt \frac{epl(T)}{n!} = \frac{n!\lfloor logn!\rfloor + 2(n! - 2^{\lfloor logn!\rfloor})}{n!}=\lfloor logn!\rfloor +\epsilon\approx nlogn - 1.5n(0\lt \epsilon &lt; 1)$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>堆排序在平均情况下阶达到最优。</p>
+</li>
+</ul>
+<h3 id="排序算法的比较"><a href="#排序算法的比较" class="headerlink" title="排序算法的比较"></a>排序算法的比较</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">算法</th>
+<th style="text-align:center">最坏情况</th>
+<th style="text-align:center">平均情况</th>
+<th style="text-align:center">占用空间</th>
+<th style="text-align:center">时间最优性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">冒泡排序</td>
+<td style="text-align:center">$O(n^2)$</td>
+<td style="text-align:center">$O(n^2)$</td>
+<td style="text-align:center">原地</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">快速排序</td>
+<td style="text-align:center">$O(n^2)$</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(logn)$</td>
+<td style="text-align:center">平均最优</td>
+</tr>
+<tr>
+<td style="text-align:center">归并排序</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(n)$</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">堆排序</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">原地</td>
+<td style="text-align:center">最优</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="选择算法的时间复杂度分析"><a href="#选择算法的时间复杂度分析" class="headerlink" title="选择算法的时间复杂度分析"></a>选择算法的时间复杂度分析</h2><p><img src="" alt="img"></p>
+<h3 id="管道问题"><a href="#管道问题" class="headerlink" title="管道问题"></a>管道问题</h3><ul>
+<li>某区域有n口油井，需要修建输油管道。根据设计要求，水平方向有一条主管道，每口油井修一条垂直方向的支管道通向主管道。问如何选择主管道的垂直方向位置，使得支管道长度的综合最小？</li>
+<li><p>最优解是垂直方向上的所有支管道坐标的中位数</p>
+</li>
+<li><p>简单算法</p>
+<ul>
+<li>调用k次选最小算法，复杂度为$O(kn)$</li>
+<li>先排序，然后输出第k小的数，复杂度为$O(nlogn)$</li>
+</ul>
+</li>
+<li>分治算法<ul>
+<li>假设元素彼此不等</li>
+<li>用某个元素$m^<em>$作为标准将总集合$S$划分为$S_1$($&lt;m^</em>$), $S_2$($&gt;m^*$)。</li>
+<li>分治:<ul>
+<li>如果$k\lt |S_1|$，则在$S_1$中找第k小</li>
+<li>如果$k = |S_1| + 1$，则$m^*$是第k小</li>
+<li>如果$k\gt |S_1| + 1$，则在$S_2$中找第$k-|S_1|-1$小</li>
+</ul>
+</li>
+<li>伪码<ul>
+<li>行2: $O(n)$，每5个数找中位数构成M。</li>
+<li>行3: $W(\frac{n}{5})$，在M中再找中位数$m^*$。</li>
+<li>行4: $O(n)$，用$m^*$划分集合$S$。</li>
+<li>行8-9: $W(\frac{7n}{10})$，进行递归</li>
+<li>$W(n)\lt W(\frac{n}{5}) + W(\frac{7n}{10}) + O(n)$<br><img src="" alt="img"></li>
+</ul>
+</li>
+<li>该算法的效率取决于子问题的规模<ul>
+<li>算法工作量为$O(n)$<ul>
+<li>$W(n) \lt cn(1+0.9+0.9^2+…) = O(n)$</li>
+<li>$|M|$与归约后子问题的规模之和小于n，递归树每行的工作量便能构成公比小于1的等比级数，于是算法复杂度为$O(n)$<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>分组时如果不是5个元素一组，而是3个或7个<ul>
+<li>求$m^*$的工作量与$|M|=\frac{n}{t}$相关，t为每组的元素数，如果t大，那么$|M|$就小。</li>
+<li>归约后的子问题大小与分组元素t有关，t大，子问题规模就大。<ul>
+<li>复杂度满足方程$W(n) = W(\frac{n}{3}) + W(\frac{4n}{6}) + cn = \Theta(nlogn)$<br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="下界的证明方法-构造最坏的输入"><a href="#下界的证明方法-构造最坏的输入" class="headerlink" title="下界的证明方法: 构造最坏的输入"></a>下界的证明方法: 构造最坏的输入</h3><ul>
+<li>任意给定一个算法，对于任意输入x都存在一个确定的操作序列$\tau$<ul>
+<li>$\tau$中的操作分成两类:<ul>
+<li>决定性的: 能够对确定输出结果提供有效的信息。</li>
+<li>非决定性的: 对确定结果没有帮助的冗余操作。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>最坏情况便是: <ul>
+<li>根据算法构造某个输入实例x，使得算法对x的操作序列$\tau$包含尽量多的冗余非决定性操作。</li>
+<li>给出冗余操作+必要操作的计数公式便能得到下界。</li>
+</ul>
+</li>
+</ul>
+<h3 id="选最大与最小的算法"><a href="#选最大与最小的算法" class="headerlink" title="选最大与最小的算法"></a>选最大与最小的算法</h3><ul>
+<li>任何通过比较找最大和最小的算法至少需要$\lceil\frac{3n}{2}\rceil - 2$次比较。<ul>
+<li>任意给定一个算法，根据算法的比较结果构造输入T，使得算法对T至少做$\lceil\frac{3n}{2}\rceil-2$次比较。</li>
+<li>不妨假设n彼此不等的数，max代表最大，min代表最小。<ul>
+<li>基于比较的暴力算法要找到最大必须确定有n-1个数比max小。找到最小的数必须确定有n-1个数比min小。共$2n-2$次比较。</li>
+<li>FindMaxMin算法将数两两分组比较，是最优算法，是复杂度的下界。<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="找第二大问题"><a href="#找第二大问题" class="headerlink" title="找第二大问题"></a>找第二大问题</h3><ul>
+<li><p>元素x的权: $w(x)$，表示以x为根的子树中的结点数。</p>
+<ul>
+<li>初始，$w(x_i)=1, i=1, 2, 3, …, n$</li>
+<li>赋值原则: 在比较的时候进行赋值或者调整赋值。只对没有失败过的元素(权大于0)进行赋值。权大者胜，原来胜的次数多的仍旧是胜，输入值也大。<ul>
+<li>$w(x), w(y) &gt; 0$<ul>
+<li>权大者胜: 若$w(x) &gt; w(y)$，那么x的值大于y的值，$w(x)\leftarrow w(x) + w(y), w(y)\leftarrow 0$。</li>
+<li>权等则任意分配: 若$w(x) = w(y)$，那么可考虑为x的值大于y的值的情况，也可考虑为y的值大于x的值。</li>
+<li>无意义不变: 若$w(x) = w(y) = 0$，x和y值不变。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>构造树</p>
+<ul>
+<li>初始是森林，包含n个结点。</li>
+<li>若x, y是子树的树根，则算法比较x, y。</li>
+<li>若x, y以前没有参加过比较，任意赋值给x, y，比如$x&gt;y$，那么y作为x的儿子。</li>
+<li>若x, y已经在前面的比较中赋过值，且$x&gt;y$，那么把y作为x的儿子，以y为根的子树作为x的子树。<br><img src="" alt="img"></li>
+</ul>
+</li>
+<li><p>任何找第二大算法，针对上述赋值规则产生的输入，通过与最大元素的比较直接淘汰的元素数至少是$\lceil logn\rceil$。</p>
+<ul>
+<li>$w<em>k$表示max在第k次比较后形成以max为根子树的结点总数。$w_k\lt 2w</em>{k-1}$。</li>
+<li>设K为max最终与权不为0的结点的比较次数。<ul>
+<li>$n=w_K\lt 2^K\Rightarrow K\gt logn \Rightarrow K \gt \lceil logn\rceil$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>任何通过比较找第二大的算法至少需要$n+\lceil logn\rceil-2$次比较。<ul>
+<li>确定最大需要n-1次比较。</li>
+<li>确定第二大还要淘汰K-1个元素，至少用$\lceil logn\rceil - 1$次比较。</li>
+</ul>
+</li>
+<li>锦标赛算法是找第二大的最优算法。</li>
+</ul>
+<h3 id="找中位数问题"><a href="#找中位数问题" class="headerlink" title="找中位数问题"></a>找中位数问题</h3><ul>
+<li>设n为奇数，任何通过比较运算找n个数的中位数(median)的算法在最坏情况下至少做$\frac{3n}{2} - \frac{3}{2}$次比较。<ul>
+<li>决定性的比较: 建立x与median的关系的比较，比较时y和median的关系可以不知道。<ul>
+<li>$\exist y (x&gt;y \&amp; y\gt median)$，x满足上述条件的第一次比较。</li>
+<li>$\exist y (x&lt;y \&amp; y\lt median)$，x满足上述条件的第一次比较。</li>
+</ul>
+</li>
+<li>非决定性的比较<ul>
+<li>$x&gt;median, y<median$，这时$x>y$的比较不是决定性的，因为根据median本可知道x和y的大小。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>为了找到中位数，必须要做n-1次决定性的比较，针对算法构造输入，使得非决定性比较达到$\frac{n-1}{2}$次。</p>
+</li>
+<li><p>对于求中位数的任意算法，构造输入</p>
+<ul>
+<li>分配一个值给中位数median。</li>
+<li>如果算法比较x与y，且x与y没有被赋值，那么赋值x, y使得$x&gt;median, y&lt;median$。</li>
+<li>如果算法比较x与y，且$x&gt;median$，y没有被赋值，则赋值y使得$y&lt;median$。</li>
+<li>如果算法比较x与y，且$x<median$，y没有被赋值，则赋值y使得$y>median$。</li>
+<li>如果存在$\frac{n-1}{2}$个元素已得到小于median的值，则对未赋值的全部元素分配大于median的值。</li>
+<li>如果存在$\frac{n-1}{2}$个元素已得到大于median的值，则对未赋值的全部元素分配小于median的值。</li>
+<li>如果只剩下1个元素，则分配为median。<br><img src="" alt="img"></li>
+</ul>
+</li>
+<li><p>复杂度分析</p>
+<ul>
+<li>Select算法在阶上达到最优。<br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">问题</th>
+<th style="text-align:center">算法</th>
+<th style="text-align:center">最坏情况</th>
+<th style="text-align:center">问题下界</th>
+<th style="text-align:center">最优性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">找最大</td>
+<td style="text-align:center">Findmax</td>
+<td style="text-align:center">$n-1$</td>
+<td style="text-align:center">n-1</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找最大最小</td>
+<td style="text-align:center">FindMaxMin</td>
+<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
+<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找第二大</td>
+<td style="text-align:center">锦标赛</td>
+<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
+<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找中位数</td>
+<td style="text-align:center">Select(找第$\frac{k}{2}$小)</td>
+<td style="text-align:center">$O(n)$</td>
+<td style="text-align:center">$\frac{3n}{2}-\frac{3}{2}$</td>
+<td style="text-align:center">阶最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找第k小</td>
+<td style="text-align:center">Select</td>
+<td style="text-align:center">$O(n)$</td>
+<td style="text-align:center">$n+\min{k, n-k+1}-2$</td>
+<td style="text-align:center">阶最优</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="归约确认问题"><a href="#归约确认问题" class="headerlink" title="归约确认问题"></a>归约确认问题</h2>]]></content>
+      <categories>
+        <category>高级算法设计</category>
+      </categories>
+      <tags>
+        <tag>高级算法设计</tag>
       </tags>
   </entry>
   <entry>
@@ -8004,622 +8694,6 @@ j =
       </categories>
       <tags>
         <tag>高级分布式系统</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>算法分析与问题的计算复杂度</title>
-    <url>/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/</url>
-    <content><![CDATA[<h1 id="算法分析与问题的计算复杂度"><a href="#算法分析与问题的计算复杂度" class="headerlink" title="算法分析与问题的计算复杂度"></a>算法分析与问题的计算复杂度</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="解决一个计算问题的过程"><a href="#解决一个计算问题的过程" class="headerlink" title="解决一个计算问题的过程"></a>解决一个计算问题的过程</h3><ul>
-<li>是否可计算</li>
-<li>是否能行可计算(在有限的复杂度内完成计算)</li>
-<li>算法设计与分析</li>
-<li>用计算机语言实现算法</li>
-<li>软件系统</li>
-</ul>
-<h3 id="可计算理论"><a href="#可计算理论" class="headerlink" title="可计算理论"></a>可计算理论</h3><ul>
-<li>计算模型</li>
-<li>可计算问题与不可计算问题</li>
-<li>计算模型的等价性——图灵/Church命题</li>
-</ul>
-<h3 id="计算复杂性理论"><a href="#计算复杂性理论" class="headerlink" title="计算复杂性理论"></a>计算复杂性理论</h3><p>在给定的计算模型下研究问题的复杂性</p>
-<ul>
-<li>固有复杂性</li>
-<li>上界</li>
-<li>下界</li>
-<li>平均</li>
-<li>复杂性问题的分类: P=NP?</li>
-<li>抽象复杂性研究</li>
-</ul>
-<h3 id="算法设计和分析"><a href="#算法设计和分析" class="headerlink" title="算法设计和分析"></a>算法设计和分析</h3><ul>
-<li>可计算问题的算法的设计与分析</li>
-<li>设计高效算法，分析算法性能，两者交互验证<ul>
-<li>设计算法的理论、方法和技术(设计正确高效的算法)</li>
-<li>分析算法的理论、方法和技术(判断算法是否足够高效)</li>
-</ul>
-</li>
-</ul>
-<h3 id="算法的定义"><a href="#算法的定义" class="headerlink" title="算法的定义"></a>算法的定义</h3><p>算法是一个满足下列条件的计算: </p>
-<ul>
-<li>输入: 有一个满足给定约束条件的输入</li>
-<li>输出: 满足给定约束条件的结果</li>
-<li>有穷性/终止性: 有限步内必须终止</li>
-<li>可行性: 每一个动作都能够被精确地机械执行<ul>
-<li>反例: 将大元素放数组后，小元素放数组前。但是无法精确执行，因为没有确定一个元素是大元素还是小元素的指标</li>
-</ul>
-</li>
-</ul>
-<h3 id="计算机问题求解的实例——补丁与bug问题"><a href="#计算机问题求解的实例——补丁与bug问题" class="headerlink" title="计算机问题求解的实例——补丁与bug问题"></a>计算机问题求解的实例——补丁与bug问题</h3><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>错误就是人们所说的bug。用户在试用软件时总是希望其错误越少越好，最好是没有错误的。但是推出一个没有错误的软件几乎不可能，所以很多软件公司都在疯狂地发放补丁(有时这种补丁甚至是收费的)。T公司就是其中之一。上个月，T公司推出了一个新的字处理软件，随后发放了一批补丁。最近T公司发现其发放的补丁有致命的问题，那就是一个补丁在排除某些错误的同时，往往会加入另一些错误，此字处理软件中只可能出现n个特定的错误，这n个错误是由软件本身决定的。T公司目前共发放了m个补丁，对于每一个补丁，都有特定的适用环境，某个补丁只有在当前软件中包含某些错误而同时又不不包含另一些错误时才可以使用，如果它被使用，它将修复某些错误而同时加入某些错误。另外，使用每个补丁都要耗一定的时间(即补丁程序的运行时间)。</p>
-<p>现在T公司的问题很简单: 其字处理软件的初始版本不幸地包含了全部n个错误，有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
-<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><p>T公司的T公司的字处理软件中可能出现的n个错误为集合$B={b<em>1, b_2, ···, b_n}$中的元素，T公司目前共发放了m个补丁，记为；$P={p_1, p_2, ···, p_m}$。对于每一个补丁$P_i$，假设存在错误集合: $B</em>{i+}$，$B<em>{i-}$，当软件包含了$B</em>{i+}$中的所有错误，而没有包含$B<em>{i-}$中的任何错误时，补丁$P_i$才可以被使用，否则不能使用，显然$B</em>{i+}$，$B<em>{i-}$交集为空。补丁$P_i$将修复某些错误而同时加入某些错误，设错误集合$F</em>{i+}$，$F<em>{i-}$使用过补丁$P_i$之后，$F</em>{i-}$中的任何错误都不会在软件中出现，而软件将包含$F<em>{i+}$中的所有错误，同样$F</em>{i+}$，$F_{i-}$交集为空。另外，使用每个补丁都要耗一定的时间$T_i$。</p>
-<p>现在T公司的字处理软件的初始版本不幸地包含了全部n个错误，试编写程序判断有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
-<h4 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h4><p>把n个bug的状态(存在和不存在)的组合用一个0-1字符串(模式串)表示，执行一个补丁本质上就是模式串的转换。<br>模式串可以作为一个图的定点，那么补丁就是图中的边。于是问题则转换为从全1模式串${1, 1, …, 1}$到全0模式串${0, 0, …, 0}$的转换。</p>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/bug%E4%B8%8E%E8%A1%A5%E4%B8%81%E9%97%AE%E9%A2%98.png" alt="img"></p>
-<h4 id="设计最短路径算法"><a href="#设计最短路径算法" class="headerlink" title="设计最短路径算法"></a>设计最短路径算法</h4><ul>
-<li>Dijkstra最短路径算法求解</li>
-</ul>
-<h2 id="寻找最优算法的途径"><a href="#寻找最优算法的途径" class="headerlink" title="寻找最优算法的途径"></a>寻找最优算法的途径</h2><ul>
-<li>设计算法A，求$W(n)$，得到算法类最坏情况下时间复杂度的一个上界</li>
-<li>寻找函数$F(n)$，使得对任何算法都存在一个规模为n的输入，并且该算法在这个输入下至少要做$F(n)$次基本运算，得到该算法类最坏情况下时间复杂度的一个下界<ul>
-<li>给定问题和基本运算后就能确定一个算法类</li>
-</ul>
-</li>
-<li>如果$W(n)=F(n)$或$W(n)=\Theta(F(n))$，则A是最优的，下界是紧的</li>
-<li>如果$W(n)\gt F(n)$，A不是最优的或者$F(n)$的下界过低。需要: <ul>
-<li>改进原算法A或设计新的算法A’，使得$W’(n)\lt W(n)$</li>
-<li>重新证明新下界$F’(n)$，使得$F’(n)\gt F(n)$</li>
-<li>重复以上两个步骤，直到最终得到$W’(n)=F’(n)$或者$W’(n)=\Theta(F’(n))$</li>
-</ul>
-</li>
-</ul>
-<h3 id="平凡下界"><a href="#平凡下界" class="headerlink" title="平凡下界"></a>平凡下界</h3><ul>
-<li>算法的输入规模和输出规模是其平凡下界<ul>
-<li>n阶置换: 求解的时间复杂度下界为$\Omega(n!)$</li>
-<li>求n次实系数多项式在给定x时的值: 求解的时间复杂度下界为$\Omega(n)$</li>
-<li>两个n阶矩阵的乘积: 求解的时间复杂度下界为$\Omega(n^2)$</li>
-<li>货郎问题: 求解的时间复杂度下界为$\Omega(n^2)$</li>
-</ul>
-</li>
-</ul>
-<h3 id="以找最大问题为例"><a href="#以找最大问题为例" class="headerlink" title="以找最大问题为例"></a>以找最大问题为例</h3><ul>
-<li>获得某基本运算的算法类的上界<ul>
-<li>以比较作为基本运算的算法类的上界为: n-1</li>
-</ul>
-</li>
-<li>所设计算法的复杂度<ul>
-<li>在n个数的数组中找最大的数，以比较做基本运算的算法类中的任何算法在最坏情况下至少要做n-1次比较<ul>
-<li>因为最大的数是唯一的，其他n-1个数必须在比较后被淘汰，一次比较至多淘汰一个数，所以至少需要n-1次比较</li>
-</ul>
-</li>
-<li>下界为: n-1</li>
-</ul>
-</li>
-<li>于是所设计的算法便是最优算法</li>
-</ul>
-<h2 id="决策树-Decision-Tree"><a href="#决策树-Decision-Tree" class="headerlink" title="决策树(Decision Tree)"></a>决策树(Decision Tree)</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
-<li>决策树是一棵二叉树。<ul>
-<li>在二叉树的t层至多$2^t$个结点，根节点是第0层</li>
-<li>深度为d的二叉树至多$2^{d+1}-1$个结点</li>
-<li>n个结点的二叉树的深度至少为$\lfloor logn\rfloor$</li>
-<li>设t为二叉树的树叶个数，d为树的深度，如果树的每个内结点都有2个儿子结点，则$t\lt 2^d$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E4%BA%8C%E5%8F%89%E6%A0%91%E6%80%A7%E8%B4%A8%E5%BD%92%E7%BA%B3%E6%B3%95.png" alt="img"></li>
-</ul>
-</li>
-<li>对于给定问题(以比较运算作为基本运算)规定一个决策树的构造规则。求解这个问题的不同算法所构造的决策树结构不一样。<ul>
-<li>一个问题决定了一类决策树，具有相同的构造规则，决定了求解该问题的一个算法类。</li>
-</ul>
-</li>
-<li>给定一个算法的决策树，对于任何输入实例，算法将从树根开始，沿一条路径向下，在每个结点做一次基本操作(例如比较操作)，然后根据比较结果到达某个儿子节点或者在该节点直接停机。对于给定实例的计算恰好对应了一条从树根到树叶或者某个内部结点的路径。</li>
-</ul>
-<h3 id="输入规模"><a href="#输入规模" class="headerlink" title="输入规模"></a>输入规模</h3><ul>
-<li>给定一个算法，对于不同的输入，算法将在对应决策树的某个结点(树叶或者内部结点)停机，将该结点标记为输入，问题的输入规模对应于决策树的结点总数或者叶结点数。</li>
-</ul>
-<h3 id="时间复杂度-确定问题的难度"><a href="#时间复杂度-确定问题的难度" class="headerlink" title="时间复杂度(确定问题的难度)"></a>时间复杂度(确定问题的难度)</h3><ul>
-<li>最坏情况下的时间复杂度对应于决策树的深度。</li>
-<li>平均情况下的时间复杂度对应于决策树的平均路径长度。</li>
-</ul>
-<h2 id="检索算法的时间复杂度分析"><a href="#检索算法的时间复杂度分析" class="headerlink" title="检索算法的时间复杂度分析"></a>检索算法的时间复杂度分析</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>检索问题是给定按递增顺序排列的数组L(项数$n\gt 1$)和数x，如果x在L中，输出x的下标，否则输出0</p>
-<h3 id="顺序检索算法时间复杂度"><a href="#顺序检索算法时间复杂度" class="headerlink" title="顺序检索算法时间复杂度"></a>顺序检索算法时间复杂度</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 顺序检索算法</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">search_inde</span><span class="params">(<span class="type">int</span>* L, <span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> j = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">while</span>(j &lt;= <span class="built_in">len</span>(L) &amp;&amp; L[j] != x)</span><br><span class="line">    j += <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span>(j &gt; <span class="built_in">len</span>(L))</span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>设x在L每个位置(n)和空隙(n+1)的概率都是$\frac{1}{2n+1}$。</p>
-<ul>
-<li><p>最坏复杂度: $W(n) = n$</p>
-</li>
-<li><p>平均复杂度: $A(n) = \frac{[(1+2+…+n)+n(n+1)]}{(2n+1)} \approx \frac{3n}{4}$</p>
-</li>
-</ul>
-<h3 id="二分检索算法时间复杂度"><a href="#二分检索算法时间复杂度" class="headerlink" title="二分检索算法时间复杂度"></a>二分检索算法时间复杂度</h3><ul>
-<li>最坏复杂度: $W(n) = \lfloor log n\rfloor + 1, n\gt 1$<ul>
-<li>$W(n) = 1 + W(\lfloor \frac{n}{2} \rfloor) = 1 + \lfloor log\lfloor \frac{n}{2} \rfloor \rfloor + 1 = 1 = \lfloor log\lfloor n \rfloor \rfloor - 1 + 1$(对数除法运算法则)</li>
-</ul>
-</li>
-<li>平均复杂度: <ul>
-<li>令$n=2^k - 1$，$S_t, 1\lt t\lt k$为算法做t次比较时的输入个数 $k \lt logn$</li>
-<li>$S_1 = 1 = 2^0, S_2 = 2 = 2^1, S_3 = 2^2, …, S_t=2^{t-1}, …, S_k=2^{k-1} + n + 1$(n+1)为缝隙中情况</li>
-<li>$A(n) = \frac{1S<em>1 + 2S_2 + … + kS_k}{2n+1} = \frac{\sum</em>{t=1}^{k}t2^{t-1}+k(n+1)}{2n+1}=\frac{(k-1)2^k + 1 + k(n+1)}{2n+1}\approx \frac{k-1}{2} + \frac{k}{2} = k - \frac{1}{2} = \lfloor logn \rfloor + \frac{1}{2}$<ul>
-<li>$\sum<em>{t=1}^{k}t2^{t-1}$拆分为$\sum</em>{t=1}^{k}t2^{t} - \sum<em>{t=1}^{k}t2^{t-1} = \sum</em>{t=1}^{k}t2^t - \sum_{t=0}^{k-1}(t+1)2^t$</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h3><p>对于给定输入规模n, 决策树是一棵二叉树, 其结点被标记为 1, 2, … , n, 且标记规则是:</p>
-<ul>
-<li>首先与 x 比较的 L 的项的下标标记为树根。</li>
-<li>假设某结点被标记为 i:<ul>
-<li>i 的左儿子是：当 $x &lt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
-<li>i 的右儿子是：当 $x &gt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
-</ul>
-</li>
-<li>若 $x &lt; L(i)$ 时算法停止, 则 i 没有左儿子</li>
-<li>若 $x &gt; L(i)$ 时算法停止, 则 i 没有右儿子</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E6%A3%80%E7%B4%A2%E7%AE%97%E6%B3%95%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
-<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li>给定输入，算法将从根开始，沿一条路径前进，直到某个结点为止。所执行的基本运算次数是这条路径的结点个数，最坏情况下的基本运算次数是树的深度+1。<ul>
-<li>对于任何一个搜索算法存在某个规模为 n 的输入使得该算法至少要做 $\lfloor logn \rfloor + 1$次比较。</li>
-</ul>
-</li>
-<li>对于有序表搜索问题, 在以比较作为基本运算的算法类中, 二分法在最坏情况下是最优的.</li>
-</ul>
-<h2 id="排序算法的时间复杂度分析"><a href="#排序算法的时间复杂度分析" class="headerlink" title="排序算法的时间复杂度分析"></a>排序算法的时间复杂度分析</h2><h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// bubbleSort</span></span><br><span class="line"><span class="comment">// 交换只发生在相邻的元素之间</span></span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">bubbleSort</span><span class="params">(<span class="type">int</span>* L, n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> index = n;</span><br><span class="line">  <span class="keyword">while</span>(index &gt; <span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    k = index - <span class="number">1</span>;</span><br><span class="line">    index = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">1</span>; j &lt;= k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(L[j] &gt; L[j+<span class="number">1</span>])</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">int</span> tmp = L[j];</span><br><span class="line">        L[j] = L[j+<span class="number">1</span>];</span><br><span class="line">        L[j+<span class="number">1</span>] = tmp;</span><br><span class="line">        index = j;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="置换与逆序"><a href="#置换与逆序" class="headerlink" title="置换与逆序"></a>置换与逆序</h4><ul>
-<li>逆序<ul>
-<li>令$L={1, 2, …, n}$，排序的任何输入为L上的置换。在置换$a_1a_2…a_n$中若$i<j$，但$a_i>a_j$，则称($a_i, a_j$)为该置换的一个逆序。</li>
-</ul>
-</li>
-<li>逆序序列<ul>
-<li>在$i$的右边，并且小于i的元素的个数记作$b_i$，$i=1, 2, …, n$。</li>
-<li>($b_1, b_2, …, b_n$)为置换的逆序序列。<ul>
-<li>总共可以有$n!$个不同的逆序序列(1, 2, 3, …, n个)。</li>
-<li>置换与逆序序列构成一一对应。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>逆序数<ul>
-<li>置换中的逆序总数($\sum_{i=1}^{n}b_i$)</li>
-</ul>
-</li>
-<li><p>实例</p>
-<ul>
-<li>3, 1, 6, 5, 8, 7, 2, 4</li>
-<li>逆序数: 12</li>
-<li><p>降序逆序序列: </p>
-<p>1|2|3|4|5|6|7|8<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>0|0|2|0|2|3|2|3</p>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li>最坏复杂度<ul>
-<li>$W(n) = O(n^2)$，至多巡回$O(n)$次，每次$O(n)$</li>
-<li>对换只发生在相邻元素之间，每次相邻元素交换只消除1个逆序，比较次数不少于逆序数，而最大逆序数为$\frac{n(n-1)}{2}$，于是$W(n)=\Omega(n^2)$</li>
-</ul>
-</li>
-<li>平均复杂度<ul>
-<li>假设各种输入是等可能的，置换$\alpha$的逆序序列是($b_1, b_2, …, b_n$)，置换$\alpha’$的逆序序列为($0-b_1, 1-b_2, …, n-1-b_n$)，$\alpha$和$\alpha’$的逆序数之和为$\frac{n(n-1)}{2}$。将$n!$种不同的置换分成$\frac{n!}{2}$组，每组的逆序之和为$\frac{n(n-1)}{2}$<ul>
-<li>$\alpha’$是补集置换，记录的是顺序数，因为经过置换后，其顺序数的逆序贡献等价于原置换的逆序数的逆序贡献。</li>
-</ul>
-</li>
-<li>平均逆序数为$\frac{n(n-1)}{4}$</li>
-<li>平均交换次数为$\Omega(\frac{n(n-1)}{4})$</li>
-</ul>
-</li>
-<li>因此均为$\Theta(n^2)$</li>
-</ul>
-<h3 id="快速排序与二分归并排序"><a href="#快速排序与二分归并排序" class="headerlink" title="快速排序与二分归并排序"></a>快速排序与二分归并排序</h3><h4 id="复杂度分析-2"><a href="#复杂度分析-2" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li>快速排序<ul>
-<li>最坏情况: $O(n^2)$</li>
-<li>平均情况: $O(nlogn)$</li>
-</ul>
-</li>
-<li>二分归并排序<ul>
-<li>最坏情况: $O(nlogn)$</li>
-<li>平均情况: $O(nlogn)$</li>
-</ul>
-</li>
-</ul>
-<h3 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h3><h4 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h4><p>设T是一棵深度为d的二叉树，结点为L中的元素。若能满足以下条件，则为堆:</p>
-<ul>
-<li>所有内结点(可能一点除外)的度数为2</li>
-<li>所有树叶至多在相邻的两层</li>
-<li>d-1层的所有树叶在内结点的右边</li>
-<li>d-1层最右边的内结点可能度数为1(只有左儿子，没有右儿子)</li>
-<li>每个结点的元素不小于儿子的元素(不满足这条的称作堆结构或者伪堆)</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86.png" alt="img"></p>
-<h4 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h4><ul>
-<li>根据二叉树的性质和堆的定义<ul>
-<li>$left(i)=2i$</li>
-<li>$right(i)=2i+1$</li>
-</ul>
-</li>
-<li><p>n个结点的堆恰好有$\lceil \frac{n}{2}\rceil$片树叶<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E2.png" alt="img"></p>
-</li>
-<li><p>结点的高度: 结点到树叶的距离</p>
-<ul>
-<li>同一高度的结点分布在树的不同层<ul>
-<li>结点的深度: 结点到树根的距离</li>
-</ul>
-</li>
-<li>同一深度的结点分布在树的同一层</li>
-</ul>
-</li>
-</ul>
-<h4 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h4><ul>
-<li><p>整理</p>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%AE%9E%E4%BE%8B.png" alt="img"></p>
-</li>
-<li><p>建堆</p>
-<ul>
-<li>从下往上整理，堆有n个结点，树叶有$\lceil\frac{n}{2}\rceil$片，最大的内结点标号为$n-\lceil\frac{n}{2}\rceil=\lfloor\frac{n}{2}\rfloor$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%AE%9E%E4%BE%8B.png" alt="img"></li>
-</ul>
-</li>
-<li><p>排序</p>
-<ul>
-<li>建堆后从后往前每个结点下沉<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B2.png" alt="img"></li>
-</ul>
-</li>
-</ul>
-<h4 id="复杂度分析-3"><a href="#复杂度分析-3" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li><p>整理</p>
-<ul>
-<li>每次调用为$O(1)$，子堆大小至多为原来的$\frac{2}{3}$<ul>
-<li><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6.png" alt="img"></li>
-</ul>
-</li>
-<li>递推不等式$T(n)\lt T(\frac{2n}{3}) + \Theta(1)$<ul>
-<li>$T(n) = \Theta(logn)$($T(h) = \Theta(h)$)<ul>
-<li>h为结点i的高度(距离树叶的最大距离)，n为以i为根的子树的结点数。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>建堆</p>
-<ul>
-<li>按照高度来计数结点数，乘以$O(h)$，再求和。</li>
-<li>而整理的复杂度依赖于所整理结点的高度。</li>
-<li>$T(n) = \sum_{\lfloor logn \rfloor}^{h=0}高为h的结点数 \times O(h)$<ul>
-<li>n个元素的堆高度为h的层至多存在$\lceil\frac{n}{2^{h+1}}\rceil$个结点(归纳法证明)。<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B01.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B02.png" alt="img"></li>
-</ul>
-</li>
-<li>n个结点的建堆算法的时间复杂度是$O(n)$<ul>
-<li>对高为h的结点调用整理算法的时间是$O(h)$: $T(n) = \sum<em>{h=0}^{\lfloor logn \rfloor}\lceil\frac{n}{2^{h+1}}\rceil O(h) = O(n\sum</em>{h=0}^{\infin}\frac{h}{2^{h+1}} = O(n)$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC2.png" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>排序</p>
-<ul>
-<li>$O(nlogn)$<ul>
-<li>建堆复杂度为$O(n)$</li>
-<li>整理需要n-1次，每次$O(logn)$</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="排序问题的决策树"><a href="#排序问题的决策树" class="headerlink" title="排序问题的决策树"></a>排序问题的决策树</h3><p>考虑以比较运算作为基本运算的排序算法类<br>任取算法，输入$L={x_1, x_2, …, x_n}$</p>
-<ul>
-<li>第一次比较的元素为$x_i, x_j$，作为决策树根为$(i, j)$</li>
-<li><p>假设结点k已经标记为$(m, n)$</p>
-<ul>
-<li>$x_m &lt; x_n$: <ul>
-<li>如果算法结束了，则将k的左儿子标记为输出。</li>
-<li>如果下一步是比较$x_p, x_q$，则k的左儿子标记为$(p, q)$</li>
-</ul>
-</li>
-<li>$x_m &gt; x_n$<ul>
-<li>如果算法结束了，则将k的右儿子标记为输出</li>
-<li>如果下一步是比较$x_p, x_q$，则k的右儿子标记为$(p, q)$</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>任意输入对应了决策树中从树根到树叶的一条路径，算法最坏情况下的比较次数则为树的深度。</p>
-</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E7%9A%84%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
-<ul>
-<li>删除非二叉的内结点(灰色结点)，得到的二叉树为B-树，其深度肯定不超过决策树的深度，有$n!$片树叶</li>
-</ul>
-<ul>
-<li>设t为B-树中的树叶数，d为树的深度，$t\lt 2^d$(归纳法证明)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/B%E6%A0%91%E5%8F%B6%E5%AD%90%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%85%B3%E7%B3%BB.png" alt="img"></li>
-</ul>
-<h4 id="最坏情况复杂度的下界"><a href="#最坏情况复杂度的下界" class="headerlink" title="最坏情况复杂度的下界"></a>最坏情况复杂度的下界</h4><ul>
-<li>对于给定的n，任何通过比较对n个元素排序的算法的决策树的深度至少为$\lceil logn!\rceil$(从上两条结论得到)</li>
-<li>任何通过比较对n个元素排序的算法在最坏情况下的时间复杂度是$\lceil logn! \rceil$，可近似为$nlogn - 1.5n$<ul>
-<li>最坏情况下的比较次数是树的深度。</li>
-<li>证明思路: 用对数乘加变换<ul>
-<li>$log n! = \sum<em>{j=1}^{n}log j \gt \int_1^n logx dx = loge\int</em>{1}^{n}lnx dx = loge(nlnn - n + 1) = nlogn - nloge + loge \approx nlogn - 1.5n$<ul>
-<li>$x = e^{lnx}$</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>堆排序算法在最坏情况阶达到最优。<ul>
-<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{1}^{n}logxdx=nlnn - n + 1 = \Omega(nlogn)$</li>
-<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{2}^{n+1}logxdx=O(nlogn)$</li>
-</ul>
-</li>
-</ul>
-<h4 id="平均情况复杂度的下界"><a href="#平均情况复杂度的下界" class="headerlink" title="平均情况复杂度的下界"></a>平均情况复杂度的下界</h4><ul>
-<li>epl(T): 假设所有的输入等概率分布，令epl(T)表示B-树中从根到树叶的所有路径长度之和，$\frac{epl(T)}{n!}$的最小值对应平均情况时间复杂性的下界。<ul>
-<li>分析具有最小epl(T)值的树的结构求得最小值。</li>
-</ul>
-</li>
-<li>在具有t片树叶的所有B-树中，树叶分布在两个相邻层上的树的epl值最小。<ul>
-<li>反证法?: 假设树T的深度为d，假设树叶x在第k层，$k&lt;d-1$。取d-1层的某个结点y，y有两个儿子是第d层的树叶，y的两个儿子作为x的儿子得到树T’<ul>
-<li>$epl(T)-epl(T’)=(2d+k) - (d-1) + 2(k+1) = d-k-1 &gt; 0$</li>
-<li>T’的树叶相距层数小于T的树叶相距层数，且T’的epl值小于T的epl值</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>epl的下界</p>
-<ul>
-<li>具有t片树叶且epl值最小的B-树T满足: $epl(T) = t\lfloor logt\rfloor + 2(t-2^{\lfloor logt \rfloor})$<ul>
-<li>$d\gt \lceil logt\rceil$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E2.png" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>在输入等概分布下任何通过比较对n个项排序的算法平均比较次数至少为$\lfloor log n!\rfloor$，近似为$nlogn - 1.5n$</p>
-<ul>
-<li>算法类中任何算法的平均比较次数是该算法决策树T的$\frac{epl(T)}{n!}$<ul>
-<li>$A(n)\gt \frac{epl(T)}{n!} = \frac{n!\lfloor logn!\rfloor + 2(n! - 2^{\lfloor logn!\rfloor})}{n!}=\lfloor logn!\rfloor +\epsilon\approx nlogn - 1.5n(0\lt \epsilon &lt; 1)$</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>堆排序在平均情况下阶达到最优。</p>
-</li>
-</ul>
-<h3 id="排序算法的比较"><a href="#排序算法的比较" class="headerlink" title="排序算法的比较"></a>排序算法的比较</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">算法</th>
-<th style="text-align:center">最坏情况</th>
-<th style="text-align:center">平均情况</th>
-<th style="text-align:center">占用空间</th>
-<th style="text-align:center">时间最优性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">冒泡排序</td>
-<td style="text-align:center">$O(n^2)$</td>
-<td style="text-align:center">$O(n^2)$</td>
-<td style="text-align:center">原地</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">快速排序</td>
-<td style="text-align:center">$O(n^2)$</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(logn)$</td>
-<td style="text-align:center">平均最优</td>
-</tr>
-<tr>
-<td style="text-align:center">归并排序</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(n)$</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">堆排序</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">原地</td>
-<td style="text-align:center">最优</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h2 id="选择算法的时间复杂度分析"><a href="#选择算法的时间复杂度分析" class="headerlink" title="选择算法的时间复杂度分析"></a>选择算法的时间复杂度分析</h2><p><img src="" alt="img"></p>
-<h3 id="管道问题"><a href="#管道问题" class="headerlink" title="管道问题"></a>管道问题</h3><ul>
-<li>某区域有n口油井，需要修建输油管道。根据设计要求，水平方向有一条主管道，每口油井修一条垂直方向的支管道通向主管道。问如何选择主管道的垂直方向位置，使得支管道长度的综合最小？</li>
-<li><p>最优解是垂直方向上的所有支管道坐标的中位数</p>
-</li>
-<li><p>简单算法</p>
-<ul>
-<li>调用k次选最小算法，复杂度为$O(kn)$</li>
-<li>先排序，然后输出第k小的数，复杂度为$O(nlogn)$</li>
-</ul>
-</li>
-<li>分治算法<ul>
-<li>假设元素彼此不等</li>
-<li>用某个元素$m^<em>$作为标准将总集合$S$划分为$S_1$($&lt;m^</em>$), $S_2$($&gt;m^*$)。</li>
-<li>分治:<ul>
-<li>如果$k\lt |S_1|$，则在$S_1$中找第k小</li>
-<li>如果$k = |S_1| + 1$，则$m^*$是第k小</li>
-<li>如果$k\gt |S_1| + 1$，则在$S_2$中找第$k-|S_1|-1$小</li>
-</ul>
-</li>
-<li>伪码<ul>
-<li>行2: $O(n)$，每5个数找中位数构成M。</li>
-<li>行3: $W(\frac{n}{5})$，在M中再找中位数$m^*$。</li>
-<li>行4: $O(n)$，用$m^*$划分集合$S$。</li>
-<li>行8-9: $W(\frac{7n}{10})$，进行递归</li>
-<li>$W(n)\lt W(\frac{n}{5}) + W(\frac{7n}{10}) + O(n)$<br><img src="" alt="img"></li>
-</ul>
-</li>
-<li>该算法的效率取决于子问题的规模<ul>
-<li>算法工作量为$O(n)$<ul>
-<li>$W(n) \lt cn(1+0.9+0.9^2+…) = O(n)$</li>
-<li>$|M|$与归约后子问题的规模之和小于n，递归树每行的工作量便能构成公比小于1的等比级数，于是算法复杂度为$O(n)$<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>分组时如果不是5个元素一组，而是3个或7个<ul>
-<li>求$m^*$的工作量与$|M|=\frac{n}{t}$相关，t为每组的元素数，如果t大，那么$|M|$就小。</li>
-<li>归约后的子问题大小与分组元素t有关，t大，子问题规模就大。<ul>
-<li>复杂度满足方程$W(n) = W(\frac{n}{3}) + W(\frac{4n}{6}) + cn = \Theta(nlogn)$<br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="下界的证明方法-构造最坏的输入"><a href="#下界的证明方法-构造最坏的输入" class="headerlink" title="下界的证明方法: 构造最坏的输入"></a>下界的证明方法: 构造最坏的输入</h3><ul>
-<li>任意给定一个算法，对于任意输入x都存在一个确定的操作序列$\tau$<ul>
-<li>$\tau$中的操作分成两类:<ul>
-<li>决定性的: 能够对确定输出结果提供有效的信息。</li>
-<li>非决定性的: 对确定结果没有帮助的冗余操作。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>最坏情况便是: <ul>
-<li>根据算法构造某个输入实例x，使得算法对x的操作序列$\tau$包含尽量多的冗余非决定性操作。</li>
-<li>给出冗余操作+必要操作的计数公式便能得到下界。</li>
-</ul>
-</li>
-</ul>
-<h3 id="选最大与最小的算法"><a href="#选最大与最小的算法" class="headerlink" title="选最大与最小的算法"></a>选最大与最小的算法</h3><ul>
-<li>任何通过比较找最大和最小的算法至少需要$\lceil\frac{3n}{2}\rceil - 2$次比较。<ul>
-<li>任意给定一个算法，根据算法的比较结果构造输入T，使得算法对T至少做$\lceil\frac{3n}{2}\rceil-2$次比较。</li>
-<li>不妨假设n彼此不等的数，max代表最大，min代表最小。<ul>
-<li>基于比较的暴力算法要找到最大必须确定有n-1个数比max小。找到最小的数必须确定有n-1个数比min小。共$2n-2$次比较。</li>
-<li>FindMaxMin算法将数两两分组比较，是最优算法，是复杂度的下界。<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="找第二大问题"><a href="#找第二大问题" class="headerlink" title="找第二大问题"></a>找第二大问题</h3><ul>
-<li><p>元素x的权: $w(x)$，表示以x为根的子树中的结点数。</p>
-<ul>
-<li>初始，$w(x_i)=1, i=1, 2, 3, …, n$</li>
-<li>赋值原则: 在比较的时候进行赋值或者调整赋值。只对没有失败过的元素(权大于0)进行赋值。权大者胜，原来胜的次数多的仍旧是胜，输入值也大。<ul>
-<li>$w(x), w(y) &gt; 0$<ul>
-<li>权大者胜: 若$w(x) &gt; w(y)$，那么x的值大于y的值，$w(x)\leftarrow w(x) + w(y), w(y)\leftarrow 0$。</li>
-<li>权等则任意分配: 若$w(x) = w(y)$，那么可考虑为x的值大于y的值的情况，也可考虑为y的值大于x的值。</li>
-<li>无意义不变: 若$w(x) = w(y) = 0$，x和y值不变。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>构造树</p>
-<ul>
-<li>初始是森林，包含n个结点。</li>
-<li>若x, y是子树的树根，则算法比较x, y。</li>
-<li>若x, y以前没有参加过比较，任意赋值给x, y，比如$x&gt;y$，那么y作为x的儿子。</li>
-<li>若x, y已经在前面的比较中赋过值，且$x&gt;y$，那么把y作为x的儿子，以y为根的子树作为x的子树。<br><img src="" alt="img"></li>
-</ul>
-</li>
-<li><p>任何找第二大算法，针对上述赋值规则产生的输入，通过与最大元素的比较直接淘汰的元素数至少是$\lceil logn\rceil$。</p>
-<ul>
-<li>$w<em>k$表示max在第k次比较后形成以max为根子树的结点总数。$w_k\lt 2w</em>{k-1}$。</li>
-<li>设K为max最终与权不为0的结点的比较次数。<ul>
-<li>$n=w_K\lt 2^K\Rightarrow K\gt logn \Rightarrow K \gt \lceil logn\rceil$</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>任何通过比较找第二大的算法至少需要$n+\lceil logn\rceil-2$次比较。<ul>
-<li>确定最大需要n-1次比较。</li>
-<li>确定第二大还要淘汰K-1个元素，至少用$\lceil logn\rceil - 1$次比较。</li>
-</ul>
-</li>
-<li>锦标赛算法是找第二大的最优算法。</li>
-</ul>
-<h3 id="找中位数问题"><a href="#找中位数问题" class="headerlink" title="找中位数问题"></a>找中位数问题</h3><ul>
-<li>设n为奇数，任何通过比较运算找n个数的中位数(median)的算法在最坏情况下至少做$\frac{3n}{2} - \frac{3}{2}$次比较。<ul>
-<li>决定性的比较: 建立x与median的关系的比较，比较时y和median的关系可以不知道。<ul>
-<li>$\exist y (x&gt;y \&amp; y\gt median)$，x满足上述条件的第一次比较。</li>
-<li>$\exist y (x&lt;y \&amp; y\lt median)$，x满足上述条件的第一次比较。</li>
-</ul>
-</li>
-<li>非决定性的比较<ul>
-<li>$x&gt;median, y<median$，这时$x>y$的比较不是决定性的，因为根据median本可知道x和y的大小。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>为了找到中位数，必须要做n-1次决定性的比较，针对算法构造输入，使得非决定性比较达到$\frac{n-1}{2}$次。</p>
-</li>
-<li><p>对于求中位数的任意算法，构造输入</p>
-<ul>
-<li>分配一个值给中位数median。</li>
-<li>如果算法比较x与y，且x与y没有被赋值，那么赋值x, y使得$x&gt;median, y&lt;median$。</li>
-<li>如果算法比较x与y，且$x&gt;median$，y没有被赋值，则赋值y使得$y&lt;median$。</li>
-<li>如果算法比较x与y，且$x<median$，y没有被赋值，则赋值y使得$y>median$。</li>
-<li>如果存在$\frac{n-1}{2}$个元素已得到小于median的值，则对未赋值的全部元素分配大于median的值。</li>
-<li>如果存在$\frac{n-1}{2}$个元素已得到大于median的值，则对未赋值的全部元素分配小于median的值。</li>
-<li>如果只剩下1个元素，则分配为median。<br><img src="" alt="img"></li>
-</ul>
-</li>
-<li><p>复杂度分析</p>
-<ul>
-<li>Select算法在阶上达到最优。<br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">问题</th>
-<th style="text-align:center">算法</th>
-<th style="text-align:center">最坏情况</th>
-<th style="text-align:center">问题下界</th>
-<th style="text-align:center">最优性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">找最大</td>
-<td style="text-align:center">Findmax</td>
-<td style="text-align:center">$n-1$</td>
-<td style="text-align:center">n-1</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找最大最小</td>
-<td style="text-align:center">FindMaxMin</td>
-<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
-<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找第二大</td>
-<td style="text-align:center">锦标赛</td>
-<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
-<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找中位数</td>
-<td style="text-align:center">Select(找第$\frac{k}{2}$小)</td>
-<td style="text-align:center">$O(n)$</td>
-<td style="text-align:center">$\frac{3n}{2}-\frac{3}{2}$</td>
-<td style="text-align:center">阶最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找第k小</td>
-<td style="text-align:center">Select</td>
-<td style="text-align:center">$O(n)$</td>
-<td style="text-align:center">$n+\min{k, n-k+1}-2$</td>
-<td style="text-align:center">阶最优</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h2 id="归约确认问题"><a href="#归约确认问题" class="headerlink" title="归约确认问题"></a>归约确认问题</h2>]]></content>
-      <categories>
-        <category>高级算法设计</category>
-      </categories>
-      <tags>
-        <tag>高级算法设计</tag>
       </tags>
   </entry>
   <entry>
