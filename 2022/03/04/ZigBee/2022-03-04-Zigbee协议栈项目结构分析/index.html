@@ -233,14 +233,14 @@
 <li>使用分布式寻址方案来分配网络地址。</li>
 <li>保证在整个网络中所有分配的地址是唯一的。进而保证一个特定的数据包能够发送给指定的设备而不出现混乱。同时，寻址算法本身的分布特性保证设备只能与父辈设备通讯来接收一个网络地址。不需要整个网络范围内通讯的地址分配，有助于网络的可测量性。</li>
 <li>假设父设备可拥有的最大设备数为$C_m$，其拥有的最大路由子设备数为$R_m$，网络的最大深度为$L_m$，则父设备所能分配子区段地址数为：<ul>
-<li>若$R<em>m=1, C</em>{skip}(d)=(1+C_m-R_m-C_m*(R_m)^{(L_m-d-1)}/(1-R_m)$</li>
+<li>若$R_m=1, C_{skip}(d)=(1+C_m-R_m-C_m*(R_m)^{(L_m-d-1)}/(1-R_m)$</li>
 <li>子节点为父设备的第n个子路由器的短地址分配：<ul>
-<li>$A<em>{child}=A</em>{parent}+(n-1)*C_{skip}(d)+1, n=1$</li>
-<li>$A<em>{child}=A</em>{parent}+(n-1)*C_{skip}(d), n&gt;1$</li>
+<li>$A_{child}=A_{parent}+(n-1)*C_{skip}(d)+1, n=1$</li>
+<li>$A_{child}=A_{parent}+(n-1)*C_{skip}(d), n&gt;1$</li>
 </ul>
 </li>
 <li>子节点为父设备的第n个子终端设备的短地址分配：<ul>
-<li>$A<em>{child}=A</em>{parent}+R<em>m*C</em>{skip}+n$</li>
+<li>$A_{child}=A_{parent}+R_m*C_{skip}+n$</li>
 </ul>
 </li>
 </ul>

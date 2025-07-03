@@ -300,7 +300,7 @@
 <li>发展前景不好</li>
 <li>ILLIAC IV<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ILLIAC%20IV.png" alt="img"><ul>
 <li>64个处理单元、64个处理单元存储器和存储器逻辑部件组成<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ILLIAC%20IV1.png" alt="img"><ul>
-<li>64个处理部件$PE<em>0～PE</em>{63}$排列成8×8的方阵，任何一个$PE_i$只与其上、下、左、右4个近邻$(PE_i-8)\mod64$、$(PE_i+8)\mod64$、$(PE_i-1)\mod64$和$(PE_i+1)\mod64$直接相连</li>
+<li>64个处理部件$PE_0～PE_{63}$排列成8×8的方阵，任何一个$PE_i$只与其上、下、左、右4个近邻$(PE_i-8)\mod64$、$(PE_i+8)\mod64$、$(PE_i-1)\mod64$和$(PE_i+1)\mod64$直接相连</li>
 <li>循此规则，南北方向上同一列的PE两端相连成一个环，东西方向上每一行的东端PE与下一行的西端PE相连，最下面一行的东端PE则与最上面一行的西端PE相连，从而构成一个闭合的螺线形状，所以称其为闭合螺线阵列<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ILLIAC%20IV2.png" alt="img"></li>
 </ul>
 </li>
@@ -374,7 +374,7 @@
 <li>8个: $S_0~S_7$，每个64位</li>
 </ul>
 </li>
-<li>标量保存寄存器(后援寄存器, Scalar-save Register): 用于在标量寄存器和存储器之间提供缓存($T<em>0~T</em>{63}$)</li>
+<li>标量保存寄存器(后援寄存器, Scalar-save Register): 用于在标量寄存器和存储器之间提供缓存($T_0~T_{63}$)</li>
 </ul>
 </li>
 <li>我国自主研发的第一台大型向量计算机“757”机</li>

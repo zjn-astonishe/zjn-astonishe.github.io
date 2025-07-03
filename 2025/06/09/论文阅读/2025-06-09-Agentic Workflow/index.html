@@ -253,7 +253,7 @@
 <li>如果不是，则根据软混合概率选择策略选择父结点$parent$。候选结点包括得分最高的$k$个结点和初始结点(公式见下一节<a href="#算法(伪代码">算法(伪代码)</a>))。</li>
 <li>加载父结点的上下文$context$。</li>
 <li>扩展: 使用LLM优化器$Optimizor$，利用过去的修改和相应的改进或失败生成新的工作流$W_{round}$和修改$modification$(新的提示和结点间连接)。</li>
-<li>评估: 在验证集$D<em>V$上执行5次新的工作流$W</em>{round}$，计算平均分数$avgScore$和标准差。</li>
+<li>评估: 在验证集$D_V$上执行5次新的工作流$W_{round}$，计算平均分数$avgScore$和标准差。</li>
 <li>回传: 创建经验$experience$并将其添加到经验集$experiences$。</li>
 <li>如果$avgScore$高于最佳分数$bestScore$，则更新$W^*$和$bestScore$。</li>
 </ul>
@@ -364,7 +364,7 @@
 <li>工作流程中额外的依赖关系会降低子任务的预期成功率。<ul>
 <li>考虑两个拓扑排序的工作流$A$和$B$，每个工作流都包含根据执行顺序排序的$N$个子任务。<ul>
 <li>随机失败可能性: 每个子任务$v\in\mathcal{T}$有$p_f(0\lt p_f\lt 1)$的概率失败。</li>
-<li>工作流$B$的额外依赖: 存在至少一个子任务$v^<em>\in\mathcal{T}$和一个子任务$b\in\mathcal{T}$，使得工作流$B$中$v^</em>$的直接前置任务(依赖)的集合为$D_B(v^<em>)=D_A(v^</em>)\bigcup{b}$，其中$D_A(v^<em>)$是工作流$A$中$v^</em>$的直接前置任务的集合。对于所有其他子任务$v\neq v^*$满足$D_A(v)\subseteq D_B(v)$。</li>
+<li>工作流$B$的额外依赖: 存在至少一个子任务$v^<em>\in\mathcal{T}$和一个子任务$b\in\mathcal{T}$，使得工作流$B$中$v^</em>$的直接前置任务(依赖)的集合为$D_B(v^<em>)=D_A(v^</em>)\bigcup\{b\}$，其中$D_A(v^<em>)$是工作流$A$中$v^</em>$的直接前置任务的集合。对于所有其他子任务$v\neq v^*$满足$D_A(v)\subseteq D_B(v)$。</li>
 <li>于是工作流$A$的已完成子任务的期望严格大于$B$: $E[S_A]\gt E[S_B]$。</li>
 </ul>
 </li>
@@ -375,19 +375,19 @@
 <ul>
 <li>并行性: 用于衡量子任务并发执行的程度。<ul>
 <li>假设$S_t$表示在第t步执行的子任务集合。$T$为总步数(DAG的最大深度)，给定AOV图$G=(V, E, A)$，整体的并行度定义为步骤中的平均子任务比例:<ul>
-<li>$P<em>{avg} = \frac{1}{T}\sum</em>{t=1}^{T}S_t$</li>
+<li>$P_{avg} = \frac{1}{T}\sum_{t=1}^{T}S_t$</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>依赖复杂度: 分析子任务图中的度分布测量子任务依赖结构。对于每个子任务$v_i$，定义$deg(v_i)$为在图$G$上的直接连接数。依赖复杂度由直接连接数的标准差量化:<ul>
-<li>$C<em>{dependency}=\sigma</em>{deg(v<em>i)}=\sqrt{\frac{1}{|V|}\sum</em>{v_i\in V}(deg(v_i)-\bar{d})^2}$</li>
+<li>$C_{dependency}=\sigma_{deg(v_i)}=\sqrt{\frac{1}{|V|}\sum_{v_i\in V}(deg(v_i)-\bar{d})^2}$</li>
 </ul>
 </li>
 </ul>
 <h3 id="Workflow"><a href="#Workflow" class="headerlink" title="Workflow"></a>Workflow</h3><p>首先根据给定的任务需求，制定初始工作流程，生成执行计划和智能体分配策略。在执行过程中，工作流程会不断完善和动态更新，直到任务完成。</p>
 <p><img src="" alt="Flow流程"></p>
-<h4 id="Generate-an-Initial-AOV-Graph"><a href="#Generate-an-Initial-AOV-Graph" class="headerlink" title="Generate an Initial AOV Graph"></a>Generate an Initial AOV Graph</h4><p>给定一个任务需求提示$P$，让LLM基于$P$和用于初始化的指定提示$P<em>{init}$生成一组候选AOV图${G_1, G_2, …, G_k}=f(\mathcal{P}</em>{init}, \mathcal{P})$。每个候选AOV图$G_k=(V_k, E_k, A_k)$都使用并行性和依赖复杂度的度量公式进行评估，然后优先选择具有最高并行性分数的工作流。如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
+<h4 id="Generate-an-Initial-AOV-Graph"><a href="#Generate-an-Initial-AOV-Graph" class="headerlink" title="Generate an Initial AOV Graph"></a>Generate an Initial AOV Graph</h4><p>给定一个任务需求提示$P$，让LLM基于$P$和用于初始化的指定提示$P_{init}$生成一组候选AOV图$\{G_1, G_2, …, G_k\}=f(\mathcal{P}_{init}, \mathcal{P})$。每个候选AOV图$G_k=(V_k, E_k, A_k)$都使用并行性和依赖复杂度的度量公式进行评估，然后优先选择具有最高并行性分数的工作流。如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
 <ul>
 <li>早期强调并行性与模块化是因为:<ul>
 <li>如果不在早期明确鼓励并行性和独立性，生成的工作流很可能会过于复杂，导致子任务执行效率低下。</li>
@@ -396,9 +396,9 @@
 </li>
 </ul>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">PROMPT_TEMPLATE = <span class="string">&quot;You are an intelligent workflow planner. Given the following task requirements, generate a set of necessary sub-tasks along with their dependencies and assign appropriate agents to each task. Ensure that tasks that can be executed in parallel are identified to enhance efficiency. The workflow should be represented as a dictionary where each key is a task and its value contains the task’s status, data, number of parents not completed, child tasks, and assigned agent.&quot;</span></span><br><span class="line">Task_Requirements = &#123;TASK_REQUIREMENTS&#125;</span><br><span class="line">Output_Format = &#123; <span class="string">&quot;Task_A&quot;</span>: &#123; <span class="string">&quot;status&quot;</span>: <span class="string">&quot;not started&quot;</span>, <span class="string">&quot;data&quot;</span>: null, <span class="string">&quot;num_parents_not_completed&quot;</span>: <span class="number">0</span>, <span class="string">&quot;child&quot;</span>: [<span class="string">&quot;Task_B&quot;</span>, <span class="string">&quot;Task_C&quot;</span>], <span class="string">&quot;agent&quot;</span>: <span class="string">&quot;Agent_1&quot;</span> &#125;, <span class="string">&quot;Task_B&quot;</span>: &#123;<span class="string">&quot;status&quot;</span>: <span class="string">&quot;not started&quot;</span>, <span class="string">&quot;data&quot;</span>: null, <span class="string">&quot;num_parents_not_completed&quot;</span>: <span class="number">1</span>, <span class="string">&quot;child&quot;</span>: [<span class="string">&quot;Task_D&quot;</span>], <span class="string">&quot;agent&quot;</span>: <span class="string">&quot;Agent_2&quot;</span> &#125;, ... &#125;</span><br></pre></td></tr></table></figure>
-<h4 id="Execution-Plan-Generation-and-Agent-Allocation"><a href="#Execution-Plan-Generation-and-Agent-Allocation" class="headerlink" title="Execution Plan Generation and Agent Allocation"></a>Execution Plan Generation and Agent Allocation</h4><p>在获得最佳AOV图后，会对子任务的依赖关系图执行拓扑排序，生成子任务的先行顺序$o: V\rightarrow{1, 2, …, |V|}$，使得对于任何边$(v_i, v_j)\in E$，都有$o(v_i)\lt o(v_j)$。结果是一个子任务步骤序列，其中每个步骤都包含可以并行执行的子任务。此执行计划最大限度地减少了执行所需的步骤数，同时确保所有子任务在最短时间内完成，并遵守其依赖关系。</p>
+<h4 id="Execution-Plan-Generation-and-Agent-Allocation"><a href="#Execution-Plan-Generation-and-Agent-Allocation" class="headerlink" title="Execution Plan Generation and Agent Allocation"></a>Execution Plan Generation and Agent Allocation</h4><p>在获得最佳AOV图后，会对子任务的依赖关系图执行拓扑排序，生成子任务的先行顺序$o: V\rightarrow\{1, 2, …, |V|\}$，使得对于任何边$(v_i, v_j)\in E$，都有$o(v_i)\lt o(v_j)$。结果是一个子任务步骤序列，其中每个步骤都包含可以并行执行的子任务。此执行计划最大限度地减少了执行所需的步骤数，同时确保所有子任务在最短时间内完成，并遵守其依赖关系。</p>
 <p>而每个智能体$a_j\in A$都与一组子任务$T_i\subseteq V$相关联，表明该智能体负责处理该组子任务。但如果两个子任务$v_p, v_q$在同一步骤$s_i$中需要相同的智能体$a_i$，则创建一个该智能体的克隆，表示为$a’_j$，以此来实现同时运行两个子任务而不增加等待时间。</p>
-<h4 id="Workflow-Refinement-and-Dynamic-Updating"><a href="#Workflow-Refinement-and-Dynamic-Updating" class="headerlink" title="Workflow Refinement and Dynamic Updating"></a>Workflow Refinement and Dynamic Updating</h4><p>利用LLM作为全局检查器(global inspector)，持续监控任务进度，并在必要时动态修改AOV图。<br>具体来说，给定任务需求提示$P$，更新提示$P<em>{update}$，当前的AOV图$G_t$，以及包含子任务状态和运行子任务的智能体输出的生成数据$D_t$。与初始化过程类似，生成K个候选AOV图${G</em>{t+1}^1, G<em>{t+1}^2, …, G</em>{t+1}^K}=f(P_{update}, P, D_t)$。遵循与初始化时相同的选择策略，该策略优先选择具有最高并行分数的工作流，如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
+<h4 id="Workflow-Refinement-and-Dynamic-Updating"><a href="#Workflow-Refinement-and-Dynamic-Updating" class="headerlink" title="Workflow Refinement and Dynamic Updating"></a>Workflow Refinement and Dynamic Updating</h4><p>利用LLM作为全局检查器(global inspector)，持续监控任务进度，并在必要时动态修改AOV图。<br>具体来说，给定任务需求提示$P$，更新提示$P_{update}$，当前的AOV图$G_t$，以及包含子任务状态和运行子任务的智能体输出的生成数据$D_t$。与初始化过程类似，生成K个候选AOV图$\{G_{t+1}^1, G_{t+1}^2, …, G_{t+1}^K\}=f(P_{update}, P, D_t)$。遵循与初始化时相同的选择策略，该策略优先选择具有最高并行分数的工作流，如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PROMPT_TEMPLATE = <span class="string">&quot;You are an intelligent workflow updater. Based on the current workflow and the all subtasks’ progress data, update the workflow for acheving the objective by adding, removing, or modifying subtasks as necessary. Ensure that the updated workflow maintains modularity and maximizes parallel execution.&quot;</span></span><br><span class="line">Output_Format= &#123; <span class="string">&quot;Task_A&quot;</span>: &#123; <span class="string">&quot;status&quot;</span>: <span class="string">&quot;not started&quot;</span>, <span class="string">&quot;data&quot;</span>: null, ... &#125;&#125;</span><br></pre></td></tr></table></figure>
 <p>由于具有模块化约束，所以动态更新可以很大程度上满足灵活性，允许修改子任务分配，包括删除、添加、编辑、重新运行和重新分配智能体，而无需影响其他智能体及被分配的子任务。</p>
 <p>通过足够的数据和计算资源，我们可以通过使用强化学习对 LLM 进行微调以生成 workflow，从而进一步增强框架。</p>

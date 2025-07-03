@@ -177,7 +177,7 @@
 </ul>
 </li>
 <li>对应事件: $a\sim b$，表示两个事件在同一个进程中发生</li>
-<li>发送接收对: $T={(s, r)\in E_i\times E_j | s\quad corresponds\quad to\quad r}$</li>
+<li>发送接收对: $T=\{(s, r)\in E_i\times E_j | s\quad corresponds\quad to\quad r\}$</li>
 </ul>
 <h3 id="异步和FIFO执行"><a href="#异步和FIFO执行" class="headerlink" title="异步和FIFO执行"></a>异步和FIFO执行</h3><h4 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h4><ul>
 <li>$(E, \prec)$，因果关系是一个偏序关系。</li>
@@ -228,9 +228,9 @@
 <li>对于所有$(s, r)$和$(s’, r’)\in T$，如果$s\prec s’$，则$r\prec r’$</li>
 </ul>
 <h4 id="空区间属性-Empty-Interval-EI"><a href="#空区间属性-Empty-Interval-EI" class="headerlink" title="空区间属性(Empty-Interval, EI)"></a>空区间属性(Empty-Interval, EI)</h4><ul>
-<li><p>$(E, \prec)$是一个EI执行，如果对于所有$(s, r)\in T$，在偏序关系中的开区间集合${x\in E | s\prec x\prec r}$为空</p>
+<li><p>$(E, \prec)$是一个EI执行，如果对于所有$(s, r)\in T$，在偏序关系中的开区间集合$\{x\in E | s\prec x\prec r\}$为空</p>
 <ul>
-<li>对于$EI<s, r>$，存在某个线性扩展使得相应的区间${x\in E | s\prec x\prec r}$为空<ul>
+<li>对于$EI<s, r>$，存在某个线性扩展使得相应的区间$\{x\in E | s\prec x\prec r\}$为空<ul>
 <li>线性扩展是一个偏序关系$(E, \prec)$的任何全序关系$(E, \lt)$，其中偏序关系的所有排序关系都被保留</li>
 <li>线性扩展中，一个空的$(s, r)$区间意味着$s$和$r$是可以任意接近的，即发送和接收是可以接近的，由垂直箭头表示</li>
 </ul>
@@ -291,12 +291,12 @@
 </li>
 <li><p>非分离线性扩展$(E, \prec)$</p>
 <ul>
-<li>$(E, \prec)$的一个线性扩展，使得对于每一对$(s, r)\in T$，区间${x\in E | s\prec x\prec r}$是空的</li>
+<li>$(E, \prec)$的一个线性扩展，使得对于每一对$(s, r)\in T$，区间$\{x\in E | s\prec x\prec r\}$是空的</li>
 </ul>
 </li>
 <li>RSC执行 <ul>
 <li>一个异步执行是一个RSC执行，当且仅当存在一个非分离线性扩展的偏序关系$(E, \prec)$(在所有可能的线性扩展中，至少有一个满足非分离条件。)<ul>
-<li>为了确定一个异步执行是否是RSC，我们需要找到一个线性扩展(即对事件的一个全序排列)，在这个排列中，对于每一个消息$m$的发送事件$s(m)$和接收事件$r(m)$，在它们之间的开区间${x\in E | s(m)\prec x\prec r(m)}$是空的。这意味着没有其他事件发生在消息的发送和接收之间，就像同步系统中那样。</li>
+<li>为了确定一个异步执行是否是RSC，我们需要找到一个线性扩展(即对事件的一个全序排列)，在这个排列中，对于每一个消息$m$的发送事件$s(m)$和接收事件$r(m)$，在它们之间的开区间$\{x\in E | s(m)\prec x\prec r(m)\}$是空的。这意味着没有其他事件发生在消息的发送和接收之间，就像同步系统中那样。</li>
 <li>检查所有线性扩展具有指数级成本！</li>
 <li>实际测试使用Crown皇冠特征化方法。</li>
 </ul>
@@ -305,7 +305,7 @@
 </li>
 </ul>
 <h3 id="Crown测试法"><a href="#Crown测试法" class="headerlink" title="Crown测试法"></a>Crown测试法</h3><h4 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h4><ul>
-<li>设$E$是一个执行，在$E$中，大小为k的Crown是一个序列$&lt;(s^i, r^i), i\in {0, 1, …, k-1}&gt;$，其中包含对应发送事件和接收事件配对，满足以下条件:<ul>
+<li>设$E$是一个执行，在$E$中，大小为k的Crown是一个序列$&lt;(s^i, r^i), i\in \{0, 1, …, k-1\}&gt;$，其中包含对应发送事件和接收事件配对，满足以下条件:<ul>
 <li>$s^0\prec r^1$</li>
 <li>$s^1\prec r^2$</li>
 <li>…</li>
@@ -490,7 +490,7 @@
 <li>考虑信息$d\in M_{i, a}.Dests$应该在进程的日志中存储多长时间，并且应该捎带在信息上</li>
 <li>只要且只有当以下两个传播约束成立时，需要捎带:<ul>
 <li>约束1: 向后不可达性，确保消息不会过早被交付。未知消息$M_{i, a}$是否已经被交付给$d$</li>
-<li>约束2: 向前可达性，未知是否已经向$d$发送了在$Send(M<em>{i, a})$因果未来的消息，因此不能保证使用基于传递性的推理来确保消息$M</em>{i, a}$将被交付给$d$</li>
+<li>约束2: 向前可达性，未知是否已经向$d$发送了在$Send(M_{i, a})$因果未来的消息，因此不能保证使用基于传递性的推理来确保消息$M_{i, a}$将被交付给$d$</li>
 </ul>
 </li>
 <li>如果两个约束为假，则信息$d\in M.Dests$必须不被存储或传播</li>
@@ -504,11 +504,11 @@
 <li>关于消息两个约束的隐式跟踪无需存储或传播<ul>
 <li>可以从显示信息推导</li>
 <li>用于确定何时两个约束的显示信息变为假，该消息被存储/捎带</li>
-<li>类型1: 存在$d\in M<em>{i, a}.Dests$且$d\notin l</em>{i, a}.Dests\vee d\notin o_{i, a}.Dests$<ul>
-<li>当$l<em>{i, a}.Dests=\empty$或$o</em>{i, a}.Dests = \empty$</li>
+<li>类型1: 存在$d\in M_{i, a}.Dests$且$d\notin l_{i, a}.Dests\vee d\notin o_{i, a}.Dests$<ul>
+<li>当$l_{i, a}.Dests=\empty$或$o_{i, a}.Dests = \empty$</li>
 </ul>
 </li>
-<li>类型2: 如果$a<em>1\lt a_2$且$l</em>{i, a<em>2}\in LOG_j$，则$l</em>{i, a_1}\in LOG_j$<ul>
+<li>类型2: 如果$a_1\lt a_2$且$l_{i, a_2}\in LOG_j$，则$l_{i, a_1}\in LOG_j$<ul>
 <li>形如$l_{i, a}.Dests=\empty$的条目可以通过缺失推断，不应存储</li>
 </ul>
 </li>
@@ -564,8 +564,8 @@
 </ul>
 <p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/A%20Nomenclature%20for%20Multicast.png" alt="img"></p>
 <h3 id="用于多播的传播树-Propagation-Trees"><a href="#用于多播的传播树-Propagation-Trees" class="headerlink" title="用于多播的传播树(Propagation Trees)"></a>用于多播的传播树(Propagation Trees)</h3><h4 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h4><ul>
-<li>组集: $G = {G_1, …, G_g}$</li>
-<li>元组集: $MG = {MG_1, \dots, MG_h}$<ul>
+<li>组集: $G = \{G_1, …, G_g\}$</li>
+<li>元组集: $MG = \{MG_1, \dots, MG_h\}$<ul>
 <li>每个进程属于一个元组，并且在该元组中的每个其他进程具有完全相同的组成员资格</li>
 <li>元组之外没有其他进程具有该确切的组成员资格</li>
 </ul>
@@ -617,7 +617,7 @@
 <li>每个元组都有一个用于区分的进程(manager)</li>
 <li>$SV_i[k]$在每个$P_i$处: 由$P_i$多播的消息数量，这些消息通过$PM(G_k)$传播。附带在每个由$P_i$发送的多播消息上</li>
 <li>$RV_{manager(PM(G_z))}[k]$: 由$P_k$发送并被$PM(G_z)$接收的消息的数量</li>
-<li>$manager(PM(G<em>z))$: 如果$SV_i[z]==RV</em>{manager(PM(G_z))}[i]$，则处理来自$P_i$的消息$M$，否则缓冲消息$M$直到条件成立</li>
+<li>$manager(PM(G_z))$: 如果$SV_i[z]==RV_{manager(PM(G_z))}[i]$，则处理来自$P_i$的消息$M$，否则缓冲消息$M$直到条件成立</li>
 <li>在非主元组的管理者处: 消息顺序已经确定，因为它从未直接从多播发送者接收消息。转发(伪代码的2d-2g)。</li>
 </ul>
 <h3 id="Total-Order的正确性"><a href="#Total-Order的正确性" class="headerlink" title="Total Order的正确性"></a>Total Order的正确性</h3><ul>
@@ -704,7 +704,7 @@
 </ul>
 <p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Kou-Markowsky-Berman%20Heuristic%20for%20Steiner%20Tree.png" alt="img"></p>
 <h3 id="受约束的-延迟受限的-Steiner树-Constrained-Delay-bounded-Steiner-Trees"><a href="#受约束的-延迟受限的-Steiner树-Constrained-Delay-bounded-Steiner-Trees" class="headerlink" title="受约束的(延迟受限的)Steiner树(Constrained Delay-bounded Steiner Trees)"></a>受约束的(延迟受限的)Steiner树(Constrained Delay-bounded Steiner Trees)</h3><ul>
-<li>对于给定的延迟容忍度$\Delta$，给定的源节点$s$和目标节点集$Dest$，其中${s}\bigcup Dest = N’\subset N$，识别一个覆盖所有$N’$中节点的生成树$T$，满足以下约束条件: <ul>
+<li>对于给定的延迟容忍度$\Delta$，给定的源节点$s$和目标节点集$Dest$，其中$\{s\}\bigcup Dest = N’\subset N$，识别一个覆盖所有$N’$中节点的生成树$T$，满足以下约束条件: <ul>
 <li>$\sum_{l\in T} C(l)$最小化，其中$C(l)$是边的成本</li>
 <li>对于所有$v\in N’$，路径$path(s, v)$上的所有边l的延迟之和$\sum_{l\in path(s, v)}D(l)\lt \Delta$，其中$path(s, v)$表示从s到v在T中的路径<ul>
 <li>路径的成本和延迟分别表示为$C(x, y), D(x, y)$</li>

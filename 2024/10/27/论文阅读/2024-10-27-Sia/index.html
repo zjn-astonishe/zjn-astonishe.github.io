@@ -285,11 +285,11 @@
 <h3 id="Configurations"><a href="#Configurations" class="headerlink" title="Configurations"></a>Configurations</h3><p>配置由一系列的资源组成，如CPU, GPU, Network, etc，可以表示为<code>(n, r, t)</code>，其中<code>n</code>表示节点数量，<code>r</code>表示资源数量，<code>t</code>表示资源类型。</p>
 <ul>
 <li>例如<code>(2, 16, T4)</code>表示的是2个节点包含16个T4 GPU<br>为了减少资源争用，避免分布式作业共享节点。配置集合可以划分为两部分：</li>
-<li>单节点分配集合: 不会跨节点分配资源，${(1, 2^0, X), (1, 2^1, X), …, (1, R, X)}\bigcup\quad\leftarrow$ single-node<ul>
+<li>单节点分配集合: 不会跨节点分配资源，$\{(1, 2^0, X), (1, 2^1, X), …, (1, R, X)\}\bigcup\quad\leftarrow$ single-node<ul>
 <li>该分配方式限制每次都分配一个节点内2的倍数的GPU，直到节点拥有的最多GPU数量$R$。如果$R$不是2的幂，则可以把$R$拆分成2的幂的和，即把一个物理节点拆分成多个虚拟节点</li>
 </ul>
 </li>
-<li>多节点分配集合: 需要跨节点分配资源，${(2, 2R, X), …, (N, N\cdot R, X), n\in N}\quad\leftarrow$ multi-node<ul>
+<li>多节点分配集合: 需要跨节点分配资源，$\{(2, 2R, X), …, (N, N\cdot R, X), n\in N\}\quad\leftarrow$ multi-node<ul>
 <li>该分配方式要求每个节点的GPU都必须完全被利用，即遵守第二条规则(详见<a href="#process">process</a>)<br>假设集群是同构的，Sia在优化配置过程中考虑的复杂度是$O(N+log_2R)$</li>
 </ul>
 </li>
@@ -305,8 +305,8 @@
 </ul>
 <h4 id="Normalized-goodput-matrix"><a href="#Normalized-goodput-matrix" class="headerlink" title="Normalized goodput matrix"></a>Normalized goodput matrix</h4><p>对于最低GPU数量要求为$N_i^{min}$的$J_i$，有公式: </p>
 <ul>
-<li>$G<em>{ij}\leftarrow N_i^{min}\cdot\frac{G</em>{ij}}{min<em>jG</em>{ij}}$<ul>
-<li>$min<em>jG</em>{ij}$: $J_i$所有配置的goodput估计值中的最小值</li>
+<li>$G_{ij}\leftarrow N_i^{min}\cdot\frac{G_{ij}}{min_jG_{ij}}$<ul>
+<li>$min_jG_{ij}$: $J_i$所有配置的goodput估计值中的最小值</li>
 </ul>
 </li>
 <li>即用矩阵每行最小值进行归一化，有两个好处：<ul>
@@ -318,7 +318,7 @@
 <h4 id="Scheduler-objective-1"><a href="#Scheduler-objective-1" class="headerlink" title="Scheduler objective"></a>Scheduler objective</h4><p>定义了一个大小与$G$相同的二进制矩阵$A$，其中$A_{ij}==1$表明下一轮次J_i选择的配置为$c_j$<br>Sia调度的目标是为每个job选择配置，使得所有job的归一化goodput之和最大</p>
 <ul>
 <li>不是每个job都挑选归一化goodput值最大是因为可能出现多对一的情况，但实际是一对一的<br>于是对Sia的调度目标建模得到：</li>
-<li>$\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot G_{ij} + \lambda(1-\lVert A_i\rVert_1))$<ul>
+<li>$\displaystyle\max_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot G_{ij} + \lambda(1-\lVert A_i\rVert_1))$<ul>
 <li>$\lVert v\rVert_1$表示相邻$v$的L1范式，即求和后的绝对值</li>
 <li>这是一个二进制整数线性规划问题，有以下限制:<ul>
 <li>每个job最多选择一种配置: $\lVert A_i\rVert \leq 1$</li>
@@ -346,18 +346,18 @@
 </ul>
 <h4 id="Balancing-goodput-with-fairness"><a href="#Balancing-goodput-with-fairness" class="headerlink" title="Balancing goodput with fairness"></a>Balancing goodput with fairness</h4><p>用一个参数$p$来平衡job的goodput。让每个job都能获得相对公平的资源分配。则加上重启参数$r_i$公式变为</p>
 <ul>
-<li>$\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot G</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$</li>
-<li>$\displaystyle\min<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot G</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\lt 0$</li>
+<li>$\displaystyle\max_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot (r_i\cdot G_{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$</li>
+<li>$\displaystyle\min_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot (r_i\cdot G_{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\lt 0$</li>
 <li>实验发现$p$在$-1.0~1.0$之间能够在获得稳定的公平性的同时对性能指标最小的负面影响，其中$p=-0.5$效果最好</li>
 </ul>
 <h4 id="Support-for-limited-adaptivity-支持有限制的自适应性"><a href="#Support-for-limited-adaptivity-支持有限制的自适应性" class="headerlink" title="Support for limited adaptivity(支持有限制的自适应性)"></a>Support for limited adaptivity(支持有限制的自适应性)</h4><p>大的数据规模使模型有高的吞吐量和使GPU有高利用率，但也可能导致训练模型的泛化误差(generalization gap)。因此Sia页支持对不同类型的job使用不同程度的自适应性。</p>
 <ul>
 <li>strong-scaling(强扩展) jobs: 固定的批量大小，但允许优化GPU数量和类型<ul>
-<li>优化的目标函数公式: $\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot T</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$(因为对于固定的批量大小，throughput和goodput成正比，不用考虑统计效率)</li>
+<li>优化的目标函数公式: $\displaystyle\max_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot (r_i\cdot T_{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$(因为对于固定的批量大小，throughput和goodput成正比，不用考虑统计效率)</li>
 </ul>
 </li>
 <li>rigid(刚性) job: 固定的批量大小和GPU数量，只允许优化GPU类型<ul>
-<li>优化的目标函数公式: $\displaystyle\max<em>B\sum</em>{i=1}^{|J<em>R|}(\sum</em>{g=1}^{|N<em>g|}B</em>{ig}\cdot (r<em>i\cdot T</em>{ig})^p + \lambda(1-\lVert B_{ig}\rVert_1))\quad p\gt 0$(固定了GPU数量，配置的方案只需要考虑GPU的类型)</li>
+<li>优化的目标函数公式: $\displaystyle\max_B\sum_{i=1}^{|J_R|}(\sum_{g=1}^{|N_g|}B_{ig}\cdot (r_i\cdot T_{ig})^p + \lambda(1-\lVert B_{ig}\rVert_1))\quad p\gt 0$(固定了GPU数量，配置的方案只需要考虑GPU的类型)</li>
 </ul>
 </li>
 </ul>

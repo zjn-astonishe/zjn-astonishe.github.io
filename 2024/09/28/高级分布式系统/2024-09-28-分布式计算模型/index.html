@@ -150,7 +150,7 @@
 <li>The processes do not share a global clock that is instantaneously accessible to these processes(不共享可以即时访问的全局时钟)</li>
 <li>Process execution and message transfer are asynchronous(进程运行和消息收发是异步发)</li>
 <li>Without loss of generality(为了不失去一般性), we assume that each process is running on a different processor(假设每个进程运行在不同的处理器上)</li>
-<li>Let $C<em>{ij}$  denote the channel(信道) from process $p_i$ to process $p_j$ and let $m</em>{ij}$ denote a message(消息) sent by $p_i$ to $p_j$</li>
+<li>Let $C_{ij}$  denote the channel(信道) from process $p_i$ to process $p_j$ and let $m_{ij}$ denote a message(消息) sent by $p_i$ to $p_j$</li>
 <li>The message transmission delay is definite and unpredictable(传输延迟确定的但不可预测，只要传了，延迟就是确定的，但不知道什么时候传，所以是不可预测？)</li>
 </ul>
 <h2 id="A-Model-of-Distributed-Executions-分布式执行的模型"><a href="#A-Model-of-Distributed-Executions-分布式执行的模型" class="headerlink" title="A Model of Distributed Executions(分布式执行的模型)"></a>A Model of Distributed Executions(分布式执行的模型)</h2><ul>
@@ -259,7 +259,7 @@
 <h3 id="causal-ordering-因果序"><a href="#causal-ordering-因果序" class="headerlink" title="causal ordering(因果序)"></a>causal ordering(因果序)</h3><ul>
 <li>is based on Lamport’s “happens before” relation</li>
 <li>A system that supports the causal ordering model satisfies the following property:<ul>
-<li>CO: For any two messages $m<em>{ij}$ and $m</em>{kj}$, if $send(m<em>{ij})\rightarrow send(m</em>{kj})$, then $rec(m<em>{ij})\rightarrow rec(m</em>{kj})$</li>
+<li>CO: For any two messages $m_{ij}$ and $m_{kj}$, if $send(m_{ij})\rightarrow send(m_{kj})$, then $rec(m_{ij})\rightarrow rec(m_{kj})$</li>
 <li>This property ensures that causally related messages destined to the same destination are delivered in an order that is consistent with their causality relation(因果相关的信息与其因果关系一致地顺序传递)</li>
 </ul>
 </li>
@@ -292,7 +292,7 @@
 </ul>
 <h4 id="A-Channel-State-信道状态"><a href="#A-Channel-State-信道状态" class="headerlink" title="A Channel State(信道状态)"></a>A Channel State(信道状态)</h4><ul>
 <li>The state of a channel depends upon the states of the process it connects(取决于信道所连接的进程的状态)</li>
-<li>Let $SC<em>{ij}^{x, y}$ denote the state of a channel $C</em>{ij}$</li>
+<li>Let $SC_{ij}^{x, y}$ denote the state of a channel $C_{ij}$</li>
 <li>The state of a channel is defined as follows:<ul>
 <li>$SC_{ij}^{x, y}$ denotes all messages that $p_i$ sent upto event $e_i^x$ and which process $p_j$ had not received until event $e_j^y$(进程i在事件x发送消息，并且进程j在事件y接收到消息)</li>
 </ul>
@@ -301,7 +301,7 @@
 <h4 id="Global-State-全局状态，不太可能，只存在与理论"><a href="#Global-State-全局状态，不太可能，只存在与理论" class="headerlink" title="Global State(全局状态，不太可能，只存在与理论)"></a>Global State(全局状态，不太可能，只存在与理论)</h4><ul>
 <li>The global state of a distributed system is a collection of the local states of the processes and the channels(进程本地状态和信道状态的集合)</li>
 <li>Notationally, global state $GS$ is defined as,<ul>
-<li>$GS={\bigcup<em>iLS_i^{x_i}, \bigcup</em>{j, k}SC_{jk}^{y_j, z_k}}$</li>
+<li>$GS=\{\bigcup_iLS_i^{x_i}, \bigcup_{j, k}SC_{jk}^{y_j, z_k}\}$</li>
 </ul>
 </li>
 <li>For a global state to be meaningful, the states of all the components of the distributed system must be recorded at the same instant(分布式系统中的所有组件的状态需要在相同的时刻记录)</li>
@@ -315,14 +315,14 @@
 </li>
 <li>Such states are called consistent global states and are meaningful global states.</li>
 <li>Inconsistent global states are not meaningful in the sense that a distributed system can never be in an inconsistent state(分布式系统永远不可能处于不一致状态).</li>
-<li>A global state $GS={\bigcup<em>iLS_i^{x_i}, \bigcup</em>{j, k}SC_{jk}^{y_j, z_k}}$ is a consistent global state iff(if and only if):<ul>
-<li>$\forall m<em>{ij}:send(m</em>{ij})\nleq LS<em>i^{x_i} \Leftrightarrow m</em>{ij} \notin SC<em>{ij}^{x_i, y_j}\bigwedge rec(m</em>{ij})\nleq LS_j^{y_j}$(发送的消息要不还在信道中，要不就已经被接收，不能出现有接收但没发送)</li>
+<li>A global state $GS=\{\bigcup_iLS_i^{x_i}, \bigcup_{j, k}SC_{jk}^{y_j, z_k}\}$ is a consistent global state iff(if and only if):<ul>
+<li>$\forall m_{ij}:send(m_{ij})\nleq LS_i^{x_i} \Leftrightarrow m_{ij} \notin SC_{ij}^{x_i, y_j}\bigwedge rec(m_{ij})\nleq LS_j^{y_j}$(发送的消息要不还在信道中，要不就已经被接收，不能出现有接收但没发送)</li>
 <li>channel state $SC_{ij}^{y_i, z_k}$ and process state $LS_j^{z_k}$ must not include any message that process $p_i$ sent after executing event $e_i^{x_i}$</li>
 </ul>
 </li>
 <li>Example<ul>
-<li>A global state $GS<em>1={LS_1^1, LS_2^3, LS_3^3, LS_4^2}$ is inconsistent, because the state of $p_2$ has recorded the receipt of message $m</em>{12}$, however, the state of $p_1$ has not recorded its send</li>
-<li>A global state $GS<em>2$ consisting of local states ${LS_1^2, LS_2^4, LS_3^4, LS_4^2}$ is consistent, all the channels are empty except $C</em>{21}$ that contains message $m_{21}$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution2.png" alt="img"></li>
+<li>A global state $GS_1=\{LS_1^1, LS_2^3, LS_3^3, LS_4^2\}$ is inconsistent, because the state of $p_2$ has recorded the receipt of message $m_{12}$, however, the state of $p_1$ has not recorded its send</li>
+<li>A global state $GS_2$ consisting of local states $\{LS_1^2, LS_2^4, LS_3^4, LS_4^2\}$ is consistent, all the channels are empty except $C_{21}$ that contains message $m_{21}$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution2.png" alt="img"></li>
 </ul>
 </li>
 </ul>
@@ -348,7 +348,7 @@
 <li>In this situation, all the information available at $e_i$ could be made accessible at $e_j$</li>
 <li>All such events $e_i$ belong to the past of $e_j$<ul>
 <li>Let $Past(e_j)$ denote all events in the past of $e_j$ in a computation $(H, \rightarrow)$. Then, <ul>
-<li>$Past(e_j) = {e_i\mid \forall e_i\in H, e_i\rightarrow e_j}$</li>
+<li>$Past(e_j) = \{e_i\mid \forall e_i\in H, e_i\rightarrow e_j\}$</li>
 <li>$Past(e_j)$ represents all events on the past light cone that affect $e_j$  </li>
 </ul>
 </li>
@@ -359,7 +359,7 @@
 <li>$max(Past_i(e_j))$ is the <strong>latest event</strong> at process $p_i$ that affected event $e_j$</li>
 </ul>
 </li>
-<li>Let $Max_Past(e<em>j) = \bigcup</em>{(\forall i)} {max(Past_i(e_j))}$(所有进程中的latest event)<ul>
+<li>Let $Max_Past(e_j) = \bigcup_{(\forall i)} \{max(Past_i(e_j))\}$(所有进程中的latest event)<ul>
 <li>$Max_Past(e_j)$ consists of the latest event at every process that affected event $e_j$ and is referred to as the surface of the past cone of $e_j$(past cone的latest平面)</li>
 </ul>
 </li>
@@ -369,12 +369,12 @@
 <h3 id="Future-Cone-of-an-Event-事件因果关系中的果"><a href="#Future-Cone-of-an-Event-事件因果关系中的果" class="headerlink" title="Future Cone of an Event(事件因果关系中的果)"></a>Future Cone of an Event(事件因果关系中的果)</h3><ul>
 <li>The future of an event $e_j$, denoted by $Future(e_j)$, contains all events $e_i$ that are causally affected by $e_j$</li>
 <li>In a computation $(H, \rightarrow)$, $Future(e_j)$ is defined as:<ul>
-<li>$Future(e_j) = {e_i\mid \forall e_i \in H, e_j\rightarrow e_i}$</li>
+<li>$Future(e_j) = \{e_i\mid \forall e_i \in H, e_j\rightarrow e_i\}$</li>
 </ul>
 </li>
 <li>Define $Future_i(e_j)$ as the set of those events of $Future(e_j)$ that are on process $p_i$<ul>
 <li>define $min(Future_i(e_j))$ as the <strong>first event</strong> on process $p_i$ that is affected by $e_j$</li>
-<li>Define $Min<em>Future(e_j)$ as $\bigcup</em>{(\forall i)}{min(Future_i(e_j))}$, which consists of the first event at every process that is causally affected by event $e_j$(所有进程中的first event)</li>
+<li>Define $Min_Future(e_j)$ as $\bigcup_{(\forall i)}\{min(Future_i(e_j))\}$, which consists of the first event at every process that is causally affected by event $e_j$(所有进程中的first event)</li>
 <li>$Min_Future(e_j)$ is referred to as the surface of the future cone of $e_j$(事件j的future cone平面)</li>
 <li>All events at a process $p_i$ that occurred after $max(Past_i(e_j))$ but before $min(Future_i(e_j))$ are concurrent with $e_j$(与事件j无因果关系)</li>
 <li>Therefore, all and only those events of computation $H$ that belong to the set “$H - Past(e_j) - Future(e_j)$” are concurrent with event $e_j$(所有事件去掉有因果关系的得到的便是并发的事件)</li>

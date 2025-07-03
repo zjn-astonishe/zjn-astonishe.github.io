@@ -184,9 +184,9 @@
 </ul>
 <h3 id="计算机问题求解的实例——补丁与bug问题"><a href="#计算机问题求解的实例——补丁与bug问题" class="headerlink" title="计算机问题求解的实例——补丁与bug问题"></a>计算机问题求解的实例——补丁与bug问题</h3><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>错误就是人们所说的bug。用户在试用软件时总是希望其错误越少越好，最好是没有错误的。但是推出一个没有错误的软件几乎不可能，所以很多软件公司都在疯狂地发放补丁(有时这种补丁甚至是收费的)。T公司就是其中之一。上个月，T公司推出了一个新的字处理软件，随后发放了一批补丁。最近T公司发现其发放的补丁有致命的问题，那就是一个补丁在排除某些错误的同时，往往会加入另一些错误，此字处理软件中只可能出现n个特定的错误，这n个错误是由软件本身决定的。T公司目前共发放了m个补丁，对于每一个补丁，都有特定的适用环境，某个补丁只有在当前软件中包含某些错误而同时又不不包含另一些错误时才可以使用，如果它被使用，它将修复某些错误而同时加入某些错误。另外，使用每个补丁都要耗一定的时间(即补丁程序的运行时间)。</p>
 <p>现在T公司的问题很简单: 其字处理软件的初始版本不幸地包含了全部n个错误，有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
-<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><p>T公司的T公司的字处理软件中可能出现的n个错误为集合$B={b<em>1, b_2, ···, b_n}$中的元素，T公司目前共发放了m个补丁，记为；$P={p_1, p_2, ···, p_m}$。对于每一个补丁$P_i$，假设存在错误集合: $B</em>{i+}$，$B<em>{i-}$，当软件包含了$B</em>{i+}$中的所有错误，而没有包含$B<em>{i-}$中的任何错误时，补丁$P_i$才可以被使用，否则不能使用，显然$B</em>{i+}$，$B<em>{i-}$交集为空。补丁$P_i$将修复某些错误而同时加入某些错误，设错误集合$F</em>{i+}$，$F<em>{i-}$使用过补丁$P_i$之后，$F</em>{i-}$中的任何错误都不会在软件中出现，而软件将包含$F<em>{i+}$中的所有错误，同样$F</em>{i+}$，$F_{i-}$交集为空。另外，使用每个补丁都要耗一定的时间$T_i$。</p>
+<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><p>T公司的T公司的字处理软件中可能出现的n个错误为集合$B=\{b_1, b_2, ···, b_n\}$中的元素，T公司目前共发放了m个补丁，记为；$P=\{p_1, p_2, ···, p_m\}$。对于每一个补丁$P_i$，假设存在错误集合: $B_{i+}$，$B_{i-}$，当软件包含了$B_{i+}$中的所有错误，而没有包含$B_{i-}$中的任何错误时，补丁$P_i$才可以被使用，否则不能使用，显然$B_{i+}$，$B_{i-}$交集为空。补丁$P_i$将修复某些错误而同时加入某些错误，设错误集合$F_{i+}$，$F_{i-}$使用过补丁$P_i$之后，$F_{i-}$中的任何错误都不会在软件中出现，而软件将包含$F_{i+}$中的所有错误，同样$F_{i+}$，$F_{i-}$交集为空。另外，使用每个补丁都要耗一定的时间$T_i$。</p>
 <p>现在T公司的字处理软件的初始版本不幸地包含了全部n个错误，试编写程序判断有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
-<h4 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h4><p>把n个bug的状态(存在和不存在)的组合用一个0-1字符串(模式串)表示，执行一个补丁本质上就是模式串的转换。<br>模式串可以作为一个图的定点，那么补丁就是图中的边。于是问题则转换为从全1模式串${1, 1, …, 1}$到全0模式串${0, 0, …, 0}$的转换。</p>
+<h4 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h4><p>把n个bug的状态(存在和不存在)的组合用一个0-1字符串(模式串)表示，执行一个补丁本质上就是模式串的转换。<br>模式串可以作为一个图的定点，那么补丁就是图中的边。于是问题则转换为从全1模式串$\{1, 1, …, 1\}$到全0模式串$\{0, 0, …, 0\}$的转换。</p>
 <p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/bug%E4%B8%8E%E8%A1%A5%E4%B8%81%E9%97%AE%E9%A2%98.png" alt="img"></p>
 <h4 id="设计最短路径算法"><a href="#设计最短路径算法" class="headerlink" title="设计最短路径算法"></a>设计最短路径算法</h4><ul>
 <li>Dijkstra最短路径算法求解</li>
@@ -267,8 +267,8 @@
 <li>平均复杂度: <ul>
 <li>令$n=2^k - 1$，$S_t, 1\lt t\lt k$为算法做t次比较时的输入个数 $k \lt logn$</li>
 <li>$S_1 = 1 = 2^0, S_2 = 2 = 2^1, S_3 = 2^2, …, S_t=2^{t-1}, …, S_k=2^{k-1} + n + 1$(n+1)为缝隙中情况</li>
-<li>$A(n) = \frac{1S<em>1 + 2S_2 + … + kS_k}{2n+1} = \frac{\sum</em>{t=1}^{k}t2^{t-1}+k(n+1)}{2n+1}=\frac{(k-1)2^k + 1 + k(n+1)}{2n+1}\approx \frac{k-1}{2} + \frac{k}{2} = k - \frac{1}{2} = \lfloor logn \rfloor + \frac{1}{2}$<ul>
-<li>$\sum<em>{t=1}^{k}t2^{t-1}$拆分为$\sum</em>{t=1}^{k}t2^{t} - \sum<em>{t=1}^{k}t2^{t-1} = \sum</em>{t=1}^{k}t2^t - \sum_{t=0}^{k-1}(t+1)2^t$</li>
+<li>$A(n) = \frac{1S_1 + 2S_2 + … + kS_k}{2n+1} = \frac{\sum_{t=1}^{k}t2^{t-1}+k(n+1)}{2n+1}=\frac{(k-1)2^k + 1 + k(n+1)}{2n+1}\approx \frac{k-1}{2} + \frac{k}{2} = k - \frac{1}{2} = \lfloor logn \rfloor + \frac{1}{2}$<ul>
+<li>$\sum_{t=1}^{k}t2^{t-1}$拆分为$\sum_{t=1}^{k}t2^{t} - \sum_{t=1}^{k}t2^{t-1} = \sum_{t=1}^{k}t2^t - \sum_{t=0}^{k-1}(t+1)2^t$</li>
 </ul>
 </li>
 </ul>
@@ -296,7 +296,7 @@
 <h2 id="排序算法的时间复杂度分析"><a href="#排序算法的时间复杂度分析" class="headerlink" title="排序算法的时间复杂度分析"></a>排序算法的时间复杂度分析</h2><h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bubbleSort</span></span><br><span class="line"><span class="comment">// 交换只发生在相邻的元素之间</span></span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">bubbleSort</span><span class="params">(<span class="type">int</span>* L, n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> index = n;</span><br><span class="line">  <span class="keyword">while</span>(index &gt; <span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    k = index - <span class="number">1</span>;</span><br><span class="line">    index = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">1</span>; j &lt;= k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(L[j] &gt; L[j+<span class="number">1</span>])</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">int</span> tmp = L[j];</span><br><span class="line">        L[j] = L[j+<span class="number">1</span>];</span><br><span class="line">        L[j+<span class="number">1</span>] = tmp;</span><br><span class="line">        index = j;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h4 id="置换与逆序"><a href="#置换与逆序" class="headerlink" title="置换与逆序"></a>置换与逆序</h4><ul>
 <li>逆序<ul>
-<li>令$L={1, 2, …, n}$，排序的任何输入为L上的置换。在置换$a_1a_2…a_n$中若$i<j$，但$a_i>a_j$，则称($a_i, a_j$)为该置换的一个逆序。</li>
+<li>令$L=\{1, 2, …, n\}$，排序的任何输入为L上的置换。在置换$a_1a_2…a_n$中若$i<j$，但$a_i>a_j$，则称($a_i, a_j$)为该置换的一个逆序。</li>
 </ul>
 </li>
 <li>逆序序列<ul>
@@ -418,7 +418,7 @@
 </ul>
 </li>
 <li>n个结点的建堆算法的时间复杂度是$O(n)$<ul>
-<li>对高为h的结点调用整理算法的时间是$O(h)$: $T(n) = \sum<em>{h=0}^{\lfloor logn \rfloor}\lceil\frac{n}{2^{h+1}}\rceil O(h) = O(n\sum</em>{h=0}^{\infin}\frac{h}{2^{h+1}} = O(n)$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC2.png" alt="img"></li>
+<li>对高为h的结点调用整理算法的时间是$O(h)$: $T(n) = \sum_{h=0}^{\lfloor logn \rfloor}\lceil\frac{n}{2^{h+1}}\rceil O(h) = O(n\sum_{h=0}^{\infin}\frac{h}{2^{h+1}} = O(n)$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC2.png" alt="img"></li>
 </ul>
 </li>
 </ul>
@@ -433,7 +433,7 @@
 </ul>
 </li>
 </ul>
-<h3 id="排序问题的决策树"><a href="#排序问题的决策树" class="headerlink" title="排序问题的决策树"></a>排序问题的决策树</h3><p>考虑以比较运算作为基本运算的排序算法类<br>任取算法，输入$L={x_1, x_2, …, x_n}$</p>
+<h3 id="排序问题的决策树"><a href="#排序问题的决策树" class="headerlink" title="排序问题的决策树"></a>排序问题的决策树</h3><p>考虑以比较运算作为基本运算的排序算法类<br>任取算法，输入$L=\{x_1, x_2, …, x_n\}$</p>
 <ul>
 <li>第一次比较的元素为$x_i, x_j$，作为决策树根为$(i, j)$</li>
 <li><p>假设结点k已经标记为$(m, n)$</p>
@@ -465,7 +465,7 @@
 <li>任何通过比较对n个元素排序的算法在最坏情况下的时间复杂度是$\lceil logn! \rceil$，可近似为$nlogn - 1.5n$<ul>
 <li>最坏情况下的比较次数是树的深度。</li>
 <li>证明思路: 用对数乘加变换<ul>
-<li>$log n! = \sum<em>{j=1}^{n}log j \gt \int_1^n logx dx = loge\int</em>{1}^{n}lnx dx = loge(nlnn - n + 1) = nlogn - nloge + loge \approx nlogn - 1.5n$<ul>
+<li>$log n! = \sum_{j=1}^{n}log j \gt \int_1^n logx dx = loge\int_{1}^{n}lnx dx = loge(nlnn - n + 1) = nlogn - nloge + loge \approx nlogn - 1.5n$<ul>
 <li>$x = e^{lnx}$</li>
 </ul>
 </li>
@@ -474,8 +474,8 @@
 </ul>
 </li>
 <li>堆排序算法在最坏情况阶达到最优。<ul>
-<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{1}^{n}logxdx=nlnn - n + 1 = \Omega(nlogn)$</li>
-<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{2}^{n+1}logxdx=O(nlogn)$</li>
+<li>$log(n!) = \sum_{k=1}^{n}logk \gt \int_{1}^{n}logxdx=nlnn - n + 1 = \Omega(nlogn)$</li>
+<li>$log(n!) = \sum_{k=1}^{n}logk \gt \int_{2}^{n+1}logxdx=O(nlogn)$</li>
 </ul>
 </li>
 </ul>
@@ -652,7 +652,7 @@
 </li>
 <li><p>任何找第二大算法，针对上述赋值规则产生的输入，通过与最大元素的比较直接淘汰的元素数至少是$\lceil logn\rceil$。</p>
 <ul>
-<li>$w<em>k$表示max在第k次比较后形成以max为根子树的结点总数。$w_k\lt 2w</em>{k-1}$。</li>
+<li>$w_k$表示max在第k次比较后形成以max为根子树的结点总数。$w_k\lt 2w_{k-1}$。</li>
 <li>设K为max最终与权不为0的结点的比较次数。<ul>
 <li>$n=w_K\lt 2^K\Rightarrow K\gt logn \Rightarrow K \gt \lceil logn\rceil$</li>
 </ul>
@@ -742,7 +742,7 @@
 <td style="text-align:center">找第k小</td>
 <td style="text-align:center">Select</td>
 <td style="text-align:center">$O(n)$</td>
-<td style="text-align:center">$n+\min{k, n-k+1}-2$</td>
+<td style="text-align:center">$n+\min\{k, n-k+1\}-2$</td>
 <td style="text-align:center">阶最优</td>
 </tr>
 </tbody>

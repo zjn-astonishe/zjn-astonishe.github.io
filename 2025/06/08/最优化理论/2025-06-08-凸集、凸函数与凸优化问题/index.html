@@ -170,7 +170,7 @@
 <li>鲁棒主成分分析(Robust Principal Component Analysis)<ul>
 <li>假设一个数据矩阵$M\in R^{m\times n}$: $M = L_0 + S_0$<ul>
 <li>可由以下凸优化问题的解恢复:<ul>
-<li>$\min<em>{L, S} \parallel L\parallel </em>* + \lambda\parallel S\parallel_1$<ul>
+<li>$\min_{L, S} \parallel L\parallel _* + \lambda\parallel S\parallel_1$<ul>
 <li>最小化核范数(nuclear norm)$\parallel L\parallel_*$用于诱导矩阵L的低秩性，是对$rank(L)$的“最佳”凸逼近。</li>
 <li>最小化$\ell_1$范数$\parallel S\parallel_1$用于诱导矩阵S的稀疏性。$\parallel S\parallel_1$是$\parallel S\parallel_0$的“最佳”凸逼近，其中$\parallel S\parallel_0$表示矩阵S中非零元素的个数，$\parallel S\parallel_1$表示元素绝对值的和。</li>
 <li>$\lambda$用于控制低秩和稀疏部分之间的权衡。</li>
@@ -200,31 +200,31 @@
 <ul>
 <li>$x\le y$: 表示$x_i\le y_i, i=1, 2, …, n$</li>
 <li>内积: $<x, y>=x^Ty=\sum_{i=1}^{n}x_iy_i$</li>
-<li>$\ell<em>2$范数: $\parallel x\parallel_2 = (\sum</em>{i=1}^n\mid x_i\mid^2)^\frac{1}{2}$，可省略下标。</li>
-<li>$\ell<em>1$范数: $\parallel x\parallel_1 = \sum</em>{i=1}^n\mid x_i\mid$</li>
-<li>$\ell<em>\infin$范数: $\parallel x\parallel</em>\infin = \max_{1\le i\le n}\mid x_i\mid$</li>
-<li>$\ell<em>p$范数($p\ge 1$): $\parallel x\parallel_p = (\sum</em>{i=1}^n\mid x_i\mid^p)^\frac{1}{p}$</li>
+<li>$\ell_2$范数: $\parallel x\parallel_2 = (\sum_{i=1}^n\mid x_i\mid^2)^\frac{1}{2}$，可省略下标。</li>
+<li>$\ell_1$范数: $\parallel x\parallel_1 = \sum_{i=1}^n\mid x_i\mid$</li>
+<li>$\ell_\infin$范数: $\parallel x\parallel_\infin = \max_{1\le i\le n}\mid x_i\mid$</li>
+<li>$\ell_p$范数($p\ge 1$): $\parallel x\parallel_p = (\sum_{i=1}^n\mid x_i\mid^p)^\frac{1}{p}$</li>
 <li>$\ell_0$“范数”$\parallel x\parallel_0$: 向量x的所有分量中非零元素的个数(并非真正的范数)。</li>
 </ul>
 </li>
-<li><p>对任意的$x\in \mathbb{R}^n$: $\parallel x\parallel<em>\infin\le\parallel x\parallel_2\le\parallel x\parallel_1\le n\parallel x\parallel</em>\infin$</p>
+<li><p>对任意的$x\in \mathbb{R}^n$: $\parallel x\parallel_\infin\le\parallel x\parallel_2\le\parallel x\parallel_1\le n\parallel x\parallel_\infin$</p>
 </li>
 <li>柯西-施瓦兹不等式: 对任意的$x, y\in \mathbb{R}^n$，有$-\parallel x\parallel\parallel y\parallel\le<x, y>\le\parallel x\parallel\parallel y\parallel$</li>
-<li>赫尔德不等式: $\mid x^Ty\mid \le \parallel x\parallel<em>p\parallel y\parallel_q = (\sum</em>{i=1}^{n}\mid x<em>i\mid^p)^\frac{1}{p}(\sum</em>{i=1}^{n}\mid y_i\mid^q)^\frac{1}{q}$<ul>
+<li>赫尔德不等式: $\mid x^Ty\mid \le \parallel x\parallel_p\parallel y\parallel_q = (\sum_{i=1}^{n}\mid x_i\mid^p)^\frac{1}{p}(\sum_{i=1}^{n}\mid y_i\mid^q)^\frac{1}{q}$<ul>
 <li>其中$p, q$是大于1的实数，且满足$\frac{1}{p} + \frac{1}{q} = 1$</li>
 </ul>
 </li>
-<li><p>闵可夫斯基不等式: 对任意的$x, y\in \mathbb{R}^n, p\in [1, \infin)$，有$\parallel x+y\parallel<em>p\le\parallel x\parallel_p + \parallel y\parallel_p =(\sum</em>{i=1}^{n}\mid x<em>i\mid^p)^\frac{1}{p}(\sum</em>{i=1}^{n}\mid y_i\mid^p)^\frac{1}{p}$</p>
+<li><p>闵可夫斯基不等式: 对任意的$x, y\in \mathbb{R}^n, p\in [1, \infin)$，有$\parallel x+y\parallel_p\le\parallel x\parallel_p + \parallel y\parallel_p =(\sum_{i=1}^{n}\mid x_i\mid^p)^\frac{1}{p}(\sum_{i=1}^{n}\mid y_i\mid^p)^\frac{1}{p}$</p>
 </li>
-<li><p>对任意的$A = (a<em>{ij})\in\mathbb{R}^{m\times n}$和$B = (b</em>{ij})\in\mathbb{R}^{m\times n}$</p>
+<li><p>对任意的$A = (a_{ij})\in\mathbb{R}^{m\times n}$和$B = (b_{ij})\in\mathbb{R}^{m\times n}$</p>
 <ul>
-<li>内积: $<A, B>=tr(AB^T)=\sum<em>{i=1}^{m}\sum</em>{j=1}^{n}a<em>{ij}b</em>{ij}$</li>
-<li>Frobenius范数: $\parallel A\parallel<em>F = \sqrt{\sum</em>{i, j}\mid a_{ij}\mid^2} = \sqrt{tr(A^TA)}$ </li>
-<li>诱导范数: $\parallel A\parallel\triangleq \sup<em>{\parallel x\parallel=1}\parallel Ax\parallel=\sup</em>{\parallel x\parallel\neq 0}\frac{\parallel Ax\parallel}{\parallel x\parallel}$</li>
-<li>诱导$\ell<em>2$范数: $\parallel A\parallel_2 = \sqrt{\lambda</em>{max}(A^TA)}$</li>
-<li>诱导$\ell<em>1$范数: $\parallel A\parallel_1=\max</em>{1\le j\le n}\sum<em>{i=1}^{n}\mid a</em>{ij}\mid$</li>
-<li>诱导$\ell<em>\infin$范数:  $\parallel A\parallel</em>\infin=\max<em>{1\le i\le n}\sum</em>{j=1}^{n}\mid a_{ij}\mid$</li>
-<li>核范数: $\parallel A\parallel<em>*\sum</em>{i=1}^{r}\sigma_i$，其中${\sigma_i}$为A的非零奇异值，$r=rank(A)$。</li>
+<li>内积: $<A, B>=tr(AB^T)=\sum_{i=1}^{m}\sum_{j=1}^{n}a_{ij}b_{ij}$</li>
+<li>Frobenius范数: $\parallel A\parallel_F = \sqrt{\sum_{i, j}\mid a_{ij}\mid^2} = \sqrt{tr(A^TA)}$ </li>
+<li>诱导范数: $\parallel A\parallel\triangleq \sup_{\parallel x\parallel=1}\parallel Ax\parallel=\sup_{\parallel x\parallel\neq 0}\frac{\parallel Ax\parallel}{\parallel x\parallel}$</li>
+<li>诱导$\ell_2$范数: $\parallel A\parallel_2 = \sqrt{\lambda_{max}(A^TA)}$</li>
+<li>诱导$\ell_1$范数: $\parallel A\parallel_1=\max_{1\le j\le n}\sum_{i=1}^{n}\mid a_{ij}\mid$</li>
+<li>诱导$\ell_\infin$范数:  $\parallel A\parallel_\infin=\max_{1\le i\le n}\sum_{j=1}^{n}\mid a_{ij}\mid$</li>
+<li>核范数: $\parallel A\parallel_*\sum_{i=1}^{r}\sigma_i$，其中$\{\sigma_i\}$为A的非零奇异值，$r=rank(A)$。</li>
 </ul>
 </li>
 <li>对任意的$A, B\in\mathbb{R}^{n\times n}$和$x\in\mathbb{R}^n$，有: $\parallel AB\parallel\le\parallel A\parallel\parallel B\parallel, \parallel Ax\parallel\le\parallel A\parallel\parallel x\parallel$</li>
@@ -242,7 +242,7 @@
 </ul>
 </li>
 <li>海瑟矩阵(Hessian)<ul>
-<li>如果函数$f:\mathbb{R}^n\rightarrow\mathbb{R}$在点$x$处的二阶偏导数$\frac{\partial^2 f}{\partial x_i\partial x_j}(x), i, j=1, 2, \cdots, n$都存在，则$\nabla^2 f(x)=\left[<br>\begin{matrix}<br>\frac{\partial^2 f(x)}{\partial x_1^2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_n}\<br>\frac{\partial^2 f(x)}{\partial x_2\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_2^2} &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_n} \<br>\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots<br>\<br>\frac{\partial^2 f(x)}{\partial x_n\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_n^2}<br>\end{matrix}<br>\right]$称为$f$在点$x$处的海瑟矩阵。</li>
+<li>如果函数$f:\mathbb{R}^n\rightarrow\mathbb{R}$在点$x$处的二阶偏导数$\frac{\partial^2 f}{\partial x_i\partial x_j}(x), i, j=1, 2, \cdots, n$都存在，则$\nabla^2 f(x)=\left[<br>\begin{matrix}<br>\frac{\partial^2 f(x)}{\partial x_1^2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_n}\\<br>\frac{\partial^2 f(x)}{\partial x_2\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_2^2} &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_n} \\<br>\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots<br>\\<br>\frac{\partial^2 f(x)}{\partial x_n\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_n^2}<br>\end{matrix}<br>\right]$称为$f$在点$x$处的海瑟矩阵。</li>
 <li>当$\nabla^2f(x)$在区域$D$上的每个点$x$处都存在，且$\nabla^2f(x)$在区域$D$上连续，则$f$在$D$上二阶(次)连续可微，此时的海瑟矩阵是对称矩阵。</li>
 <li>例子: <ul>
 <li>给定对称矩阵$Q\in\mathbb{R}^{n\times n}$，向量$q\in\mathbb{R}^n$，以及数$r\in\mathbb{R}$，考虑二次函数$f(x)=\frac{1}{2}x^TQx+q^Tx+r$，则$\nabla f(x)=Qx+q, \nabla^2 f(x)=Q$。</li>
@@ -264,7 +264,7 @@
 <li>目标函数: $f:\Omega\rightarrow\mathbb{R}$</li>
 <li>可行域(决策集): $\Omega\subset\mathbb{R}^n$，$\Omega$中的所有点或者说是满足约束条件的点为可行点。<ul>
 <li>若$\Omega=\mathbb{R}^n$，则为无约束优化问题。否则为约束优化问题。<ul>
-<li>$\Omega:={x\in\mathbb{R}^n:h(x)=0, c(x)\le 0}$<ul>
+<li>$\Omega:=\{x\in\mathbb{R}^n:h(x)=0, c(x)\le 0\}$<ul>
 <li>$h(x)=(h_1(x), …, h_m(x))^T$，$h_i(x)=0, i=1, 2, …, m$为等式约束。</li>
 <li>$c(x)=(c_1(x), …, c_S(x))^T$，$c_j(x)\le 0, j=1, 2, …, s$为不等式约束。</li>
 </ul>
@@ -272,8 +272,8 @@
 </ul>
 </li>
 <li>对$x^<em>\in\Omega$，若对任意的$x\in\Omega$，都有$f(x^</em>)\le f(x)$，则$x^<em>$是问题的全局最优解，对应的目标函数值为全局最优值。$$x^</em>\in \arg\min_{x\in\Omega}f(x)$$<ul>
-<li>若存在$x^<em>$点的邻域$\mathcal{B}(x^</em>, \delta)={x:\parallel x-x^<em>\parallel\le\delta}$使得对任意的$x\in\Omega\bigcap\mathcal{B}(x^</em>, \delta)$，有$f(x^<em>)\le f(x)$，则$x^</em>$为局部最优解。</li>
-<li>若还满足对任意的$x\in\Omega\bigcap\mathcal{B}(x^<em>, \delta), x\neq{x^</em>}$，有$f(x^<em>)\lt f(x)$，则$x^</em>$为严格局部最优解。</li>
+<li>若存在$x^<em>$点的邻域$\mathcal{B}(x^</em>, \delta)=\{x:\parallel x-x^<em>\parallel\le\delta\}$使得对任意的$x\in\Omega\bigcap\mathcal{B}(x^</em>, \delta)$，有$f(x^<em>)\le f(x)$，则$x^</em>$为局部最优解。</li>
+<li>若还满足对任意的$x\in\Omega\bigcap\mathcal{B}(x^<em>, \delta), x\neq\{x^</em>\}$，有$f(x^<em>)\lt f(x)$，则$x^</em>$为严格局部最优解。</li>
 </ul>
 </li>
 </ul>
@@ -311,20 +311,20 @@
 <li>鲁棒优化和随机优化。</li>
 </ul>
 <h4 id="算法评价标准"><a href="#算法评价标准" class="headerlink" title="算法评价标准"></a>算法评价标准</h4><ul>
-<li>若$\lim_{k\rightarrow\infin}\parallel x^k-x^<em>\parallel=0$，则称${x^k}$收敛于$x^</em>$。</li>
-<li>聚点: 若存在${x^k}$的一个子序列收敛于$x^<em>$，则称$x^</em>$是${x^k}$的一个聚点。</li>
-<li>全局收敛性: 从任意的初始点出发，算法产生的迭代序列${x^k}$都收敛于问题的一个最优点或稳定点。</li>
-<li>局部收敛性: 算法只有在初始点与最优点比较靠近时才能保证迭代序列${x^k}$收敛于问题的一个最优点或稳定点。</li>
-<li>收敛速度: 假设算法产生的迭代序列${x^k}$收敛于$x^*$<ul>
-<li>若存在$r\in(0, 1)$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}\le r$，则${x^k}$是Q(quotient)-线性收敛于$x^*$</li>
-<li>若$\lim_{k\rightarrow\infin}\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}=0$，则${x^k}$是Q(quotient)-超线性收敛于$x^*$</li>
-<li>若存在$p\gt 1$和一个正数$\gamma$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel^p}\le \gamma$，则${x^k}$是Q-p阶收敛于$x^<em>$，或者称为p-阶收敛于${x^</em>}$，最常见是Q-2阶收敛。</li>
+<li>若$\lim_{k\rightarrow\infin}\parallel x^k-x^<em>\parallel=0$，则称$\{x^k\}$收敛于$x^</em>$。</li>
+<li>聚点: 若存在$\{x^k\}$的一个子序列收敛于$x^<em>$，则称$x^</em>$是$\{x^k\}$的一个聚点。</li>
+<li>全局收敛性: 从任意的初始点出发，算法产生的迭代序列$\{x^k\}$都收敛于问题的一个最优点或稳定点。</li>
+<li>局部收敛性: 算法只有在初始点与最优点比较靠近时才能保证迭代序列$\{x^k\}$收敛于问题的一个最优点或稳定点。</li>
+<li>收敛速度: 假设算法产生的迭代序列$\{x^k\}$收敛于$x^*$<ul>
+<li>若存在$r\in(0, 1)$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}\le r$，则$\{x^k\}$是Q(quotient)-线性收敛于$x^*$</li>
+<li>若$\lim_{k\rightarrow\infin}\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}=0$，则$\{x^k\}$是Q(quotient)-超线性收敛于$x^*$</li>
+<li>若存在$p\gt 1$和一个正数$\gamma$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel^p}\le \gamma$，则$\{x^k\}$是Q-p阶收敛于$x^<em>$，或者称为p-阶收敛于$\{x^</em>\}$，最常见是Q-2阶收敛。</li>
 </ul>
 </li>
 <li><p>弱化收敛速度标准</p>
 <ul>
-<li>若存在一个Q-线性收敛于0的非负序列${v_k}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则${x^k}$是R(root)-线性收敛于$x^</em>$。</li>
-<li>若存在一个Q-超线性收敛于0的非负序列${v_k}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则${x^k}$是R(root)-超线性收敛于$x^</em>$。</li>
+<li>若存在一个Q-线性收敛于0的非负序列$\{v_k\}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则$\{x^k\}$是R(root)-线性收敛于$x^</em>$。</li>
+<li>若存在一个Q-超线性收敛于0的非负序列$\{v_k\}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则$\{x^k\}$是R(root)-超线性收敛于$x^</em>$。</li>
 </ul>
 </li>
 <li><p>其他算法评价标准:</p>

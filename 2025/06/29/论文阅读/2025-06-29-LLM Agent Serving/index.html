@@ -180,7 +180,7 @@
 <h4 id="Model-Setup"><a href="#Model-Setup" class="headerlink" title="Model_Setup"></a>Model_Setup</h4><p>以当前先进的LLM服务系统Sarathi-serve构建一个随机处理模型。</p>
 <ul>
 <li>建模请求到来(requests arrival)<ul>
-<li>时间是离散的，辅以下标$n\in \mathbb{N}\equiv {1, 2, …, }$。</li>
+<li>时间是离散的，辅以下标$n\in \mathbb{N}\equiv \{1, 2, …, \}$。</li>
 <li>对于每个时隙$n$，允许在同一时隙到达多个请求，于是使用$a_n$表示在该时隙到达系统的请求的数量。从物理上讲，时隙可以对应于时钟频率单位或其他时间单位。</li>
 <li>假设所有的请求都是有序的(也就是有标号的?)。对于$i=1, 2, …, $，假设请求$i$具有$v_p(i)\in \mathbb{N}$个有序的预填充tokens，$v_d(i)\in\mathbb{N}$个有序的解码tokens和特征$z(i)\in \mathcal{K}$(其中$\mathcal{K}$是一个有限集)。特征$z(i)$可以捕获请求的类型/内容。于是使用$(v_p(i), v_d(i), z(i))$描述系统，不过调度算法可能无法观察到它们(特别是$v_d(i)$)。</li>
 <li>假设两个独立的iid序列:<script type="math/tex">\{a_n: n\in \mathbb{N}\} \quad \{(v_p(i), v_d(i), z(i)), i \in\mathbb{N}\}</script><ul>
@@ -223,7 +223,7 @@
 </ul>
 <h4 id="马尔可夫链-A-Markov-chain"><a href="#马尔可夫链-A-Markov-chain" class="headerlink" title="马尔可夫链(A Markov chain)"></a>马尔可夫链(A Markov chain)</h4><p>引入离散时间马尔可夫链(DTMCs, discrete-time Markov chains)描述系统的动态。</p>
 <ul>
-<li>在每个时隙$n$，令$Q_n$表示尚未离开的请求集合。假设${(P_i(n), D_i(n), Z_i(n)):i\in\mathscr{Q}_n}$是有序的(按请求到达时间排序)。<ul>
+<li>在每个时隙$n$，令$Q_n$表示尚未离开的请求集合。假设$\{(P_i(n), D_i(n), Z_i(n)):i\in\mathscr{Q}_n\}$是有序的(按请求到达时间排序)。<ul>
 <li>$P_i(n)$表示在预填充阶段未处理的token的数量，不包括当前在批处理中正在处理的token。</li>
 <li>$D_i(n)$表示在解码阶段未处理的token的数量，不包括当前在批处理中正在处理的token。</li>
 </ul>
@@ -233,8 +233,8 @@
 </ul>
 </li>
 <li>调度算法(Scheduling algorithms):<ul>
-<li>令$x=(r, {(p_i, d_i, z_i):i\in Q})\in X$表示任意系统状态。</li>
-<li>给定一个状态$x$且$r=0$，该状态表明上个批次已经处理完毕，可以开始新批次处理的状态。调度算法选择一个批处理配置:$\pi(x) = (\delta p<em>i, \delta d_i)</em>{i\in Q}$。<ul>
+<li>令$x=(r, \{(p_i, d_i, z_i):i\in Q\})\in X$表示任意系统状态。</li>
+<li>给定一个状态$x$且$r=0$，该状态表明上个批次已经处理完毕，可以开始新批次处理的状态。调度算法选择一个批处理配置:$\pi(x) = (\delta p_i, \delta d_i)_{i\in Q}$。<ul>
 <li>$\delta p_i$表示来自请求$i$的，要包含在该次批处理中的预处理阶段token的数量。</li>
 <li>$\delta d_i$表示来自请求$i$的，要包含在该次批处理中的解码阶段token的数量。</li>
 </ul>
@@ -250,20 +250,20 @@
 </ul>
 </li>
 <li>系统调度(System dynamics)<ul>
-<li>令系统在时隙$n$的状态为: $X(n)=(R(n), {P<em>i(n), D_i(n), Z_i(n), i\in Q_n})$。使用$X’(n)$表示时隙$n$进行决策后的状态，该状态是在考虑时隙$n$中新请求到达之前的状态。特别地，令$\pi(X(n))=(\delta p_i, \delta d_i)</em>{i\in Q}$：<script type="math/tex">P_i'(n) - P_i(n) - \delta_i^p, i\in\mathscr{Q}_n,\\ D_i'(n) = D_i(n) - \delta_i^d, i\in\mathscr{Q}_n,\\ \mathscr{Q}_n'=\mathscr{Q}_n \setminus\{i\in\mathscr{Q}_n:D'(n) = 0\}</script><ul>
+<li>令系统在时隙$n$的状态为: $X(n)=(R(n), \{P_i(n), D_i(n), Z_i(n), i\in Q_n\})$。使用$X’(n)$表示时隙$n$进行决策后的状态，该状态是在考虑时隙$n$中新请求到达之前的状态。特别地，令$\pi(X(n))=(\delta p_i, \delta d_i)_{i\in Q}$：<script type="math/tex">P_i'(n) - P_i(n) - \delta_i^p, i\in\mathscr{Q}_n,\\ D_i'(n) = D_i(n) - \delta_i^d, i\in\mathscr{Q}_n,\\ \mathscr{Q}_n'=\mathscr{Q}_n \setminus\{i\in\mathscr{Q}_n:D'(n) = 0\}</script><ul>
 <li>$\setminus$为集合差运算，表示从左边的集合中移除属于右边集合的元素。</li>
 <li>第一个公式表示经过该时隙处理后剩余的预填充token的数量。</li>
 <li>第二个公式表示经过该时隙处理后剩余的解码token的数量。</li>
 <li>第三个公式表示经过该时隙处理后剩余的请求的数量。</li>
 </ul>
 </li>
-<li>考虑在时隙$n$中会有新请求到达，则时隙$n+1$的状态可以表示为: $X(n+1)=(R(n+1), {P<em>i(n+1), D_i(n+1), Z_i(n+1), i\in\mathscr{Q}</em>{n+1}})$。时隙$n+1$的请求集合为$\mathscr{Q}_{n+1} = \mathscr{Q}_n’ \bigcup {\mathscr{A}_n}$。<script type="math/tex">\forall i\in \mathscr{Q}_n': P_i(n+1)=P_i'(n), D_i(n+1)=D_i'(n), Z_i(n+1)=Z_i(n)\\ \forall i\in \mathscr{A}_n: P_i(n+1)=v_p(i), D_i(n+1)=v_d(i), Z_i(n+1)=z'(i)</script><ul>
+<li>考虑在时隙$n$中会有新请求到达，则时隙$n+1$的状态可以表示为: $X(n+1)=(R(n+1), \{P_i(n+1), D_i(n+1), Z_i(n+1), i\in\mathscr{Q}_{n+1}\})$。时隙$n+1$的请求集合为$\mathscr{Q}_{n+1} = \mathscr{Q}_n’ \bigcup \{\mathscr{A}_n\}$。<script type="math/tex">\forall i\in \mathscr{Q}_n': P_i(n+1)=P_i'(n), D_i(n+1)=D_i'(n), Z_i(n+1)=Z_i(n)\\ \forall i\in \mathscr{A}_n: P_i(n+1)=v_p(i), D_i(n+1)=v_d(i), Z_i(n+1)=z'(i)</script><ul>
 <li>前者是未完成的旧批次，后者是新的批次。</li>
 </ul>
 </li>
 <li>对于剩余的处理事件$R(n+1)$:<script type="math/tex">R(n+1)=\begin{cases} R(n) - 1 & R(n)\gt 0\\ t_{b'} - 1 & R(n) = 0 \end{cases}</script><ul>
-<li>其中$t<em>{b’}$是处理新批次$b’:=\sum</em>{i\in\mathscr{Q}(n)}(\delta_i^p + \delta_i^d)$所需的时隙数。前者表示批次仍在处理，后者表示批次已经处理完成，准备处理下一个新的批次。</li>
-<li>假设iid假设成立，在任何调度算法下，${X_n:n\in N}$都是一个DTMC(离散马尔可夫链)。</li>
+<li>其中$t_{b’}$是处理新批次$b’:=\sum_{i\in\mathscr{Q}(n)}(\delta_i^p + \delta_i^d)$所需的时隙数。前者表示批次仍在处理，后者表示批次已经处理完成，准备处理下一个新的批次。</li>
+<li>假设iid假设成立，在任何调度算法下，$\{X_n:n\in N\}$都是一个DTMC(离散马尔可夫链)。</li>
 </ul>
 </li>
 </ul>
@@ -278,15 +278,15 @@
 </ul>
 </li>
 </ul>
-<p>一类为”work-conserving”的调度算法能够几乎实现系统最大化吞吐率。特别地，当$\pi(x)$能够形成一个满足$b’=b$的批次时，一个调度算法被称为是”work-conserving”的。即对于$\sum<em>{i\in\mathscr{Q}}(p_i+1(p_i=0))\ge b$，满足: $\pi(x)=\sum</em>{i\in\mathscr{Q}}(\delta_i^d + \delta_i^p) = b$(不会浪费任何带宽，保证每个批次都到达阈值，通常的实现方法是将预填充和解码的token混合到一个批次处理)。</p>
+<p>一类为”work-conserving”的调度算法能够几乎实现系统最大化吞吐率。特别地，当$\pi(x)$能够形成一个满足$b’=b$的批次时，一个调度算法被称为是”work-conserving”的。即对于$\sum_{i\in\mathscr{Q}}(p_i+1(p_i=0))\ge b$，满足: $\pi(x)=\sum_{i\in\mathscr{Q}}(\delta_i^d + \delta_i^p) = b$(不会浪费任何带宽，保证每个批次都到达阈值，通常的实现方法是将预填充和解码的token混合到一个批次处理)。</p>
 <p>$(K_p, K_d)$-FCFS算法:</p>
 <ul>
-<li>令$K_p, K_d$为不小于1的整数。在阶段$f\in{p, d}$加载token时，仅加载最多$K_f$个最旧请求的token(token的选择可以遵循任何规则，如最小剩余token优先，因为本身请求就是最旧的了？)</li>
-<li>假设每个DTMC都是不可约的(通过假设$P{a_n=0}\gt 0$，即一段时间内没有传入新的请求，如果这段时间足够长，那么最终work-conserving策略会清空队列)。</li>
+<li>令$K_p, K_d$为不小于1的整数。在阶段$f\in\{p, d\}$加载token时，仅加载最多$K_f$个最旧请求的token(token的选择可以遵循任何规则，如最小剩余token优先，因为本身请求就是最旧的了？)</li>
+<li>假设每个DTMC都是不可约的(通过假设$P\{a_n=0\}\gt 0$，即一段时间内没有传入新的请求，如果这段时间足够长，那么最终work-conserving策略会清空队列)。</li>
 <li>假设用户的请求到达系统是独立同分布的，每个请求的预填充 token 数量、解码(decode) token 数量以及特征也是独立同分布的。这些序列彼此独立。满足iid假设和第一矩假设(<a href="#Model_Setup">Model Setup</a>)，更进一步假设$\mathbb{E}[D_1^2]\lt\infin$具有二阶矩。</li>
-<li>如果系统满足以下负载条件，则说明DTMC${X_n, x\in N}$在任意work-conserving的算法中是正常返(positive recurrent)的。其中$\frac{b}{t_b}$表示处理token的最大速率。<script type="math/tex">\lambda(m_p+m_d)\lt\frac{b}{t_b}</script></li>
+<li>如果系统满足以下负载条件，则说明DTMC$\{X_n, x\in N\}$在任意work-conserving的算法中是正常返(positive recurrent)的。其中$\frac{b}{t_b}$表示处理token的最大速率。<script type="math/tex">\lambda(m_p+m_d)\lt\frac{b}{t_b}</script></li>
 <li>如果系统满足以下负载条件，<script type="math/tex">\lambda(m_p+m_d)\gt\frac{b}{t_b}</script><ul>
-<li>则说明对于时隙n时所有未处理的token$|X<em>n|=\sum</em>{i\in\mathscr{Q}<em>n}(P_i(n)+D_i(n))$，永远都有未处理完的token，即不是正常返的，无法终止。$$\mathbb{P}{\lim</em>{n\rightarrow\infin}|X_n|=\infin}=1$$</li>
+<li>则说明对于时隙n时所有未处理的token$|X_n|=\sum_{i\in\mathscr{Q}_n}(P_i(n)+D_i(n))$，永远都有未处理完的token，即不是正常返的，无法终止。<script type="math/tex">\mathbb{P}\{\lim_{n\rightarrow\infin}|X_n|=\infin\}=1</script></li>
 <li>当系统过载时，显然没有任何调度算法可以稳定系统。在此过载情况下，系统内存可能会耗尽，从而导致请求被阻止或丢弃。</li>
 </ul>
 </li>
@@ -308,11 +308,11 @@
 <li>另一种算法是分配给目前具有最少数量请求的引擎。</li>
 <li>当然，如果能够所有LLM引擎中未处理的token数量信息是已知的，则可以分配给使用具有最少token数量的引擎。<br>以上算法都是稳定的。证明过程原文中没看到，后续再观察。</li>
 </ul>
-<h4 id="一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests"><a href="#一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests" class="headerlink" title="一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)"></a>一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)</h4><p>假设有$j\in{1, 2}$两种类型的请求以$\lambda^j$的速度到达，平均token大小为$(m^p<em>j, m^d_j)$，假设算法满足$\sum</em>{j\in{1, 2}}\lambda^j(m_p^j + m_d^j)\lt\frac{b}{t_p}$，则该算法能使系统稳定。</p>
+<h4 id="一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests"><a href="#一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests" class="headerlink" title="一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)"></a>一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)</h4><p>假设有$j\in\{1, 2\}$两种类型的请求以$\lambda^j$的速度到达，平均token大小为$(m^p_j, m^d_j)$，假设算法满足$\sum_{j\in\{1, 2\}}\lambda^j(m_p^j + m_d^j)\lt\frac{b}{t_p}$，则该算法能使系统稳定。</p>
 <h4 id="LLM引擎的两种网络-Two-networks-of-LLM-engines"><a href="#LLM引擎的两种网络-Two-networks-of-LLM-engines" class="headerlink" title="LLM引擎的两种网络(Two networks of LLM engines)"></a>LLM引擎的两种网络(Two networks of LLM engines)</h4><ul>
 <li>fork-join network<ul>
-<li>假设有四个Agent，记为${a_j}$，$j\in{0, 1, 2, 3}$。其中$a_0$的请求到达速率为$\lambda$，当请求被$a_0$处理完后，会分为两个子请求，子请求1由$a_1$处理，子请求2由$a_2$处理。在同一请求的两个子请求都完成后会进行合并，并到达$a_3$进行处理。</li>
-<li>假设$a_j$的token大小为$(m_j^p, m_j^d)$，满足$\lambda(m_j^p+m_j^d)\lt \frac{b^j}{t^j_b}, j\in{0, 1, 2, 3}$，在$a_j$中都是$(K_p^j, K_d^j)$-FCFS work-conserving调度算法。则描述系统的DTMC是正常返的。</li>
+<li>假设有四个Agent，记为$\{a_j\}$，$j\in\{0, 1, 2, 3\}$。其中$a_0$的请求到达速率为$\lambda$，当请求被$a_0$处理完后，会分为两个子请求，子请求1由$a_1$处理，子请求2由$a_2$处理。在同一请求的两个子请求都完成后会进行合并，并到达$a_3$进行处理。</li>
+<li>假设$a_j$的token大小为$(m_j^p, m_j^d)$，满足$\lambda(m_j^p+m_j^d)\lt \frac{b^j}{t^j_b}, j\in\{0, 1, 2, 3\}$，在$a_j$中都是$(K_p^j, K_d^j)$-FCFS work-conserving调度算法。则描述系统的DTMC是正常返的。</li>
 <li>如果把$a_3$去掉也不影响。</li>
 </ul>
 </li>
@@ -472,13 +472,13 @@
 </li>
 <li>Single-Threaded Programs<ul>
 <li>使用的调度策略是Least-Attained-Service(LAS) algorithm，并引入Program-Level Attained Service(PLAS)。对于一个单线程的程序来说，运行时间就是所有先前已完成的LLM调用的总运行时间。</li>
-<li>如果提交了第j个LLM调用$c<em>j$，其程序ID为$c_j.id$，PLAS会根据所有先前具有相同ID的LLM调用的运行时间$t_k$之和，为$c_j$分配一个优先级$$p(c_j)=\sum</em>{k &lt; j, c_k.id=c_j.id}t_k$$</li>
+<li>如果提交了第j个LLM调用$c_j$，其程序ID为$c_j.id$，PLAS会根据所有先前具有相同ID的LLM调用的运行时间$t_k$之和，为$c_j$分配一个优先级<script type="math/tex">p(c_j)=\sum_{k < j, c_k.id=c_j.id}t_k</script></li>
 <li>优先值$p(c_j)$越大表明优先级越低，这是因为Autellix倾向于帮助较短的程序更快完成，减少响应时间。</li>
 </ul>
 </li>
 <li>Multi-Threaded Programs<ul>
 <li>由于多线程的程序被建模为由LLM调用构成的动态有向无环图。因此程序的执行时间由对应的DAG上的关键路径决定。<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Serving/Critical%20path%20for%20multi-threaded%20programs.png" alt="img"></li>
-<li>引入Adaptive Thread-Level Attained Service(ATLAS)，基于调用的服务的时间，根据程序的关键路径优先处理调用。旨在根据同一程序中其父节点$\mathcal{P}(c<em>j)$的优先级($p(c_k)$)和已完成的服务时间$t_k$，为每个新到达的LLM调用$c_j$分配一个优先级$$p(c_j)=\begin{cases}0, &amp; if\quad c_j\quad is\quad root\ max</em>{c_k\in\mathcal{P(c_j)}}{p(c_k) + t_k} &amp; otherwise\end{cases}$$</li>
+<li>引入Adaptive Thread-Level Attained Service(ATLAS)，基于调用的服务的时间，根据程序的关键路径优先处理调用。旨在根据同一程序中其父节点$\mathcal{P}(c_j)$的优先级($p(c_k)$)和已完成的服务时间$t_k$，为每个新到达的LLM调用$c_j$分配一个优先级<script type="math/tex">p(c_j)=\begin{cases}0, & if\quad c_j\quad is\quad root\\ max_{c_k\in\mathcal{P(c_j)}}\{p(c_k) + t_k\} & otherwise\end{cases}</script></li>
 <li>要结合处理最长关键路径线程和优先处理较短程序的目标，则需在全局进程表中加入一个标量: the longest observed critical path。程序中的每个活跃的LLM调用都会继承该值作为其初始的优先级，并且在call完成时，仅当其自身的critical path更长时才更新这个标量。由于给定程序的所有call都是从同一条目进行优先级派生的，因此调度器会自然地将程序的并行调用分组到一起，防止落后的线程延迟程序的完成时间。</li>
 </ul>
 </li>
@@ -486,11 +486,11 @@
 </li>
 <li>Preemptive Scheduling(抢占式调度)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Serving/LLM%20call%20lifecycle%20based%20on%20discretized%20prioritization.png" alt="img"><ul>
 <li>Multi-level Program-based Scheduling<ul>
-<li>基于连续优先级进行的调度和抢占程序可能会退化为最坏情况的循环调度。性能比FCFS(先到先处理)更差，导致不必要的上下文切换(CPU和GPU之间频繁的KV缓存交换)。于是Autellix将优先级离散化为一组有限的队列(参考操作系统的多级反馈队列)，假设有K个优先级递减的队列$(Q<em>1, Q_2, …, Q_K)$，每个队列$Q_i$覆盖一个优先级范围$[Q_i^{lo}, Q_i^{hi})$，其中$Q_1^{lo}=0, Q_K^{hi}=\infin, Q</em>{i+1}^{lo}=Q_i^{hi}$。</li>
+<li>基于连续优先级进行的调度和抢占程序可能会退化为最坏情况的循环调度。性能比FCFS(先到先处理)更差，导致不必要的上下文切换(CPU和GPU之间频繁的KV缓存交换)。于是Autellix将优先级离散化为一组有限的队列(参考操作系统的多级反馈队列)，假设有K个优先级递减的队列$(Q_1, Q_2, …, Q_K)$，每个队列$Q_i$覆盖一个优先级范围$[Q_i^{lo}, Q_i^{hi})$，其中$Q_1^{lo}=0, Q_K^{hi}=\infin, Q_{i+1}^{lo}=Q_i^{hi}$。</li>
 </ul>
 </li>
 <li>Anti-Starvation<ul>
-<li>为了解决低优先级的较长程序一直无法被处理而产生饥饿的问题。Autellix利用全局进程表衡量程序级别的饥饿情况，对于程序$p$的某个LLM调用$c$，如果总等待时间($W<em>{total}=W_p+W_c$)与总服务时间$T</em>{total}=T<em>p+T_c$之比超过阈值$\beta$，则将调用$c$提升到$Q_1$队列，并需要将$c$的等待时间和执行时间重置为0。可通过修改$\beta$的值权衡平均响应和公平性。$$\frac{W</em>{total}}{T_{total}}\ge \beta$$</li>
+<li>为了解决低优先级的较长程序一直无法被处理而产生饥饿的问题。Autellix利用全局进程表衡量程序级别的饥饿情况，对于程序$p$的某个LLM调用$c$，如果总等待时间($W_{total}=W_p+W_c$)与总服务时间$T_{total}=T_p+T_c$之比超过阈值$\beta$，则将调用$c$提升到$Q_1$队列，并需要将$c$的等待时间和执行时间重置为0。可通过修改$\beta$的值权衡平均响应和公平性。<script type="math/tex">\frac{W_{total}}{T_{total}}\ge \beta</script></li>
 </ul>
 </li>
 <li>Memory Management(内存管理)<ul>

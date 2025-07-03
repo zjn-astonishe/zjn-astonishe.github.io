@@ -221,8 +221,8 @@
 <li>$I_N$表示指令数量</li>
 </ul>
 </li>
-<li>相对MIPS: $MIPS<em>{Rel} = (\frac{T</em>{Ref}}{T<em>V} \times MIPS</em>{Ref}$<ul>
-<li>$MIPS<em>{Ref}$和$T</em>{Ref}$为参照机器的执行时间和MIPS</li>
+<li>相对MIPS: $MIPS_{Rel} = (\frac{T_{Ref}}{T_V} \times MIPS_{Ref}$<ul>
+<li>$MIPS_{Ref}$和$T_{Ref}$为参照机器的执行时间和MIPS</li>
 </ul>
 </li>
 </ul>
@@ -395,8 +395,8 @@
 <li><p>等效率度量标准(非唯一的方法): 保持效率E不变的前提下，研究问题规模W如何随着处理器个数p而变化</p>
 <ul>
 <li>令$t_e^i$和$t_o^i$分别是并行系统上第i个处理器的有用计算时间和额外开销时间(通信、同步和空闲等待时间)<ul>
-<li>$T<em>e = \Sigma</em>{i=0}^{p-1} t_e^i$(整个系统的有用计算时间)</li>
-<li>$T<em>o = \Sigma</em>{i=0}^{p-1} t_o^i$(整个系统的额外开销时间)</li>
+<li>$T_e = \Sigma_{i=0}^{p-1} t_e^i$(整个系统的有用计算时间)</li>
+<li>$T_o = \Sigma_{i=0}^{p-1} t_o^i$(整个系统的额外开销时间)</li>
 </ul>
 </li>
 <li>$T_p$是p个处理器系统上并行算法的运行时间，对于任意i显然有$T_p = t_e^i + t_o^i$，且$T_e + T_o = pT_p$</li>
@@ -796,8 +796,8 @@
 <h4 id="能耗评测集"><a href="#能耗评测集" class="headerlink" title="能耗评测集"></a>能耗评测集</h4><ul>
 <li>Green 500: 提供高性能计算机的能耗排名<ul>
 <li>指标: 使用PPW(performance per watt, 每瓦特性能, 通常单位为GFLOPS Per Watt)作为其指标对能源效率进行排名<ul>
-<li>$PPW = \frac{Performance}{Power} = \frac{R<em>{max}}{\overline{P}(R</em>{max})}$</li>
-<li>$\overline{P}(R<em>{max}) = N \cdot \overline{P}</em>{unit}(R_{max})$(超级计算机的整体功耗包括计算节点、网络和存储等各个部分的能耗之和，这里是假定各部分能耗一致)</li>
+<li>$PPW = \frac{Performance}{Power} = \frac{R_{max}}{\overline{P}(R_{max})}$</li>
+<li>$\overline{P}(R_{max}) = N \cdot \overline{P}_{unit}(R_{max})$(超级计算机的整体功耗包括计算节点、网络和存储等各个部分的能耗之和，这里是假定各部分能耗一致)</li>
 </ul>
 </li>
 </ul>

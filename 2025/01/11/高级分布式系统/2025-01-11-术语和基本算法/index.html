@@ -524,7 +524,7 @@
 </li>
 <li>每次迭代的流程<ul>
 <li>对每个目的地独立应用三角不等式<ul>
-<li>$LENGTH[k]\gt (LENGTH<em>j[k] + weight</em>{j, i})$</li>
+<li>$LENGTH[k]\gt (LENGTH_j[k] + weight_{j, i})$</li>
 <li>节点i用RTT或者到邻居节点j的排队延迟评估$weight_{i, j}$</li>
 </ul>
 </li>
@@ -664,7 +664,7 @@
 <li>使用 Kruskal 的策略，从图的组件森林开始。</li>
 <li>MWOE(minimum weight outgoing edge): <ul>
 <li>最小权重的出边: D”outgoing” 是逻辑上的，表示组件扩展的方向。<ul>
-<li>对于图$G$的任何生成森林${(N_i, L_i)|i=1, …, k}$，考虑其中的任意一个组件$(N_j, L_j)$。记$\lambda_j$为那些仅与$N_j$中的一个节点相邻的所有边中权重最小的边。包含生成森林中所有边$L_i$的$G$的最小生成树，也必须包含边$\lambda_j$</li>
+<li>对于图$G$的任何生成森林$\{(N_i, L_i)|i=1, …, k\}$，考虑其中的任意一个组件$(N_j, L_j)$。记$\lambda_j$为那些仅与$N_j$中的一个节点相邻的所有边中权重最小的边。包含生成森林中所有边$L_i$的$G$的最小生成树，也必须包含边$\lambda_j$</li>
 </ul>
 </li>
 <li>连通组件的生成树与 MWOEs 结合，以在合并后的组件中仍然保留生成树属性。</li>
@@ -749,14 +749,14 @@
 </ul>
 </li>
 <li>公式<ul>
-<li>$M<em>a=M_s + M</em>{init} + rounds * M_{round})$(所有的消息)<ul>
+<li>$M_a=M_s + M_{init} + rounds * M_{round})$(所有的消息)<ul>
 <li>$M_s$: 同步算法中的消息数量</li>
 <li>$M_{init}$: 初始化异步系统所需的顺序消息数量</li>
 <li>$rounds$: 同步算法的迭代轮数</li>
 <li>$M_{round}$: 一次迭代中需要执行的消息数量</li>
 </ul>
 </li>
-<li>$T<em>a = T_S + T</em>{init} + rounds * T_{round}$(所有的时间)<ul>
+<li>$T_a = T_S + T_{init} + rounds * T_{round}$(所有的时间)<ul>
 <li>$T_s$: 同步算法的时间，假设每轮只发送一个单位消息，则该值为轮数</li>
 <li>$T_init$: 初始化异步系统所需的时间(顺序消息跳数)</li>
 <li>$rounds$: 迭代次数</li>
@@ -771,15 +771,15 @@
 <ul>
 <li>每个进程每轮向每个邻居发送一条消息(合并消息或发送虚拟消息)</li>
 <li>在接收到每个邻居的消息后，节点进入下一轮</li>
-<li>邻居$P<em>i, P_j$之间可能仅相差一轮，因此$P_i$在轮次$round_i$只能接收来自$round_i$或$round</em>{i+1}$的消息</li>
+<li>邻居$P_i, P_j$之间可能仅相差一轮，因此$P_i$在轮次$round_i$只能接收来自$round_i$或$round_{i+1}$的消息</li>
 <li>初始化<ul>
 <li>任何进程都可以开始轮次</li>
 <li>在直径(d个时间单位)内，所有进程都会处于该轮次</li>
-<li>$T<em>{init} = d, M</em>{init} = 0$</li>
+<li>$T_{init} = d, M_{init} = 0$</li>
 </ul>
 </li>
 <li>复杂度<ul>
-<li>$M<em>{round}=2|L|, T</em>{round}=1$</li>
+<li>$M_{round}=2|L|, T_{round}=1$</li>
 </ul>
 </li>
 </ul>
@@ -920,8 +920,8 @@
 </ul>
 </li>
 <li>伸缩因子$r$<ul>
-<li>$max<em>{i, j\in N}{\frac{distance_r(i, j)}{distance</em>{opt}(i, j)}}$<ul>
-<li>定义为所有节点对$i, j$中的最大值，$distance<em>r(i, j)$是使用路由方案r从节点i到节点j的距离，而$distance</em>{opt}(i, j)$是最佳路径的距离</li>
+<li>$max_{i, j\in N}\{\frac{distance_r(i, j)}{distance_{opt}(i, j)}\}$<ul>
+<li>定义为所有节点对$i, j$中的最大值，$distance_r(i, j)$是使用路由方案r从节点i到节点j的距离，而$distance_{opt}(i, j)$是最佳路径的距离</li>
 </ul>
 </li>
 <li>设计紧凑的路由方案<ul>
@@ -980,7 +980,7 @@
 <li><p>对象复制问题</p>
 <ul>
 <li>加权图: $(N, L)$，其中k个用户位于$N_k\subset N$节点，r个对象副本位于$N_r\subset N$</li>
-<li>如果$k\gt r$并且访问是只读的，副本的最佳放置是最小化从用户到最近副本的距离总和($min(\sum<em>{i\in N_k, r_i\in N_r}dist</em>{i, r<em>i})$，其中的$dist</em>{i, r_i}$为节点到最近副本的成本)</li>
+<li>如果$k\gt r$并且访问是只读的，副本的最佳放置是最小化从用户到最近副本的距离总和($min(\sum_{i\in N_k, r_i\in N_r}dist_{i, r_i})$，其中的$dist_{i, r_i}$为节点到最近副本的成本)</li>
 <li>如果来自每个用户$N_k$的读取访问具有一定的频率(权重)，则最小化函数发生变化</li>
 <li>需要考虑每条边的带宽限制</li>
 <li>假设用户访问是读取的概率为x，更新的概率为1-x。更新需要所有副本都进行更新</li>
@@ -994,7 +994,7 @@
 <li>$c_r(i), c_w(i)$: 节点i发出的读取和写入成本</li>
 <li>$R$: 所有可能的复制方案集合</li>
 <li>目标：最小化复制方案的成本：<ul>
-<li>$\min<em>{R’\in R}[\sum</em>{i\in V}r<em>i\cdot c_r(i) + \sum</em>{i\in V}w_i\cdot c_w(i)]$</li>
+<li>$\min_{R’\in R}[\sum_{i\in V}r_i\cdot c_r(i) + \sum_{i\in V}w_i\cdot c_w(i)]$</li>
 </ul>
 </li>
 <li>成本是NP完全问题</li>

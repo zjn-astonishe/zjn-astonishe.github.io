@@ -517,7 +517,7 @@
 <li>approach: adaptive playout delay adjustment<ul>
 <li>estimate network delay, adjust playout delay at beginning of each talkspurt<ul>
 <li>EWMA: exponentially weighted moving average(指数加权移动平均), recall TCP RTT estimate</li>
-<li>$d<em>i = (1-\alpha)d</em>{i-1} + \alpha(r_i-t_i)$<ul>
+<li>$d_i = (1-\alpha)d_{i-1} + \alpha(r_i-t_i)$<ul>
 <li>$d_i$: delay estimate after $i^{th}$ packet(第i个包后的延迟估计)</li>
 <li>$\alpha$: small constant(e.g. 0.1)</li>
 <li>$r_i$: time received，用来测量第i个包的传输延迟</li>

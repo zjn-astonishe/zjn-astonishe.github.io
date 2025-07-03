@@ -1801,105 +1801,6 @@
       </tags>
   </entry>
   <entry>
-    <title>usbip和Linux系统</title>
-    <url>/2023/02/13/USBIP/2023-02-13-usbip%E5%92%8Clinux%E7%B3%BB%E7%BB%9F/</url>
-    <content><![CDATA[<h1 id="1-Linux系统的USB总线"><a href="#1-Linux系统的USB总线" class="headerlink" title="1. Linux系统的USB总线"></a>1. Linux系统的USB总线</h1><p>Linux系统中的<code>/proc</code>和<code>/sys</code>两个文件系统包含了很多有用的信息。</p>
-<h2 id="ls-sys-class-udc"><a href="#ls-sys-class-udc" class="headerlink" title="ls /sys/class/udc"></a>ls /sys/class/udc</h2><p>该命令能查看系统注册了的udc驱动(与gadget驱动相关)。</p>
-<h2 id="cat-proc-devices"><a href="#cat-proc-devices" class="headerlink" title="cat /proc/devices"></a>cat /proc/devices</h2><p>该命令能查看当前系统注册了哪些驱动，Linux系统会为每个已注册的设备驱动分配一个”主设备号”。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">字符设备</span></span><br><span class="line">Character devices:</span><br><span class="line"> 1 mem</span><br><span class="line"> 4 /dev/vc/0</span><br><span class="line"> 4 tty</span><br><span class="line"> 4 ttyS</span><br><span class="line"> 5 /dev/tty</span><br><span class="line"> ...</span><br><span class="line"> 180 usb</span><br><span class="line"> 189 usb_device</span><br><span class="line"> ...</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">块设备</span></span><br><span class="line">Block devices:</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
-<p>其中和USB相关的是<code>180 usb</code>和<code>189 usb_device</code>，但所代表的驱动是有区别的。</p>
-<p>而且不是所有USB设备驱动(USB接口驱动)都会分配一个主设备号，有些挂接在一些子系统内，如USB HID键鼠设备挂接在input子系统内。</p>
-<h2 id="ls-sys-bus-usb-devices"><a href="#ls-sys-bus-usb-devices" class="headerlink" title="ls /sys/bus/usb/devices"></a>ls /sys/bus/usb/devices</h2><p>该命令列举了Linux系统中USB类型设备的许多信息。每插入一个USB设备，<code>/sys/bus/usb/devices</code>下就有新的文件夹生成。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1-0:1.0  2-2      3-0:1.0  3-1:1.0  3-3:1.0  3-4:1.0  usb1  usb3</span><br><span class="line">2-0:1.0  2-2:1.0  3-1      3-3      3-4      4-0:1.0  usb2  usb4</span><br></pre></td></tr></table></figure>
-<p>其中的<code>usb1</code>、<code>usb2</code>、<code>usb3</code>和<code>usb4</code>代表Linux系统注册了4条USB总线，有4个USB主机控制器，不同的数字则是总线号，用于区分不同总线。</p>
-<p>其中的<code>3-3:1.0</code>代表USB总线号为3，devpath为3，配置号为1，接口号为0 —— <strong>3号总线的3号端口的设备，使用的是1号配置，接口号为0</strong>。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cat 3-3:1.0/bInterfaceClass</span><br><span class="line">09</span><br></pre></td></tr></table></figure>
-<p>运行上述命令查询后可知，<code>3-3:1.0</code>代表的是一个Hub设备(09代表，08代表mass storage class —— U盘)。当Hub设备的端口上又接入USB设备，则利用devpath。顶级设备的devpath就是其连在Root Hub上的端口号，次级设备就是其父Hub的devpath后面加上其端口号。例如：<code>3-3:1.0</code>是与一个Hub，它的1号端口挂载的设备就可以是<code>3-3.1:1.0</code>，2号端口挂载的设备就可以是<code>3-3.2:1.0</code>。</p>
-<h1 id="2-usbip驱动"><a href="#2-usbip驱动" class="headerlink" title="2. usbip驱动"></a>2. usbip驱动</h1><p>usbip驱动提供了Linux下USB透传(bypass)的功能，或者说是usb over tcp。利用以太网，将USB设备共享到另外一端。</p>
-<h2 id="组成架构"><a href="#组成架构" class="headerlink" title="组成架构"></a>组成架构</h2><p>其架构如下图：</p>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/Linux_Share/master/Image/image/usbip/usbip%E6%9E%B6%E6%9E%84.png" alt="usbip架构图"></p>
-<p>usbip分为两端：server端和client端，分别运行在不同的Linux主机中：</p>
-<ul>
-<li>server端：运行server端驱动的PC插入USB设备，负责共享。</li>
-<li>client端：client端PC可以attach到server端PC插入的USB设备。此时，client端PC会以为真的有一个USB设备插入，可对其进行访问、修改等操作，效果跟在本机上直接插入USB设备无异。</li>
-</ul>
-<p>这便是USB共享或USB延长器的功效。</p>
-<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h3><p>因为Ubuntu 16.04的内核版本是Linux 4.4以上，所以usbip的用户态工具不能使用<code>apt-get install</code>来安装，否则得到的是配套旧版本的usbip驱动。</p>
-<p>正确的方式是运行<code>uname -a</code>查看Ubuntu当前使用的是什么版本的kernel，然后在”<a href="https://www.kernel.org">The Linux Kernel Archives</a>“下找到对应版本的kernel版本，下载源码并解压。</p>
-<p>进入源码的根目录下<code>tools/usb/usbip</code>，准备编译。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install autoconf automake libtool libudev-dev</span><br></pre></td></tr></table></figure>
-<p>运行以上命令安装编译依赖环境，然后就可以在目录下运行<code>./autogen.sh</code>生成<code>configure</code>了。最后运行以下命令完成编译和安装。</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>安装完成后，需要到”<a href="http://www.linux-usb.org/usb.ids">Linux USB</a>“下载包含了各种厂商的VID和描述信息的USB数据库——<code>usb.ids</code>文件并放入<code>/usr/share/hwdata/</code>目录。</p>
-<h3 id="非源码安装"><a href="#非源码安装" class="headerlink" title="非源码安装"></a>非源码安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic linux-cloud-tools-generic</span><br></pre></td></tr></table></figure>
-<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><h3 id="在server端PC上"><a href="#在server端PC上" class="headerlink" title="在server端PC上"></a>在server端PC上</h3><ul>
-<li>加载驱动</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe usbip-host</span><br></pre></td></tr></table></figure>
-<ul>
-<li>运行<code>usbipd</code>程序，该守护进程用于建立TCP socket连接等。</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbipd -D</span><br></pre></td></tr></table></figure>
-<ul>
-<li>server端的PC上插入一个USB设备，运行以下命令列举出设备，用于查看busid</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -l</span><br><span class="line"> - busid 3-2 (0781:557d)</span><br><span class="line">   SanDisk Corp. : Cruzer Force (0781:557d)</span><br></pre></td></tr></table></figure>
-<p>找到busid是3-2的SanDisk Crop(U盘)为将要共享的设备。</p>
-<ul>
-<li>运行以下命令绑定要共享的设备：</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbip bind -b 3-2</span><br><span class="line">usbip: info: bind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
-<ul>
-<li>如果不想再将设备进行共享，则运行以下命令：</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip unbind -b 3-2</span><br><span class="line">usbip: info: unbind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
-<h3 id="在client端PC上-Linux端"><a href="#在client端PC上-Linux端" class="headerlink" title="在client端PC上(Linux端)"></a>在client端PC上(Linux端)</h3><ul>
-<li>加载驱动，Ubuntu自带</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe vhci-hcd</span><br></pre></td></tr></table></figure>
-<ul>
-<li>列举出server端已经导出的USB设备</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -r &lt;server ip&gt;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>将server端已经导出的USB设备attach到本地</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip attach -r &lt;server ip&gt; -b &lt;busid&gt;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>断开attach到本地的USB设备</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip detach -p &lt;port&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="在client端PC上-Windows端"><a href="#在client端PC上-Windows端" class="headerlink" title="在client端PC上(Windows端)"></a>在client端PC上(Windows端)</h3><p>笔者近期主要工作，参考自以下两个开源项目：</p>
-<ul>
-<li><a href="https://github.com/vadimgrn/usbip-win2">usbip-win2</a></li>
-<li><a href="https://github.com/cezanne/usbip-win">usbip-win</a></li>
-</ul>
-<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><ul>
-<li>兼容性：USB摄像头支持得不好，笔者在测试时发现摄像头会出现无法使用或者使用过程中热插拔导致应用卡死等问题。</li>
-<li>稳定性问题：热插拔USB或插拔网线出问题。以Windows端的client为例，在进行快速热插拔时，会出现设备重复的问题。因为server端拔掉设备后，并没有通知client端设备已经断开连接，需要client端自己发现，然而在client端删去该设备在本机上的信息之前，server端又将该设备插回原位，继而导致client端误以为其还在连接中，而server端则认为其还未进行连接。那么client端就会出现两个一模一样的设备，如果再进行操作的话，就会出现蓝屏等问题，只能通过重启客户端解决。</li>
-<li>缺乏长期测试，没有广泛用于真实产品。由于其兼容性和稳定性问题，目前usbip还未达到能成熟地进行商业化、产品化的程度。</li>
-</ul>
-<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><ul>
-<li>如今市场上的USB网线延长器(过交换机的那种)利用的是链路层的以太网帧传输USB数据，是通过硬件实现的，其兼容性和稳定性更好。<ul>
-<li><a href="http://www.usb-over-network.com/">usb over network</a></li>
-<li><a href="https://www.virtualhere.com/home">VirtualHere</a></li>
-</ul>
-</li>
-<li>从USB协议规范可知：USB对时间要求高，状态转移大多数与超时相关。</li>
-</ul>
-]]></content>
-      <categories>
-        <category>usbip</category>
-        <category>USB驱动</category>
-        <category>Linux系统</category>
-      </categories>
-      <tags>
-        <tag>usbip</tag>
-        <tag>USB驱动</tag>
-        <tag>Linux系统</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Linux内核的I2C子系统详解</title>
     <url>/2022/08/09/RK3568%E9%A9%B1%E5%8A%A8%E5%88%86%E6%9E%90/2022-08-09-Linux%E5%86%85%E6%A0%B8%E7%9A%84I2C%E9%A9%B1%E5%8A%A8/</url>
     <content><![CDATA[<h1 id="1-前言"><a href="#1-前言" class="headerlink" title="1. 前言"></a>1. 前言</h1><p>为了提高代码的重用性，解决驱动代码和设备信息耦合的问题，Linux提出了总线、设备、驱动模型。</p>
@@ -2000,6 +1901,105 @@
       <tags>
         <tag>Linux设备驱动</tag>
         <tag>RK3568</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>usbip和Linux系统</title>
+    <url>/2023/02/13/USBIP/2023-02-13-usbip%E5%92%8Clinux%E7%B3%BB%E7%BB%9F/</url>
+    <content><![CDATA[<h1 id="1-Linux系统的USB总线"><a href="#1-Linux系统的USB总线" class="headerlink" title="1. Linux系统的USB总线"></a>1. Linux系统的USB总线</h1><p>Linux系统中的<code>/proc</code>和<code>/sys</code>两个文件系统包含了很多有用的信息。</p>
+<h2 id="ls-sys-class-udc"><a href="#ls-sys-class-udc" class="headerlink" title="ls /sys/class/udc"></a>ls /sys/class/udc</h2><p>该命令能查看系统注册了的udc驱动(与gadget驱动相关)。</p>
+<h2 id="cat-proc-devices"><a href="#cat-proc-devices" class="headerlink" title="cat /proc/devices"></a>cat /proc/devices</h2><p>该命令能查看当前系统注册了哪些驱动，Linux系统会为每个已注册的设备驱动分配一个”主设备号”。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">字符设备</span></span><br><span class="line">Character devices:</span><br><span class="line"> 1 mem</span><br><span class="line"> 4 /dev/vc/0</span><br><span class="line"> 4 tty</span><br><span class="line"> 4 ttyS</span><br><span class="line"> 5 /dev/tty</span><br><span class="line"> ...</span><br><span class="line"> 180 usb</span><br><span class="line"> 189 usb_device</span><br><span class="line"> ...</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">块设备</span></span><br><span class="line">Block devices:</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+<p>其中和USB相关的是<code>180 usb</code>和<code>189 usb_device</code>，但所代表的驱动是有区别的。</p>
+<p>而且不是所有USB设备驱动(USB接口驱动)都会分配一个主设备号，有些挂接在一些子系统内，如USB HID键鼠设备挂接在input子系统内。</p>
+<h2 id="ls-sys-bus-usb-devices"><a href="#ls-sys-bus-usb-devices" class="headerlink" title="ls /sys/bus/usb/devices"></a>ls /sys/bus/usb/devices</h2><p>该命令列举了Linux系统中USB类型设备的许多信息。每插入一个USB设备，<code>/sys/bus/usb/devices</code>下就有新的文件夹生成。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">1-0:1.0  2-2      3-0:1.0  3-1:1.0  3-3:1.0  3-4:1.0  usb1  usb3</span><br><span class="line">2-0:1.0  2-2:1.0  3-1      3-3      3-4      4-0:1.0  usb2  usb4</span><br></pre></td></tr></table></figure>
+<p>其中的<code>usb1</code>、<code>usb2</code>、<code>usb3</code>和<code>usb4</code>代表Linux系统注册了4条USB总线，有4个USB主机控制器，不同的数字则是总线号，用于区分不同总线。</p>
+<p>其中的<code>3-3:1.0</code>代表USB总线号为3，devpath为3，配置号为1，接口号为0 —— <strong>3号总线的3号端口的设备，使用的是1号配置，接口号为0</strong>。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cat 3-3:1.0/bInterfaceClass</span><br><span class="line">09</span><br></pre></td></tr></table></figure>
+<p>运行上述命令查询后可知，<code>3-3:1.0</code>代表的是一个Hub设备(09代表，08代表mass storage class —— U盘)。当Hub设备的端口上又接入USB设备，则利用devpath。顶级设备的devpath就是其连在Root Hub上的端口号，次级设备就是其父Hub的devpath后面加上其端口号。例如：<code>3-3:1.0</code>是与一个Hub，它的1号端口挂载的设备就可以是<code>3-3.1:1.0</code>，2号端口挂载的设备就可以是<code>3-3.2:1.0</code>。</p>
+<h1 id="2-usbip驱动"><a href="#2-usbip驱动" class="headerlink" title="2. usbip驱动"></a>2. usbip驱动</h1><p>usbip驱动提供了Linux下USB透传(bypass)的功能，或者说是usb over tcp。利用以太网，将USB设备共享到另外一端。</p>
+<h2 id="组成架构"><a href="#组成架构" class="headerlink" title="组成架构"></a>组成架构</h2><p>其架构如下图：</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/Linux_Share/master/Image/image/usbip/usbip%E6%9E%B6%E6%9E%84.png" alt="usbip架构图"></p>
+<p>usbip分为两端：server端和client端，分别运行在不同的Linux主机中：</p>
+<ul>
+<li>server端：运行server端驱动的PC插入USB设备，负责共享。</li>
+<li>client端：client端PC可以attach到server端PC插入的USB设备。此时，client端PC会以为真的有一个USB设备插入，可对其进行访问、修改等操作，效果跟在本机上直接插入USB设备无异。</li>
+</ul>
+<p>这便是USB共享或USB延长器的功效。</p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><h3 id="源码安装"><a href="#源码安装" class="headerlink" title="源码安装"></a>源码安装</h3><p>因为Ubuntu 16.04的内核版本是Linux 4.4以上，所以usbip的用户态工具不能使用<code>apt-get install</code>来安装，否则得到的是配套旧版本的usbip驱动。</p>
+<p>正确的方式是运行<code>uname -a</code>查看Ubuntu当前使用的是什么版本的kernel，然后在”<a href="https://www.kernel.org">The Linux Kernel Archives</a>“下找到对应版本的kernel版本，下载源码并解压。</p>
+<p>进入源码的根目录下<code>tools/usb/usbip</code>，准备编译。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt-get install autoconf automake libtool libudev-dev</span><br></pre></td></tr></table></figure>
+<p>运行以上命令安装编译依赖环境，然后就可以在目录下运行<code>./autogen.sh</code>生成<code>configure</code>了。最后运行以下命令完成编译和安装。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>安装完成后，需要到”<a href="http://www.linux-usb.org/usb.ids">Linux USB</a>“下载包含了各种厂商的VID和描述信息的USB数据库——<code>usb.ids</code>文件并放入<code>/usr/share/hwdata/</code>目录。</p>
+<h3 id="非源码安装"><a href="#非源码安装" class="headerlink" title="非源码安装"></a>非源码安装</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo apt install linux-tools-generic linux-cloud-tools-generic</span><br></pre></td></tr></table></figure>
+<h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><h3 id="在server端PC上"><a href="#在server端PC上" class="headerlink" title="在server端PC上"></a>在server端PC上</h3><ul>
+<li>加载驱动</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe usbip-host</span><br></pre></td></tr></table></figure>
+<ul>
+<li>运行<code>usbipd</code>程序，该守护进程用于建立TCP socket连接等。</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbipd -D</span><br></pre></td></tr></table></figure>
+<ul>
+<li>server端的PC上插入一个USB设备，运行以下命令列举出设备，用于查看busid</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -l</span><br><span class="line"> - busid 3-2 (0781:557d)</span><br><span class="line">   SanDisk Corp. : Cruzer Force (0781:557d)</span><br></pre></td></tr></table></figure>
+<p>找到busid是3-2的SanDisk Crop(U盘)为将要共享的设备。</p>
+<ul>
+<li>运行以下命令绑定要共享的设备：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo usbip bind -b 3-2</span><br><span class="line">usbip: info: bind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果不想再将设备进行共享，则运行以下命令：</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip unbind -b 3-2</span><br><span class="line">usbip: info: unbind device on busid 3-2: complete</span><br></pre></td></tr></table></figure>
+<h3 id="在client端PC上-Linux端"><a href="#在client端PC上-Linux端" class="headerlink" title="在client端PC上(Linux端)"></a>在client端PC上(Linux端)</h3><ul>
+<li>加载驱动，Ubuntu自带</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">sudo modprobe vhci-hcd</span><br></pre></td></tr></table></figure>
+<ul>
+<li>列举出server端已经导出的USB设备</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip list -r &lt;server ip&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>将server端已经导出的USB设备attach到本地</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip attach -r &lt;server ip&gt; -b &lt;busid&gt;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>断开attach到本地的USB设备</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">usbip detach -p &lt;port&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="在client端PC上-Windows端"><a href="#在client端PC上-Windows端" class="headerlink" title="在client端PC上(Windows端)"></a>在client端PC上(Windows端)</h3><p>笔者近期主要工作，参考自以下两个开源项目：</p>
+<ul>
+<li><a href="https://github.com/vadimgrn/usbip-win2">usbip-win2</a></li>
+<li><a href="https://github.com/cezanne/usbip-win">usbip-win</a></li>
+</ul>
+<h1 id="3-总结"><a href="#3-总结" class="headerlink" title="3. 总结"></a>3. 总结</h1><h2 id="存在的问题"><a href="#存在的问题" class="headerlink" title="存在的问题"></a>存在的问题</h2><ul>
+<li>兼容性：USB摄像头支持得不好，笔者在测试时发现摄像头会出现无法使用或者使用过程中热插拔导致应用卡死等问题。</li>
+<li>稳定性问题：热插拔USB或插拔网线出问题。以Windows端的client为例，在进行快速热插拔时，会出现设备重复的问题。因为server端拔掉设备后，并没有通知client端设备已经断开连接，需要client端自己发现，然而在client端删去该设备在本机上的信息之前，server端又将该设备插回原位，继而导致client端误以为其还在连接中，而server端则认为其还未进行连接。那么client端就会出现两个一模一样的设备，如果再进行操作的话，就会出现蓝屏等问题，只能通过重启客户端解决。</li>
+<li>缺乏长期测试，没有广泛用于真实产品。由于其兼容性和稳定性问题，目前usbip还未达到能成熟地进行商业化、产品化的程度。</li>
+</ul>
+<h2 id="原因分析"><a href="#原因分析" class="headerlink" title="原因分析"></a>原因分析</h2><ul>
+<li>如今市场上的USB网线延长器(过交换机的那种)利用的是链路层的以太网帧传输USB数据，是通过硬件实现的，其兼容性和稳定性更好。<ul>
+<li><a href="http://www.usb-over-network.com/">usb over network</a></li>
+<li><a href="https://www.virtualhere.com/home">VirtualHere</a></li>
+</ul>
+</li>
+<li>从USB协议规范可知：USB对时间要求高，状态转移大多数与超时相关。</li>
+</ul>
+]]></content>
+      <categories>
+        <category>usbip</category>
+        <category>USB驱动</category>
+        <category>Linux系统</category>
+      </categories>
+      <tags>
+        <tag>usbip</tag>
+        <tag>USB驱动</tag>
+        <tag>Linux系统</tag>
       </tags>
   </entry>
   <entry>
@@ -2201,14 +2201,14 @@
 <li>使用分布式寻址方案来分配网络地址。</li>
 <li>保证在整个网络中所有分配的地址是唯一的。进而保证一个特定的数据包能够发送给指定的设备而不出现混乱。同时，寻址算法本身的分布特性保证设备只能与父辈设备通讯来接收一个网络地址。不需要整个网络范围内通讯的地址分配，有助于网络的可测量性。</li>
 <li>假设父设备可拥有的最大设备数为$C_m$，其拥有的最大路由子设备数为$R_m$，网络的最大深度为$L_m$，则父设备所能分配子区段地址数为：<ul>
-<li>若$R<em>m=1, C</em>{skip}(d)=(1+C_m-R_m-C_m*(R_m)^{(L_m-d-1)}/(1-R_m)$</li>
+<li>若$R_m=1, C_{skip}(d)=(1+C_m-R_m-C_m*(R_m)^{(L_m-d-1)}/(1-R_m)$</li>
 <li>子节点为父设备的第n个子路由器的短地址分配：<ul>
-<li>$A<em>{child}=A</em>{parent}+(n-1)*C_{skip}(d)+1, n=1$</li>
-<li>$A<em>{child}=A</em>{parent}+(n-1)*C_{skip}(d), n&gt;1$</li>
+<li>$A_{child}=A_{parent}+(n-1)*C_{skip}(d)+1, n=1$</li>
+<li>$A_{child}=A_{parent}+(n-1)*C_{skip}(d), n&gt;1$</li>
 </ul>
 </li>
 <li>子节点为父设备的第n个子终端设备的短地址分配：<ul>
-<li>$A<em>{child}=A</em>{parent}+R<em>m*C</em>{skip}+n$</li>
+<li>$A_{child}=A_{parent}+R_m*C_{skip}+n$</li>
 </ul>
 </li>
 </ul>
@@ -2735,7 +2735,7 @@
 <li>鲁棒主成分分析(Robust Principal Component Analysis)<ul>
 <li>假设一个数据矩阵$M\in R^{m\times n}$: $M = L_0 + S_0$<ul>
 <li>可由以下凸优化问题的解恢复:<ul>
-<li>$\min<em>{L, S} \parallel L\parallel </em>* + \lambda\parallel S\parallel_1$<ul>
+<li>$\min_{L, S} \parallel L\parallel _* + \lambda\parallel S\parallel_1$<ul>
 <li>最小化核范数(nuclear norm)$\parallel L\parallel_*$用于诱导矩阵L的低秩性，是对$rank(L)$的“最佳”凸逼近。</li>
 <li>最小化$\ell_1$范数$\parallel S\parallel_1$用于诱导矩阵S的稀疏性。$\parallel S\parallel_1$是$\parallel S\parallel_0$的“最佳”凸逼近，其中$\parallel S\parallel_0$表示矩阵S中非零元素的个数，$\parallel S\parallel_1$表示元素绝对值的和。</li>
 <li>$\lambda$用于控制低秩和稀疏部分之间的权衡。</li>
@@ -2765,31 +2765,31 @@
 <ul>
 <li>$x\le y$: 表示$x_i\le y_i, i=1, 2, …, n$</li>
 <li>内积: $<x, y>=x^Ty=\sum_{i=1}^{n}x_iy_i$</li>
-<li>$\ell<em>2$范数: $\parallel x\parallel_2 = (\sum</em>{i=1}^n\mid x_i\mid^2)^\frac{1}{2}$，可省略下标。</li>
-<li>$\ell<em>1$范数: $\parallel x\parallel_1 = \sum</em>{i=1}^n\mid x_i\mid$</li>
-<li>$\ell<em>\infin$范数: $\parallel x\parallel</em>\infin = \max_{1\le i\le n}\mid x_i\mid$</li>
-<li>$\ell<em>p$范数($p\ge 1$): $\parallel x\parallel_p = (\sum</em>{i=1}^n\mid x_i\mid^p)^\frac{1}{p}$</li>
+<li>$\ell_2$范数: $\parallel x\parallel_2 = (\sum_{i=1}^n\mid x_i\mid^2)^\frac{1}{2}$，可省略下标。</li>
+<li>$\ell_1$范数: $\parallel x\parallel_1 = \sum_{i=1}^n\mid x_i\mid$</li>
+<li>$\ell_\infin$范数: $\parallel x\parallel_\infin = \max_{1\le i\le n}\mid x_i\mid$</li>
+<li>$\ell_p$范数($p\ge 1$): $\parallel x\parallel_p = (\sum_{i=1}^n\mid x_i\mid^p)^\frac{1}{p}$</li>
 <li>$\ell_0$“范数”$\parallel x\parallel_0$: 向量x的所有分量中非零元素的个数(并非真正的范数)。</li>
 </ul>
 </li>
-<li><p>对任意的$x\in \mathbb{R}^n$: $\parallel x\parallel<em>\infin\le\parallel x\parallel_2\le\parallel x\parallel_1\le n\parallel x\parallel</em>\infin$</p>
+<li><p>对任意的$x\in \mathbb{R}^n$: $\parallel x\parallel_\infin\le\parallel x\parallel_2\le\parallel x\parallel_1\le n\parallel x\parallel_\infin$</p>
 </li>
 <li>柯西-施瓦兹不等式: 对任意的$x, y\in \mathbb{R}^n$，有$-\parallel x\parallel\parallel y\parallel\le<x, y>\le\parallel x\parallel\parallel y\parallel$</li>
-<li>赫尔德不等式: $\mid x^Ty\mid \le \parallel x\parallel<em>p\parallel y\parallel_q = (\sum</em>{i=1}^{n}\mid x<em>i\mid^p)^\frac{1}{p}(\sum</em>{i=1}^{n}\mid y_i\mid^q)^\frac{1}{q}$<ul>
+<li>赫尔德不等式: $\mid x^Ty\mid \le \parallel x\parallel_p\parallel y\parallel_q = (\sum_{i=1}^{n}\mid x_i\mid^p)^\frac{1}{p}(\sum_{i=1}^{n}\mid y_i\mid^q)^\frac{1}{q}$<ul>
 <li>其中$p, q$是大于1的实数，且满足$\frac{1}{p} + \frac{1}{q} = 1$</li>
 </ul>
 </li>
-<li><p>闵可夫斯基不等式: 对任意的$x, y\in \mathbb{R}^n, p\in [1, \infin)$，有$\parallel x+y\parallel<em>p\le\parallel x\parallel_p + \parallel y\parallel_p =(\sum</em>{i=1}^{n}\mid x<em>i\mid^p)^\frac{1}{p}(\sum</em>{i=1}^{n}\mid y_i\mid^p)^\frac{1}{p}$</p>
+<li><p>闵可夫斯基不等式: 对任意的$x, y\in \mathbb{R}^n, p\in [1, \infin)$，有$\parallel x+y\parallel_p\le\parallel x\parallel_p + \parallel y\parallel_p =(\sum_{i=1}^{n}\mid x_i\mid^p)^\frac{1}{p}(\sum_{i=1}^{n}\mid y_i\mid^p)^\frac{1}{p}$</p>
 </li>
-<li><p>对任意的$A = (a<em>{ij})\in\mathbb{R}^{m\times n}$和$B = (b</em>{ij})\in\mathbb{R}^{m\times n}$</p>
+<li><p>对任意的$A = (a_{ij})\in\mathbb{R}^{m\times n}$和$B = (b_{ij})\in\mathbb{R}^{m\times n}$</p>
 <ul>
-<li>内积: $<A, B>=tr(AB^T)=\sum<em>{i=1}^{m}\sum</em>{j=1}^{n}a<em>{ij}b</em>{ij}$</li>
-<li>Frobenius范数: $\parallel A\parallel<em>F = \sqrt{\sum</em>{i, j}\mid a_{ij}\mid^2} = \sqrt{tr(A^TA)}$ </li>
-<li>诱导范数: $\parallel A\parallel\triangleq \sup<em>{\parallel x\parallel=1}\parallel Ax\parallel=\sup</em>{\parallel x\parallel\neq 0}\frac{\parallel Ax\parallel}{\parallel x\parallel}$</li>
-<li>诱导$\ell<em>2$范数: $\parallel A\parallel_2 = \sqrt{\lambda</em>{max}(A^TA)}$</li>
-<li>诱导$\ell<em>1$范数: $\parallel A\parallel_1=\max</em>{1\le j\le n}\sum<em>{i=1}^{n}\mid a</em>{ij}\mid$</li>
-<li>诱导$\ell<em>\infin$范数:  $\parallel A\parallel</em>\infin=\max<em>{1\le i\le n}\sum</em>{j=1}^{n}\mid a_{ij}\mid$</li>
-<li>核范数: $\parallel A\parallel<em>*\sum</em>{i=1}^{r}\sigma_i$，其中${\sigma_i}$为A的非零奇异值，$r=rank(A)$。</li>
+<li>内积: $<A, B>=tr(AB^T)=\sum_{i=1}^{m}\sum_{j=1}^{n}a_{ij}b_{ij}$</li>
+<li>Frobenius范数: $\parallel A\parallel_F = \sqrt{\sum_{i, j}\mid a_{ij}\mid^2} = \sqrt{tr(A^TA)}$ </li>
+<li>诱导范数: $\parallel A\parallel\triangleq \sup_{\parallel x\parallel=1}\parallel Ax\parallel=\sup_{\parallel x\parallel\neq 0}\frac{\parallel Ax\parallel}{\parallel x\parallel}$</li>
+<li>诱导$\ell_2$范数: $\parallel A\parallel_2 = \sqrt{\lambda_{max}(A^TA)}$</li>
+<li>诱导$\ell_1$范数: $\parallel A\parallel_1=\max_{1\le j\le n}\sum_{i=1}^{n}\mid a_{ij}\mid$</li>
+<li>诱导$\ell_\infin$范数:  $\parallel A\parallel_\infin=\max_{1\le i\le n}\sum_{j=1}^{n}\mid a_{ij}\mid$</li>
+<li>核范数: $\parallel A\parallel_*\sum_{i=1}^{r}\sigma_i$，其中$\{\sigma_i\}$为A的非零奇异值，$r=rank(A)$。</li>
 </ul>
 </li>
 <li>对任意的$A, B\in\mathbb{R}^{n\times n}$和$x\in\mathbb{R}^n$，有: $\parallel AB\parallel\le\parallel A\parallel\parallel B\parallel, \parallel Ax\parallel\le\parallel A\parallel\parallel x\parallel$</li>
@@ -2807,7 +2807,7 @@
 </ul>
 </li>
 <li>海瑟矩阵(Hessian)<ul>
-<li>如果函数$f:\mathbb{R}^n\rightarrow\mathbb{R}$在点$x$处的二阶偏导数$\frac{\partial^2 f}{\partial x_i\partial x_j}(x), i, j=1, 2, \cdots, n$都存在，则$\nabla^2 f(x)=\left[<br>\begin{matrix}<br>\frac{\partial^2 f(x)}{\partial x_1^2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_n}\<br>\frac{\partial^2 f(x)}{\partial x_2\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_2^2} &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_n} \<br>\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots<br>\<br>\frac{\partial^2 f(x)}{\partial x_n\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_n^2}<br>\end{matrix}<br>\right]$称为$f$在点$x$处的海瑟矩阵。</li>
+<li>如果函数$f:\mathbb{R}^n\rightarrow\mathbb{R}$在点$x$处的二阶偏导数$\frac{\partial^2 f}{\partial x_i\partial x_j}(x), i, j=1, 2, \cdots, n$都存在，则$\nabla^2 f(x)=\left[<br>\begin{matrix}<br>\frac{\partial^2 f(x)}{\partial x_1^2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_1\partial x_n}\\<br>\frac{\partial^2 f(x)}{\partial x_2\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_2^2} &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_2\partial x_n} \\<br>\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots<br>\\<br>\frac{\partial^2 f(x)}{\partial x_n\partial x_1} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_2} &amp; \frac{\partial^2 f(x)}{\partial x_n\partial x_3} &amp; \cdots &amp; \frac{\partial^2 f(x)}{\partial x_n^2}<br>\end{matrix}<br>\right]$称为$f$在点$x$处的海瑟矩阵。</li>
 <li>当$\nabla^2f(x)$在区域$D$上的每个点$x$处都存在，且$\nabla^2f(x)$在区域$D$上连续，则$f$在$D$上二阶(次)连续可微，此时的海瑟矩阵是对称矩阵。</li>
 <li>例子: <ul>
 <li>给定对称矩阵$Q\in\mathbb{R}^{n\times n}$，向量$q\in\mathbb{R}^n$，以及数$r\in\mathbb{R}$，考虑二次函数$f(x)=\frac{1}{2}x^TQx+q^Tx+r$，则$\nabla f(x)=Qx+q, \nabla^2 f(x)=Q$。</li>
@@ -2829,7 +2829,7 @@
 <li>目标函数: $f:\Omega\rightarrow\mathbb{R}$</li>
 <li>可行域(决策集): $\Omega\subset\mathbb{R}^n$，$\Omega$中的所有点或者说是满足约束条件的点为可行点。<ul>
 <li>若$\Omega=\mathbb{R}^n$，则为无约束优化问题。否则为约束优化问题。<ul>
-<li>$\Omega:={x\in\mathbb{R}^n:h(x)=0, c(x)\le 0}$<ul>
+<li>$\Omega:=\{x\in\mathbb{R}^n:h(x)=0, c(x)\le 0\}$<ul>
 <li>$h(x)=(h_1(x), …, h_m(x))^T$，$h_i(x)=0, i=1, 2, …, m$为等式约束。</li>
 <li>$c(x)=(c_1(x), …, c_S(x))^T$，$c_j(x)\le 0, j=1, 2, …, s$为不等式约束。</li>
 </ul>
@@ -2837,8 +2837,8 @@
 </ul>
 </li>
 <li>对$x^<em>\in\Omega$，若对任意的$x\in\Omega$，都有$f(x^</em>)\le f(x)$，则$x^<em>$是问题的全局最优解，对应的目标函数值为全局最优值。$$x^</em>\in \arg\min_{x\in\Omega}f(x)$$<ul>
-<li>若存在$x^<em>$点的邻域$\mathcal{B}(x^</em>, \delta)={x:\parallel x-x^<em>\parallel\le\delta}$使得对任意的$x\in\Omega\bigcap\mathcal{B}(x^</em>, \delta)$，有$f(x^<em>)\le f(x)$，则$x^</em>$为局部最优解。</li>
-<li>若还满足对任意的$x\in\Omega\bigcap\mathcal{B}(x^<em>, \delta), x\neq{x^</em>}$，有$f(x^<em>)\lt f(x)$，则$x^</em>$为严格局部最优解。</li>
+<li>若存在$x^<em>$点的邻域$\mathcal{B}(x^</em>, \delta)=\{x:\parallel x-x^<em>\parallel\le\delta\}$使得对任意的$x\in\Omega\bigcap\mathcal{B}(x^</em>, \delta)$，有$f(x^<em>)\le f(x)$，则$x^</em>$为局部最优解。</li>
+<li>若还满足对任意的$x\in\Omega\bigcap\mathcal{B}(x^<em>, \delta), x\neq\{x^</em>\}$，有$f(x^<em>)\lt f(x)$，则$x^</em>$为严格局部最优解。</li>
 </ul>
 </li>
 </ul>
@@ -2876,20 +2876,20 @@
 <li>鲁棒优化和随机优化。</li>
 </ul>
 <h4 id="算法评价标准"><a href="#算法评价标准" class="headerlink" title="算法评价标准"></a>算法评价标准</h4><ul>
-<li>若$\lim_{k\rightarrow\infin}\parallel x^k-x^<em>\parallel=0$，则称${x^k}$收敛于$x^</em>$。</li>
-<li>聚点: 若存在${x^k}$的一个子序列收敛于$x^<em>$，则称$x^</em>$是${x^k}$的一个聚点。</li>
-<li>全局收敛性: 从任意的初始点出发，算法产生的迭代序列${x^k}$都收敛于问题的一个最优点或稳定点。</li>
-<li>局部收敛性: 算法只有在初始点与最优点比较靠近时才能保证迭代序列${x^k}$收敛于问题的一个最优点或稳定点。</li>
-<li>收敛速度: 假设算法产生的迭代序列${x^k}$收敛于$x^*$<ul>
-<li>若存在$r\in(0, 1)$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}\le r$，则${x^k}$是Q(quotient)-线性收敛于$x^*$</li>
-<li>若$\lim_{k\rightarrow\infin}\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}=0$，则${x^k}$是Q(quotient)-超线性收敛于$x^*$</li>
-<li>若存在$p\gt 1$和一个正数$\gamma$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel^p}\le \gamma$，则${x^k}$是Q-p阶收敛于$x^<em>$，或者称为p-阶收敛于${x^</em>}$，最常见是Q-2阶收敛。</li>
+<li>若$\lim_{k\rightarrow\infin}\parallel x^k-x^<em>\parallel=0$，则称$\{x^k\}$收敛于$x^</em>$。</li>
+<li>聚点: 若存在$\{x^k\}$的一个子序列收敛于$x^<em>$，则称$x^</em>$是$\{x^k\}$的一个聚点。</li>
+<li>全局收敛性: 从任意的初始点出发，算法产生的迭代序列$\{x^k\}$都收敛于问题的一个最优点或稳定点。</li>
+<li>局部收敛性: 算法只有在初始点与最优点比较靠近时才能保证迭代序列$\{x^k\}$收敛于问题的一个最优点或稳定点。</li>
+<li>收敛速度: 假设算法产生的迭代序列$\{x^k\}$收敛于$x^*$<ul>
+<li>若存在$r\in(0, 1)$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}\le r$，则$\{x^k\}$是Q(quotient)-线性收敛于$x^*$</li>
+<li>若$\lim_{k\rightarrow\infin}\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel}=0$，则$\{x^k\}$是Q(quotient)-超线性收敛于$x^*$</li>
+<li>若存在$p\gt 1$和一个正数$\gamma$使得，对充分大的$k$有: $\frac{\parallel x^{k+1}-x^<em>\parallel}{\parallel x^{k}-x^</em>\parallel^p}\le \gamma$，则$\{x^k\}$是Q-p阶收敛于$x^<em>$，或者称为p-阶收敛于$\{x^</em>\}$，最常见是Q-2阶收敛。</li>
 </ul>
 </li>
 <li><p>弱化收敛速度标准</p>
 <ul>
-<li>若存在一个Q-线性收敛于0的非负序列${v_k}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则${x^k}$是R(root)-线性收敛于$x^</em>$。</li>
-<li>若存在一个Q-超线性收敛于0的非负序列${v_k}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则${x^k}$是R(root)-超线性收敛于$x^</em>$。</li>
+<li>若存在一个Q-线性收敛于0的非负序列$\{v_k\}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则$\{x^k\}$是R(root)-线性收敛于$x^</em>$。</li>
+<li>若存在一个Q-超线性收敛于0的非负序列$\{v_k\}$，使得$\parallel x^k-x^<em>\parallel\le v_k, \forall k$，则$\{x^k\}$是R(root)-超线性收敛于$x^</em>$。</li>
 </ul>
 </li>
 <li><p>其他算法评价标准:</p>
@@ -3367,11 +3367,11 @@
 <h3 id="Configurations"><a href="#Configurations" class="headerlink" title="Configurations"></a>Configurations</h3><p>配置由一系列的资源组成，如CPU, GPU, Network, etc，可以表示为<code>(n, r, t)</code>，其中<code>n</code>表示节点数量，<code>r</code>表示资源数量，<code>t</code>表示资源类型。</p>
 <ul>
 <li>例如<code>(2, 16, T4)</code>表示的是2个节点包含16个T4 GPU<br>为了减少资源争用，避免分布式作业共享节点。配置集合可以划分为两部分：</li>
-<li>单节点分配集合: 不会跨节点分配资源，${(1, 2^0, X), (1, 2^1, X), …, (1, R, X)}\bigcup\quad\leftarrow$ single-node<ul>
+<li>单节点分配集合: 不会跨节点分配资源，$\{(1, 2^0, X), (1, 2^1, X), …, (1, R, X)\}\bigcup\quad\leftarrow$ single-node<ul>
 <li>该分配方式限制每次都分配一个节点内2的倍数的GPU，直到节点拥有的最多GPU数量$R$。如果$R$不是2的幂，则可以把$R$拆分成2的幂的和，即把一个物理节点拆分成多个虚拟节点</li>
 </ul>
 </li>
-<li>多节点分配集合: 需要跨节点分配资源，${(2, 2R, X), …, (N, N\cdot R, X), n\in N}\quad\leftarrow$ multi-node<ul>
+<li>多节点分配集合: 需要跨节点分配资源，$\{(2, 2R, X), …, (N, N\cdot R, X), n\in N\}\quad\leftarrow$ multi-node<ul>
 <li>该分配方式要求每个节点的GPU都必须完全被利用，即遵守第二条规则(详见<a href="#process">process</a>)<br>假设集群是同构的，Sia在优化配置过程中考虑的复杂度是$O(N+log_2R)$</li>
 </ul>
 </li>
@@ -3387,8 +3387,8 @@
 </ul>
 <h4 id="Normalized-goodput-matrix"><a href="#Normalized-goodput-matrix" class="headerlink" title="Normalized goodput matrix"></a>Normalized goodput matrix</h4><p>对于最低GPU数量要求为$N_i^{min}$的$J_i$，有公式: </p>
 <ul>
-<li>$G<em>{ij}\leftarrow N_i^{min}\cdot\frac{G</em>{ij}}{min<em>jG</em>{ij}}$<ul>
-<li>$min<em>jG</em>{ij}$: $J_i$所有配置的goodput估计值中的最小值</li>
+<li>$G_{ij}\leftarrow N_i^{min}\cdot\frac{G_{ij}}{min_jG_{ij}}$<ul>
+<li>$min_jG_{ij}$: $J_i$所有配置的goodput估计值中的最小值</li>
 </ul>
 </li>
 <li>即用矩阵每行最小值进行归一化，有两个好处：<ul>
@@ -3400,7 +3400,7 @@
 <h4 id="Scheduler-objective-1"><a href="#Scheduler-objective-1" class="headerlink" title="Scheduler objective"></a>Scheduler objective</h4><p>定义了一个大小与$G$相同的二进制矩阵$A$，其中$A_{ij}==1$表明下一轮次J_i选择的配置为$c_j$<br>Sia调度的目标是为每个job选择配置，使得所有job的归一化goodput之和最大</p>
 <ul>
 <li>不是每个job都挑选归一化goodput值最大是因为可能出现多对一的情况，但实际是一对一的<br>于是对Sia的调度目标建模得到：</li>
-<li>$\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot G_{ij} + \lambda(1-\lVert A_i\rVert_1))$<ul>
+<li>$\displaystyle\max_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot G_{ij} + \lambda(1-\lVert A_i\rVert_1))$<ul>
 <li>$\lVert v\rVert_1$表示相邻$v$的L1范式，即求和后的绝对值</li>
 <li>这是一个二进制整数线性规划问题，有以下限制:<ul>
 <li>每个job最多选择一种配置: $\lVert A_i\rVert \leq 1$</li>
@@ -3428,18 +3428,18 @@
 </ul>
 <h4 id="Balancing-goodput-with-fairness"><a href="#Balancing-goodput-with-fairness" class="headerlink" title="Balancing goodput with fairness"></a>Balancing goodput with fairness</h4><p>用一个参数$p$来平衡job的goodput。让每个job都能获得相对公平的资源分配。则加上重启参数$r_i$公式变为</p>
 <ul>
-<li>$\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot G</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$</li>
-<li>$\displaystyle\min<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot G</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\lt 0$</li>
+<li>$\displaystyle\max_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot (r_i\cdot G_{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$</li>
+<li>$\displaystyle\min_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot (r_i\cdot G_{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\lt 0$</li>
 <li>实验发现$p$在$-1.0~1.0$之间能够在获得稳定的公平性的同时对性能指标最小的负面影响，其中$p=-0.5$效果最好</li>
 </ul>
 <h4 id="Support-for-limited-adaptivity-支持有限制的自适应性"><a href="#Support-for-limited-adaptivity-支持有限制的自适应性" class="headerlink" title="Support for limited adaptivity(支持有限制的自适应性)"></a>Support for limited adaptivity(支持有限制的自适应性)</h4><p>大的数据规模使模型有高的吞吐量和使GPU有高利用率，但也可能导致训练模型的泛化误差(generalization gap)。因此Sia页支持对不同类型的job使用不同程度的自适应性。</p>
 <ul>
 <li>strong-scaling(强扩展) jobs: 固定的批量大小，但允许优化GPU数量和类型<ul>
-<li>优化的目标函数公式: $\displaystyle\max<em>A\sum</em>{i=1}^{|J|}(\sum<em>{j=1}^{|C|}A</em>{ij}\cdot (r<em>i\cdot T</em>{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$(因为对于固定的批量大小，throughput和goodput成正比，不用考虑统计效率)</li>
+<li>优化的目标函数公式: $\displaystyle\max_A\sum_{i=1}^{|J|}(\sum_{j=1}^{|C|}A_{ij}\cdot (r_i\cdot T_{ij})^p + \lambda(1-\lVert A_i\rVert_1))\quad p\gt 0$(因为对于固定的批量大小，throughput和goodput成正比，不用考虑统计效率)</li>
 </ul>
 </li>
 <li>rigid(刚性) job: 固定的批量大小和GPU数量，只允许优化GPU类型<ul>
-<li>优化的目标函数公式: $\displaystyle\max<em>B\sum</em>{i=1}^{|J<em>R|}(\sum</em>{g=1}^{|N<em>g|}B</em>{ig}\cdot (r<em>i\cdot T</em>{ig})^p + \lambda(1-\lVert B_{ig}\rVert_1))\quad p\gt 0$(固定了GPU数量，配置的方案只需要考虑GPU的类型)</li>
+<li>优化的目标函数公式: $\displaystyle\max_B\sum_{i=1}^{|J_R|}(\sum_{g=1}^{|N_g|}B_{ig}\cdot (r_i\cdot T_{ig})^p + \lambda(1-\lVert B_{ig}\rVert_1))\quad p\gt 0$(固定了GPU数量，配置的方案只需要考虑GPU的类型)</li>
 </ul>
 </li>
 </ul>
@@ -3603,7 +3603,7 @@
 <li>如果不是，则根据软混合概率选择策略选择父结点$parent$。候选结点包括得分最高的$k$个结点和初始结点(公式见下一节<a href="#算法(伪代码">算法(伪代码)</a>))。</li>
 <li>加载父结点的上下文$context$。</li>
 <li>扩展: 使用LLM优化器$Optimizor$，利用过去的修改和相应的改进或失败生成新的工作流$W_{round}$和修改$modification$(新的提示和结点间连接)。</li>
-<li>评估: 在验证集$D<em>V$上执行5次新的工作流$W</em>{round}$，计算平均分数$avgScore$和标准差。</li>
+<li>评估: 在验证集$D_V$上执行5次新的工作流$W_{round}$，计算平均分数$avgScore$和标准差。</li>
 <li>回传: 创建经验$experience$并将其添加到经验集$experiences$。</li>
 <li>如果$avgScore$高于最佳分数$bestScore$，则更新$W^*$和$bestScore$。</li>
 </ul>
@@ -3714,7 +3714,7 @@
 <li>工作流程中额外的依赖关系会降低子任务的预期成功率。<ul>
 <li>考虑两个拓扑排序的工作流$A$和$B$，每个工作流都包含根据执行顺序排序的$N$个子任务。<ul>
 <li>随机失败可能性: 每个子任务$v\in\mathcal{T}$有$p_f(0\lt p_f\lt 1)$的概率失败。</li>
-<li>工作流$B$的额外依赖: 存在至少一个子任务$v^<em>\in\mathcal{T}$和一个子任务$b\in\mathcal{T}$，使得工作流$B$中$v^</em>$的直接前置任务(依赖)的集合为$D_B(v^<em>)=D_A(v^</em>)\bigcup{b}$，其中$D_A(v^<em>)$是工作流$A$中$v^</em>$的直接前置任务的集合。对于所有其他子任务$v\neq v^*$满足$D_A(v)\subseteq D_B(v)$。</li>
+<li>工作流$B$的额外依赖: 存在至少一个子任务$v^<em>\in\mathcal{T}$和一个子任务$b\in\mathcal{T}$，使得工作流$B$中$v^</em>$的直接前置任务(依赖)的集合为$D_B(v^<em>)=D_A(v^</em>)\bigcup\{b\}$，其中$D_A(v^<em>)$是工作流$A$中$v^</em>$的直接前置任务的集合。对于所有其他子任务$v\neq v^*$满足$D_A(v)\subseteq D_B(v)$。</li>
 <li>于是工作流$A$的已完成子任务的期望严格大于$B$: $E[S_A]\gt E[S_B]$。</li>
 </ul>
 </li>
@@ -3725,19 +3725,19 @@
 <ul>
 <li>并行性: 用于衡量子任务并发执行的程度。<ul>
 <li>假设$S_t$表示在第t步执行的子任务集合。$T$为总步数(DAG的最大深度)，给定AOV图$G=(V, E, A)$，整体的并行度定义为步骤中的平均子任务比例:<ul>
-<li>$P<em>{avg} = \frac{1}{T}\sum</em>{t=1}^{T}S_t$</li>
+<li>$P_{avg} = \frac{1}{T}\sum_{t=1}^{T}S_t$</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>依赖复杂度: 分析子任务图中的度分布测量子任务依赖结构。对于每个子任务$v_i$，定义$deg(v_i)$为在图$G$上的直接连接数。依赖复杂度由直接连接数的标准差量化:<ul>
-<li>$C<em>{dependency}=\sigma</em>{deg(v<em>i)}=\sqrt{\frac{1}{|V|}\sum</em>{v_i\in V}(deg(v_i)-\bar{d})^2}$</li>
+<li>$C_{dependency}=\sigma_{deg(v_i)}=\sqrt{\frac{1}{|V|}\sum_{v_i\in V}(deg(v_i)-\bar{d})^2}$</li>
 </ul>
 </li>
 </ul>
 <h3 id="Workflow"><a href="#Workflow" class="headerlink" title="Workflow"></a>Workflow</h3><p>首先根据给定的任务需求，制定初始工作流程，生成执行计划和智能体分配策略。在执行过程中，工作流程会不断完善和动态更新，直到任务完成。</p>
 <p><img src="" alt="Flow流程"></p>
-<h4 id="Generate-an-Initial-AOV-Graph"><a href="#Generate-an-Initial-AOV-Graph" class="headerlink" title="Generate an Initial AOV Graph"></a>Generate an Initial AOV Graph</h4><p>给定一个任务需求提示$P$，让LLM基于$P$和用于初始化的指定提示$P<em>{init}$生成一组候选AOV图${G_1, G_2, …, G_k}=f(\mathcal{P}</em>{init}, \mathcal{P})$。每个候选AOV图$G_k=(V_k, E_k, A_k)$都使用并行性和依赖复杂度的度量公式进行评估，然后优先选择具有最高并行性分数的工作流。如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
+<h4 id="Generate-an-Initial-AOV-Graph"><a href="#Generate-an-Initial-AOV-Graph" class="headerlink" title="Generate an Initial AOV Graph"></a>Generate an Initial AOV Graph</h4><p>给定一个任务需求提示$P$，让LLM基于$P$和用于初始化的指定提示$P_{init}$生成一组候选AOV图$\{G_1, G_2, …, G_k\}=f(\mathcal{P}_{init}, \mathcal{P})$。每个候选AOV图$G_k=(V_k, E_k, A_k)$都使用并行性和依赖复杂度的度量公式进行评估，然后优先选择具有最高并行性分数的工作流。如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
 <ul>
 <li>早期强调并行性与模块化是因为:<ul>
 <li>如果不在早期明确鼓励并行性和独立性，生成的工作流很可能会过于复杂，导致子任务执行效率低下。</li>
@@ -3746,9 +3746,9 @@
 </li>
 </ul>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">PROMPT_TEMPLATE = <span class="string">&quot;You are an intelligent workflow planner. Given the following task requirements, generate a set of necessary sub-tasks along with their dependencies and assign appropriate agents to each task. Ensure that tasks that can be executed in parallel are identified to enhance efficiency. The workflow should be represented as a dictionary where each key is a task and its value contains the task’s status, data, number of parents not completed, child tasks, and assigned agent.&quot;</span></span><br><span class="line">Task_Requirements = &#123;TASK_REQUIREMENTS&#125;</span><br><span class="line">Output_Format = &#123; <span class="string">&quot;Task_A&quot;</span>: &#123; <span class="string">&quot;status&quot;</span>: <span class="string">&quot;not started&quot;</span>, <span class="string">&quot;data&quot;</span>: null, <span class="string">&quot;num_parents_not_completed&quot;</span>: <span class="number">0</span>, <span class="string">&quot;child&quot;</span>: [<span class="string">&quot;Task_B&quot;</span>, <span class="string">&quot;Task_C&quot;</span>], <span class="string">&quot;agent&quot;</span>: <span class="string">&quot;Agent_1&quot;</span> &#125;, <span class="string">&quot;Task_B&quot;</span>: &#123;<span class="string">&quot;status&quot;</span>: <span class="string">&quot;not started&quot;</span>, <span class="string">&quot;data&quot;</span>: null, <span class="string">&quot;num_parents_not_completed&quot;</span>: <span class="number">1</span>, <span class="string">&quot;child&quot;</span>: [<span class="string">&quot;Task_D&quot;</span>], <span class="string">&quot;agent&quot;</span>: <span class="string">&quot;Agent_2&quot;</span> &#125;, ... &#125;</span><br></pre></td></tr></table></figure>
-<h4 id="Execution-Plan-Generation-and-Agent-Allocation"><a href="#Execution-Plan-Generation-and-Agent-Allocation" class="headerlink" title="Execution Plan Generation and Agent Allocation"></a>Execution Plan Generation and Agent Allocation</h4><p>在获得最佳AOV图后，会对子任务的依赖关系图执行拓扑排序，生成子任务的先行顺序$o: V\rightarrow{1, 2, …, |V|}$，使得对于任何边$(v_i, v_j)\in E$，都有$o(v_i)\lt o(v_j)$。结果是一个子任务步骤序列，其中每个步骤都包含可以并行执行的子任务。此执行计划最大限度地减少了执行所需的步骤数，同时确保所有子任务在最短时间内完成，并遵守其依赖关系。</p>
+<h4 id="Execution-Plan-Generation-and-Agent-Allocation"><a href="#Execution-Plan-Generation-and-Agent-Allocation" class="headerlink" title="Execution Plan Generation and Agent Allocation"></a>Execution Plan Generation and Agent Allocation</h4><p>在获得最佳AOV图后，会对子任务的依赖关系图执行拓扑排序，生成子任务的先行顺序$o: V\rightarrow\{1, 2, …, |V|\}$，使得对于任何边$(v_i, v_j)\in E$，都有$o(v_i)\lt o(v_j)$。结果是一个子任务步骤序列，其中每个步骤都包含可以并行执行的子任务。此执行计划最大限度地减少了执行所需的步骤数，同时确保所有子任务在最短时间内完成，并遵守其依赖关系。</p>
 <p>而每个智能体$a_j\in A$都与一组子任务$T_i\subseteq V$相关联，表明该智能体负责处理该组子任务。但如果两个子任务$v_p, v_q$在同一步骤$s_i$中需要相同的智能体$a_i$，则创建一个该智能体的克隆，表示为$a’_j$，以此来实现同时运行两个子任务而不增加等待时间。</p>
-<h4 id="Workflow-Refinement-and-Dynamic-Updating"><a href="#Workflow-Refinement-and-Dynamic-Updating" class="headerlink" title="Workflow Refinement and Dynamic Updating"></a>Workflow Refinement and Dynamic Updating</h4><p>利用LLM作为全局检查器(global inspector)，持续监控任务进度，并在必要时动态修改AOV图。<br>具体来说，给定任务需求提示$P$，更新提示$P<em>{update}$，当前的AOV图$G_t$，以及包含子任务状态和运行子任务的智能体输出的生成数据$D_t$。与初始化过程类似，生成K个候选AOV图${G</em>{t+1}^1, G<em>{t+1}^2, …, G</em>{t+1}^K}=f(P_{update}, P, D_t)$。遵循与初始化时相同的选择策略，该策略优先选择具有最高并行分数的工作流，如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
+<h4 id="Workflow-Refinement-and-Dynamic-Updating"><a href="#Workflow-Refinement-and-Dynamic-Updating" class="headerlink" title="Workflow Refinement and Dynamic Updating"></a>Workflow Refinement and Dynamic Updating</h4><p>利用LLM作为全局检查器(global inspector)，持续监控任务进度，并在必要时动态修改AOV图。<br>具体来说，给定任务需求提示$P$，更新提示$P_{update}$，当前的AOV图$G_t$，以及包含子任务状态和运行子任务的智能体输出的生成数据$D_t$。与初始化过程类似，生成K个候选AOV图$\{G_{t+1}^1, G_{t+1}^2, …, G_{t+1}^K\}=f(P_{update}, P, D_t)$。遵循与初始化时相同的选择策略，该策略优先选择具有最高并行分数的工作流，如果相同并行性分数，则选择具有最低依赖复杂度的工作流。</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">PROMPT_TEMPLATE = <span class="string">&quot;You are an intelligent workflow updater. Based on the current workflow and the all subtasks’ progress data, update the workflow for acheving the objective by adding, removing, or modifying subtasks as necessary. Ensure that the updated workflow maintains modularity and maximizes parallel execution.&quot;</span></span><br><span class="line">Output_Format= &#123; <span class="string">&quot;Task_A&quot;</span>: &#123; <span class="string">&quot;status&quot;</span>: <span class="string">&quot;not started&quot;</span>, <span class="string">&quot;data&quot;</span>: null, ... &#125;&#125;</span><br></pre></td></tr></table></figure>
 <p>由于具有模块化约束，所以动态更新可以很大程度上满足灵活性，允许修改子任务分配，包括删除、添加、编辑、重新运行和重新分配智能体，而无需影响其他智能体及被分配的子任务。</p>
 <p>通过足够的数据和计算资源，我们可以通过使用强化学习对 LLM 进行微调以生成 workflow，从而进一步增强框架。</p>
@@ -3836,7 +3836,7 @@
 <h4 id="Model-Setup"><a href="#Model-Setup" class="headerlink" title="Model_Setup"></a>Model_Setup</h4><p>以当前先进的LLM服务系统Sarathi-serve构建一个随机处理模型。</p>
 <ul>
 <li>建模请求到来(requests arrival)<ul>
-<li>时间是离散的，辅以下标$n\in \mathbb{N}\equiv {1, 2, …, }$。</li>
+<li>时间是离散的，辅以下标$n\in \mathbb{N}\equiv \{1, 2, …, \}$。</li>
 <li>对于每个时隙$n$，允许在同一时隙到达多个请求，于是使用$a_n$表示在该时隙到达系统的请求的数量。从物理上讲，时隙可以对应于时钟频率单位或其他时间单位。</li>
 <li>假设所有的请求都是有序的(也就是有标号的?)。对于$i=1, 2, …, $，假设请求$i$具有$v_p(i)\in \mathbb{N}$个有序的预填充tokens，$v_d(i)\in\mathbb{N}$个有序的解码tokens和特征$z(i)\in \mathcal{K}$(其中$\mathcal{K}$是一个有限集)。特征$z(i)$可以捕获请求的类型/内容。于是使用$(v_p(i), v_d(i), z(i))$描述系统，不过调度算法可能无法观察到它们(特别是$v_d(i)$)。</li>
 <li>假设两个独立的iid序列:<script type="math/tex">\{a_n: n\in \mathbb{N}\} \quad \{(v_p(i), v_d(i), z(i)), i \in\mathbb{N}\}</script><ul>
@@ -3879,7 +3879,7 @@
 </ul>
 <h4 id="马尔可夫链-A-Markov-chain"><a href="#马尔可夫链-A-Markov-chain" class="headerlink" title="马尔可夫链(A Markov chain)"></a>马尔可夫链(A Markov chain)</h4><p>引入离散时间马尔可夫链(DTMCs, discrete-time Markov chains)描述系统的动态。</p>
 <ul>
-<li>在每个时隙$n$，令$Q_n$表示尚未离开的请求集合。假设${(P_i(n), D_i(n), Z_i(n)):i\in\mathscr{Q}_n}$是有序的(按请求到达时间排序)。<ul>
+<li>在每个时隙$n$，令$Q_n$表示尚未离开的请求集合。假设$\{(P_i(n), D_i(n), Z_i(n)):i\in\mathscr{Q}_n\}$是有序的(按请求到达时间排序)。<ul>
 <li>$P_i(n)$表示在预填充阶段未处理的token的数量，不包括当前在批处理中正在处理的token。</li>
 <li>$D_i(n)$表示在解码阶段未处理的token的数量，不包括当前在批处理中正在处理的token。</li>
 </ul>
@@ -3889,8 +3889,8 @@
 </ul>
 </li>
 <li>调度算法(Scheduling algorithms):<ul>
-<li>令$x=(r, {(p_i, d_i, z_i):i\in Q})\in X$表示任意系统状态。</li>
-<li>给定一个状态$x$且$r=0$，该状态表明上个批次已经处理完毕，可以开始新批次处理的状态。调度算法选择一个批处理配置:$\pi(x) = (\delta p<em>i, \delta d_i)</em>{i\in Q}$。<ul>
+<li>令$x=(r, \{(p_i, d_i, z_i):i\in Q\})\in X$表示任意系统状态。</li>
+<li>给定一个状态$x$且$r=0$，该状态表明上个批次已经处理完毕，可以开始新批次处理的状态。调度算法选择一个批处理配置:$\pi(x) = (\delta p_i, \delta d_i)_{i\in Q}$。<ul>
 <li>$\delta p_i$表示来自请求$i$的，要包含在该次批处理中的预处理阶段token的数量。</li>
 <li>$\delta d_i$表示来自请求$i$的，要包含在该次批处理中的解码阶段token的数量。</li>
 </ul>
@@ -3906,20 +3906,20 @@
 </ul>
 </li>
 <li>系统调度(System dynamics)<ul>
-<li>令系统在时隙$n$的状态为: $X(n)=(R(n), {P<em>i(n), D_i(n), Z_i(n), i\in Q_n})$。使用$X’(n)$表示时隙$n$进行决策后的状态，该状态是在考虑时隙$n$中新请求到达之前的状态。特别地，令$\pi(X(n))=(\delta p_i, \delta d_i)</em>{i\in Q}$：<script type="math/tex">P_i'(n) - P_i(n) - \delta_i^p, i\in\mathscr{Q}_n,\\ D_i'(n) = D_i(n) - \delta_i^d, i\in\mathscr{Q}_n,\\ \mathscr{Q}_n'=\mathscr{Q}_n \setminus\{i\in\mathscr{Q}_n:D'(n) = 0\}</script><ul>
+<li>令系统在时隙$n$的状态为: $X(n)=(R(n), \{P_i(n), D_i(n), Z_i(n), i\in Q_n\})$。使用$X’(n)$表示时隙$n$进行决策后的状态，该状态是在考虑时隙$n$中新请求到达之前的状态。特别地，令$\pi(X(n))=(\delta p_i, \delta d_i)_{i\in Q}$：<script type="math/tex">P_i'(n) - P_i(n) - \delta_i^p, i\in\mathscr{Q}_n,\\ D_i'(n) = D_i(n) - \delta_i^d, i\in\mathscr{Q}_n,\\ \mathscr{Q}_n'=\mathscr{Q}_n \setminus\{i\in\mathscr{Q}_n:D'(n) = 0\}</script><ul>
 <li>$\setminus$为集合差运算，表示从左边的集合中移除属于右边集合的元素。</li>
 <li>第一个公式表示经过该时隙处理后剩余的预填充token的数量。</li>
 <li>第二个公式表示经过该时隙处理后剩余的解码token的数量。</li>
 <li>第三个公式表示经过该时隙处理后剩余的请求的数量。</li>
 </ul>
 </li>
-<li>考虑在时隙$n$中会有新请求到达，则时隙$n+1$的状态可以表示为: $X(n+1)=(R(n+1), {P<em>i(n+1), D_i(n+1), Z_i(n+1), i\in\mathscr{Q}</em>{n+1}})$。时隙$n+1$的请求集合为$\mathscr{Q}_{n+1} = \mathscr{Q}_n’ \bigcup {\mathscr{A}_n}$。<script type="math/tex">\forall i\in \mathscr{Q}_n': P_i(n+1)=P_i'(n), D_i(n+1)=D_i'(n), Z_i(n+1)=Z_i(n)\\ \forall i\in \mathscr{A}_n: P_i(n+1)=v_p(i), D_i(n+1)=v_d(i), Z_i(n+1)=z'(i)</script><ul>
+<li>考虑在时隙$n$中会有新请求到达，则时隙$n+1$的状态可以表示为: $X(n+1)=(R(n+1), \{P_i(n+1), D_i(n+1), Z_i(n+1), i\in\mathscr{Q}_{n+1}\})$。时隙$n+1$的请求集合为$\mathscr{Q}_{n+1} = \mathscr{Q}_n’ \bigcup \{\mathscr{A}_n\}$。<script type="math/tex">\forall i\in \mathscr{Q}_n': P_i(n+1)=P_i'(n), D_i(n+1)=D_i'(n), Z_i(n+1)=Z_i(n)\\ \forall i\in \mathscr{A}_n: P_i(n+1)=v_p(i), D_i(n+1)=v_d(i), Z_i(n+1)=z'(i)</script><ul>
 <li>前者是未完成的旧批次，后者是新的批次。</li>
 </ul>
 </li>
 <li>对于剩余的处理事件$R(n+1)$:<script type="math/tex">R(n+1)=\begin{cases} R(n) - 1 & R(n)\gt 0\\ t_{b'} - 1 & R(n) = 0 \end{cases}</script><ul>
-<li>其中$t<em>{b’}$是处理新批次$b’:=\sum</em>{i\in\mathscr{Q}(n)}(\delta_i^p + \delta_i^d)$所需的时隙数。前者表示批次仍在处理，后者表示批次已经处理完成，准备处理下一个新的批次。</li>
-<li>假设iid假设成立，在任何调度算法下，${X_n:n\in N}$都是一个DTMC(离散马尔可夫链)。</li>
+<li>其中$t_{b’}$是处理新批次$b’:=\sum_{i\in\mathscr{Q}(n)}(\delta_i^p + \delta_i^d)$所需的时隙数。前者表示批次仍在处理，后者表示批次已经处理完成，准备处理下一个新的批次。</li>
+<li>假设iid假设成立，在任何调度算法下，$\{X_n:n\in N\}$都是一个DTMC(离散马尔可夫链)。</li>
 </ul>
 </li>
 </ul>
@@ -3934,15 +3934,15 @@
 </ul>
 </li>
 </ul>
-<p>一类为”work-conserving”的调度算法能够几乎实现系统最大化吞吐率。特别地，当$\pi(x)$能够形成一个满足$b’=b$的批次时，一个调度算法被称为是”work-conserving”的。即对于$\sum<em>{i\in\mathscr{Q}}(p_i+1(p_i=0))\ge b$，满足: $\pi(x)=\sum</em>{i\in\mathscr{Q}}(\delta_i^d + \delta_i^p) = b$(不会浪费任何带宽，保证每个批次都到达阈值，通常的实现方法是将预填充和解码的token混合到一个批次处理)。</p>
+<p>一类为”work-conserving”的调度算法能够几乎实现系统最大化吞吐率。特别地，当$\pi(x)$能够形成一个满足$b’=b$的批次时，一个调度算法被称为是”work-conserving”的。即对于$\sum_{i\in\mathscr{Q}}(p_i+1(p_i=0))\ge b$，满足: $\pi(x)=\sum_{i\in\mathscr{Q}}(\delta_i^d + \delta_i^p) = b$(不会浪费任何带宽，保证每个批次都到达阈值，通常的实现方法是将预填充和解码的token混合到一个批次处理)。</p>
 <p>$(K_p, K_d)$-FCFS算法:</p>
 <ul>
-<li>令$K_p, K_d$为不小于1的整数。在阶段$f\in{p, d}$加载token时，仅加载最多$K_f$个最旧请求的token(token的选择可以遵循任何规则，如最小剩余token优先，因为本身请求就是最旧的了？)</li>
-<li>假设每个DTMC都是不可约的(通过假设$P{a_n=0}\gt 0$，即一段时间内没有传入新的请求，如果这段时间足够长，那么最终work-conserving策略会清空队列)。</li>
+<li>令$K_p, K_d$为不小于1的整数。在阶段$f\in\{p, d\}$加载token时，仅加载最多$K_f$个最旧请求的token(token的选择可以遵循任何规则，如最小剩余token优先，因为本身请求就是最旧的了？)</li>
+<li>假设每个DTMC都是不可约的(通过假设$P\{a_n=0\}\gt 0$，即一段时间内没有传入新的请求，如果这段时间足够长，那么最终work-conserving策略会清空队列)。</li>
 <li>假设用户的请求到达系统是独立同分布的，每个请求的预填充 token 数量、解码(decode) token 数量以及特征也是独立同分布的。这些序列彼此独立。满足iid假设和第一矩假设(<a href="#Model_Setup">Model Setup</a>)，更进一步假设$\mathbb{E}[D_1^2]\lt\infin$具有二阶矩。</li>
-<li>如果系统满足以下负载条件，则说明DTMC${X_n, x\in N}$在任意work-conserving的算法中是正常返(positive recurrent)的。其中$\frac{b}{t_b}$表示处理token的最大速率。<script type="math/tex">\lambda(m_p+m_d)\lt\frac{b}{t_b}</script></li>
+<li>如果系统满足以下负载条件，则说明DTMC$\{X_n, x\in N\}$在任意work-conserving的算法中是正常返(positive recurrent)的。其中$\frac{b}{t_b}$表示处理token的最大速率。<script type="math/tex">\lambda(m_p+m_d)\lt\frac{b}{t_b}</script></li>
 <li>如果系统满足以下负载条件，<script type="math/tex">\lambda(m_p+m_d)\gt\frac{b}{t_b}</script><ul>
-<li>则说明对于时隙n时所有未处理的token$|X<em>n|=\sum</em>{i\in\mathscr{Q}<em>n}(P_i(n)+D_i(n))$，永远都有未处理完的token，即不是正常返的，无法终止。$$\mathbb{P}{\lim</em>{n\rightarrow\infin}|X_n|=\infin}=1$$</li>
+<li>则说明对于时隙n时所有未处理的token$|X_n|=\sum_{i\in\mathscr{Q}_n}(P_i(n)+D_i(n))$，永远都有未处理完的token，即不是正常返的，无法终止。<script type="math/tex">\mathbb{P}\{\lim_{n\rightarrow\infin}|X_n|=\infin\}=1</script></li>
 <li>当系统过载时，显然没有任何调度算法可以稳定系统。在此过载情况下，系统内存可能会耗尽，从而导致请求被阻止或丢弃。</li>
 </ul>
 </li>
@@ -3964,11 +3964,11 @@
 <li>另一种算法是分配给目前具有最少数量请求的引擎。</li>
 <li>当然，如果能够所有LLM引擎中未处理的token数量信息是已知的，则可以分配给使用具有最少token数量的引擎。<br>以上算法都是稳定的。证明过程原文中没看到，后续再观察。</li>
 </ul>
-<h4 id="一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests"><a href="#一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests" class="headerlink" title="一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)"></a>一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)</h4><p>假设有$j\in{1, 2}$两种类型的请求以$\lambda^j$的速度到达，平均token大小为$(m^p<em>j, m^d_j)$，假设算法满足$\sum</em>{j\in{1, 2}}\lambda^j(m_p^j + m_d^j)\lt\frac{b}{t_p}$，则该算法能使系统稳定。</p>
+<h4 id="一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests"><a href="#一个处理两种请求类型的LLM引擎-An-LLM-engine-serving-two-types-of-requests" class="headerlink" title="一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)"></a>一个处理两种请求类型的LLM引擎(An LLM engine serving two types of requests)</h4><p>假设有$j\in\{1, 2\}$两种类型的请求以$\lambda^j$的速度到达，平均token大小为$(m^p_j, m^d_j)$，假设算法满足$\sum_{j\in\{1, 2\}}\lambda^j(m_p^j + m_d^j)\lt\frac{b}{t_p}$，则该算法能使系统稳定。</p>
 <h4 id="LLM引擎的两种网络-Two-networks-of-LLM-engines"><a href="#LLM引擎的两种网络-Two-networks-of-LLM-engines" class="headerlink" title="LLM引擎的两种网络(Two networks of LLM engines)"></a>LLM引擎的两种网络(Two networks of LLM engines)</h4><ul>
 <li>fork-join network<ul>
-<li>假设有四个Agent，记为${a_j}$，$j\in{0, 1, 2, 3}$。其中$a_0$的请求到达速率为$\lambda$，当请求被$a_0$处理完后，会分为两个子请求，子请求1由$a_1$处理，子请求2由$a_2$处理。在同一请求的两个子请求都完成后会进行合并，并到达$a_3$进行处理。</li>
-<li>假设$a_j$的token大小为$(m_j^p, m_j^d)$，满足$\lambda(m_j^p+m_j^d)\lt \frac{b^j}{t^j_b}, j\in{0, 1, 2, 3}$，在$a_j$中都是$(K_p^j, K_d^j)$-FCFS work-conserving调度算法。则描述系统的DTMC是正常返的。</li>
+<li>假设有四个Agent，记为$\{a_j\}$，$j\in\{0, 1, 2, 3\}$。其中$a_0$的请求到达速率为$\lambda$，当请求被$a_0$处理完后，会分为两个子请求，子请求1由$a_1$处理，子请求2由$a_2$处理。在同一请求的两个子请求都完成后会进行合并，并到达$a_3$进行处理。</li>
+<li>假设$a_j$的token大小为$(m_j^p, m_j^d)$，满足$\lambda(m_j^p+m_j^d)\lt \frac{b^j}{t^j_b}, j\in\{0, 1, 2, 3\}$，在$a_j$中都是$(K_p^j, K_d^j)$-FCFS work-conserving调度算法。则描述系统的DTMC是正常返的。</li>
 <li>如果把$a_3$去掉也不影响。</li>
 </ul>
 </li>
@@ -4128,13 +4128,13 @@
 </li>
 <li>Single-Threaded Programs<ul>
 <li>使用的调度策略是Least-Attained-Service(LAS) algorithm，并引入Program-Level Attained Service(PLAS)。对于一个单线程的程序来说，运行时间就是所有先前已完成的LLM调用的总运行时间。</li>
-<li>如果提交了第j个LLM调用$c<em>j$，其程序ID为$c_j.id$，PLAS会根据所有先前具有相同ID的LLM调用的运行时间$t_k$之和，为$c_j$分配一个优先级$$p(c_j)=\sum</em>{k &lt; j, c_k.id=c_j.id}t_k$$</li>
+<li>如果提交了第j个LLM调用$c_j$，其程序ID为$c_j.id$，PLAS会根据所有先前具有相同ID的LLM调用的运行时间$t_k$之和，为$c_j$分配一个优先级<script type="math/tex">p(c_j)=\sum_{k < j, c_k.id=c_j.id}t_k</script></li>
 <li>优先值$p(c_j)$越大表明优先级越低，这是因为Autellix倾向于帮助较短的程序更快完成，减少响应时间。</li>
 </ul>
 </li>
 <li>Multi-Threaded Programs<ul>
 <li>由于多线程的程序被建模为由LLM调用构成的动态有向无环图。因此程序的执行时间由对应的DAG上的关键路径决定。<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Serving/Critical%20path%20for%20multi-threaded%20programs.png" alt="img"></li>
-<li>引入Adaptive Thread-Level Attained Service(ATLAS)，基于调用的服务的时间，根据程序的关键路径优先处理调用。旨在根据同一程序中其父节点$\mathcal{P}(c<em>j)$的优先级($p(c_k)$)和已完成的服务时间$t_k$，为每个新到达的LLM调用$c_j$分配一个优先级$$p(c_j)=\begin{cases}0, &amp; if\quad c_j\quad is\quad root\ max</em>{c_k\in\mathcal{P(c_j)}}{p(c_k) + t_k} &amp; otherwise\end{cases}$$</li>
+<li>引入Adaptive Thread-Level Attained Service(ATLAS)，基于调用的服务的时间，根据程序的关键路径优先处理调用。旨在根据同一程序中其父节点$\mathcal{P}(c_j)$的优先级($p(c_k)$)和已完成的服务时间$t_k$，为每个新到达的LLM调用$c_j$分配一个优先级<script type="math/tex">p(c_j)=\begin{cases}0, & if\quad c_j\quad is\quad root\\ max_{c_k\in\mathcal{P(c_j)}}\{p(c_k) + t_k\} & otherwise\end{cases}</script></li>
 <li>要结合处理最长关键路径线程和优先处理较短程序的目标，则需在全局进程表中加入一个标量: the longest observed critical path。程序中的每个活跃的LLM调用都会继承该值作为其初始的优先级，并且在call完成时，仅当其自身的critical path更长时才更新这个标量。由于给定程序的所有call都是从同一条目进行优先级派生的，因此调度器会自然地将程序的并行调用分组到一起，防止落后的线程延迟程序的完成时间。</li>
 </ul>
 </li>
@@ -4142,11 +4142,11 @@
 </li>
 <li>Preemptive Scheduling(抢占式调度)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Serving/LLM%20call%20lifecycle%20based%20on%20discretized%20prioritization.png" alt="img"><ul>
 <li>Multi-level Program-based Scheduling<ul>
-<li>基于连续优先级进行的调度和抢占程序可能会退化为最坏情况的循环调度。性能比FCFS(先到先处理)更差，导致不必要的上下文切换(CPU和GPU之间频繁的KV缓存交换)。于是Autellix将优先级离散化为一组有限的队列(参考操作系统的多级反馈队列)，假设有K个优先级递减的队列$(Q<em>1, Q_2, …, Q_K)$，每个队列$Q_i$覆盖一个优先级范围$[Q_i^{lo}, Q_i^{hi})$，其中$Q_1^{lo}=0, Q_K^{hi}=\infin, Q</em>{i+1}^{lo}=Q_i^{hi}$。</li>
+<li>基于连续优先级进行的调度和抢占程序可能会退化为最坏情况的循环调度。性能比FCFS(先到先处理)更差，导致不必要的上下文切换(CPU和GPU之间频繁的KV缓存交换)。于是Autellix将优先级离散化为一组有限的队列(参考操作系统的多级反馈队列)，假设有K个优先级递减的队列$(Q_1, Q_2, …, Q_K)$，每个队列$Q_i$覆盖一个优先级范围$[Q_i^{lo}, Q_i^{hi})$，其中$Q_1^{lo}=0, Q_K^{hi}=\infin, Q_{i+1}^{lo}=Q_i^{hi}$。</li>
 </ul>
 </li>
 <li>Anti-Starvation<ul>
-<li>为了解决低优先级的较长程序一直无法被处理而产生饥饿的问题。Autellix利用全局进程表衡量程序级别的饥饿情况，对于程序$p$的某个LLM调用$c$，如果总等待时间($W<em>{total}=W_p+W_c$)与总服务时间$T</em>{total}=T<em>p+T_c$之比超过阈值$\beta$，则将调用$c$提升到$Q_1$队列，并需要将$c$的等待时间和执行时间重置为0。可通过修改$\beta$的值权衡平均响应和公平性。$$\frac{W</em>{total}}{T_{total}}\ge \beta$$</li>
+<li>为了解决低优先级的较长程序一直无法被处理而产生饥饿的问题。Autellix利用全局进程表衡量程序级别的饥饿情况，对于程序$p$的某个LLM调用$c$，如果总等待时间($W_{total}=W_p+W_c$)与总服务时间$T_{total}=T_p+T_c$之比超过阈值$\beta$，则将调用$c$提升到$Q_1$队列，并需要将$c$的等待时间和执行时间重置为0。可通过修改$\beta$的值权衡平均响应和公平性。<script type="math/tex">\frac{W_{total}}{T_{total}}\ge \beta</script></li>
 </ul>
 </li>
 <li>Memory Management(内存管理)<ul>
@@ -4204,14 +4204,14 @@
 <p>Agent需解决由自然语言指令$q$指定的任务。其在由转移函数$T$定义的环境中执行操作。</p>
 <ul>
 <li>对于每个时间步$t_i$，环境状态$s_i$给出观察结果$o_i$，然后将其传递到模型$L$中。</li>
-<li>通过$L(q, M, o<em>i)\rightarrow a_i$生成动作$a_i$后，在环境中执行，于是得到环境转移$T(s_i, a_i)\rightarrow s</em>{i+1}$。</li>
+<li>通过$L(q, M, o_i)\rightarrow a_i$生成动作$a_i$后，在环境中执行，于是得到环境转移$T(s_i, a_i)\rightarrow s_{i+1}$。</li>
 <li>以上观察-行动的循环会一直迭代，直到模型预测停止动作$a_i=STOP$，或者达到任务终止条件(例如: 预定的最大步数)。</li>
 </ul>
 <p>每个完成的任务构成一次经验$e$，包含一条自然语言指令$q$和一个尝试解决任务的步骤轨迹$(P, O)$。</p>
 <ul>
-<li>每个步骤${p_i|p_i\in P}$包含从当前状态获得的Agent观察结果${o_i|o_i\in O}$。</li>
+<li>每个步骤$\{p_i|p_i\in P\}$包含从当前状态获得的Agent观察结果$\{o_i|o_i\in O\}$。</li>
 </ul>
-<p>目标是从过去或收集的经验集合$\mathcal{E}={e<em>i}</em>{i=1}^m$中，通过归纳模块$I$归纳出有用的工作流程$\mathcal{W}={w}$，即有$I(\mathcal{E})\rightarrow \mathcal{W}$。</p>
+<p>目标是从过去或收集的经验集合$\mathcal{E}=\{e_i\}_{i=1}^m$中，通过归纳模块$I$归纳出有用的工作流程$\mathcal{W}=\{w\}$，即有$I(\mathcal{E})\rightarrow \mathcal{W}$。</p>
 <p>然后会将归纳出的工作流程添加到Agent的记忆$M$中，作为后续任务解决的指导。即$M\bigcup \mathcal{W} \rightarrow M_w$</p>
 <h4 id="Workflow-Representation"><a href="#Workflow-Representation" class="headerlink" title="Workflow Representation"></a>Workflow Representation</h4><p><img src="" alt="img"></p>
 <p>Workflow由两个组件构成:</p>
@@ -4224,11 +4224,11 @@
 </ul>
 </li>
 </ul>
-<h4 id="Inducing-and-using-Workflow"><a href="#Inducing-and-using-Workflow" class="headerlink" title="Inducing and using Workflow"></a>Inducing and using Workflow</h4><p>AWM的核心是一个归纳模块$I$，从一个或多个过去的Agent经验$\mathcal{E}={e<em>i}</em>{i=1}^m$中归纳出一组工作流$\mathcal{W}$。</p>
+<h4 id="Inducing-and-using-Workflow"><a href="#Inducing-and-using-Workflow" class="headerlink" title="Inducing and using Workflow"></a>Inducing and using Workflow</h4><p>AWM的核心是一个归纳模块$I$，从一个或多个过去的Agent经验$\mathcal{E}=\{e_i\}_{i=1}^m$中归纳出一组工作流$\mathcal{W}$。</p>
 <ul>
-<li>每个经验$e=(q, P^e)$包含一个自然语言指令$q$和一个为了解决指令$q$由一系列步骤$P^e={p_1^e, …, p_n^e}$组成的动作轨迹$\mathcal{T}$。</li>
+<li>每个经验$e=(q, P^e)$包含一个自然语言指令$q$和一个为了解决指令$q$由一系列步骤$P^e=\{p_1^e, …, p_n^e\}$组成的动作轨迹$\mathcal{T}$。</li>
 </ul>
-<p>工作流的归纳模块通过接收经验$\mathcal{E}$并产生一组工作流$\mathcal{W}$来运作:$I(\mathcal{E})\rightarrow\mathcal{W}={w}={(d_j, P_j^d)}$</p>
+<p>工作流的归纳模块通过接收经验$\mathcal{E}$并产生一组工作流$\mathcal{W}$来运作:$I(\mathcal{E})\rightarrow\mathcal{W}=\{w\}=\{(d_j, P_j^d)\}$</p>
 <ul>
 <li>基于LLM的工作流归纳:<ul>
 <li>从一个或多个输入经验中提取公共子程序作为prompt输入LLM从而生成归纳$I$。</li>
@@ -4243,8 +4243,8 @@
 </li>
 <li>离线场景<ul>
 <li>当有额外的标准经验可用时(例如人工标注的数据或模型合成的数据)，采用离线模式运行，执行工作流归纳和利用两个独立的过程。<ul>
-<li>首先将所有的训练示例连接成一个prompt，并发送到LLM，以在训练时创建一组工作流: $I(\mathcal{E}<em>{train})\rightarrow \mathcal{W}</em>{offline}$。</li>
-<li>其次，AWM在推理时将所有归纳的工作流整合到Agent的记忆中，以解决测试指令。表示为$L(q, M+W<em>{offline}, o</em>{test<em>i})\rightarrow a</em>{test_i}$。</li>
+<li>首先将所有的训练示例连接成一个prompt，并发送到LLM，以在训练时创建一组工作流: $I(\mathcal{E}_{train})\rightarrow \mathcal{W}_{offline}$。</li>
+<li>其次，AWM在推理时将所有归纳的工作流整合到Agent的记忆中，以解决测试指令。表示为$L(q, M+W_{offline}, o_{test_i})\rightarrow a_{test_i}$。</li>
 <li>由于工作流在测试时推理之前被已经被完全归纳，因此Agent使用相同的工作流记忆$\mathcal{W}_{offline}$来解决每个测试。</li>
 </ul>
 </li>
@@ -4252,8 +4252,8 @@
 </li>
 <li>在线场景<ul>
 <li>没有额外的标准经验时，采用在线模式无监督运行。在这种环境中，只需处理测试的数据。在每次测试数据完成推理后，执行归纳整合，然后将经验利用到下一个测试数据的推理中。</li>
-<li>具体来说，Agent从默认记忆$M$开始，给定传递给Agent的第$t$个测试指令$q<em>t$，Agent尝试通过生成动作轨迹$(p_t1, p_t2, …)$解决任务，于是构成了经验$e_t=(q_t, {p_t})$。并采用一个基于LLM的评估模型输出一个二元标签$L</em>{eval}(e<em>t)\in{0, 1}$。该标签用于判断$e_t$是否成功解决了$q_t$。如果成功解决，则为1，将其转化为工作流$I(e_t)\rightarrow{w_t}$，并将${w_t}$添加到Agent的记忆中$M_t+{w_t}\rightarrow M</em>{t+1}$，用于辅助处理第$t+1$条指令。</li>
-<li>整个流程是通过迭代地预测动作并从流式测试指令中归纳工作流来继续这个记忆更新过程，直到所有测试都处理完毕。评估所有测试的预测动作轨迹${p_t}$的成功率，并报告平均分数。</li>
+<li>具体来说，Agent从默认记忆$M$开始，给定传递给Agent的第$t$个测试指令$q_t$，Agent尝试通过生成动作轨迹$(p_t1, p_t2, …)$解决任务，于是构成了经验$e_t=(q_t, \{p_t\})$。并采用一个基于LLM的评估模型输出一个二元标签$L_{eval}(e_t)\in\{0, 1\}$。该标签用于判断$e_t$是否成功解决了$q_t$。如果成功解决，则为1，将其转化为工作流$I(e_t)\rightarrow\{w_t\}$，并将$\{w_t\}$添加到Agent的记忆中$M_t+\{w_t\}\rightarrow M_{t+1}$，用于辅助处理第$t+1$条指令。</li>
+<li>整个流程是通过迭代地预测动作并从流式测试指令中归纳工作流来继续这个记忆更新过程，直到所有测试都处理完毕。评估所有测试的预测动作轨迹$\{p_t\}$的成功率，并报告平均分数。</li>
 </ul>
 </li>
 </ul>
@@ -4826,622 +4826,6 @@
       </tags>
   </entry>
   <entry>
-    <title>算法分析与问题的计算复杂度</title>
-    <url>/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/</url>
-    <content><![CDATA[<h1 id="算法分析与问题的计算复杂度"><a href="#算法分析与问题的计算复杂度" class="headerlink" title="算法分析与问题的计算复杂度"></a>算法分析与问题的计算复杂度</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="解决一个计算问题的过程"><a href="#解决一个计算问题的过程" class="headerlink" title="解决一个计算问题的过程"></a>解决一个计算问题的过程</h3><ul>
-<li>是否可计算</li>
-<li>是否能行可计算(在有限的复杂度内完成计算)</li>
-<li>算法设计与分析</li>
-<li>用计算机语言实现算法</li>
-<li>软件系统</li>
-</ul>
-<h3 id="可计算理论"><a href="#可计算理论" class="headerlink" title="可计算理论"></a>可计算理论</h3><ul>
-<li>计算模型</li>
-<li>可计算问题与不可计算问题</li>
-<li>计算模型的等价性——图灵/Church命题</li>
-</ul>
-<h3 id="计算复杂性理论"><a href="#计算复杂性理论" class="headerlink" title="计算复杂性理论"></a>计算复杂性理论</h3><p>在给定的计算模型下研究问题的复杂性</p>
-<ul>
-<li>固有复杂性</li>
-<li>上界</li>
-<li>下界</li>
-<li>平均</li>
-<li>复杂性问题的分类: P=NP?</li>
-<li>抽象复杂性研究</li>
-</ul>
-<h3 id="算法设计和分析"><a href="#算法设计和分析" class="headerlink" title="算法设计和分析"></a>算法设计和分析</h3><ul>
-<li>可计算问题的算法的设计与分析</li>
-<li>设计高效算法，分析算法性能，两者交互验证<ul>
-<li>设计算法的理论、方法和技术(设计正确高效的算法)</li>
-<li>分析算法的理论、方法和技术(判断算法是否足够高效)</li>
-</ul>
-</li>
-</ul>
-<h3 id="算法的定义"><a href="#算法的定义" class="headerlink" title="算法的定义"></a>算法的定义</h3><p>算法是一个满足下列条件的计算: </p>
-<ul>
-<li>输入: 有一个满足给定约束条件的输入</li>
-<li>输出: 满足给定约束条件的结果</li>
-<li>有穷性/终止性: 有限步内必须终止</li>
-<li>可行性: 每一个动作都能够被精确地机械执行<ul>
-<li>反例: 将大元素放数组后，小元素放数组前。但是无法精确执行，因为没有确定一个元素是大元素还是小元素的指标</li>
-</ul>
-</li>
-</ul>
-<h3 id="计算机问题求解的实例——补丁与bug问题"><a href="#计算机问题求解的实例——补丁与bug问题" class="headerlink" title="计算机问题求解的实例——补丁与bug问题"></a>计算机问题求解的实例——补丁与bug问题</h3><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>错误就是人们所说的bug。用户在试用软件时总是希望其错误越少越好，最好是没有错误的。但是推出一个没有错误的软件几乎不可能，所以很多软件公司都在疯狂地发放补丁(有时这种补丁甚至是收费的)。T公司就是其中之一。上个月，T公司推出了一个新的字处理软件，随后发放了一批补丁。最近T公司发现其发放的补丁有致命的问题，那就是一个补丁在排除某些错误的同时，往往会加入另一些错误，此字处理软件中只可能出现n个特定的错误，这n个错误是由软件本身决定的。T公司目前共发放了m个补丁，对于每一个补丁，都有特定的适用环境，某个补丁只有在当前软件中包含某些错误而同时又不不包含另一些错误时才可以使用，如果它被使用，它将修复某些错误而同时加入某些错误。另外，使用每个补丁都要耗一定的时间(即补丁程序的运行时间)。</p>
-<p>现在T公司的问题很简单: 其字处理软件的初始版本不幸地包含了全部n个错误，有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
-<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><p>T公司的T公司的字处理软件中可能出现的n个错误为集合$B={b<em>1, b_2, ···, b_n}$中的元素，T公司目前共发放了m个补丁，记为；$P={p_1, p_2, ···, p_m}$。对于每一个补丁$P_i$，假设存在错误集合: $B</em>{i+}$，$B<em>{i-}$，当软件包含了$B</em>{i+}$中的所有错误，而没有包含$B<em>{i-}$中的任何错误时，补丁$P_i$才可以被使用，否则不能使用，显然$B</em>{i+}$，$B<em>{i-}$交集为空。补丁$P_i$将修复某些错误而同时加入某些错误，设错误集合$F</em>{i+}$，$F<em>{i-}$使用过补丁$P_i$之后，$F</em>{i-}$中的任何错误都不会在软件中出现，而软件将包含$F<em>{i+}$中的所有错误，同样$F</em>{i+}$，$F_{i-}$交集为空。另外，使用每个补丁都要耗一定的时间$T_i$。</p>
-<p>现在T公司的字处理软件的初始版本不幸地包含了全部n个错误，试编写程序判断有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
-<h4 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h4><p>把n个bug的状态(存在和不存在)的组合用一个0-1字符串(模式串)表示，执行一个补丁本质上就是模式串的转换。<br>模式串可以作为一个图的定点，那么补丁就是图中的边。于是问题则转换为从全1模式串${1, 1, …, 1}$到全0模式串${0, 0, …, 0}$的转换。</p>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/bug%E4%B8%8E%E8%A1%A5%E4%B8%81%E9%97%AE%E9%A2%98.png" alt="img"></p>
-<h4 id="设计最短路径算法"><a href="#设计最短路径算法" class="headerlink" title="设计最短路径算法"></a>设计最短路径算法</h4><ul>
-<li>Dijkstra最短路径算法求解</li>
-</ul>
-<h2 id="寻找最优算法的途径"><a href="#寻找最优算法的途径" class="headerlink" title="寻找最优算法的途径"></a>寻找最优算法的途径</h2><ul>
-<li>设计算法A，求$W(n)$，得到算法类最坏情况下时间复杂度的一个上界</li>
-<li>寻找函数$F(n)$，使得对任何算法都存在一个规模为n的输入，并且该算法在这个输入下至少要做$F(n)$次基本运算，得到该算法类最坏情况下时间复杂度的一个下界<ul>
-<li>给定问题和基本运算后就能确定一个算法类</li>
-</ul>
-</li>
-<li>如果$W(n)=F(n)$或$W(n)=\Theta(F(n))$，则A是最优的，下界是紧的</li>
-<li>如果$W(n)\gt F(n)$，A不是最优的或者$F(n)$的下界过低。需要: <ul>
-<li>改进原算法A或设计新的算法A’，使得$W’(n)\lt W(n)$</li>
-<li>重新证明新下界$F’(n)$，使得$F’(n)\gt F(n)$</li>
-<li>重复以上两个步骤，直到最终得到$W’(n)=F’(n)$或者$W’(n)=\Theta(F’(n))$</li>
-</ul>
-</li>
-</ul>
-<h3 id="平凡下界"><a href="#平凡下界" class="headerlink" title="平凡下界"></a>平凡下界</h3><ul>
-<li>算法的输入规模和输出规模是其平凡下界<ul>
-<li>n阶置换: 求解的时间复杂度下界为$\Omega(n!)$</li>
-<li>求n次实系数多项式在给定x时的值: 求解的时间复杂度下界为$\Omega(n)$</li>
-<li>两个n阶矩阵的乘积: 求解的时间复杂度下界为$\Omega(n^2)$</li>
-<li>货郎问题: 求解的时间复杂度下界为$\Omega(n^2)$</li>
-</ul>
-</li>
-</ul>
-<h3 id="以找最大问题为例"><a href="#以找最大问题为例" class="headerlink" title="以找最大问题为例"></a>以找最大问题为例</h3><ul>
-<li>获得某基本运算的算法类的上界<ul>
-<li>以比较作为基本运算的算法类的上界为: n-1</li>
-</ul>
-</li>
-<li>所设计算法的复杂度<ul>
-<li>在n个数的数组中找最大的数，以比较做基本运算的算法类中的任何算法在最坏情况下至少要做n-1次比较<ul>
-<li>因为最大的数是唯一的，其他n-1个数必须在比较后被淘汰，一次比较至多淘汰一个数，所以至少需要n-1次比较</li>
-</ul>
-</li>
-<li>下界为: n-1</li>
-</ul>
-</li>
-<li>于是所设计的算法便是最优算法</li>
-</ul>
-<h2 id="决策树-Decision-Tree"><a href="#决策树-Decision-Tree" class="headerlink" title="决策树(Decision Tree)"></a>决策树(Decision Tree)</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
-<li>决策树是一棵二叉树。<ul>
-<li>在二叉树的t层至多$2^t$个结点，根节点是第0层</li>
-<li>深度为d的二叉树至多$2^{d+1}-1$个结点</li>
-<li>n个结点的二叉树的深度至少为$\lfloor logn\rfloor$</li>
-<li>设t为二叉树的树叶个数，d为树的深度，如果树的每个内结点都有2个儿子结点，则$t\lt 2^d$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E4%BA%8C%E5%8F%89%E6%A0%91%E6%80%A7%E8%B4%A8%E5%BD%92%E7%BA%B3%E6%B3%95.png" alt="img"></li>
-</ul>
-</li>
-<li>对于给定问题(以比较运算作为基本运算)规定一个决策树的构造规则。求解这个问题的不同算法所构造的决策树结构不一样。<ul>
-<li>一个问题决定了一类决策树，具有相同的构造规则，决定了求解该问题的一个算法类。</li>
-</ul>
-</li>
-<li>给定一个算法的决策树，对于任何输入实例，算法将从树根开始，沿一条路径向下，在每个结点做一次基本操作(例如比较操作)，然后根据比较结果到达某个儿子节点或者在该节点直接停机。对于给定实例的计算恰好对应了一条从树根到树叶或者某个内部结点的路径。</li>
-</ul>
-<h3 id="输入规模"><a href="#输入规模" class="headerlink" title="输入规模"></a>输入规模</h3><ul>
-<li>给定一个算法，对于不同的输入，算法将在对应决策树的某个结点(树叶或者内部结点)停机，将该结点标记为输入，问题的输入规模对应于决策树的结点总数或者叶结点数。</li>
-</ul>
-<h3 id="时间复杂度-确定问题的难度"><a href="#时间复杂度-确定问题的难度" class="headerlink" title="时间复杂度(确定问题的难度)"></a>时间复杂度(确定问题的难度)</h3><ul>
-<li>最坏情况下的时间复杂度对应于决策树的深度。</li>
-<li>平均情况下的时间复杂度对应于决策树的平均路径长度。</li>
-</ul>
-<h2 id="检索算法的时间复杂度分析"><a href="#检索算法的时间复杂度分析" class="headerlink" title="检索算法的时间复杂度分析"></a>检索算法的时间复杂度分析</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>检索问题是给定按递增顺序排列的数组L(项数$n\gt 1$)和数x，如果x在L中，输出x的下标，否则输出0</p>
-<h3 id="顺序检索算法时间复杂度"><a href="#顺序检索算法时间复杂度" class="headerlink" title="顺序检索算法时间复杂度"></a>顺序检索算法时间复杂度</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 顺序检索算法</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">search_inde</span><span class="params">(<span class="type">int</span>* L, <span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> j = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">while</span>(j &lt;= <span class="built_in">len</span>(L) &amp;&amp; L[j] != x)</span><br><span class="line">    j += <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span>(j &gt; <span class="built_in">len</span>(L))</span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>设x在L每个位置(n)和空隙(n+1)的概率都是$\frac{1}{2n+1}$。</p>
-<ul>
-<li><p>最坏复杂度: $W(n) = n$</p>
-</li>
-<li><p>平均复杂度: $A(n) = \frac{[(1+2+…+n)+n(n+1)]}{(2n+1)} \approx \frac{3n}{4}$</p>
-</li>
-</ul>
-<h3 id="二分检索算法时间复杂度"><a href="#二分检索算法时间复杂度" class="headerlink" title="二分检索算法时间复杂度"></a>二分检索算法时间复杂度</h3><ul>
-<li>最坏复杂度: $W(n) = \lfloor log n\rfloor + 1, n\gt 1$<ul>
-<li>$W(n) = 1 + W(\lfloor \frac{n}{2} \rfloor) = 1 + \lfloor log\lfloor \frac{n}{2} \rfloor \rfloor + 1 = 1 = \lfloor log\lfloor n \rfloor \rfloor - 1 + 1$(对数除法运算法则)</li>
-</ul>
-</li>
-<li>平均复杂度: <ul>
-<li>令$n=2^k - 1$，$S_t, 1\lt t\lt k$为算法做t次比较时的输入个数 $k \lt logn$</li>
-<li>$S_1 = 1 = 2^0, S_2 = 2 = 2^1, S_3 = 2^2, …, S_t=2^{t-1}, …, S_k=2^{k-1} + n + 1$(n+1)为缝隙中情况</li>
-<li>$A(n) = \frac{1S<em>1 + 2S_2 + … + kS_k}{2n+1} = \frac{\sum</em>{t=1}^{k}t2^{t-1}+k(n+1)}{2n+1}=\frac{(k-1)2^k + 1 + k(n+1)}{2n+1}\approx \frac{k-1}{2} + \frac{k}{2} = k - \frac{1}{2} = \lfloor logn \rfloor + \frac{1}{2}$<ul>
-<li>$\sum<em>{t=1}^{k}t2^{t-1}$拆分为$\sum</em>{t=1}^{k}t2^{t} - \sum<em>{t=1}^{k}t2^{t-1} = \sum</em>{t=1}^{k}t2^t - \sum_{t=0}^{k-1}(t+1)2^t$</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h3><p>对于给定输入规模n, 决策树是一棵二叉树, 其结点被标记为 1, 2, … , n, 且标记规则是:</p>
-<ul>
-<li>首先与 x 比较的 L 的项的下标标记为树根。</li>
-<li>假设某结点被标记为 i:<ul>
-<li>i 的左儿子是：当 $x &lt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
-<li>i 的右儿子是：当 $x &gt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
-</ul>
-</li>
-<li>若 $x &lt; L(i)$ 时算法停止, 则 i 没有左儿子</li>
-<li>若 $x &gt; L(i)$ 时算法停止, 则 i 没有右儿子</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E6%A3%80%E7%B4%A2%E7%AE%97%E6%B3%95%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
-<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li>给定输入，算法将从根开始，沿一条路径前进，直到某个结点为止。所执行的基本运算次数是这条路径的结点个数，最坏情况下的基本运算次数是树的深度+1。<ul>
-<li>对于任何一个搜索算法存在某个规模为 n 的输入使得该算法至少要做 $\lfloor logn \rfloor + 1$次比较。</li>
-</ul>
-</li>
-<li>对于有序表搜索问题, 在以比较作为基本运算的算法类中, 二分法在最坏情况下是最优的.</li>
-</ul>
-<h2 id="排序算法的时间复杂度分析"><a href="#排序算法的时间复杂度分析" class="headerlink" title="排序算法的时间复杂度分析"></a>排序算法的时间复杂度分析</h2><h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// bubbleSort</span></span><br><span class="line"><span class="comment">// 交换只发生在相邻的元素之间</span></span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">bubbleSort</span><span class="params">(<span class="type">int</span>* L, n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> index = n;</span><br><span class="line">  <span class="keyword">while</span>(index &gt; <span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    k = index - <span class="number">1</span>;</span><br><span class="line">    index = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">1</span>; j &lt;= k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(L[j] &gt; L[j+<span class="number">1</span>])</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">int</span> tmp = L[j];</span><br><span class="line">        L[j] = L[j+<span class="number">1</span>];</span><br><span class="line">        L[j+<span class="number">1</span>] = tmp;</span><br><span class="line">        index = j;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="置换与逆序"><a href="#置换与逆序" class="headerlink" title="置换与逆序"></a>置换与逆序</h4><ul>
-<li>逆序<ul>
-<li>令$L={1, 2, …, n}$，排序的任何输入为L上的置换。在置换$a_1a_2…a_n$中若$i<j$，但$a_i>a_j$，则称($a_i, a_j$)为该置换的一个逆序。</li>
-</ul>
-</li>
-<li>逆序序列<ul>
-<li>在$i$的右边，并且小于i的元素的个数记作$b_i$，$i=1, 2, …, n$。</li>
-<li>($b_1, b_2, …, b_n$)为置换的逆序序列。<ul>
-<li>总共可以有$n!$个不同的逆序序列(1, 2, 3, …, n个)。</li>
-<li>置换与逆序序列构成一一对应。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>逆序数<ul>
-<li>置换中的逆序总数($\sum_{i=1}^{n}b_i$)</li>
-</ul>
-</li>
-<li><p>实例</p>
-<ul>
-<li>3, 1, 6, 5, 8, 7, 2, 4</li>
-<li>逆序数: 12</li>
-<li><p>降序逆序序列: </p>
-<p>1|2|3|4|5|6|7|8<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>0|0|2|0|2|3|2|3</p>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li>最坏复杂度<ul>
-<li>$W(n) = O(n^2)$，至多巡回$O(n)$次，每次$O(n)$</li>
-<li>对换只发生在相邻元素之间，每次相邻元素交换只消除1个逆序，比较次数不少于逆序数，而最大逆序数为$\frac{n(n-1)}{2}$，于是$W(n)=\Omega(n^2)$</li>
-</ul>
-</li>
-<li>平均复杂度<ul>
-<li>假设各种输入是等可能的，置换$\alpha$的逆序序列是($b_1, b_2, …, b_n$)，置换$\alpha’$的逆序序列为($0-b_1, 1-b_2, …, n-1-b_n$)，$\alpha$和$\alpha’$的逆序数之和为$\frac{n(n-1)}{2}$。将$n!$种不同的置换分成$\frac{n!}{2}$组，每组的逆序之和为$\frac{n(n-1)}{2}$<ul>
-<li>$\alpha’$是补集置换，记录的是顺序数，因为经过置换后，其顺序数的逆序贡献等价于原置换的逆序数的逆序贡献。</li>
-</ul>
-</li>
-<li>平均逆序数为$\frac{n(n-1)}{4}$</li>
-<li>平均交换次数为$\Omega(\frac{n(n-1)}{4})$</li>
-</ul>
-</li>
-<li>因此均为$\Theta(n^2)$</li>
-</ul>
-<h3 id="快速排序与二分归并排序"><a href="#快速排序与二分归并排序" class="headerlink" title="快速排序与二分归并排序"></a>快速排序与二分归并排序</h3><h4 id="复杂度分析-2"><a href="#复杂度分析-2" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li>快速排序<ul>
-<li>最坏情况: $O(n^2)$</li>
-<li>平均情况: $O(nlogn)$</li>
-</ul>
-</li>
-<li>二分归并排序<ul>
-<li>最坏情况: $O(nlogn)$</li>
-<li>平均情况: $O(nlogn)$</li>
-</ul>
-</li>
-</ul>
-<h3 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h3><h4 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h4><p>设T是一棵深度为d的二叉树，结点为L中的元素。若能满足以下条件，则为堆:</p>
-<ul>
-<li>所有内结点(可能一点除外)的度数为2</li>
-<li>所有树叶至多在相邻的两层</li>
-<li>d-1层的所有树叶在内结点的右边</li>
-<li>d-1层最右边的内结点可能度数为1(只有左儿子，没有右儿子)</li>
-<li>每个结点的元素不小于儿子的元素(不满足这条的称作堆结构或者伪堆)</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86.png" alt="img"></p>
-<h4 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h4><ul>
-<li>根据二叉树的性质和堆的定义<ul>
-<li>$left(i)=2i$</li>
-<li>$right(i)=2i+1$</li>
-</ul>
-</li>
-<li><p>n个结点的堆恰好有$\lceil \frac{n}{2}\rceil$片树叶<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E2.png" alt="img"></p>
-</li>
-<li><p>结点的高度: 结点到树叶的距离</p>
-<ul>
-<li>同一高度的结点分布在树的不同层<ul>
-<li>结点的深度: 结点到树根的距离</li>
-</ul>
-</li>
-<li>同一深度的结点分布在树的同一层</li>
-</ul>
-</li>
-</ul>
-<h4 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h4><ul>
-<li><p>整理</p>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%AE%9E%E4%BE%8B.png" alt="img"></p>
-</li>
-<li><p>建堆</p>
-<ul>
-<li>从下往上整理，堆有n个结点，树叶有$\lceil\frac{n}{2}\rceil$片，最大的内结点标号为$n-\lceil\frac{n}{2}\rceil=\lfloor\frac{n}{2}\rfloor$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%AE%9E%E4%BE%8B.png" alt="img"></li>
-</ul>
-</li>
-<li><p>排序</p>
-<ul>
-<li>建堆后从后往前每个结点下沉<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B2.png" alt="img"></li>
-</ul>
-</li>
-</ul>
-<h4 id="复杂度分析-3"><a href="#复杂度分析-3" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
-<li><p>整理</p>
-<ul>
-<li>每次调用为$O(1)$，子堆大小至多为原来的$\frac{2}{3}$<ul>
-<li><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6.png" alt="img"></li>
-</ul>
-</li>
-<li>递推不等式$T(n)\lt T(\frac{2n}{3}) + \Theta(1)$<ul>
-<li>$T(n) = \Theta(logn)$($T(h) = \Theta(h)$)<ul>
-<li>h为结点i的高度(距离树叶的最大距离)，n为以i为根的子树的结点数。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>建堆</p>
-<ul>
-<li>按照高度来计数结点数，乘以$O(h)$，再求和。</li>
-<li>而整理的复杂度依赖于所整理结点的高度。</li>
-<li>$T(n) = \sum_{\lfloor logn \rfloor}^{h=0}高为h的结点数 \times O(h)$<ul>
-<li>n个元素的堆高度为h的层至多存在$\lceil\frac{n}{2^{h+1}}\rceil$个结点(归纳法证明)。<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B01.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B02.png" alt="img"></li>
-</ul>
-</li>
-<li>n个结点的建堆算法的时间复杂度是$O(n)$<ul>
-<li>对高为h的结点调用整理算法的时间是$O(h)$: $T(n) = \sum<em>{h=0}^{\lfloor logn \rfloor}\lceil\frac{n}{2^{h+1}}\rceil O(h) = O(n\sum</em>{h=0}^{\infin}\frac{h}{2^{h+1}} = O(n)$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC2.png" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>排序</p>
-<ul>
-<li>$O(nlogn)$<ul>
-<li>建堆复杂度为$O(n)$</li>
-<li>整理需要n-1次，每次$O(logn)$</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="排序问题的决策树"><a href="#排序问题的决策树" class="headerlink" title="排序问题的决策树"></a>排序问题的决策树</h3><p>考虑以比较运算作为基本运算的排序算法类<br>任取算法，输入$L={x_1, x_2, …, x_n}$</p>
-<ul>
-<li>第一次比较的元素为$x_i, x_j$，作为决策树根为$(i, j)$</li>
-<li><p>假设结点k已经标记为$(m, n)$</p>
-<ul>
-<li>$x_m &lt; x_n$: <ul>
-<li>如果算法结束了，则将k的左儿子标记为输出。</li>
-<li>如果下一步是比较$x_p, x_q$，则k的左儿子标记为$(p, q)$</li>
-</ul>
-</li>
-<li>$x_m &gt; x_n$<ul>
-<li>如果算法结束了，则将k的右儿子标记为输出</li>
-<li>如果下一步是比较$x_p, x_q$，则k的右儿子标记为$(p, q)$</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>任意输入对应了决策树中从树根到树叶的一条路径，算法最坏情况下的比较次数则为树的深度。</p>
-</li>
-</ul>
-<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E7%9A%84%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
-<ul>
-<li>删除非二叉的内结点(灰色结点)，得到的二叉树为B-树，其深度肯定不超过决策树的深度，有$n!$片树叶</li>
-</ul>
-<ul>
-<li>设t为B-树中的树叶数，d为树的深度，$t\lt 2^d$(归纳法证明)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/B%E6%A0%91%E5%8F%B6%E5%AD%90%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%85%B3%E7%B3%BB.png" alt="img"></li>
-</ul>
-<h4 id="最坏情况复杂度的下界"><a href="#最坏情况复杂度的下界" class="headerlink" title="最坏情况复杂度的下界"></a>最坏情况复杂度的下界</h4><ul>
-<li>对于给定的n，任何通过比较对n个元素排序的算法的决策树的深度至少为$\lceil logn!\rceil$(从上两条结论得到)</li>
-<li>任何通过比较对n个元素排序的算法在最坏情况下的时间复杂度是$\lceil logn! \rceil$，可近似为$nlogn - 1.5n$<ul>
-<li>最坏情况下的比较次数是树的深度。</li>
-<li>证明思路: 用对数乘加变换<ul>
-<li>$log n! = \sum<em>{j=1}^{n}log j \gt \int_1^n logx dx = loge\int</em>{1}^{n}lnx dx = loge(nlnn - n + 1) = nlogn - nloge + loge \approx nlogn - 1.5n$<ul>
-<li>$x = e^{lnx}$</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>堆排序算法在最坏情况阶达到最优。<ul>
-<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{1}^{n}logxdx=nlnn - n + 1 = \Omega(nlogn)$</li>
-<li>$log(n!) = \sum<em>{k=1}^{n}logk \gt \int</em>{2}^{n+1}logxdx=O(nlogn)$</li>
-</ul>
-</li>
-</ul>
-<h4 id="平均情况复杂度的下界"><a href="#平均情况复杂度的下界" class="headerlink" title="平均情况复杂度的下界"></a>平均情况复杂度的下界</h4><ul>
-<li>epl(T): 假设所有的输入等概率分布，令epl(T)表示B-树中从根到树叶的所有路径长度之和，$\frac{epl(T)}{n!}$的最小值对应平均情况时间复杂性的下界。<ul>
-<li>分析具有最小epl(T)值的树的结构求得最小值。</li>
-</ul>
-</li>
-<li>在具有t片树叶的所有B-树中，树叶分布在两个相邻层上的树的epl值最小。<ul>
-<li>反证法?: 假设树T的深度为d，假设树叶x在第k层，$k&lt;d-1$。取d-1层的某个结点y，y有两个儿子是第d层的树叶，y的两个儿子作为x的儿子得到树T’<ul>
-<li>$epl(T)-epl(T’)=(2d+k) - (d-1) + 2(k+1) = d-k-1 &gt; 0$</li>
-<li>T’的树叶相距层数小于T的树叶相距层数，且T’的epl值小于T的epl值</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>epl的下界</p>
-<ul>
-<li>具有t片树叶且epl值最小的B-树T满足: $epl(T) = t\lfloor logt\rfloor + 2(t-2^{\lfloor logt \rfloor})$<ul>
-<li>$d\gt \lceil logt\rceil$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E2.png" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>在输入等概分布下任何通过比较对n个项排序的算法平均比较次数至少为$\lfloor log n!\rfloor$，近似为$nlogn - 1.5n$</p>
-<ul>
-<li>算法类中任何算法的平均比较次数是该算法决策树T的$\frac{epl(T)}{n!}$<ul>
-<li>$A(n)\gt \frac{epl(T)}{n!} = \frac{n!\lfloor logn!\rfloor + 2(n! - 2^{\lfloor logn!\rfloor})}{n!}=\lfloor logn!\rfloor +\epsilon\approx nlogn - 1.5n(0\lt \epsilon &lt; 1)$</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>堆排序在平均情况下阶达到最优。</p>
-</li>
-</ul>
-<h3 id="排序算法的比较"><a href="#排序算法的比较" class="headerlink" title="排序算法的比较"></a>排序算法的比较</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">算法</th>
-<th style="text-align:center">最坏情况</th>
-<th style="text-align:center">平均情况</th>
-<th style="text-align:center">占用空间</th>
-<th style="text-align:center">时间最优性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">冒泡排序</td>
-<td style="text-align:center">$O(n^2)$</td>
-<td style="text-align:center">$O(n^2)$</td>
-<td style="text-align:center">原地</td>
-<td style="text-align:center"></td>
-</tr>
-<tr>
-<td style="text-align:center">快速排序</td>
-<td style="text-align:center">$O(n^2)$</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(logn)$</td>
-<td style="text-align:center">平均最优</td>
-</tr>
-<tr>
-<td style="text-align:center">归并排序</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(n)$</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">堆排序</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">$O(nlogn)$</td>
-<td style="text-align:center">原地</td>
-<td style="text-align:center">最优</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h2 id="选择算法的时间复杂度分析"><a href="#选择算法的时间复杂度分析" class="headerlink" title="选择算法的时间复杂度分析"></a>选择算法的时间复杂度分析</h2><p><img src="" alt="img"></p>
-<h3 id="管道问题"><a href="#管道问题" class="headerlink" title="管道问题"></a>管道问题</h3><ul>
-<li>某区域有n口油井，需要修建输油管道。根据设计要求，水平方向有一条主管道，每口油井修一条垂直方向的支管道通向主管道。问如何选择主管道的垂直方向位置，使得支管道长度的综合最小？</li>
-<li><p>最优解是垂直方向上的所有支管道坐标的中位数</p>
-</li>
-<li><p>简单算法</p>
-<ul>
-<li>调用k次选最小算法，复杂度为$O(kn)$</li>
-<li>先排序，然后输出第k小的数，复杂度为$O(nlogn)$</li>
-</ul>
-</li>
-<li>分治算法<ul>
-<li>假设元素彼此不等</li>
-<li>用某个元素$m^<em>$作为标准将总集合$S$划分为$S_1$($&lt;m^</em>$), $S_2$($&gt;m^*$)。</li>
-<li>分治:<ul>
-<li>如果$k\lt |S_1|$，则在$S_1$中找第k小</li>
-<li>如果$k = |S_1| + 1$，则$m^*$是第k小</li>
-<li>如果$k\gt |S_1| + 1$，则在$S_2$中找第$k-|S_1|-1$小</li>
-</ul>
-</li>
-<li>伪码<ul>
-<li>行2: $O(n)$，每5个数找中位数构成M。</li>
-<li>行3: $W(\frac{n}{5})$，在M中再找中位数$m^*$。</li>
-<li>行4: $O(n)$，用$m^*$划分集合$S$。</li>
-<li>行8-9: $W(\frac{7n}{10})$，进行递归</li>
-<li>$W(n)\lt W(\frac{n}{5}) + W(\frac{7n}{10}) + O(n)$<br><img src="" alt="img"></li>
-</ul>
-</li>
-<li>该算法的效率取决于子问题的规模<ul>
-<li>算法工作量为$O(n)$<ul>
-<li>$W(n) \lt cn(1+0.9+0.9^2+…) = O(n)$</li>
-<li>$|M|$与归约后子问题的规模之和小于n，递归树每行的工作量便能构成公比小于1的等比级数，于是算法复杂度为$O(n)$<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>分组时如果不是5个元素一组，而是3个或7个<ul>
-<li>求$m^*$的工作量与$|M|=\frac{n}{t}$相关，t为每组的元素数，如果t大，那么$|M|$就小。</li>
-<li>归约后的子问题大小与分组元素t有关，t大，子问题规模就大。<ul>
-<li>复杂度满足方程$W(n) = W(\frac{n}{3}) + W(\frac{4n}{6}) + cn = \Theta(nlogn)$<br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="下界的证明方法-构造最坏的输入"><a href="#下界的证明方法-构造最坏的输入" class="headerlink" title="下界的证明方法: 构造最坏的输入"></a>下界的证明方法: 构造最坏的输入</h3><ul>
-<li>任意给定一个算法，对于任意输入x都存在一个确定的操作序列$\tau$<ul>
-<li>$\tau$中的操作分成两类:<ul>
-<li>决定性的: 能够对确定输出结果提供有效的信息。</li>
-<li>非决定性的: 对确定结果没有帮助的冗余操作。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>最坏情况便是: <ul>
-<li>根据算法构造某个输入实例x，使得算法对x的操作序列$\tau$包含尽量多的冗余非决定性操作。</li>
-<li>给出冗余操作+必要操作的计数公式便能得到下界。</li>
-</ul>
-</li>
-</ul>
-<h3 id="选最大与最小的算法"><a href="#选最大与最小的算法" class="headerlink" title="选最大与最小的算法"></a>选最大与最小的算法</h3><ul>
-<li>任何通过比较找最大和最小的算法至少需要$\lceil\frac{3n}{2}\rceil - 2$次比较。<ul>
-<li>任意给定一个算法，根据算法的比较结果构造输入T，使得算法对T至少做$\lceil\frac{3n}{2}\rceil-2$次比较。</li>
-<li>不妨假设n彼此不等的数，max代表最大，min代表最小。<ul>
-<li>基于比较的暴力算法要找到最大必须确定有n-1个数比max小。找到最小的数必须确定有n-1个数比min小。共$2n-2$次比较。</li>
-<li>FindMaxMin算法将数两两分组比较，是最优算法，是复杂度的下界。<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h3 id="找第二大问题"><a href="#找第二大问题" class="headerlink" title="找第二大问题"></a>找第二大问题</h3><ul>
-<li><p>元素x的权: $w(x)$，表示以x为根的子树中的结点数。</p>
-<ul>
-<li>初始，$w(x_i)=1, i=1, 2, 3, …, n$</li>
-<li>赋值原则: 在比较的时候进行赋值或者调整赋值。只对没有失败过的元素(权大于0)进行赋值。权大者胜，原来胜的次数多的仍旧是胜，输入值也大。<ul>
-<li>$w(x), w(y) &gt; 0$<ul>
-<li>权大者胜: 若$w(x) &gt; w(y)$，那么x的值大于y的值，$w(x)\leftarrow w(x) + w(y), w(y)\leftarrow 0$。</li>
-<li>权等则任意分配: 若$w(x) = w(y)$，那么可考虑为x的值大于y的值的情况，也可考虑为y的值大于x的值。</li>
-<li>无意义不变: 若$w(x) = w(y) = 0$，x和y值不变。</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>构造树</p>
-<ul>
-<li>初始是森林，包含n个结点。</li>
-<li>若x, y是子树的树根，则算法比较x, y。</li>
-<li>若x, y以前没有参加过比较，任意赋值给x, y，比如$x&gt;y$，那么y作为x的儿子。</li>
-<li>若x, y已经在前面的比较中赋过值，且$x&gt;y$，那么把y作为x的儿子，以y为根的子树作为x的子树。<br><img src="" alt="img"></li>
-</ul>
-</li>
-<li><p>任何找第二大算法，针对上述赋值规则产生的输入，通过与最大元素的比较直接淘汰的元素数至少是$\lceil logn\rceil$。</p>
-<ul>
-<li>$w<em>k$表示max在第k次比较后形成以max为根子树的结点总数。$w_k\lt 2w</em>{k-1}$。</li>
-<li>设K为max最终与权不为0的结点的比较次数。<ul>
-<li>$n=w_K\lt 2^K\Rightarrow K\gt logn \Rightarrow K \gt \lceil logn\rceil$</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>任何通过比较找第二大的算法至少需要$n+\lceil logn\rceil-2$次比较。<ul>
-<li>确定最大需要n-1次比较。</li>
-<li>确定第二大还要淘汰K-1个元素，至少用$\lceil logn\rceil - 1$次比较。</li>
-</ul>
-</li>
-<li>锦标赛算法是找第二大的最优算法。</li>
-</ul>
-<h3 id="找中位数问题"><a href="#找中位数问题" class="headerlink" title="找中位数问题"></a>找中位数问题</h3><ul>
-<li>设n为奇数，任何通过比较运算找n个数的中位数(median)的算法在最坏情况下至少做$\frac{3n}{2} - \frac{3}{2}$次比较。<ul>
-<li>决定性的比较: 建立x与median的关系的比较，比较时y和median的关系可以不知道。<ul>
-<li>$\exist y (x&gt;y \&amp; y\gt median)$，x满足上述条件的第一次比较。</li>
-<li>$\exist y (x&lt;y \&amp; y\lt median)$，x满足上述条件的第一次比较。</li>
-</ul>
-</li>
-<li>非决定性的比较<ul>
-<li>$x&gt;median, y<median$，这时$x>y$的比较不是决定性的，因为根据median本可知道x和y的大小。</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>为了找到中位数，必须要做n-1次决定性的比较，针对算法构造输入，使得非决定性比较达到$\frac{n-1}{2}$次。</p>
-</li>
-<li><p>对于求中位数的任意算法，构造输入</p>
-<ul>
-<li>分配一个值给中位数median。</li>
-<li>如果算法比较x与y，且x与y没有被赋值，那么赋值x, y使得$x&gt;median, y&lt;median$。</li>
-<li>如果算法比较x与y，且$x&gt;median$，y没有被赋值，则赋值y使得$y&lt;median$。</li>
-<li>如果算法比较x与y，且$x<median$，y没有被赋值，则赋值y使得$y>median$。</li>
-<li>如果存在$\frac{n-1}{2}$个元素已得到小于median的值，则对未赋值的全部元素分配大于median的值。</li>
-<li>如果存在$\frac{n-1}{2}$个元素已得到大于median的值，则对未赋值的全部元素分配小于median的值。</li>
-<li>如果只剩下1个元素，则分配为median。<br><img src="" alt="img"></li>
-</ul>
-</li>
-<li><p>复杂度分析</p>
-<ul>
-<li>Select算法在阶上达到最优。<br><img src="" alt="img"></li>
-</ul>
-</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><div class="table-container">
-<table>
-<thead>
-<tr>
-<th style="text-align:center">问题</th>
-<th style="text-align:center">算法</th>
-<th style="text-align:center">最坏情况</th>
-<th style="text-align:center">问题下界</th>
-<th style="text-align:center">最优性</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">找最大</td>
-<td style="text-align:center">Findmax</td>
-<td style="text-align:center">$n-1$</td>
-<td style="text-align:center">n-1</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找最大最小</td>
-<td style="text-align:center">FindMaxMin</td>
-<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
-<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找第二大</td>
-<td style="text-align:center">锦标赛</td>
-<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
-<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
-<td style="text-align:center">最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找中位数</td>
-<td style="text-align:center">Select(找第$\frac{k}{2}$小)</td>
-<td style="text-align:center">$O(n)$</td>
-<td style="text-align:center">$\frac{3n}{2}-\frac{3}{2}$</td>
-<td style="text-align:center">阶最优</td>
-</tr>
-<tr>
-<td style="text-align:center">找第k小</td>
-<td style="text-align:center">Select</td>
-<td style="text-align:center">$O(n)$</td>
-<td style="text-align:center">$n+\min{k, n-k+1}-2$</td>
-<td style="text-align:center">阶最优</td>
-</tr>
-</tbody>
-</table>
-</div>
-<h2 id="归约确认问题"><a href="#归约确认问题" class="headerlink" title="归约确认问题"></a>归约确认问题</h2>]]></content>
-      <categories>
-        <category>高级算法设计</category>
-      </categories>
-      <tags>
-        <tag>高级算法设计</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>分布式系统简介</title>
     <url>/2024/09/21/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/2024-09-21-%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%AE%80%E4%BB%8B/</url>
     <content><![CDATA[<h1 id="分布式系统简介"><a href="#分布式系统简介" class="headerlink" title="分布式系统简介"></a>分布式系统简介</h1><h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><ul>
@@ -5971,7 +5355,7 @@ j =
 <li>The processes do not share a global clock that is instantaneously accessible to these processes(不共享可以即时访问的全局时钟)</li>
 <li>Process execution and message transfer are asynchronous(进程运行和消息收发是异步发)</li>
 <li>Without loss of generality(为了不失去一般性), we assume that each process is running on a different processor(假设每个进程运行在不同的处理器上)</li>
-<li>Let $C<em>{ij}$  denote the channel(信道) from process $p_i$ to process $p_j$ and let $m</em>{ij}$ denote a message(消息) sent by $p_i$ to $p_j$</li>
+<li>Let $C_{ij}$  denote the channel(信道) from process $p_i$ to process $p_j$ and let $m_{ij}$ denote a message(消息) sent by $p_i$ to $p_j$</li>
 <li>The message transmission delay is definite and unpredictable(传输延迟确定的但不可预测，只要传了，延迟就是确定的，但不知道什么时候传，所以是不可预测？)</li>
 </ul>
 <h2 id="A-Model-of-Distributed-Executions-分布式执行的模型"><a href="#A-Model-of-Distributed-Executions-分布式执行的模型" class="headerlink" title="A Model of Distributed Executions(分布式执行的模型)"></a>A Model of Distributed Executions(分布式执行的模型)</h2><ul>
@@ -6080,7 +5464,7 @@ j =
 <h3 id="causal-ordering-因果序"><a href="#causal-ordering-因果序" class="headerlink" title="causal ordering(因果序)"></a>causal ordering(因果序)</h3><ul>
 <li>is based on Lamport’s “happens before” relation</li>
 <li>A system that supports the causal ordering model satisfies the following property:<ul>
-<li>CO: For any two messages $m<em>{ij}$ and $m</em>{kj}$, if $send(m<em>{ij})\rightarrow send(m</em>{kj})$, then $rec(m<em>{ij})\rightarrow rec(m</em>{kj})$</li>
+<li>CO: For any two messages $m_{ij}$ and $m_{kj}$, if $send(m_{ij})\rightarrow send(m_{kj})$, then $rec(m_{ij})\rightarrow rec(m_{kj})$</li>
 <li>This property ensures that causally related messages destined to the same destination are delivered in an order that is consistent with their causality relation(因果相关的信息与其因果关系一致地顺序传递)</li>
 </ul>
 </li>
@@ -6113,7 +5497,7 @@ j =
 </ul>
 <h4 id="A-Channel-State-信道状态"><a href="#A-Channel-State-信道状态" class="headerlink" title="A Channel State(信道状态)"></a>A Channel State(信道状态)</h4><ul>
 <li>The state of a channel depends upon the states of the process it connects(取决于信道所连接的进程的状态)</li>
-<li>Let $SC<em>{ij}^{x, y}$ denote the state of a channel $C</em>{ij}$</li>
+<li>Let $SC_{ij}^{x, y}$ denote the state of a channel $C_{ij}$</li>
 <li>The state of a channel is defined as follows:<ul>
 <li>$SC_{ij}^{x, y}$ denotes all messages that $p_i$ sent upto event $e_i^x$ and which process $p_j$ had not received until event $e_j^y$(进程i在事件x发送消息，并且进程j在事件y接收到消息)</li>
 </ul>
@@ -6122,7 +5506,7 @@ j =
 <h4 id="Global-State-全局状态，不太可能，只存在与理论"><a href="#Global-State-全局状态，不太可能，只存在与理论" class="headerlink" title="Global State(全局状态，不太可能，只存在与理论)"></a>Global State(全局状态，不太可能，只存在与理论)</h4><ul>
 <li>The global state of a distributed system is a collection of the local states of the processes and the channels(进程本地状态和信道状态的集合)</li>
 <li>Notationally, global state $GS$ is defined as,<ul>
-<li>$GS={\bigcup<em>iLS_i^{x_i}, \bigcup</em>{j, k}SC_{jk}^{y_j, z_k}}$</li>
+<li>$GS=\{\bigcup_iLS_i^{x_i}, \bigcup_{j, k}SC_{jk}^{y_j, z_k}\}$</li>
 </ul>
 </li>
 <li>For a global state to be meaningful, the states of all the components of the distributed system must be recorded at the same instant(分布式系统中的所有组件的状态需要在相同的时刻记录)</li>
@@ -6136,14 +5520,14 @@ j =
 </li>
 <li>Such states are called consistent global states and are meaningful global states.</li>
 <li>Inconsistent global states are not meaningful in the sense that a distributed system can never be in an inconsistent state(分布式系统永远不可能处于不一致状态).</li>
-<li>A global state $GS={\bigcup<em>iLS_i^{x_i}, \bigcup</em>{j, k}SC_{jk}^{y_j, z_k}}$ is a consistent global state iff(if and only if):<ul>
-<li>$\forall m<em>{ij}:send(m</em>{ij})\nleq LS<em>i^{x_i} \Leftrightarrow m</em>{ij} \notin SC<em>{ij}^{x_i, y_j}\bigwedge rec(m</em>{ij})\nleq LS_j^{y_j}$(发送的消息要不还在信道中，要不就已经被接收，不能出现有接收但没发送)</li>
+<li>A global state $GS=\{\bigcup_iLS_i^{x_i}, \bigcup_{j, k}SC_{jk}^{y_j, z_k}\}$ is a consistent global state iff(if and only if):<ul>
+<li>$\forall m_{ij}:send(m_{ij})\nleq LS_i^{x_i} \Leftrightarrow m_{ij} \notin SC_{ij}^{x_i, y_j}\bigwedge rec(m_{ij})\nleq LS_j^{y_j}$(发送的消息要不还在信道中，要不就已经被接收，不能出现有接收但没发送)</li>
 <li>channel state $SC_{ij}^{y_i, z_k}$ and process state $LS_j^{z_k}$ must not include any message that process $p_i$ sent after executing event $e_i^{x_i}$</li>
 </ul>
 </li>
 <li>Example<ul>
-<li>A global state $GS<em>1={LS_1^1, LS_2^3, LS_3^3, LS_4^2}$ is inconsistent, because the state of $p_2$ has recorded the receipt of message $m</em>{12}$, however, the state of $p_1$ has not recorded its send</li>
-<li>A global state $GS<em>2$ consisting of local states ${LS_1^2, LS_2^4, LS_3^4, LS_4^2}$ is consistent, all the channels are empty except $C</em>{21}$ that contains message $m_{21}$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution2.png" alt="img"></li>
+<li>A global state $GS_1=\{LS_1^1, LS_2^3, LS_3^3, LS_4^2\}$ is inconsistent, because the state of $p_2$ has recorded the receipt of message $m_{12}$, however, the state of $p_1$ has not recorded its send</li>
+<li>A global state $GS_2$ consisting of local states $\{LS_1^2, LS_2^4, LS_3^4, LS_4^2\}$ is consistent, all the channels are empty except $C_{21}$ that contains message $m_{21}$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution2.png" alt="img"></li>
 </ul>
 </li>
 </ul>
@@ -6169,7 +5553,7 @@ j =
 <li>In this situation, all the information available at $e_i$ could be made accessible at $e_j$</li>
 <li>All such events $e_i$ belong to the past of $e_j$<ul>
 <li>Let $Past(e_j)$ denote all events in the past of $e_j$ in a computation $(H, \rightarrow)$. Then, <ul>
-<li>$Past(e_j) = {e_i\mid \forall e_i\in H, e_i\rightarrow e_j}$</li>
+<li>$Past(e_j) = \{e_i\mid \forall e_i\in H, e_i\rightarrow e_j\}$</li>
 <li>$Past(e_j)$ represents all events on the past light cone that affect $e_j$  </li>
 </ul>
 </li>
@@ -6180,7 +5564,7 @@ j =
 <li>$max(Past_i(e_j))$ is the <strong>latest event</strong> at process $p_i$ that affected event $e_j$</li>
 </ul>
 </li>
-<li>Let $Max_Past(e<em>j) = \bigcup</em>{(\forall i)} {max(Past_i(e_j))}$(所有进程中的latest event)<ul>
+<li>Let $Max_Past(e_j) = \bigcup_{(\forall i)} \{max(Past_i(e_j))\}$(所有进程中的latest event)<ul>
 <li>$Max_Past(e_j)$ consists of the latest event at every process that affected event $e_j$ and is referred to as the surface of the past cone of $e_j$(past cone的latest平面)</li>
 </ul>
 </li>
@@ -6190,12 +5574,12 @@ j =
 <h3 id="Future-Cone-of-an-Event-事件因果关系中的果"><a href="#Future-Cone-of-an-Event-事件因果关系中的果" class="headerlink" title="Future Cone of an Event(事件因果关系中的果)"></a>Future Cone of an Event(事件因果关系中的果)</h3><ul>
 <li>The future of an event $e_j$, denoted by $Future(e_j)$, contains all events $e_i$ that are causally affected by $e_j$</li>
 <li>In a computation $(H, \rightarrow)$, $Future(e_j)$ is defined as:<ul>
-<li>$Future(e_j) = {e_i\mid \forall e_i \in H, e_j\rightarrow e_i}$</li>
+<li>$Future(e_j) = \{e_i\mid \forall e_i \in H, e_j\rightarrow e_i\}$</li>
 </ul>
 </li>
 <li>Define $Future_i(e_j)$ as the set of those events of $Future(e_j)$ that are on process $p_i$<ul>
 <li>define $min(Future_i(e_j))$ as the <strong>first event</strong> on process $p_i$ that is affected by $e_j$</li>
-<li>Define $Min<em>Future(e_j)$ as $\bigcup</em>{(\forall i)}{min(Future_i(e_j))}$, which consists of the first event at every process that is causally affected by event $e_j$(所有进程中的first event)</li>
+<li>Define $Min_Future(e_j)$ as $\bigcup_{(\forall i)}\{min(Future_i(e_j))\}$, which consists of the first event at every process that is causally affected by event $e_j$(所有进程中的first event)</li>
 <li>$Min_Future(e_j)$ is referred to as the surface of the future cone of $e_j$(事件j的future cone平面)</li>
 <li>All events at a process $p_i$ that occurred after $max(Past_i(e_j))$ but before $min(Future_i(e_j))$ are concurrent with $e_j$(与事件j无因果关系)</li>
 <li>Therefore, all and only those events of computation $H$ that belong to the set “$H - Past(e_j) - Future(e_j)$” are concurrent with event $e_j$(所有事件去掉有因果关系的得到的便是并发的事件)</li>
@@ -6321,8 +5705,8 @@ j =
 <li>In general, every time R1 is executed, $d$ can have a different value; however, typically $d$ is kept at 1(通常是加1)</li>
 </ul>
 </li>
-<li>R2: Each message piggybacks the clock value of its sender at sending time.(每条信息都附带了它的发送者在发送时的时钟值) When a process $p<em>i$ receives a message with timestamp $C</em>{msg}$, it executes the following actions:(选取本地的时间戳和接收到的消息中的时间戳中更大的作为新的本地时间戳)<ul>
-<li>$C<em>i = max(C_i, C</em>{msg})$</li>
+<li>R2: Each message piggybacks the clock value of its sender at sending time.(每条信息都附带了它的发送者在发送时的时钟值) When a process $p_i$ receives a message with timestamp $C_{msg}$, it executes the following actions:(选取本地的时间戳和接收到的消息中的时间戳中更大的作为新的本地时间戳)<ul>
+<li>$C_i = max(C_i, C_{msg})$</li>
 <li>Execute R1(再更新后执行一次R1，因为接收到的消息是在OS层的，要交付给应用层的过程中需要触发事件)</li>
 <li>Deliver the message<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/The%20space-time%20diagram%20of%20a%20distributed%20execution_scalar.png" alt="img"></li>
 </ul>
@@ -6460,8 +5844,8 @@ j =
 <h4 id="Singhal-Kshemkalyani’s-Differential-Technique-差分优化技术"><a href="#Singhal-Kshemkalyani’s-Differential-Technique-差分优化技术" class="headerlink" title="Singhal-Kshemkalyani’s Differential Technique(差分优化技术)"></a>Singhal-Kshemkalyani’s Differential Technique(差分优化技术)</h4><ul>
 <li>Singhal-Kshemkalyani’s differential technique is based on the observation that between successive message sends to the same process, only a few entires of the vector clock at the sender process are likely to change(在向同一进程发送的连续消息之间，发送方进程中只有少量的向量时钟发生变化)</li>
 <li>When a process $p_i$ sends a message to a process $p_j$, it piggybacks only those entires of its vector clock that differ since the last message sent to $p_j$(进程i发给进程j消息的时候，附带的只有那些与前一次发送时向量时钟不同的部分)<ul>
-<li>If entries $i<em>1, i_2, …, i</em>{n<em>1}$ of the vector clock at $p_i$ have changed to $v_1, v_2, …,v</em>{n_1}$, respectively, since the last message sent to $p_j$, then process $p_i$ piggybacks a compressed timestamp of the form:<ul>
-<li>${(i<em>1, v_1), (i_2, v_2), …, (i</em>{n<em>1}, v</em>{n_1})}$ to the next message to $p_j$</li>
+<li>If entries $i_1, i_2, …, i_{n_1}$ of the vector clock at $p_i$ have changed to $v_1, v_2, …,v_{n_1}$, respectively, since the last message sent to $p_j$, then process $p_i$ piggybacks a compressed timestamp of the form:<ul>
+<li>$\{(i_1, v_1), (i_2, v_2), …, (i_{n_1}, v_{n_1})\}$ to the next message to $p_j$</li>
 </ul>
 </li>
 </ul>
@@ -6499,11 +5883,11 @@ j =
 </li>
 <li>Since the last communication from $p_i$ to $p_j$, only those elements of vector clock $vt_i[k]$ have changed for which $LS_i[j] &lt; LU_i[k]$ holds</li>
 <li>Hence, only these elements need to be sent in a message from $p_i$ to $p_j$. When $p_i$ sends a message to $p_j$, it sends only a set of tuples<ul>
-<li>${(x, vt_i[x])\mid LS_i[j] &lt; LU_i[x]}$</li>
+<li>$\{(x, vt_i[x])\mid LS_i[j] &lt; LU_i[x]\}$</li>
 <li>as the vector timestamp to $p_j$, instead of sending a vector of $n$ entries in a message</li>
 </ul>
 </li>
-<li>Thus the entire vector of size $n$ is not sent along with a message. Instead, only the elements in the vector clock that have changed since the last message send to that process are sent in the format ${(p_1, latest_value), (p_2, latest_value), …}$, where $p_i$ indicates that the $p_i^{th}$ component of the vector clock has changed(在LS和LU找不同，发送的消息前者是不同的位置，后者是要更新的值)</li>
+<li>Thus the entire vector of size $n$ is not sent along with a message. Instead, only the elements in the vector clock that have changed since the last message send to that process are sent in the format $\{(p_1, latest_value), (p_2, latest_value), …\}$, where $p_i$ indicates that the $p_i^{th}$ component of the vector clock has changed(在LS和LU找不同，发送的消息前者是不同的位置，后者是要更新的值)</li>
 <li>This technique requires that the communication channels follow FIFO discipline for message delivery(消息传输遵守FIFO先进先出)</li>
 <li>This technique substantially reduces the cost of maintaining vector clocks in large systems, especially if the process interations exhibit temporal or spatial localities(降低在大型系统中维护向量时钟的成本，特别是进程交互包含了时空位置)</li>
 </ul>
@@ -6796,16 +6180,16 @@ j =
 <li>Assume that message $m$ takes time $t$ to transfer and $m’$ takes $t’$ to transfer</li>
 <li>The offset between A’s clock and B’s clock is $O$. If A’s local clock time is $A(t)$ and B’s local clock time is $B(t)$, <ul>
 <li>$A(t)=B(t)+O$</li>
-<li>$T<em>{i-2}=T</em>{i-3}+t+O$</li>
-<li>$T<em>i=T</em>{i-1}-O+t’$</li>
+<li>$T_{i-2}=T_{i-3}+t+O$</li>
+<li>$T_i=T_{i-1}-O+t’$</li>
 </ul>
 </li>
 <li>Assuming $t=t’$, the offset $O_i$ can be estimated as:<ul>
-<li>$O<em>i=(T</em>{i-2}-T<em>{i-3}+T</em>{i-1}-T{i})/2$</li>
+<li>$O_i=(T_{i-2}-T_{i-3}+T_{i-1}-T{i})/2$</li>
 </ul>
 </li>
 <li>The round-trip delay is estimated as:<ul>
-<li>$D<em>i=(T_i-T</em>{i-3})-(T<em>{i-1}-T</em>{i-2})$</li>
+<li>$D_i=(T_i-T_{i-3})-(T_{i-1}-T_{i-2})$</li>
 </ul>
 </li>
 <li>The eight most recent pairs of $(O_i, D_i)$ are retained</li>
@@ -6827,9 +6211,9 @@ j =
     <content><![CDATA[<h1 id="全局状态及快照算法"><a href="#全局状态及快照算法" class="headerlink" title="全局状态及快照算法"></a>全局状态及快照算法</h1><h2 id="System-model"><a href="#System-model" class="headerlink" title="System model"></a>System model</h2><ul>
 <li>The system consists of a collection of $n$ processes $p_1, p_2, …, p_n$ that are connected by channels</li>
 <li>There are no globally shared memory and physical global clock and processes communicate by passing messages through communication channels with unpredicatable message delays<ul>
-<li>$C<em>{ij}$ denotes the channel from process $p_i$ to process $p_j$ and its state is denoted by $SC</em>{ij}$<ul>
+<li>$C_{ij}$ denotes the channel from process $p_i$ to process $p_j$ and its state is denoted by $SC_{ij}$<ul>
 <li>For a channel $C_{ij}$, the following set of messages can be defined based on the local states of the processes $p_i$ and $p_j$</li>
-<li>Transit: $transit(LS<em>i, LS_j)={m</em>{ij}|send(m<em>{ij}\in LS_i \wedge rec(m</em>{ij})\notin LS_j}$(发送端发送了，但接收端没接收，说明消息在信道)</li>
+<li>Transit: $transit(LS_i, LS_j)=\{m_{ij}|send(m_{ij}\in LS_i \wedge rec(m_{ij})\notin LS_j\}$(发送端发送了，但接收端没接收，说明消息在信道)</li>
 </ul>
 </li>
 </ul>
@@ -6840,7 +6224,7 @@ j =
 <li>the message receive event</li>
 </ul>
 </li>
-<li>For a message $m<em>{ij}$ that is sent by process $p_i$ to process $p_j$, let $send(m</em>{ij})$ and $rec(m_{ij})$ denote its send and receive events</li>
+<li>For a message $m_{ij}$ that is sent by process $p_i$ to process $p_j$, let $send(m_{ij})$ and $rec(m_{ij})$ denote its send and receive events</li>
 <li>At any distant, the state of process $p_i$, denoted by $LS_i$, is a result of the sequence of all the events executed by $p_i$ till that instant(进程的状态是之前所有执行过的事件)<ul>
 <li>For an event $e$ and a process state $LS_i, e\in LS_i$ iff $e$ belongs to the sequence of events that have taken process $p_i$ to state $LS_i$</li>
 <li>For an event $e$ and a process state $LS_i, e\notin LS_i$, iff $e$ does not belong to the sequence of events that have taken process $p_i$ to state $LS_i$</li>
@@ -6851,7 +6235,7 @@ j =
 <li>In FIFO model, each channel acts as a first-in first-out message queue and thus, message ordering is preserved by a channel(FIFO消息是有序到达)</li>
 <li>In non-FIFO model, a channel acts like a set in which the sender process adds messages and the receiver process removes messages from it in a random order.(non-FIFO消息是无序到达)</li>
 <li>A system that supports causal delivery of messages satisfies the following property: <ul>
-<li>“For any two messages $m<em>{ij}$ and $m</em>{kj}$, if $send(m<em>{ij})\rightarrow send(m</em>{kj})$, then $rec(m<em>{ij}) −→ rec(m</em>{kj})$”</li>
+<li>“For any two messages $m_{ij}$ and $m_{kj}$, if $send(m_{ij})\rightarrow send(m_{kj})$, then $rec(m_{ij}) −→ rec(m_{kj})$”</li>
 <li>因果序，先发和后发有因果序，则先发的会先收，且和后收有因果序</li>
 </ul>
 </li>
@@ -6859,14 +6243,14 @@ j =
 <h2 id="Consistent-global-state"><a href="#Consistent-global-state" class="headerlink" title="Consistent global state"></a>Consistent global state</h2><ul>
 <li>The global state of a distributed system is a collection of the local states of the processes and the channels<ul>
 <li>Notationally, global state $GS$ is defined as<ul>
-<li>$GS={\bigcup<em>i LS_i, \bigcup</em>{i, j}SC_{ij}}$(所有的进程状态和所有的信道状态)</li>
+<li>$GS=\{\bigcup_i LS_i, \bigcup_{i, j}SC_{ij}\}$(所有的进程状态和所有的信道状态)</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>A global state $GS$ is a consistent global state iff it satisfies the following two conditions:<ul>
-<li>$C1: send(m<em>{ij})\in LS_i \Rightarrow m</em>{ij}\in SC<em>{ij} \bigoplus rec(m</em>{ij})\in LS_j$, ($\bigoplus$ is Ex-OR operator, 异或)(发出去的消息要么被接收要么在信道，不可能同时在接收方和信道，也不可能都不在)</li>
-<li>$C2: send(m<em>{ij})\notin LS_i \Rightarrow m</em>{ij}\notin SC<em>{ij}\wedge rec(m</em>{ij})\notin LS_j$(没发的消息不可能出现在接收方和信道)</li>
+<li>$C1: send(m_{ij})\in LS_i \Rightarrow m_{ij}\in SC_{ij} \bigoplus rec(m_{ij})\in LS_j$, ($\bigoplus$ is Ex-OR operator, 异或)(发出去的消息要么被接收要么在信道，不可能同时在接收方和信道，也不可能都不在)</li>
+<li>$C2: send(m_{ij})\notin LS_i \Rightarrow m_{ij}\notin SC_{ij}\wedge rec(m_{ij})\notin LS_j$(没发的消息不可能出现在接收方和信道)</li>
 </ul>
 </li>
 </ul>
@@ -6882,7 +6266,7 @@ j =
 </ul>
 </li>
 <li>How to determine the instant when a process takes its snapshot(如何确定何时该进行快照)<ul>
-<li>A process $p<em>j$ must record its snapshot before processing a message $m</em>{ij}$ that was sent by process $p_i$ after recording its snapshot.(在发送进程快照后才发送的消息，接收进程必须在接收后处理该消息之前进行快照)</li>
+<li>A process $p_j$ must record its snapshot before processing a message $m_{ij}$ that was sent by process $p_i$ after recording its snapshot.(在发送进程快照后才发送的消息，接收进程必须在接收后处理该消息之前进行快照)</li>
 </ul>
 </li>
 </ul>
@@ -6904,9 +6288,9 @@ j =
 <h4 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h4><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Marker Sending Rule for process i</span><br><span class="line">1- Process i records its state</span><br><span class="line">2- For each outgoing channel C on which a marker has not been sent, i sends a marker along C, before i sends further messages along C</span><br><span class="line"></span><br><span class="line">Marker Receiving Rule for process j</span><br><span class="line">On receiving a marker along channel C:</span><br><span class="line">    if j has not recorded its state then</span><br><span class="line">        Record the state of C as the empty set</span><br><span class="line">        Follow the &quot;Marker Sending Rule&quot;</span><br><span class="line">    else</span><br><span class="line">        Record the state of C as the set of messages</span><br><span class="line">        received along C after j&#x27;s state was recorded</span><br><span class="line">        and before j received the marker along C</span><br></pre></td></tr></table></figure>
 <h4 id="Correctness"><a href="#Correctness" class="headerlink" title="Correctness"></a>Correctness</h4><ul>
 <li>Due to FIFO property of channels, it follows that no message sent after the marker on that channel is recorded in the channel state. Thus, condition $C2$ is satisfied(FIFO的特性，使得marker后发送的消息不会被记录，满足$C2$规则)</li>
-<li>When a process $p<em>j$ receives message $m</em>{ij}$ that precedes the marker on channel $C<em>{ij}$($p_j$从信道$C</em>{ij}$收到在marker之前的$m_{ij}$后), it acts as follows: <ul>
-<li>If process $p<em>j$ has not taken its snapshot yet, then it includes $m</em>{ij}$ in its recorded snapshot. (如果$p<em>j$还没进行快照，那么在后面进行快照的时候，需要包括$m</em>{ij}$)</li>
-<li>Otherwise, it records $m<em>{ij}$ in the state of the channel $C</em>{ij}$. Thus, condition C1 is satisfied(否则把$m<em>{ij}$记录在信道$C</em>{ij}$的状态中，满足$C1$规则)</li>
+<li>When a process $p_j$ receives message $m_{ij}$ that precedes the marker on channel $C_{ij}$($p_j$从信道$C_{ij}$收到在marker之前的$m_{ij}$后), it acts as follows: <ul>
+<li>If process $p_j$ has not taken its snapshot yet, then it includes $m_{ij}$ in its recorded snapshot. (如果$p_j$还没进行快照，那么在后面进行快照的时候，需要包括$m_{ij}$)</li>
+<li>Otherwise, it records $m_{ij}$ in the state of the channel $C_{ij}$. Thus, condition C1 is satisfied(否则把$m_{ij}$记录在信道$C_{ij}$的状态中，满足$C1$规则)</li>
 </ul>
 </li>
 <li>$C1$和$C2$都满足，因此该算法是正确的</li>
@@ -6964,8 +6348,8 @@ j =
 <li>Every white process takes its snapshot at its convenience, but no later than the instant it receives a red message.(每个白色进程都会在该进程方便的时候拍摄快照，但不能迟于它受到其他进程的红色消息的那一刻，最迟可以在接收到红色消息之后，处理红色消息之前)</li>
 <li>Every white process records a history of all white messages sent or received by it along each channel(每个白色进程都记录了它沿每个信道发送或接收的所有白色消息的历史记录)</li>
 <li>When a process turns red, it sends these histories along with its snapshot to the initiator process that collects the global snapshot(当一个进程变为红色时，会将这些历史记录及其快照发送给收集全局快照的启动器进程initiator)</li>
-<li>The initiator process evaluates $transit(LS<em>i, LS_j)$ to compute the state of a channel $C</em>{ij}$ as given below:<ul>
-<li>$SC<em>{ij}=$ white messages sent by $p_i$ on $C</em>{ij}$ — white messages received by $p<em>j$ on $C</em>{ij}={send(m<em>{ij})|send(m</em>{ij})\in LS<em>i} - {rec(m</em>{ij})|rec(m_{ij})\in LS_j}$(得到的便是在信道中的消息)</li>
+<li>The initiator process evaluates $transit(LS_i, LS_j)$ to compute the state of a channel $C_{ij}$ as given below:<ul>
+<li>$SC_{ij}=$ white messages sent by $p_i$ on $C_{ij}$ — white messages received by $p_j$ on $C_{ij}=\{send(m_{ij})|send(m_{ij})\in LS_i\} - \{rec(m_{ij})|rec(m_{ij})\in LS_j\}$(得到的便是在信道中的消息)</li>
 </ul>
 </li>
 </ul>
@@ -6978,7 +6362,7 @@ j =
 <li>After having received an acknowledgement from every process, the initiator increases its vector clock to $s$ and broadcasts a dummy message to all processes.(启动器收到所有的进程的确认回复后，启动器将自己的虚拟时钟修改为$s$，然后广播一个dummy消息)</li>
 <li>The receipt of this dummy message forces each recipient to increase its clock to a value $\geq s$ if not already $\geq s$.(接收到dummy消息的进程也把自己的时钟修改为$s$)</li>
 <li>Each process takes a local snapshot and sends it to the initiator when (just before) its clock increases from a value less than $s$ to a value $\geq s$.(每个进程在将少于$s$的时钟值修改为$s$前，拍摄一个本地快照，并将快照发送给启动器)</li>
-<li>The state of $C<em>{ij}$ is all messages sent along $C</em>{ij}$, whose timestamp is smaller than $s$ and which are received by $p_j$ after recording $LS_j$.(信道的状态是时间戳小于s，且在接收进程拍摄快照后才接收的所有消息)</li>
+<li>The state of $C_{ij}$ is all messages sent along $C_{ij}$, whose timestamp is smaller than $s$ and which are received by $p_j$ after recording $LS_j$.(信道的状态是时间戳小于s，且在接收进程拍摄快照后才接收的所有消息)</li>
 </ul>
 </li>
 </ul>
@@ -7015,10 +6399,10 @@ j =
 </ul>
 <h4 id="Correctness-1"><a href="#Correctness-1" class="headerlink" title="Correctness"></a>Correctness</h4><ul>
 <li>For any two processes $p_i$ and $p_j$, the following property is satisfied:<ul>
-<li>$send(m<em>{ij})\notin LS_i \Rightarrow rec(m</em>{ij})\notin LS<em>j$(消息$m</em>{ij}$不在进程$p<em>i$的快照$LS_i$中，能推断出接收消息$m</em>{ij}$也不在进程$p_j$的快照$LS_j$中)</li>
+<li>$send(m_{ij})\notin LS_i \Rightarrow rec(m_{ij})\notin LS_j$(消息$m_{ij}$不在进程$p_i$的快照$LS_i$中，能推断出接收消息$m_{ij}$也不在进程$p_j$的快照$LS_j$中)</li>
 <li>This is due to the causal ordering property of the underlying system as explained next<ul>
-<li>Let a message $m<em>{ij}$ be such that $rec(token_i)\rightarrow send(m</em>{ij})$($send(m_{ij})\notin LS_i$)</li>
-<li>Then $send(token<em>j)\rightarrow send(m</em>{ij})$ and the underlying causal ordering property ensures that $rec(token<em>j)$, at which instant process $p_j$ records $LS_j$, happens before $rec(m</em>{ij})$(进程$p<em>i$先发送$token_j$给进程$p_j$，然后才发送$m</em>{ij}$，所以进程$p<em>j$先收到$token_j$拍摄快照$LS_j$，然后才接收$m</em>{ij}$?)</li>
+<li>Let a message $m_{ij}$ be such that $rec(token_i)\rightarrow send(m_{ij})$($send(m_{ij})\notin LS_i$)</li>
+<li>Then $send(token_j)\rightarrow send(m_{ij})$ and the underlying causal ordering property ensures that $rec(token_j)$, at which instant process $p_j$ records $LS_j$, happens before $rec(m_{ij})$(进程$p_i$先发送$token_j$给进程$p_j$，然后才发送$m_{ij}$，所以进程$p_j$先收到$token_j$拍摄快照$LS_j$，然后才接收$m_{ij}$?)</li>
 <li>Thus, $m_{ij}$ whose send is not recorded in $LS_i$, is not recorded as received in $LS_j$</li>
 </ul>
 </li>
@@ -7037,7 +6421,7 @@ j =
 </li>
 <li>When the algorithm terminates, the initiator determines the state of channels as follows:(判断算法终止)<ul>
 <li>The state of each channel from the initiator to each process is empty(从启动器到每个进程的每个信道都是空的，即没有消息在信道)<ul>
-<li>The state of channel from process $p_i$ to process $p_j$ is the set of messages whose sequence numbers are given by ${RECD_j[i]+1, …, SENT_i[j]}$(在两个进程之间信道的消息是根据发送和接收数组确定的，发送数组里有而接收数组里没有的则在信道)</li>
+<li>The state of channel from process $p_i$ to process $p_j$ is the set of messages whose sequence numbers are given by $\{RECD_j[i]+1, …, SENT_i[j]\}$(在两个进程之间信道的消息是根据发送和接收数组确定的，发送数组里有而接收数组里没有的则在信道)</li>
 </ul>
 </li>
 </ul>
@@ -7062,30 +6446,30 @@ j =
 <li>进程在执行过程中保存的中间状态称为进程的本地检查点(local checkpoint)</li>
 <li>一致的快照由一组同时发生或可能同时发生的本地状态集合组成</li>
 <li>进程异步保存checkpoint，假设每个进程在执行前保存一个初始checkpoint，在执行完后保存一个虚拟checkpoint(virtual)<ul>
-<li>进程$p<em>p$第i个checkpoint表示为$C</em>{p, i}$</li>
+<li>进程$p_p$第i个checkpoint表示为$C_{p, i}$</li>
 <li>进程$p_p$的第i个checkpoint间隔(interval)包括它的第i-1个checkpoint和第i个checkpoint之间执行的所有计算(包括了第i-1个checkpoint期间的计算但不包括第i个checkpoint)</li>
 </ul>
 </li>
 <li>即使两个本地checkpoint没有存在因果路径，也可能不属于一致的全局快照</li>
 </ul>
 <h4 id="zigzag-path"><a href="#zigzag-path" class="headerlink" title="zigzag path"></a>zigzag path</h4><ul>
-<li><p>A zigzag path exists from a checkpoint $C<em>{x, i}$ to a checkpoint $C</em>{y, j}$ iff there exists messages $m_1, m_2, …, m_n(n\geq 1)$:</p>
+<li><p>A zigzag path exists from a checkpoint $C_{x, i}$ to a checkpoint $C_{y, j}$ iff there exists messages $m_1, m_2, …, m_n(n\geq 1)$:</p>
 <ul>
-<li>$m<em>1$ is sent by process $p_x$ after $C</em>{x, i}$(第一条消息由zigzag路径起点快照发送)</li>
-<li>If $m<em>k(1\leq k\leq n)$ is received by process $p_z$, then $m</em>{k+1}$ is sent by $p<em>z$ in the same or a later checkpoint interval(although $m</em>{k+1}$ may be sent before or after $m_k$ is received)(通常来讲是消息有顺序。但也允许进程在接收到因果路径中的前一个消息之前发送消息，只要在同一个checkpoint间隔。后发送的消息在后一个间隔则不需考虑上述情况)</li>
-<li>$m<em>n$ is received by process $p_y$ before $C</em>{y, j}$(最后一条消息由zigzag路径终点快照接收)</li>
+<li>$m_1$ is sent by process $p_x$ after $C_{x, i}$(第一条消息由zigzag路径起点快照发送)</li>
+<li>If $m_k(1\leq k\leq n)$ is received by process $p_z$, then $m_{k+1}$ is sent by $p_z$ in the same or a later checkpoint interval(although $m_{k+1}$ may be sent before or after $m_k$ is received)(通常来讲是消息有顺序。但也允许进程在接收到因果路径中的前一个消息之前发送消息，只要在同一个checkpoint间隔。后发送的消息在后一个间隔则不需考虑上述情况)</li>
+<li>$m_n$ is received by process $p_y$ before $C_{y, j}$(最后一条消息由zigzag路径终点快照接收)</li>
 <li>A zigzag path between two checkpoints is a causal path(因果路径)<ul>
 <li>A causal path exists from a checkpoint A to another checkpoint B iff there is chain of messages starting after A and ending before B such that each message is sent after the previous one in the chain is received(因果路径消息必须有序)</li>
 <li>a causal path is always a zigzag path, but a zigzag path need not be a causal path.</li>
 </ul>
 </li>
-<li>如下图的进程$p<em>1$的快照$C</em>{1,1}$和进程$p<em>2$的快照$C</em>{2,2}$存在因果路径，zigzag路径允许进程$p<em>2$在接收消息$m_3$之前发送消息$m_4$给进程$p_3$，由快照$C</em>{3,2}$记录。因此$C<em>{1,1}$和$C</em>{3,2}$之间存在zigzag path<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/zigzag-path.png" alt="img"></li>
+<li>如下图的进程$p_1$的快照$C_{1,1}$和进程$p_2$的快照$C_{2,2}$存在因果路径，zigzag路径允许进程$p_2$在接收消息$m_3$之前发送消息$m_4$给进程$p_3$，由快照$C_{3,2}$记录。因此$C_{1,1}$和$C_{3,2}$之间存在zigzag path<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/zigzag-path.png" alt="img"></li>
 </ul>
 </li>
 <li><p>特殊的zigzag path—— zigzag cycle</p>
 <ul>
 <li>A checkpoint $C$ is involved in a zigzag cycle iff there is a zigzag path from $C$ to itself(起点和终点都是自己的zigzag路径)</li>
-<li>如下图的进程$p<em>2$的快照$C</em>{2, 1}$，起始消息$m<em>2$给$p_1$，$p_1$在同一个checkpoint间隙早些时候发送消息$m_1$给$p_2$，终点也是$C</em>{2, 1}$</li>
+<li>如下图的进程$p_2$的快照$C_{2, 1}$，起始消息$m_2$给$p_1$，$p_1$在同一个checkpoint间隙早些时候发送消息$m_1$给$p_2$，终点也是$C_{2, 1}$</li>
 <li>a causal path never forms a cycle.(因果路径不存在环)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/zigzag-cycle.png" alt="img"></li>
 </ul>
 </li>
@@ -7124,15 +6508,15 @@ j =
 </li>
 <li>Although candidates for building a consistent snapshot from $S$ must lie in the Z-cone of $S$, not all checkpoints in the Z-cone can form a consistent snapshot with $S$. (在Z-cone里的检查点不一定能与$S$构成一致性的快照，但能与$S$构成一致性快照的检查点一定在Z-cone)<ul>
 <li>If a checkpoint in the Z-cone is involved in a Z-cycle, then it cannot be part of a consistent snapshot.(Z-cone里可能存在zigzag环)</li>
-<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$. Then, for each process $p<em>q$, the set $S</em>{useful}^q$ is defined as <ul>
-<li>$S<em>{useful}^q={C</em>{q, i} | (S\nrightarrow C<em>{q, i}\bigwedge(C</em>{q, i}\nrightarrow S)\bigwedge(C<em>{q, i}\nrightarrow C</em>{q, i})}$</li>
-<li>$\displaystyle S<em>{useful}=\bigcup_q S</em>{useful}^q$(各个进程可与$S$构成一致性快照的检查点的并集)</li>
+<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$. Then, for each process $p_q$, the set $S_{useful}^q$ is defined as <ul>
+<li>$S_{useful}^q=\{C_{q, i} | (S\nrightarrow C_{q, i}\bigwedge(C_{q, i}\nrightarrow S)\bigwedge(C_{q, i}\nrightarrow C_{q, i})\}$</li>
+<li>$\displaystyle S_{useful}=\bigcup_q S_{useful}^q$(各个进程可与$S$构成一致性快照的检查点的并集)</li>
 </ul>
 </li>
-<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$, let $C<em>{q, i}$ be any checkpoint of process $p_q$ such that $C</em>{q, i}\notin S$. Then $S\bigcup {C<em>{q, i}}$ can be extended to a consistent snapshot iff $C</em>{q, i}\in S<em>{useful}$($S</em>{useful}$是所有可以与$S$构成一致性快照的检查点)</li>
+<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$, let $C_{q, i}$ be any checkpoint of process $p_q$ such that $C_{q, i}\notin S$. Then $S\bigcup \{C_{q, i}\}$ can be extended to a consistent snapshot iff $C_{q, i}\in S_{useful}$($S_{useful}$是所有可以与$S$构成一致性快照的检查点)</li>
 </ul>
 </li>
-<li>Although none of the checkpoints in $S<em>{useful}$ has a Z-path to or from any checkpoint in $S$, Z-paths may exist between members of $S</em>{useful}$($S_{useful}$里的检查点之间可能会存在Z-path)</li>
+<li>Although none of the checkpoints in $S_{useful}$ has a Z-path to or from any checkpoint in $S$, Z-paths may exist between members of $S_{useful}$($S_{useful}$里的检查点之间可能会存在Z-path)</li>
 <li>One final constraint is placed on the set $T$ we choose from $S_{useful}$ to build a consistent snapshot from $S$: checkpoints in $T$ must have no Z-paths between them. Furthermore, since $S\nrightarrow S$, at least one such $T$ must exist(即使只有一个元素)<ul>
 <li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$ and let $T$ be any set of checkpoints such that $S\bigcap T=\empty$. Then $S\bigcup T$ is a consistent global snapshot iff <ul>
 <li>$T\subseteq S_{useful}$</li>
@@ -7149,14 +6533,14 @@ j =
 <li>compute all consistent snapshots that include a given set a set of checkpoints $S$</li>
 </ul>
 <p>ComputeAllCgs($S$) {  // 计算一个完整的一致性快照<br>  $\quad$let $G=\empty$<br>  $\quad$if $S\nrightarrow S$ then<br>  $\quad<script type="math/tex">\quad$let `AllProcs` be the set of all processes not represented in $S$ // 在没有加入一致性快照的进程里选择
-  $\quad</script>\quad$<code>ComputeAllCgsForm</code>($S$, $AllProcs$)<br>  $\quad$return $G$<br>}<br>ComputeAllCgsForm($T$, $ProcSet$) {<br>  $\quad$if $(ProcSet=\empty)$ then   // 已经是完整的一致性快照了<br>  $\quad<script type="math/tex">\quad</script>G=G\bigcup{T}$<br>  $\quad$else //否则递归查找<br>  $\quad<script type="math/tex">\quad$let $p_q$ be any process in $ProcSet$
-  $\quad</script>\quad$for each checkpoint $C\in T_{useful}^q$ do  // 首先还是得保证检查点是可用的<br>  $\quad<script type="math/tex">\quad</script>\quad$<code>ComputeAllCgsForm</code>($T\bigcup{C}$, $ProcSet\setminus {p_q}$)<br>}</p>
+  $\quad</script>\quad$<code>ComputeAllCgsForm</code>($S$, $AllProcs$)<br>  $\quad$return $G$<br>}<br>ComputeAllCgsForm($T$, $ProcSet$) {<br>  $\quad$if $(ProcSet=\empty)$ then   // 已经是完整的一致性快照了<br>  $\quad<script type="math/tex">\quad</script>G=G\bigcup\{T\}$<br>  $\quad$else //否则递归查找<br>  $\quad<script type="math/tex">\quad$let $p_q$ be any process in $ProcSet$
+  $\quad</script>\quad$for each checkpoint $C\in T_{useful}^q$ do  // 首先还是得保证检查点是可用的<br>  $\quad<script type="math/tex">\quad</script>\quad$<code>ComputeAllCgsForm</code>($T\bigcup\{C\}$, $ProcSet\setminus \{p_q\}$)<br>}</p>
 <ul>
 <li>Let $S$ be a set of checkpoints and $G$ be the set returned by <code>ComputeAllCgs</code>. If $S\nrightarrow S$, then $T\in G$ iff $T$ is a consistent snapshot containing $S$. That is, $G$ contains exactly the consistent snapshots that contain $S$</li>
 </ul>
 <h4 id="R-graph-to-determine-the-existence-of-Z-paths-between-checkpoints"><a href="#R-graph-to-determine-the-existence-of-Z-paths-between-checkpoints" class="headerlink" title="R-graph to determine the existence of Z-paths between checkpoints"></a>R-graph to determine the existence of Z-paths between checkpoints</h4><ul>
 <li>Discuss a method for determining the existence of Z-paths between checkpoints in a distributed computation that has terminated or has stopped execution, using the rollback-dependency graph (R-graph).</li>
-<li>The rollback-dependency graph of a distributed computation is a directed graph $G=(V, E)$, where the vertices $V$ are the checkpoint of the distributed computation and an edge $(C<em>{p, i}, C</em>{q, j})$ from checkpoint $C<em>{p, i}$ to checkpoint $C</em>{q, j}$ belongs to $E$ if<ul>
+<li>The rollback-dependency graph of a distributed computation is a directed graph $G=(V, E)$, where the vertices $V$ are the checkpoint of the distributed computation and an edge $(C_{p, i}, C_{q, j})$ from checkpoint $C_{p, i}$ to checkpoint $C_{q, j}$ belongs to $E$ if<ul>
 <li>$p=q$ and $j=i+1$</li>
 <li>$p\neq q$ and a message $m$ sent from the $i^{th}$ checkpoint interval of $p_p$ is received by $p_q$ in its $j^{th}$ checkpoint interval($i, j\gt 0$)</li>
 <li>there is a path from $C$ to $D$ in the R-graph by $C\rightsquigarrow^{rd} D$, only denotes the existence of a path, does not specify any particular path</li>
@@ -7561,7 +6945,7 @@ j =
 </li>
 <li>每次迭代的流程<ul>
 <li>对每个目的地独立应用三角不等式<ul>
-<li>$LENGTH[k]\gt (LENGTH<em>j[k] + weight</em>{j, i})$</li>
+<li>$LENGTH[k]\gt (LENGTH_j[k] + weight_{j, i})$</li>
 <li>节点i用RTT或者到邻居节点j的排队延迟评估$weight_{i, j}$</li>
 </ul>
 </li>
@@ -7701,7 +7085,7 @@ j =
 <li>使用 Kruskal 的策略，从图的组件森林开始。</li>
 <li>MWOE(minimum weight outgoing edge): <ul>
 <li>最小权重的出边: D”outgoing” 是逻辑上的，表示组件扩展的方向。<ul>
-<li>对于图$G$的任何生成森林${(N_i, L_i)|i=1, …, k}$，考虑其中的任意一个组件$(N_j, L_j)$。记$\lambda_j$为那些仅与$N_j$中的一个节点相邻的所有边中权重最小的边。包含生成森林中所有边$L_i$的$G$的最小生成树，也必须包含边$\lambda_j$</li>
+<li>对于图$G$的任何生成森林$\{(N_i, L_i)|i=1, …, k\}$，考虑其中的任意一个组件$(N_j, L_j)$。记$\lambda_j$为那些仅与$N_j$中的一个节点相邻的所有边中权重最小的边。包含生成森林中所有边$L_i$的$G$的最小生成树，也必须包含边$\lambda_j$</li>
 </ul>
 </li>
 <li>连通组件的生成树与 MWOEs 结合，以在合并后的组件中仍然保留生成树属性。</li>
@@ -7786,14 +7170,14 @@ j =
 </ul>
 </li>
 <li>公式<ul>
-<li>$M<em>a=M_s + M</em>{init} + rounds * M_{round})$(所有的消息)<ul>
+<li>$M_a=M_s + M_{init} + rounds * M_{round})$(所有的消息)<ul>
 <li>$M_s$: 同步算法中的消息数量</li>
 <li>$M_{init}$: 初始化异步系统所需的顺序消息数量</li>
 <li>$rounds$: 同步算法的迭代轮数</li>
 <li>$M_{round}$: 一次迭代中需要执行的消息数量</li>
 </ul>
 </li>
-<li>$T<em>a = T_S + T</em>{init} + rounds * T_{round}$(所有的时间)<ul>
+<li>$T_a = T_S + T_{init} + rounds * T_{round}$(所有的时间)<ul>
 <li>$T_s$: 同步算法的时间，假设每轮只发送一个单位消息，则该值为轮数</li>
 <li>$T_init$: 初始化异步系统所需的时间(顺序消息跳数)</li>
 <li>$rounds$: 迭代次数</li>
@@ -7808,15 +7192,15 @@ j =
 <ul>
 <li>每个进程每轮向每个邻居发送一条消息(合并消息或发送虚拟消息)</li>
 <li>在接收到每个邻居的消息后，节点进入下一轮</li>
-<li>邻居$P<em>i, P_j$之间可能仅相差一轮，因此$P_i$在轮次$round_i$只能接收来自$round_i$或$round</em>{i+1}$的消息</li>
+<li>邻居$P_i, P_j$之间可能仅相差一轮，因此$P_i$在轮次$round_i$只能接收来自$round_i$或$round_{i+1}$的消息</li>
 <li>初始化<ul>
 <li>任何进程都可以开始轮次</li>
 <li>在直径(d个时间单位)内，所有进程都会处于该轮次</li>
-<li>$T<em>{init} = d, M</em>{init} = 0$</li>
+<li>$T_{init} = d, M_{init} = 0$</li>
 </ul>
 </li>
 <li>复杂度<ul>
-<li>$M<em>{round}=2|L|, T</em>{round}=1$</li>
+<li>$M_{round}=2|L|, T_{round}=1$</li>
 </ul>
 </li>
 </ul>
@@ -7957,8 +7341,8 @@ j =
 </ul>
 </li>
 <li>伸缩因子$r$<ul>
-<li>$max<em>{i, j\in N}{\frac{distance_r(i, j)}{distance</em>{opt}(i, j)}}$<ul>
-<li>定义为所有节点对$i, j$中的最大值，$distance<em>r(i, j)$是使用路由方案r从节点i到节点j的距离，而$distance</em>{opt}(i, j)$是最佳路径的距离</li>
+<li>$max_{i, j\in N}\{\frac{distance_r(i, j)}{distance_{opt}(i, j)}\}$<ul>
+<li>定义为所有节点对$i, j$中的最大值，$distance_r(i, j)$是使用路由方案r从节点i到节点j的距离，而$distance_{opt}(i, j)$是最佳路径的距离</li>
 </ul>
 </li>
 <li>设计紧凑的路由方案<ul>
@@ -8017,7 +7401,7 @@ j =
 <li><p>对象复制问题</p>
 <ul>
 <li>加权图: $(N, L)$，其中k个用户位于$N_k\subset N$节点，r个对象副本位于$N_r\subset N$</li>
-<li>如果$k\gt r$并且访问是只读的，副本的最佳放置是最小化从用户到最近副本的距离总和($min(\sum<em>{i\in N_k, r_i\in N_r}dist</em>{i, r<em>i})$，其中的$dist</em>{i, r_i}$为节点到最近副本的成本)</li>
+<li>如果$k\gt r$并且访问是只读的，副本的最佳放置是最小化从用户到最近副本的距离总和($min(\sum_{i\in N_k, r_i\in N_r}dist_{i, r_i})$，其中的$dist_{i, r_i}$为节点到最近副本的成本)</li>
 <li>如果来自每个用户$N_k$的读取访问具有一定的频率(权重)，则最小化函数发生变化</li>
 <li>需要考虑每条边的带宽限制</li>
 <li>假设用户访问是读取的概率为x，更新的概率为1-x。更新需要所有副本都进行更新</li>
@@ -8031,7 +7415,7 @@ j =
 <li>$c_r(i), c_w(i)$: 节点i发出的读取和写入成本</li>
 <li>$R$: 所有可能的复制方案集合</li>
 <li>目标：最小化复制方案的成本：<ul>
-<li>$\min<em>{R’\in R}[\sum</em>{i\in V}r<em>i\cdot c_r(i) + \sum</em>{i\in V}w_i\cdot c_w(i)]$</li>
+<li>$\min_{R’\in R}[\sum_{i\in V}r_i\cdot c_r(i) + \sum_{i\in V}w_i\cdot c_w(i)]$</li>
 </ul>
 </li>
 <li>成本是NP完全问题</li>
@@ -8112,7 +7496,7 @@ j =
 </ul>
 </li>
 <li>对应事件: $a\sim b$，表示两个事件在同一个进程中发生</li>
-<li>发送接收对: $T={(s, r)\in E_i\times E_j | s\quad corresponds\quad to\quad r}$</li>
+<li>发送接收对: $T=\{(s, r)\in E_i\times E_j | s\quad corresponds\quad to\quad r\}$</li>
 </ul>
 <h3 id="异步和FIFO执行"><a href="#异步和FIFO执行" class="headerlink" title="异步和FIFO执行"></a>异步和FIFO执行</h3><h4 id="异步执行"><a href="#异步执行" class="headerlink" title="异步执行"></a>异步执行</h4><ul>
 <li>$(E, \prec)$，因果关系是一个偏序关系。</li>
@@ -8163,9 +7547,9 @@ j =
 <li>对于所有$(s, r)$和$(s’, r’)\in T$，如果$s\prec s’$，则$r\prec r’$</li>
 </ul>
 <h4 id="空区间属性-Empty-Interval-EI"><a href="#空区间属性-Empty-Interval-EI" class="headerlink" title="空区间属性(Empty-Interval, EI)"></a>空区间属性(Empty-Interval, EI)</h4><ul>
-<li><p>$(E, \prec)$是一个EI执行，如果对于所有$(s, r)\in T$，在偏序关系中的开区间集合${x\in E | s\prec x\prec r}$为空</p>
+<li><p>$(E, \prec)$是一个EI执行，如果对于所有$(s, r)\in T$，在偏序关系中的开区间集合$\{x\in E | s\prec x\prec r\}$为空</p>
 <ul>
-<li>对于$EI<s, r>$，存在某个线性扩展使得相应的区间${x\in E | s\prec x\prec r}$为空<ul>
+<li>对于$EI<s, r>$，存在某个线性扩展使得相应的区间$\{x\in E | s\prec x\prec r\}$为空<ul>
 <li>线性扩展是一个偏序关系$(E, \prec)$的任何全序关系$(E, \lt)$，其中偏序关系的所有排序关系都被保留</li>
 <li>线性扩展中，一个空的$(s, r)$区间意味着$s$和$r$是可以任意接近的，即发送和接收是可以接近的，由垂直箭头表示</li>
 </ul>
@@ -8226,12 +7610,12 @@ j =
 </li>
 <li><p>非分离线性扩展$(E, \prec)$</p>
 <ul>
-<li>$(E, \prec)$的一个线性扩展，使得对于每一对$(s, r)\in T$，区间${x\in E | s\prec x\prec r}$是空的</li>
+<li>$(E, \prec)$的一个线性扩展，使得对于每一对$(s, r)\in T$，区间$\{x\in E | s\prec x\prec r\}$是空的</li>
 </ul>
 </li>
 <li>RSC执行 <ul>
 <li>一个异步执行是一个RSC执行，当且仅当存在一个非分离线性扩展的偏序关系$(E, \prec)$(在所有可能的线性扩展中，至少有一个满足非分离条件。)<ul>
-<li>为了确定一个异步执行是否是RSC，我们需要找到一个线性扩展(即对事件的一个全序排列)，在这个排列中，对于每一个消息$m$的发送事件$s(m)$和接收事件$r(m)$，在它们之间的开区间${x\in E | s(m)\prec x\prec r(m)}$是空的。这意味着没有其他事件发生在消息的发送和接收之间，就像同步系统中那样。</li>
+<li>为了确定一个异步执行是否是RSC，我们需要找到一个线性扩展(即对事件的一个全序排列)，在这个排列中，对于每一个消息$m$的发送事件$s(m)$和接收事件$r(m)$，在它们之间的开区间$\{x\in E | s(m)\prec x\prec r(m)\}$是空的。这意味着没有其他事件发生在消息的发送和接收之间，就像同步系统中那样。</li>
 <li>检查所有线性扩展具有指数级成本！</li>
 <li>实际测试使用Crown皇冠特征化方法。</li>
 </ul>
@@ -8240,7 +7624,7 @@ j =
 </li>
 </ul>
 <h3 id="Crown测试法"><a href="#Crown测试法" class="headerlink" title="Crown测试法"></a>Crown测试法</h3><h4 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h4><ul>
-<li>设$E$是一个执行，在$E$中，大小为k的Crown是一个序列$&lt;(s^i, r^i), i\in {0, 1, …, k-1}&gt;$，其中包含对应发送事件和接收事件配对，满足以下条件:<ul>
+<li>设$E$是一个执行，在$E$中，大小为k的Crown是一个序列$&lt;(s^i, r^i), i\in \{0, 1, …, k-1\}&gt;$，其中包含对应发送事件和接收事件配对，满足以下条件:<ul>
 <li>$s^0\prec r^1$</li>
 <li>$s^1\prec r^2$</li>
 <li>…</li>
@@ -8425,7 +7809,7 @@ j =
 <li>考虑信息$d\in M_{i, a}.Dests$应该在进程的日志中存储多长时间，并且应该捎带在信息上</li>
 <li>只要且只有当以下两个传播约束成立时，需要捎带:<ul>
 <li>约束1: 向后不可达性，确保消息不会过早被交付。未知消息$M_{i, a}$是否已经被交付给$d$</li>
-<li>约束2: 向前可达性，未知是否已经向$d$发送了在$Send(M<em>{i, a})$因果未来的消息，因此不能保证使用基于传递性的推理来确保消息$M</em>{i, a}$将被交付给$d$</li>
+<li>约束2: 向前可达性，未知是否已经向$d$发送了在$Send(M_{i, a})$因果未来的消息，因此不能保证使用基于传递性的推理来确保消息$M_{i, a}$将被交付给$d$</li>
 </ul>
 </li>
 <li>如果两个约束为假，则信息$d\in M.Dests$必须不被存储或传播</li>
@@ -8439,11 +7823,11 @@ j =
 <li>关于消息两个约束的隐式跟踪无需存储或传播<ul>
 <li>可以从显示信息推导</li>
 <li>用于确定何时两个约束的显示信息变为假，该消息被存储/捎带</li>
-<li>类型1: 存在$d\in M<em>{i, a}.Dests$且$d\notin l</em>{i, a}.Dests\vee d\notin o_{i, a}.Dests$<ul>
-<li>当$l<em>{i, a}.Dests=\empty$或$o</em>{i, a}.Dests = \empty$</li>
+<li>类型1: 存在$d\in M_{i, a}.Dests$且$d\notin l_{i, a}.Dests\vee d\notin o_{i, a}.Dests$<ul>
+<li>当$l_{i, a}.Dests=\empty$或$o_{i, a}.Dests = \empty$</li>
 </ul>
 </li>
-<li>类型2: 如果$a<em>1\lt a_2$且$l</em>{i, a<em>2}\in LOG_j$，则$l</em>{i, a_1}\in LOG_j$<ul>
+<li>类型2: 如果$a_1\lt a_2$且$l_{i, a_2}\in LOG_j$，则$l_{i, a_1}\in LOG_j$<ul>
 <li>形如$l_{i, a}.Dests=\empty$的条目可以通过缺失推断，不应存储</li>
 </ul>
 </li>
@@ -8499,8 +7883,8 @@ j =
 </ul>
 <p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/A%20Nomenclature%20for%20Multicast.png" alt="img"></p>
 <h3 id="用于多播的传播树-Propagation-Trees"><a href="#用于多播的传播树-Propagation-Trees" class="headerlink" title="用于多播的传播树(Propagation Trees)"></a>用于多播的传播树(Propagation Trees)</h3><h4 id="定义-4"><a href="#定义-4" class="headerlink" title="定义"></a>定义</h4><ul>
-<li>组集: $G = {G_1, …, G_g}$</li>
-<li>元组集: $MG = {MG_1, \dots, MG_h}$<ul>
+<li>组集: $G = \{G_1, …, G_g\}$</li>
+<li>元组集: $MG = \{MG_1, \dots, MG_h\}$<ul>
 <li>每个进程属于一个元组，并且在该元组中的每个其他进程具有完全相同的组成员资格</li>
 <li>元组之外没有其他进程具有该确切的组成员资格</li>
 </ul>
@@ -8552,7 +7936,7 @@ j =
 <li>每个元组都有一个用于区分的进程(manager)</li>
 <li>$SV_i[k]$在每个$P_i$处: 由$P_i$多播的消息数量，这些消息通过$PM(G_k)$传播。附带在每个由$P_i$发送的多播消息上</li>
 <li>$RV_{manager(PM(G_z))}[k]$: 由$P_k$发送并被$PM(G_z)$接收的消息的数量</li>
-<li>$manager(PM(G<em>z))$: 如果$SV_i[z]==RV</em>{manager(PM(G_z))}[i]$，则处理来自$P_i$的消息$M$，否则缓冲消息$M$直到条件成立</li>
+<li>$manager(PM(G_z))$: 如果$SV_i[z]==RV_{manager(PM(G_z))}[i]$，则处理来自$P_i$的消息$M$，否则缓冲消息$M$直到条件成立</li>
 <li>在非主元组的管理者处: 消息顺序已经确定，因为它从未直接从多播发送者接收消息。转发(伪代码的2d-2g)。</li>
 </ul>
 <h3 id="Total-Order的正确性"><a href="#Total-Order的正确性" class="headerlink" title="Total Order的正确性"></a>Total Order的正确性</h3><ul>
@@ -8639,7 +8023,7 @@ j =
 </ul>
 <p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Kou-Markowsky-Berman%20Heuristic%20for%20Steiner%20Tree.png" alt="img"></p>
 <h3 id="受约束的-延迟受限的-Steiner树-Constrained-Delay-bounded-Steiner-Trees"><a href="#受约束的-延迟受限的-Steiner树-Constrained-Delay-bounded-Steiner-Trees" class="headerlink" title="受约束的(延迟受限的)Steiner树(Constrained Delay-bounded Steiner Trees)"></a>受约束的(延迟受限的)Steiner树(Constrained Delay-bounded Steiner Trees)</h3><ul>
-<li>对于给定的延迟容忍度$\Delta$，给定的源节点$s$和目标节点集$Dest$，其中${s}\bigcup Dest = N’\subset N$，识别一个覆盖所有$N’$中节点的生成树$T$，满足以下约束条件: <ul>
+<li>对于给定的延迟容忍度$\Delta$，给定的源节点$s$和目标节点集$Dest$，其中$\{s\}\bigcup Dest = N’\subset N$，识别一个覆盖所有$N’$中节点的生成树$T$，满足以下约束条件: <ul>
 <li>$\sum_{l\in T} C(l)$最小化，其中$C(l)$是边的成本</li>
 <li>对于所有$v\in N’$，路径$path(s, v)$上的所有边l的延迟之和$\sum_{l\in path(s, v)}D(l)\lt \Delta$，其中$path(s, v)$表示从s到v在T中的路径<ul>
 <li>路径的成本和延迟分别表示为$C(x, y), D(x, y)$</li>
@@ -8694,6 +8078,622 @@ j =
       </categories>
       <tags>
         <tag>高级分布式系统</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>算法分析与问题的计算复杂度</title>
+    <url>/2025/03/10/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/2025-03-10-%E7%AE%97%E6%B3%95%E5%88%86%E6%9E%90%E4%B8%8E%E9%97%AE%E9%A2%98%E7%9A%84%E8%AE%A1%E7%AE%97%E5%A4%8D%E6%9D%82%E5%BA%A6/</url>
+    <content><![CDATA[<h1 id="算法分析与问题的计算复杂度"><a href="#算法分析与问题的计算复杂度" class="headerlink" title="算法分析与问题的计算复杂度"></a>算法分析与问题的计算复杂度</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h3 id="解决一个计算问题的过程"><a href="#解决一个计算问题的过程" class="headerlink" title="解决一个计算问题的过程"></a>解决一个计算问题的过程</h3><ul>
+<li>是否可计算</li>
+<li>是否能行可计算(在有限的复杂度内完成计算)</li>
+<li>算法设计与分析</li>
+<li>用计算机语言实现算法</li>
+<li>软件系统</li>
+</ul>
+<h3 id="可计算理论"><a href="#可计算理论" class="headerlink" title="可计算理论"></a>可计算理论</h3><ul>
+<li>计算模型</li>
+<li>可计算问题与不可计算问题</li>
+<li>计算模型的等价性——图灵/Church命题</li>
+</ul>
+<h3 id="计算复杂性理论"><a href="#计算复杂性理论" class="headerlink" title="计算复杂性理论"></a>计算复杂性理论</h3><p>在给定的计算模型下研究问题的复杂性</p>
+<ul>
+<li>固有复杂性</li>
+<li>上界</li>
+<li>下界</li>
+<li>平均</li>
+<li>复杂性问题的分类: P=NP?</li>
+<li>抽象复杂性研究</li>
+</ul>
+<h3 id="算法设计和分析"><a href="#算法设计和分析" class="headerlink" title="算法设计和分析"></a>算法设计和分析</h3><ul>
+<li>可计算问题的算法的设计与分析</li>
+<li>设计高效算法，分析算法性能，两者交互验证<ul>
+<li>设计算法的理论、方法和技术(设计正确高效的算法)</li>
+<li>分析算法的理论、方法和技术(判断算法是否足够高效)</li>
+</ul>
+</li>
+</ul>
+<h3 id="算法的定义"><a href="#算法的定义" class="headerlink" title="算法的定义"></a>算法的定义</h3><p>算法是一个满足下列条件的计算: </p>
+<ul>
+<li>输入: 有一个满足给定约束条件的输入</li>
+<li>输出: 满足给定约束条件的结果</li>
+<li>有穷性/终止性: 有限步内必须终止</li>
+<li>可行性: 每一个动作都能够被精确地机械执行<ul>
+<li>反例: 将大元素放数组后，小元素放数组前。但是无法精确执行，因为没有确定一个元素是大元素还是小元素的指标</li>
+</ul>
+</li>
+</ul>
+<h3 id="计算机问题求解的实例——补丁与bug问题"><a href="#计算机问题求解的实例——补丁与bug问题" class="headerlink" title="计算机问题求解的实例——补丁与bug问题"></a>计算机问题求解的实例——补丁与bug问题</h3><h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>错误就是人们所说的bug。用户在试用软件时总是希望其错误越少越好，最好是没有错误的。但是推出一个没有错误的软件几乎不可能，所以很多软件公司都在疯狂地发放补丁(有时这种补丁甚至是收费的)。T公司就是其中之一。上个月，T公司推出了一个新的字处理软件，随后发放了一批补丁。最近T公司发现其发放的补丁有致命的问题，那就是一个补丁在排除某些错误的同时，往往会加入另一些错误，此字处理软件中只可能出现n个特定的错误，这n个错误是由软件本身决定的。T公司目前共发放了m个补丁，对于每一个补丁，都有特定的适用环境，某个补丁只有在当前软件中包含某些错误而同时又不不包含另一些错误时才可以使用，如果它被使用，它将修复某些错误而同时加入某些错误。另外，使用每个补丁都要耗一定的时间(即补丁程序的运行时间)。</p>
+<p>现在T公司的问题很简单: 其字处理软件的初始版本不幸地包含了全部n个错误，有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
+<h4 id="任务描述"><a href="#任务描述" class="headerlink" title="任务描述"></a>任务描述</h4><p>T公司的T公司的字处理软件中可能出现的n个错误为集合$B=\{b_1, b_2, ···, b_n\}$中的元素，T公司目前共发放了m个补丁，记为；$P=\{p_1, p_2, ···, p_m\}$。对于每一个补丁$P_i$，假设存在错误集合: $B_{i+}$，$B_{i-}$，当软件包含了$B_{i+}$中的所有错误，而没有包含$B_{i-}$中的任何错误时，补丁$P_i$才可以被使用，否则不能使用，显然$B_{i+}$，$B_{i-}$交集为空。补丁$P_i$将修复某些错误而同时加入某些错误，设错误集合$F_{i+}$，$F_{i-}$使用过补丁$P_i$之后，$F_{i-}$中的任何错误都不会在软件中出现，而软件将包含$F_{i+}$中的所有错误，同样$F_{i+}$，$F_{i-}$交集为空。另外，使用每个补丁都要耗一定的时间$T_i$。</p>
+<p>现在T公司的字处理软件的初始版本不幸地包含了全部n个错误，试编写程序判断有没有可能通过使用这m个补丁(任意顺序地使用，一个补丁可使用多次)，使此字处理软件成为一个没有错误的软件。如果可能，希望找到总耗时最少的方案。</p>
+<h4 id="构建模型"><a href="#构建模型" class="headerlink" title="构建模型"></a>构建模型</h4><p>把n个bug的状态(存在和不存在)的组合用一个0-1字符串(模式串)表示，执行一个补丁本质上就是模式串的转换。<br>模式串可以作为一个图的定点，那么补丁就是图中的边。于是问题则转换为从全1模式串$\{1, 1, …, 1\}$到全0模式串$\{0, 0, …, 0\}$的转换。</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/bug%E4%B8%8E%E8%A1%A5%E4%B8%81%E9%97%AE%E9%A2%98.png" alt="img"></p>
+<h4 id="设计最短路径算法"><a href="#设计最短路径算法" class="headerlink" title="设计最短路径算法"></a>设计最短路径算法</h4><ul>
+<li>Dijkstra最短路径算法求解</li>
+</ul>
+<h2 id="寻找最优算法的途径"><a href="#寻找最优算法的途径" class="headerlink" title="寻找最优算法的途径"></a>寻找最优算法的途径</h2><ul>
+<li>设计算法A，求$W(n)$，得到算法类最坏情况下时间复杂度的一个上界</li>
+<li>寻找函数$F(n)$，使得对任何算法都存在一个规模为n的输入，并且该算法在这个输入下至少要做$F(n)$次基本运算，得到该算法类最坏情况下时间复杂度的一个下界<ul>
+<li>给定问题和基本运算后就能确定一个算法类</li>
+</ul>
+</li>
+<li>如果$W(n)=F(n)$或$W(n)=\Theta(F(n))$，则A是最优的，下界是紧的</li>
+<li>如果$W(n)\gt F(n)$，A不是最优的或者$F(n)$的下界过低。需要: <ul>
+<li>改进原算法A或设计新的算法A’，使得$W’(n)\lt W(n)$</li>
+<li>重新证明新下界$F’(n)$，使得$F’(n)\gt F(n)$</li>
+<li>重复以上两个步骤，直到最终得到$W’(n)=F’(n)$或者$W’(n)=\Theta(F’(n))$</li>
+</ul>
+</li>
+</ul>
+<h3 id="平凡下界"><a href="#平凡下界" class="headerlink" title="平凡下界"></a>平凡下界</h3><ul>
+<li>算法的输入规模和输出规模是其平凡下界<ul>
+<li>n阶置换: 求解的时间复杂度下界为$\Omega(n!)$</li>
+<li>求n次实系数多项式在给定x时的值: 求解的时间复杂度下界为$\Omega(n)$</li>
+<li>两个n阶矩阵的乘积: 求解的时间复杂度下界为$\Omega(n^2)$</li>
+<li>货郎问题: 求解的时间复杂度下界为$\Omega(n^2)$</li>
+</ul>
+</li>
+</ul>
+<h3 id="以找最大问题为例"><a href="#以找最大问题为例" class="headerlink" title="以找最大问题为例"></a>以找最大问题为例</h3><ul>
+<li>获得某基本运算的算法类的上界<ul>
+<li>以比较作为基本运算的算法类的上界为: n-1</li>
+</ul>
+</li>
+<li>所设计算法的复杂度<ul>
+<li>在n个数的数组中找最大的数，以比较做基本运算的算法类中的任何算法在最坏情况下至少要做n-1次比较<ul>
+<li>因为最大的数是唯一的，其他n-1个数必须在比较后被淘汰，一次比较至多淘汰一个数，所以至少需要n-1次比较</li>
+</ul>
+</li>
+<li>下界为: n-1</li>
+</ul>
+</li>
+<li>于是所设计的算法便是最优算法</li>
+</ul>
+<h2 id="决策树-Decision-Tree"><a href="#决策树-Decision-Tree" class="headerlink" title="决策树(Decision Tree)"></a>决策树(Decision Tree)</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ul>
+<li>决策树是一棵二叉树。<ul>
+<li>在二叉树的t层至多$2^t$个结点，根节点是第0层</li>
+<li>深度为d的二叉树至多$2^{d+1}-1$个结点</li>
+<li>n个结点的二叉树的深度至少为$\lfloor logn\rfloor$</li>
+<li>设t为二叉树的树叶个数，d为树的深度，如果树的每个内结点都有2个儿子结点，则$t\lt 2^d$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E4%BA%8C%E5%8F%89%E6%A0%91%E6%80%A7%E8%B4%A8%E5%BD%92%E7%BA%B3%E6%B3%95.png" alt="img"></li>
+</ul>
+</li>
+<li>对于给定问题(以比较运算作为基本运算)规定一个决策树的构造规则。求解这个问题的不同算法所构造的决策树结构不一样。<ul>
+<li>一个问题决定了一类决策树，具有相同的构造规则，决定了求解该问题的一个算法类。</li>
+</ul>
+</li>
+<li>给定一个算法的决策树，对于任何输入实例，算法将从树根开始，沿一条路径向下，在每个结点做一次基本操作(例如比较操作)，然后根据比较结果到达某个儿子节点或者在该节点直接停机。对于给定实例的计算恰好对应了一条从树根到树叶或者某个内部结点的路径。</li>
+</ul>
+<h3 id="输入规模"><a href="#输入规模" class="headerlink" title="输入规模"></a>输入规模</h3><ul>
+<li>给定一个算法，对于不同的输入，算法将在对应决策树的某个结点(树叶或者内部结点)停机，将该结点标记为输入，问题的输入规模对应于决策树的结点总数或者叶结点数。</li>
+</ul>
+<h3 id="时间复杂度-确定问题的难度"><a href="#时间复杂度-确定问题的难度" class="headerlink" title="时间复杂度(确定问题的难度)"></a>时间复杂度(确定问题的难度)</h3><ul>
+<li>最坏情况下的时间复杂度对应于决策树的深度。</li>
+<li>平均情况下的时间复杂度对应于决策树的平均路径长度。</li>
+</ul>
+<h2 id="检索算法的时间复杂度分析"><a href="#检索算法的时间复杂度分析" class="headerlink" title="检索算法的时间复杂度分析"></a>检索算法的时间复杂度分析</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>检索问题是给定按递增顺序排列的数组L(项数$n\gt 1$)和数x，如果x在L中，输出x的下标，否则输出0</p>
+<h3 id="顺序检索算法时间复杂度"><a href="#顺序检索算法时间复杂度" class="headerlink" title="顺序检索算法时间复杂度"></a>顺序检索算法时间复杂度</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 顺序检索算法</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">search_inde</span><span class="params">(<span class="type">int</span>* L, <span class="type">int</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> j = <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">while</span>(j &lt;= <span class="built_in">len</span>(L) &amp;&amp; L[j] != x)</span><br><span class="line">    j += <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span>(j &gt; <span class="built_in">len</span>(L))</span><br><span class="line">    j = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">return</span> j;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设x在L每个位置(n)和空隙(n+1)的概率都是$\frac{1}{2n+1}$。</p>
+<ul>
+<li><p>最坏复杂度: $W(n) = n$</p>
+</li>
+<li><p>平均复杂度: $A(n) = \frac{[(1+2+…+n)+n(n+1)]}{(2n+1)} \approx \frac{3n}{4}$</p>
+</li>
+</ul>
+<h3 id="二分检索算法时间复杂度"><a href="#二分检索算法时间复杂度" class="headerlink" title="二分检索算法时间复杂度"></a>二分检索算法时间复杂度</h3><ul>
+<li>最坏复杂度: $W(n) = \lfloor log n\rfloor + 1, n\gt 1$<ul>
+<li>$W(n) = 1 + W(\lfloor \frac{n}{2} \rfloor) = 1 + \lfloor log\lfloor \frac{n}{2} \rfloor \rfloor + 1 = 1 = \lfloor log\lfloor n \rfloor \rfloor - 1 + 1$(对数除法运算法则)</li>
+</ul>
+</li>
+<li>平均复杂度: <ul>
+<li>令$n=2^k - 1$，$S_t, 1\lt t\lt k$为算法做t次比较时的输入个数 $k \lt logn$</li>
+<li>$S_1 = 1 = 2^0, S_2 = 2 = 2^1, S_3 = 2^2, …, S_t=2^{t-1}, …, S_k=2^{k-1} + n + 1$(n+1)为缝隙中情况</li>
+<li>$A(n) = \frac{1S_1 + 2S_2 + … + kS_k}{2n+1} = \frac{\sum_{t=1}^{k}t2^{t-1}+k(n+1)}{2n+1}=\frac{(k-1)2^k + 1 + k(n+1)}{2n+1}\approx \frac{k-1}{2} + \frac{k}{2} = k - \frac{1}{2} = \lfloor logn \rfloor + \frac{1}{2}$<ul>
+<li>$\sum_{t=1}^{k}t2^{t-1}$拆分为$\sum_{t=1}^{k}t2^{t} - \sum_{t=1}^{k}t2^{t-1} = \sum_{t=1}^{k}t2^t - \sum_{t=0}^{k-1}(t+1)2^t$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="决策树"><a href="#决策树" class="headerlink" title="决策树"></a>决策树</h3><p>对于给定输入规模n, 决策树是一棵二叉树, 其结点被标记为 1, 2, … , n, 且标记规则是:</p>
+<ul>
+<li>首先与 x 比较的 L 的项的下标标记为树根。</li>
+<li>假设某结点被标记为 i:<ul>
+<li>i 的左儿子是：当 $x &lt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
+<li>i 的右儿子是：当 $x &gt;L(i)$ 时，下一步与 x 比较的项的下标。</li>
+</ul>
+</li>
+<li>若 $x &lt; L(i)$ 时算法停止, 则 i 没有左儿子</li>
+<li>若 $x &gt; L(i)$ 时算法停止, 则 i 没有右儿子</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E6%A3%80%E7%B4%A2%E7%AE%97%E6%B3%95%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
+<h4 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li>给定输入，算法将从根开始，沿一条路径前进，直到某个结点为止。所执行的基本运算次数是这条路径的结点个数，最坏情况下的基本运算次数是树的深度+1。<ul>
+<li>对于任何一个搜索算法存在某个规模为 n 的输入使得该算法至少要做 $\lfloor logn \rfloor + 1$次比较。</li>
+</ul>
+</li>
+<li>对于有序表搜索问题, 在以比较作为基本运算的算法类中, 二分法在最坏情况下是最优的.</li>
+</ul>
+<h2 id="排序算法的时间复杂度分析"><a href="#排序算法的时间复杂度分析" class="headerlink" title="排序算法的时间复杂度分析"></a>排序算法的时间复杂度分析</h2><h3 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h3><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">// bubbleSort</span></span><br><span class="line"><span class="comment">// 交换只发生在相邻的元素之间</span></span><br><span class="line"><span class="function"><span class="type">int</span>* <span class="title">bubbleSort</span><span class="params">(<span class="type">int</span>* L, n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> index = n;</span><br><span class="line">  <span class="keyword">while</span>(index &gt; <span class="number">1</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    k = index - <span class="number">1</span>;</span><br><span class="line">    index = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j = <span class="number">1</span>; j &lt;= k; j++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span>(L[j] &gt; L[j+<span class="number">1</span>])</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">int</span> tmp = L[j];</span><br><span class="line">        L[j] = L[j+<span class="number">1</span>];</span><br><span class="line">        L[j+<span class="number">1</span>] = tmp;</span><br><span class="line">        index = j;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="置换与逆序"><a href="#置换与逆序" class="headerlink" title="置换与逆序"></a>置换与逆序</h4><ul>
+<li>逆序<ul>
+<li>令$L=\{1, 2, …, n\}$，排序的任何输入为L上的置换。在置换$a_1a_2…a_n$中若$i<j$，但$a_i>a_j$，则称($a_i, a_j$)为该置换的一个逆序。</li>
+</ul>
+</li>
+<li>逆序序列<ul>
+<li>在$i$的右边，并且小于i的元素的个数记作$b_i$，$i=1, 2, …, n$。</li>
+<li>($b_1, b_2, …, b_n$)为置换的逆序序列。<ul>
+<li>总共可以有$n!$个不同的逆序序列(1, 2, 3, …, n个)。</li>
+<li>置换与逆序序列构成一一对应。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>逆序数<ul>
+<li>置换中的逆序总数($\sum_{i=1}^{n}b_i$)</li>
+</ul>
+</li>
+<li><p>实例</p>
+<ul>
+<li>3, 1, 6, 5, 8, 7, 2, 4</li>
+<li>逆序数: 12</li>
+<li><p>降序逆序序列: </p>
+<p>1|2|3|4|5|6|7|8<br>:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:<br>0|0|2|0|2|3|2|3</p>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="复杂度分析-1"><a href="#复杂度分析-1" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li>最坏复杂度<ul>
+<li>$W(n) = O(n^2)$，至多巡回$O(n)$次，每次$O(n)$</li>
+<li>对换只发生在相邻元素之间，每次相邻元素交换只消除1个逆序，比较次数不少于逆序数，而最大逆序数为$\frac{n(n-1)}{2}$，于是$W(n)=\Omega(n^2)$</li>
+</ul>
+</li>
+<li>平均复杂度<ul>
+<li>假设各种输入是等可能的，置换$\alpha$的逆序序列是($b_1, b_2, …, b_n$)，置换$\alpha’$的逆序序列为($0-b_1, 1-b_2, …, n-1-b_n$)，$\alpha$和$\alpha’$的逆序数之和为$\frac{n(n-1)}{2}$。将$n!$种不同的置换分成$\frac{n!}{2}$组，每组的逆序之和为$\frac{n(n-1)}{2}$<ul>
+<li>$\alpha’$是补集置换，记录的是顺序数，因为经过置换后，其顺序数的逆序贡献等价于原置换的逆序数的逆序贡献。</li>
+</ul>
+</li>
+<li>平均逆序数为$\frac{n(n-1)}{4}$</li>
+<li>平均交换次数为$\Omega(\frac{n(n-1)}{4})$</li>
+</ul>
+</li>
+<li>因此均为$\Theta(n^2)$</li>
+</ul>
+<h3 id="快速排序与二分归并排序"><a href="#快速排序与二分归并排序" class="headerlink" title="快速排序与二分归并排序"></a>快速排序与二分归并排序</h3><h4 id="复杂度分析-2"><a href="#复杂度分析-2" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li>快速排序<ul>
+<li>最坏情况: $O(n^2)$</li>
+<li>平均情况: $O(nlogn)$</li>
+</ul>
+</li>
+<li>二分归并排序<ul>
+<li>最坏情况: $O(nlogn)$</li>
+<li>平均情况: $O(nlogn)$</li>
+</ul>
+</li>
+</ul>
+<h3 id="堆排序"><a href="#堆排序" class="headerlink" title="堆排序"></a>堆排序</h3><h4 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h4><p>设T是一棵深度为d的二叉树，结点为L中的元素。若能满足以下条件，则为堆:</p>
+<ul>
+<li>所有内结点(可能一点除外)的度数为2</li>
+<li>所有树叶至多在相邻的两层</li>
+<li>d-1层的所有树叶在内结点的右边</li>
+<li>d-1层最右边的内结点可能度数为1(只有左儿子，没有右儿子)</li>
+<li>每个结点的元素不小于儿子的元素(不满足这条的称作堆结构或者伪堆)</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86.png" alt="img"></p>
+<h4 id="性质"><a href="#性质" class="headerlink" title="性质"></a>性质</h4><ul>
+<li>根据二叉树的性质和堆的定义<ul>
+<li>$left(i)=2i$</li>
+<li>$right(i)=2i+1$</li>
+</ul>
+</li>
+<li><p>n个结点的堆恰好有$\lceil \frac{n}{2}\rceil$片树叶<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E6%A0%91%E5%8F%B6%E8%AF%81%E6%98%8E2.png" alt="img"></p>
+</li>
+<li><p>结点的高度: 结点到树叶的距离</p>
+<ul>
+<li>同一高度的结点分布在树的不同层<ul>
+<li>结点的深度: 结点到树根的距离</li>
+</ul>
+</li>
+<li>同一深度的结点分布在树的同一层</li>
+</ul>
+</li>
+</ul>
+<h4 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h4><ul>
+<li><p>整理</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%AE%9E%E4%BE%8B.png" alt="img"></p>
+</li>
+<li><p>建堆</p>
+<ul>
+<li>从下往上整理，堆有n个结点，树叶有$\lceil\frac{n}{2}\rceil$片，最大的内结点标号为$n-\lceil\frac{n}{2}\rceil=\lfloor\frac{n}{2}\rfloor$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%AE%9E%E4%BE%8B.png" alt="img"></li>
+</ul>
+</li>
+<li><p>排序</p>
+<ul>
+<li>建堆后从后往前每个结点下沉<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%8E%92%E5%BA%8F%E5%AE%9E%E4%BE%8B2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h4 id="复杂度分析-3"><a href="#复杂度分析-3" class="headerlink" title="复杂度分析"></a>复杂度分析</h4><ul>
+<li><p>整理</p>
+<ul>
+<li>每次调用为$O(1)$，子堆大小至多为原来的$\frac{2}{3}$<ul>
+<li><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E6%95%B4%E7%90%86%E5%A4%8D%E6%9D%82%E5%BA%A6.png" alt="img"></li>
+</ul>
+</li>
+<li>递推不等式$T(n)\lt T(\frac{2n}{3}) + \Theta(1)$<ul>
+<li>$T(n) = \Theta(logn)$($T(h) = \Theta(h)$)<ul>
+<li>h为结点i的高度(距离树叶的最大距离)，n为以i为根的子树的结点数。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>建堆</p>
+<ul>
+<li>按照高度来计数结点数，乘以$O(h)$，再求和。</li>
+<li>而整理的复杂度依赖于所整理结点的高度。</li>
+<li>$T(n) = \sum_{\lfloor logn \rfloor}^{h=0}高为h的结点数 \times O(h)$<ul>
+<li>n个元素的堆高度为h的层至多存在$\lceil\frac{n}{2^{h+1}}\rceil$个结点(归纳法证明)。<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B01.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E7%9A%84%E9%AB%98%E5%BA%A6%E5%92%8C%E7%BB%93%E7%82%B9%E6%95%B02.png" alt="img"></li>
+</ul>
+</li>
+<li>n个结点的建堆算法的时间复杂度是$O(n)$<ul>
+<li>对高为h的结点调用整理算法的时间是$O(h)$: $T(n) = \sum_{h=0}^{\lfloor logn \rfloor}\lceil\frac{n}{2^{h+1}}\rceil O(h) = O(n\sum_{h=0}^{\infin}\frac{h}{2^{h+1}} = O(n)$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%A0%86%E8%BF%90%E7%AE%97%E5%BB%BA%E5%A0%86%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%8E%A8%E5%AF%BC2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>排序</p>
+<ul>
+<li>$O(nlogn)$<ul>
+<li>建堆复杂度为$O(n)$</li>
+<li>整理需要n-1次，每次$O(logn)$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="排序问题的决策树"><a href="#排序问题的决策树" class="headerlink" title="排序问题的决策树"></a>排序问题的决策树</h3><p>考虑以比较运算作为基本运算的排序算法类<br>任取算法，输入$L=\{x_1, x_2, …, x_n\}$</p>
+<ul>
+<li>第一次比较的元素为$x_i, x_j$，作为决策树根为$(i, j)$</li>
+<li><p>假设结点k已经标记为$(m, n)$</p>
+<ul>
+<li>$x_m &lt; x_n$: <ul>
+<li>如果算法结束了，则将k的左儿子标记为输出。</li>
+<li>如果下一步是比较$x_p, x_q$，则k的左儿子标记为$(p, q)$</li>
+</ul>
+</li>
+<li>$x_m &gt; x_n$<ul>
+<li>如果算法结束了，则将k的右儿子标记为输出</li>
+<li>如果下一步是比较$x_p, x_q$，则k的右儿子标记为$(p, q)$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>任意输入对应了决策树中从树根到树叶的一条路径，算法最坏情况下的比较次数则为树的深度。</p>
+</li>
+</ul>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E7%9A%84%E5%86%B3%E7%AD%96%E6%A0%91.png" alt="img"></p>
+<ul>
+<li>删除非二叉的内结点(灰色结点)，得到的二叉树为B-树，其深度肯定不超过决策树的深度，有$n!$片树叶</li>
+</ul>
+<ul>
+<li>设t为B-树中的树叶数，d为树的深度，$t\lt 2^d$(归纳法证明)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/B%E6%A0%91%E5%8F%B6%E5%AD%90%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%85%B3%E7%B3%BB.png" alt="img"></li>
+</ul>
+<h4 id="最坏情况复杂度的下界"><a href="#最坏情况复杂度的下界" class="headerlink" title="最坏情况复杂度的下界"></a>最坏情况复杂度的下界</h4><ul>
+<li>对于给定的n，任何通过比较对n个元素排序的算法的决策树的深度至少为$\lceil logn!\rceil$(从上两条结论得到)</li>
+<li>任何通过比较对n个元素排序的算法在最坏情况下的时间复杂度是$\lceil logn! \rceil$，可近似为$nlogn - 1.5n$<ul>
+<li>最坏情况下的比较次数是树的深度。</li>
+<li>证明思路: 用对数乘加变换<ul>
+<li>$log n! = \sum_{j=1}^{n}log j \gt \int_1^n logx dx = loge\int_{1}^{n}lnx dx = loge(nlnn - n + 1) = nlogn - nloge + loge \approx nlogn - 1.5n$<ul>
+<li>$x = e^{lnx}$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>堆排序算法在最坏情况阶达到最优。<ul>
+<li>$log(n!) = \sum_{k=1}^{n}logk \gt \int_{1}^{n}logxdx=nlnn - n + 1 = \Omega(nlogn)$</li>
+<li>$log(n!) = \sum_{k=1}^{n}logk \gt \int_{2}^{n+1}logxdx=O(nlogn)$</li>
+</ul>
+</li>
+</ul>
+<h4 id="平均情况复杂度的下界"><a href="#平均情况复杂度的下界" class="headerlink" title="平均情况复杂度的下界"></a>平均情况复杂度的下界</h4><ul>
+<li>epl(T): 假设所有的输入等概率分布，令epl(T)表示B-树中从根到树叶的所有路径长度之和，$\frac{epl(T)}{n!}$的最小值对应平均情况时间复杂性的下界。<ul>
+<li>分析具有最小epl(T)值的树的结构求得最小值。</li>
+</ul>
+</li>
+<li>在具有t片树叶的所有B-树中，树叶分布在两个相邻层上的树的epl值最小。<ul>
+<li>反证法?: 假设树T的深度为d，假设树叶x在第k层，$k&lt;d-1$。取d-1层的某个结点y，y有两个儿子是第d层的树叶，y的两个儿子作为x的儿子得到树T’<ul>
+<li>$epl(T)-epl(T’)=(2d+k) - (d-1) + 2(k+1) = d-k-1 &gt; 0$</li>
+<li>T’的树叶相距层数小于T的树叶相距层数，且T’的epl值小于T的epl值</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>epl的下界</p>
+<ul>
+<li>具有t片树叶且epl值最小的B-树T满足: $epl(T) = t\lfloor logt\rfloor + 2(t-2^{\lfloor logt \rfloor})$<ul>
+<li>$d\gt \lceil logt\rceil$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E1.png" alt="img"><br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E7%AE%97%E6%B3%95%E8%AE%BE%E8%AE%A1/epl%E4%B8%8B%E7%95%8C%E8%AF%81%E6%98%8E2.png" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>在输入等概分布下任何通过比较对n个项排序的算法平均比较次数至少为$\lfloor log n!\rfloor$，近似为$nlogn - 1.5n$</p>
+<ul>
+<li>算法类中任何算法的平均比较次数是该算法决策树T的$\frac{epl(T)}{n!}$<ul>
+<li>$A(n)\gt \frac{epl(T)}{n!} = \frac{n!\lfloor logn!\rfloor + 2(n! - 2^{\lfloor logn!\rfloor})}{n!}=\lfloor logn!\rfloor +\epsilon\approx nlogn - 1.5n(0\lt \epsilon &lt; 1)$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>堆排序在平均情况下阶达到最优。</p>
+</li>
+</ul>
+<h3 id="排序算法的比较"><a href="#排序算法的比较" class="headerlink" title="排序算法的比较"></a>排序算法的比较</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">算法</th>
+<th style="text-align:center">最坏情况</th>
+<th style="text-align:center">平均情况</th>
+<th style="text-align:center">占用空间</th>
+<th style="text-align:center">时间最优性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">冒泡排序</td>
+<td style="text-align:center">$O(n^2)$</td>
+<td style="text-align:center">$O(n^2)$</td>
+<td style="text-align:center">原地</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">快速排序</td>
+<td style="text-align:center">$O(n^2)$</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(logn)$</td>
+<td style="text-align:center">平均最优</td>
+</tr>
+<tr>
+<td style="text-align:center">归并排序</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(n)$</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">堆排序</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">$O(nlogn)$</td>
+<td style="text-align:center">原地</td>
+<td style="text-align:center">最优</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="选择算法的时间复杂度分析"><a href="#选择算法的时间复杂度分析" class="headerlink" title="选择算法的时间复杂度分析"></a>选择算法的时间复杂度分析</h2><p><img src="" alt="img"></p>
+<h3 id="管道问题"><a href="#管道问题" class="headerlink" title="管道问题"></a>管道问题</h3><ul>
+<li>某区域有n口油井，需要修建输油管道。根据设计要求，水平方向有一条主管道，每口油井修一条垂直方向的支管道通向主管道。问如何选择主管道的垂直方向位置，使得支管道长度的综合最小？</li>
+<li><p>最优解是垂直方向上的所有支管道坐标的中位数</p>
+</li>
+<li><p>简单算法</p>
+<ul>
+<li>调用k次选最小算法，复杂度为$O(kn)$</li>
+<li>先排序，然后输出第k小的数，复杂度为$O(nlogn)$</li>
+</ul>
+</li>
+<li>分治算法<ul>
+<li>假设元素彼此不等</li>
+<li>用某个元素$m^<em>$作为标准将总集合$S$划分为$S_1$($&lt;m^</em>$), $S_2$($&gt;m^*$)。</li>
+<li>分治:<ul>
+<li>如果$k\lt |S_1|$，则在$S_1$中找第k小</li>
+<li>如果$k = |S_1| + 1$，则$m^*$是第k小</li>
+<li>如果$k\gt |S_1| + 1$，则在$S_2$中找第$k-|S_1|-1$小</li>
+</ul>
+</li>
+<li>伪码<ul>
+<li>行2: $O(n)$，每5个数找中位数构成M。</li>
+<li>行3: $W(\frac{n}{5})$，在M中再找中位数$m^*$。</li>
+<li>行4: $O(n)$，用$m^*$划分集合$S$。</li>
+<li>行8-9: $W(\frac{7n}{10})$，进行递归</li>
+<li>$W(n)\lt W(\frac{n}{5}) + W(\frac{7n}{10}) + O(n)$<br><img src="" alt="img"></li>
+</ul>
+</li>
+<li>该算法的效率取决于子问题的规模<ul>
+<li>算法工作量为$O(n)$<ul>
+<li>$W(n) \lt cn(1+0.9+0.9^2+…) = O(n)$</li>
+<li>$|M|$与归约后子问题的规模之和小于n，递归树每行的工作量便能构成公比小于1的等比级数，于是算法复杂度为$O(n)$<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>分组时如果不是5个元素一组，而是3个或7个<ul>
+<li>求$m^*$的工作量与$|M|=\frac{n}{t}$相关，t为每组的元素数，如果t大，那么$|M|$就小。</li>
+<li>归约后的子问题大小与分组元素t有关，t大，子问题规模就大。<ul>
+<li>复杂度满足方程$W(n) = W(\frac{n}{3}) + W(\frac{4n}{6}) + cn = \Theta(nlogn)$<br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="下界的证明方法-构造最坏的输入"><a href="#下界的证明方法-构造最坏的输入" class="headerlink" title="下界的证明方法: 构造最坏的输入"></a>下界的证明方法: 构造最坏的输入</h3><ul>
+<li>任意给定一个算法，对于任意输入x都存在一个确定的操作序列$\tau$<ul>
+<li>$\tau$中的操作分成两类:<ul>
+<li>决定性的: 能够对确定输出结果提供有效的信息。</li>
+<li>非决定性的: 对确定结果没有帮助的冗余操作。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>最坏情况便是: <ul>
+<li>根据算法构造某个输入实例x，使得算法对x的操作序列$\tau$包含尽量多的冗余非决定性操作。</li>
+<li>给出冗余操作+必要操作的计数公式便能得到下界。</li>
+</ul>
+</li>
+</ul>
+<h3 id="选最大与最小的算法"><a href="#选最大与最小的算法" class="headerlink" title="选最大与最小的算法"></a>选最大与最小的算法</h3><ul>
+<li>任何通过比较找最大和最小的算法至少需要$\lceil\frac{3n}{2}\rceil - 2$次比较。<ul>
+<li>任意给定一个算法，根据算法的比较结果构造输入T，使得算法对T至少做$\lceil\frac{3n}{2}\rceil-2$次比较。</li>
+<li>不妨假设n彼此不等的数，max代表最大，min代表最小。<ul>
+<li>基于比较的暴力算法要找到最大必须确定有n-1个数比max小。找到最小的数必须确定有n-1个数比min小。共$2n-2$次比较。</li>
+<li>FindMaxMin算法将数两两分组比较，是最优算法，是复杂度的下界。<br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"><br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="找第二大问题"><a href="#找第二大问题" class="headerlink" title="找第二大问题"></a>找第二大问题</h3><ul>
+<li><p>元素x的权: $w(x)$，表示以x为根的子树中的结点数。</p>
+<ul>
+<li>初始，$w(x_i)=1, i=1, 2, 3, …, n$</li>
+<li>赋值原则: 在比较的时候进行赋值或者调整赋值。只对没有失败过的元素(权大于0)进行赋值。权大者胜，原来胜的次数多的仍旧是胜，输入值也大。<ul>
+<li>$w(x), w(y) &gt; 0$<ul>
+<li>权大者胜: 若$w(x) &gt; w(y)$，那么x的值大于y的值，$w(x)\leftarrow w(x) + w(y), w(y)\leftarrow 0$。</li>
+<li>权等则任意分配: 若$w(x) = w(y)$，那么可考虑为x的值大于y的值的情况，也可考虑为y的值大于x的值。</li>
+<li>无意义不变: 若$w(x) = w(y) = 0$，x和y值不变。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>构造树</p>
+<ul>
+<li>初始是森林，包含n个结点。</li>
+<li>若x, y是子树的树根，则算法比较x, y。</li>
+<li>若x, y以前没有参加过比较，任意赋值给x, y，比如$x&gt;y$，那么y作为x的儿子。</li>
+<li>若x, y已经在前面的比较中赋过值，且$x&gt;y$，那么把y作为x的儿子，以y为根的子树作为x的子树。<br><img src="" alt="img"></li>
+</ul>
+</li>
+<li><p>任何找第二大算法，针对上述赋值规则产生的输入，通过与最大元素的比较直接淘汰的元素数至少是$\lceil logn\rceil$。</p>
+<ul>
+<li>$w_k$表示max在第k次比较后形成以max为根子树的结点总数。$w_k\lt 2w_{k-1}$。</li>
+<li>设K为max最终与权不为0的结点的比较次数。<ul>
+<li>$n=w_K\lt 2^K\Rightarrow K\gt logn \Rightarrow K \gt \lceil logn\rceil$</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>任何通过比较找第二大的算法至少需要$n+\lceil logn\rceil-2$次比较。<ul>
+<li>确定最大需要n-1次比较。</li>
+<li>确定第二大还要淘汰K-1个元素，至少用$\lceil logn\rceil - 1$次比较。</li>
+</ul>
+</li>
+<li>锦标赛算法是找第二大的最优算法。</li>
+</ul>
+<h3 id="找中位数问题"><a href="#找中位数问题" class="headerlink" title="找中位数问题"></a>找中位数问题</h3><ul>
+<li>设n为奇数，任何通过比较运算找n个数的中位数(median)的算法在最坏情况下至少做$\frac{3n}{2} - \frac{3}{2}$次比较。<ul>
+<li>决定性的比较: 建立x与median的关系的比较，比较时y和median的关系可以不知道。<ul>
+<li>$\exist y (x&gt;y \&amp; y\gt median)$，x满足上述条件的第一次比较。</li>
+<li>$\exist y (x&lt;y \&amp; y\lt median)$，x满足上述条件的第一次比较。</li>
+</ul>
+</li>
+<li>非决定性的比较<ul>
+<li>$x&gt;median, y<median$，这时$x>y$的比较不是决定性的，因为根据median本可知道x和y的大小。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>为了找到中位数，必须要做n-1次决定性的比较，针对算法构造输入，使得非决定性比较达到$\frac{n-1}{2}$次。</p>
+</li>
+<li><p>对于求中位数的任意算法，构造输入</p>
+<ul>
+<li>分配一个值给中位数median。</li>
+<li>如果算法比较x与y，且x与y没有被赋值，那么赋值x, y使得$x&gt;median, y&lt;median$。</li>
+<li>如果算法比较x与y，且$x&gt;median$，y没有被赋值，则赋值y使得$y&lt;median$。</li>
+<li>如果算法比较x与y，且$x<median$，y没有被赋值，则赋值y使得$y>median$。</li>
+<li>如果存在$\frac{n-1}{2}$个元素已得到小于median的值，则对未赋值的全部元素分配大于median的值。</li>
+<li>如果存在$\frac{n-1}{2}$个元素已得到大于median的值，则对未赋值的全部元素分配小于median的值。</li>
+<li>如果只剩下1个元素，则分配为median。<br><img src="" alt="img"></li>
+</ul>
+</li>
+<li><p>复杂度分析</p>
+<ul>
+<li>Select算法在阶上达到最优。<br><img src="" alt="img"></li>
+</ul>
+</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">问题</th>
+<th style="text-align:center">算法</th>
+<th style="text-align:center">最坏情况</th>
+<th style="text-align:center">问题下界</th>
+<th style="text-align:center">最优性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">找最大</td>
+<td style="text-align:center">Findmax</td>
+<td style="text-align:center">$n-1$</td>
+<td style="text-align:center">n-1</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找最大最小</td>
+<td style="text-align:center">FindMaxMin</td>
+<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
+<td style="text-align:center">$\lceil\frac{3n}{2}\rceil-2$</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找第二大</td>
+<td style="text-align:center">锦标赛</td>
+<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
+<td style="text-align:center">$n+\lceil logn\rceil - 2$</td>
+<td style="text-align:center">最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找中位数</td>
+<td style="text-align:center">Select(找第$\frac{k}{2}$小)</td>
+<td style="text-align:center">$O(n)$</td>
+<td style="text-align:center">$\frac{3n}{2}-\frac{3}{2}$</td>
+<td style="text-align:center">阶最优</td>
+</tr>
+<tr>
+<td style="text-align:center">找第k小</td>
+<td style="text-align:center">Select</td>
+<td style="text-align:center">$O(n)$</td>
+<td style="text-align:center">$n+\min\{k, n-k+1\}-2$</td>
+<td style="text-align:center">阶最优</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h2 id="归约确认问题"><a href="#归约确认问题" class="headerlink" title="归约确认问题"></a>归约确认问题</h2>]]></content>
+      <categories>
+        <category>高级算法设计</category>
+      </categories>
+      <tags>
+        <tag>高级算法设计</tag>
       </tags>
   </entry>
   <entry>
@@ -9132,7 +9132,7 @@ j =
 </li>
 <li>Static Power(静态功耗)<ul>
 <li>Static power is becoming an important issue, because leakage current(泄漏电流) flows even when a transistor is off(即使晶体管关闭了，依然可能会有电流泄漏)<ul>
-<li>$Power<em>{static} \propto Current</em>{static} \times Voltage$，功率和电流电压成正比</li>
+<li>$Power_{static} \propto Current_{static} \times Voltage$，功率和电流电压成正比</li>
 </ul>
 </li>
 <li>Leakage can be as high as 50% for high-performance chips<ul>
@@ -9222,7 +9222,7 @@ j =
 </ul>
 </li>
 <li>$Cost\quad of\quad die = Cost\quad of\quad wafer / (Dies\quad per\quad wafer \times Die\quad yield)$</li>
-<li>$Dies\quad per\quad wafer = {[\pi \times (Wafer \quad diameter / 2)^2] / (Die\quad area)} - {[\pi \times Wafer \quad diameter] / \sqrt{2 \times Die\quad area}}$<ul>
+<li>$Dies\quad per\quad wafer = \{[\pi \times (Wafer \quad diameter / 2)^2] / (Die\quad area)\} - \{[\pi \times Wafer \quad diameter] / \sqrt{2 \times Die\quad area}\}$<ul>
 <li>wafer：薄片</li>
 <li>前者是薄片模型除以芯片面积，后者是薄片周长除以晶片对角线长(边缘部分)</li>
 </ul>
@@ -9717,8 +9717,8 @@ j =
 <li>$I_N$表示指令数量</li>
 </ul>
 </li>
-<li>相对MIPS: $MIPS<em>{Rel} = (\frac{T</em>{Ref}}{T<em>V} \times MIPS</em>{Ref}$<ul>
-<li>$MIPS<em>{Ref}$和$T</em>{Ref}$为参照机器的执行时间和MIPS</li>
+<li>相对MIPS: $MIPS_{Rel} = (\frac{T_{Ref}}{T_V} \times MIPS_{Ref}$<ul>
+<li>$MIPS_{Ref}$和$T_{Ref}$为参照机器的执行时间和MIPS</li>
 </ul>
 </li>
 </ul>
@@ -9891,8 +9891,8 @@ j =
 <li><p>等效率度量标准(非唯一的方法): 保持效率E不变的前提下，研究问题规模W如何随着处理器个数p而变化</p>
 <ul>
 <li>令$t_e^i$和$t_o^i$分别是并行系统上第i个处理器的有用计算时间和额外开销时间(通信、同步和空闲等待时间)<ul>
-<li>$T<em>e = \Sigma</em>{i=0}^{p-1} t_e^i$(整个系统的有用计算时间)</li>
-<li>$T<em>o = \Sigma</em>{i=0}^{p-1} t_o^i$(整个系统的额外开销时间)</li>
+<li>$T_e = \Sigma_{i=0}^{p-1} t_e^i$(整个系统的有用计算时间)</li>
+<li>$T_o = \Sigma_{i=0}^{p-1} t_o^i$(整个系统的额外开销时间)</li>
 </ul>
 </li>
 <li>$T_p$是p个处理器系统上并行算法的运行时间，对于任意i显然有$T_p = t_e^i + t_o^i$，且$T_e + T_o = pT_p$</li>
@@ -10292,8 +10292,8 @@ j =
 <h4 id="能耗评测集"><a href="#能耗评测集" class="headerlink" title="能耗评测集"></a>能耗评测集</h4><ul>
 <li>Green 500: 提供高性能计算机的能耗排名<ul>
 <li>指标: 使用PPW(performance per watt, 每瓦特性能, 通常单位为GFLOPS Per Watt)作为其指标对能源效率进行排名<ul>
-<li>$PPW = \frac{Performance}{Power} = \frac{R<em>{max}}{\overline{P}(R</em>{max})}$</li>
-<li>$\overline{P}(R<em>{max}) = N \cdot \overline{P}</em>{unit}(R_{max})$(超级计算机的整体功耗包括计算节点、网络和存储等各个部分的能耗之和，这里是假定各部分能耗一致)</li>
+<li>$PPW = \frac{Performance}{Power} = \frac{R_{max}}{\overline{P}(R_{max})}$</li>
+<li>$\overline{P}(R_{max}) = N \cdot \overline{P}_{unit}(R_{max})$(超级计算机的整体功耗包括计算节点、网络和存储等各个部分的能耗之和，这里是假定各部分能耗一致)</li>
 </ul>
 </li>
 </ul>
@@ -10666,7 +10666,7 @@ j =
 <li>发展前景不好</li>
 <li>ILLIAC IV<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ILLIAC%20IV.png" alt="img"><ul>
 <li>64个处理单元、64个处理单元存储器和存储器逻辑部件组成<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ILLIAC%20IV1.png" alt="img"><ul>
-<li>64个处理部件$PE<em>0～PE</em>{63}$排列成8×8的方阵，任何一个$PE_i$只与其上、下、左、右4个近邻$(PE_i-8)\mod64$、$(PE_i+8)\mod64$、$(PE_i-1)\mod64$和$(PE_i+1)\mod64$直接相连</li>
+<li>64个处理部件$PE_0～PE_{63}$排列成8×8的方阵，任何一个$PE_i$只与其上、下、左、右4个近邻$(PE_i-8)\mod64$、$(PE_i+8)\mod64$、$(PE_i-1)\mod64$和$(PE_i+1)\mod64$直接相连</li>
 <li>循此规则，南北方向上同一列的PE两端相连成一个环，东西方向上每一行的东端PE与下一行的西端PE相连，最下面一行的东端PE则与最上面一行的西端PE相连，从而构成一个闭合的螺线形状，所以称其为闭合螺线阵列<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84/ILLIAC%20IV2.png" alt="img"></li>
 </ul>
 </li>
@@ -10740,7 +10740,7 @@ j =
 <li>8个: $S_0~S_7$，每个64位</li>
 </ul>
 </li>
-<li>标量保存寄存器(后援寄存器, Scalar-save Register): 用于在标量寄存器和存储器之间提供缓存($T<em>0~T</em>{63}$)</li>
+<li>标量保存寄存器(后援寄存器, Scalar-save Register): 用于在标量寄存器和存储器之间提供缓存($T_0~T_{63}$)</li>
 </ul>
 </li>
 <li>我国自主研发的第一台大型向量计算机“757”机</li>
@@ -12611,7 +12611,7 @@ j =
 <li>approach: adaptive playout delay adjustment<ul>
 <li>estimate network delay, adjust playout delay at beginning of each talkspurt<ul>
 <li>EWMA: exponentially weighted moving average(指数加权移动平均), recall TCP RTT estimate</li>
-<li>$d<em>i = (1-\alpha)d</em>{i-1} + \alpha(r_i-t_i)$<ul>
+<li>$d_i = (1-\alpha)d_{i-1} + \alpha(r_i-t_i)$<ul>
 <li>$d_i$: delay estimate after $i^{th}$ packet(第i个包后的延迟估计)</li>
 <li>$\alpha$: small constant(e.g. 0.1)</li>
 <li>$r_i$: time received，用来测量第i个包的传输延迟</li>
@@ -13177,7 +13177,7 @@ j =
 <li>certificate containing E’s public key digitally signed by CA – CA says “this is E’s public key”<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CA.png" alt="img"></li>
 <li>when want public key $K_B^+$<ul>
 <li>get certificate</li>
-<li>apply CA’s public key $K<em>{CA}^+$ to certificate, get public key $K_B^+ = K</em>{CA}^+(K_{CA}^-(K_B^+))$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CA1.png" alt="img"></li>
+<li>apply CA’s public key $K_{CA}^+$ to certificate, get public key $K_B^+ = K_{CA}^+(K_{CA}^-(K_B^+))$<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/CA1.png" alt="img"></li>
 </ul>
 </li>
 </ul>

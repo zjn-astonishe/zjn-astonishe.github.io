@@ -146,9 +146,9 @@
 </head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">56</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">25</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">全局状态及快照算法</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-10-25T13:25:26.000Z" title="发表于 2024-10-25 21:25:26">2024-10-25</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-11-09T04:33:57.468Z" title="更新于 2024-11-09 12:33:57">2024-11-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">高级分布式系统</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">7.6k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>35分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="全局状态及快照算法"><a href="#全局状态及快照算法" class="headerlink" title="全局状态及快照算法"></a>全局状态及快照算法</h1><h2 id="System-model"><a href="#System-model" class="headerlink" title="System model"></a>System model</h2><ul>
 <li>The system consists of a collection of $n$ processes $p_1, p_2, …, p_n$ that are connected by channels</li>
 <li>There are no globally shared memory and physical global clock and processes communicate by passing messages through communication channels with unpredicatable message delays<ul>
-<li>$C<em>{ij}$ denotes the channel from process $p_i$ to process $p_j$ and its state is denoted by $SC</em>{ij}$<ul>
+<li>$C_{ij}$ denotes the channel from process $p_i$ to process $p_j$ and its state is denoted by $SC_{ij}$<ul>
 <li>For a channel $C_{ij}$, the following set of messages can be defined based on the local states of the processes $p_i$ and $p_j$</li>
-<li>Transit: $transit(LS<em>i, LS_j)={m</em>{ij}|send(m<em>{ij}\in LS_i \wedge rec(m</em>{ij})\notin LS_j}$(发送端发送了，但接收端没接收，说明消息在信道)</li>
+<li>Transit: $transit(LS_i, LS_j)=\{m_{ij}|send(m_{ij}\in LS_i \wedge rec(m_{ij})\notin LS_j\}$(发送端发送了，但接收端没接收，说明消息在信道)</li>
 </ul>
 </li>
 </ul>
@@ -159,7 +159,7 @@
 <li>the message receive event</li>
 </ul>
 </li>
-<li>For a message $m<em>{ij}$ that is sent by process $p_i$ to process $p_j$, let $send(m</em>{ij})$ and $rec(m_{ij})$ denote its send and receive events</li>
+<li>For a message $m_{ij}$ that is sent by process $p_i$ to process $p_j$, let $send(m_{ij})$ and $rec(m_{ij})$ denote its send and receive events</li>
 <li>At any distant, the state of process $p_i$, denoted by $LS_i$, is a result of the sequence of all the events executed by $p_i$ till that instant(进程的状态是之前所有执行过的事件)<ul>
 <li>For an event $e$ and a process state $LS_i, e\in LS_i$ iff $e$ belongs to the sequence of events that have taken process $p_i$ to state $LS_i$</li>
 <li>For an event $e$ and a process state $LS_i, e\notin LS_i$, iff $e$ does not belong to the sequence of events that have taken process $p_i$ to state $LS_i$</li>
@@ -170,7 +170,7 @@
 <li>In FIFO model, each channel acts as a first-in first-out message queue and thus, message ordering is preserved by a channel(FIFO消息是有序到达)</li>
 <li>In non-FIFO model, a channel acts like a set in which the sender process adds messages and the receiver process removes messages from it in a random order.(non-FIFO消息是无序到达)</li>
 <li>A system that supports causal delivery of messages satisfies the following property: <ul>
-<li>“For any two messages $m<em>{ij}$ and $m</em>{kj}$, if $send(m<em>{ij})\rightarrow send(m</em>{kj})$, then $rec(m<em>{ij}) −→ rec(m</em>{kj})$”</li>
+<li>“For any two messages $m_{ij}$ and $m_{kj}$, if $send(m_{ij})\rightarrow send(m_{kj})$, then $rec(m_{ij}) −→ rec(m_{kj})$”</li>
 <li>因果序，先发和后发有因果序，则先发的会先收，且和后收有因果序</li>
 </ul>
 </li>
@@ -178,14 +178,14 @@
 <h2 id="Consistent-global-state"><a href="#Consistent-global-state" class="headerlink" title="Consistent global state"></a>Consistent global state</h2><ul>
 <li>The global state of a distributed system is a collection of the local states of the processes and the channels<ul>
 <li>Notationally, global state $GS$ is defined as<ul>
-<li>$GS={\bigcup<em>i LS_i, \bigcup</em>{i, j}SC_{ij}}$(所有的进程状态和所有的信道状态)</li>
+<li>$GS=\{\bigcup_i LS_i, \bigcup_{i, j}SC_{ij}\}$(所有的进程状态和所有的信道状态)</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>A global state $GS$ is a consistent global state iff it satisfies the following two conditions:<ul>
-<li>$C1: send(m<em>{ij})\in LS_i \Rightarrow m</em>{ij}\in SC<em>{ij} \bigoplus rec(m</em>{ij})\in LS_j$, ($\bigoplus$ is Ex-OR operator, 异或)(发出去的消息要么被接收要么在信道，不可能同时在接收方和信道，也不可能都不在)</li>
-<li>$C2: send(m<em>{ij})\notin LS_i \Rightarrow m</em>{ij}\notin SC<em>{ij}\wedge rec(m</em>{ij})\notin LS_j$(没发的消息不可能出现在接收方和信道)</li>
+<li>$C1: send(m_{ij})\in LS_i \Rightarrow m_{ij}\in SC_{ij} \bigoplus rec(m_{ij})\in LS_j$, ($\bigoplus$ is Ex-OR operator, 异或)(发出去的消息要么被接收要么在信道，不可能同时在接收方和信道，也不可能都不在)</li>
+<li>$C2: send(m_{ij})\notin LS_i \Rightarrow m_{ij}\notin SC_{ij}\wedge rec(m_{ij})\notin LS_j$(没发的消息不可能出现在接收方和信道)</li>
 </ul>
 </li>
 </ul>
@@ -201,7 +201,7 @@
 </ul>
 </li>
 <li>How to determine the instant when a process takes its snapshot(如何确定何时该进行快照)<ul>
-<li>A process $p<em>j$ must record its snapshot before processing a message $m</em>{ij}$ that was sent by process $p_i$ after recording its snapshot.(在发送进程快照后才发送的消息，接收进程必须在接收后处理该消息之前进行快照)</li>
+<li>A process $p_j$ must record its snapshot before processing a message $m_{ij}$ that was sent by process $p_i$ after recording its snapshot.(在发送进程快照后才发送的消息，接收进程必须在接收后处理该消息之前进行快照)</li>
 </ul>
 </li>
 </ul>
@@ -223,9 +223,9 @@
 <h4 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Marker Sending Rule for process i</span><br><span class="line">1- Process i records its state</span><br><span class="line">2- For each outgoing channel C on which a marker has not been sent, i sends a marker along C, before i sends further messages along C</span><br><span class="line"></span><br><span class="line">Marker Receiving Rule for process j</span><br><span class="line">On receiving a marker along channel C:</span><br><span class="line">    if j has not recorded its state then</span><br><span class="line">        Record the state of C as the empty set</span><br><span class="line">        Follow the &quot;Marker Sending Rule&quot;</span><br><span class="line">    else</span><br><span class="line">        Record the state of C as the set of messages</span><br><span class="line">        received along C after j&#x27;s state was recorded</span><br><span class="line">        and before j received the marker along C</span><br></pre></td></tr></table></figure>
 <h4 id="Correctness"><a href="#Correctness" class="headerlink" title="Correctness"></a>Correctness</h4><ul>
 <li>Due to FIFO property of channels, it follows that no message sent after the marker on that channel is recorded in the channel state. Thus, condition $C2$ is satisfied(FIFO的特性，使得marker后发送的消息不会被记录，满足$C2$规则)</li>
-<li>When a process $p<em>j$ receives message $m</em>{ij}$ that precedes the marker on channel $C<em>{ij}$($p_j$从信道$C</em>{ij}$收到在marker之前的$m_{ij}$后), it acts as follows: <ul>
-<li>If process $p<em>j$ has not taken its snapshot yet, then it includes $m</em>{ij}$ in its recorded snapshot. (如果$p<em>j$还没进行快照，那么在后面进行快照的时候，需要包括$m</em>{ij}$)</li>
-<li>Otherwise, it records $m<em>{ij}$ in the state of the channel $C</em>{ij}$. Thus, condition C1 is satisfied(否则把$m<em>{ij}$记录在信道$C</em>{ij}$的状态中，满足$C1$规则)</li>
+<li>When a process $p_j$ receives message $m_{ij}$ that precedes the marker on channel $C_{ij}$($p_j$从信道$C_{ij}$收到在marker之前的$m_{ij}$后), it acts as follows: <ul>
+<li>If process $p_j$ has not taken its snapshot yet, then it includes $m_{ij}$ in its recorded snapshot. (如果$p_j$还没进行快照，那么在后面进行快照的时候，需要包括$m_{ij}$)</li>
+<li>Otherwise, it records $m_{ij}$ in the state of the channel $C_{ij}$. Thus, condition C1 is satisfied(否则把$m_{ij}$记录在信道$C_{ij}$的状态中，满足$C1$规则)</li>
 </ul>
 </li>
 <li>$C1$和$C2$都满足，因此该算法是正确的</li>
@@ -283,8 +283,8 @@
 <li>Every white process takes its snapshot at its convenience, but no later than the instant it receives a red message.(每个白色进程都会在该进程方便的时候拍摄快照，但不能迟于它受到其他进程的红色消息的那一刻，最迟可以在接收到红色消息之后，处理红色消息之前)</li>
 <li>Every white process records a history of all white messages sent or received by it along each channel(每个白色进程都记录了它沿每个信道发送或接收的所有白色消息的历史记录)</li>
 <li>When a process turns red, it sends these histories along with its snapshot to the initiator process that collects the global snapshot(当一个进程变为红色时，会将这些历史记录及其快照发送给收集全局快照的启动器进程initiator)</li>
-<li>The initiator process evaluates $transit(LS<em>i, LS_j)$ to compute the state of a channel $C</em>{ij}$ as given below:<ul>
-<li>$SC<em>{ij}=$ white messages sent by $p_i$ on $C</em>{ij}$ — white messages received by $p<em>j$ on $C</em>{ij}={send(m<em>{ij})|send(m</em>{ij})\in LS<em>i} - {rec(m</em>{ij})|rec(m_{ij})\in LS_j}$(得到的便是在信道中的消息)</li>
+<li>The initiator process evaluates $transit(LS_i, LS_j)$ to compute the state of a channel $C_{ij}$ as given below:<ul>
+<li>$SC_{ij}=$ white messages sent by $p_i$ on $C_{ij}$ — white messages received by $p_j$ on $C_{ij}=\{send(m_{ij})|send(m_{ij})\in LS_i\} - \{rec(m_{ij})|rec(m_{ij})\in LS_j\}$(得到的便是在信道中的消息)</li>
 </ul>
 </li>
 </ul>
@@ -297,7 +297,7 @@
 <li>After having received an acknowledgement from every process, the initiator increases its vector clock to $s$ and broadcasts a dummy message to all processes.(启动器收到所有的进程的确认回复后，启动器将自己的虚拟时钟修改为$s$，然后广播一个dummy消息)</li>
 <li>The receipt of this dummy message forces each recipient to increase its clock to a value $\geq s$ if not already $\geq s$.(接收到dummy消息的进程也把自己的时钟修改为$s$)</li>
 <li>Each process takes a local snapshot and sends it to the initiator when (just before) its clock increases from a value less than $s$ to a value $\geq s$.(每个进程在将少于$s$的时钟值修改为$s$前，拍摄一个本地快照，并将快照发送给启动器)</li>
-<li>The state of $C<em>{ij}$ is all messages sent along $C</em>{ij}$, whose timestamp is smaller than $s$ and which are received by $p_j$ after recording $LS_j$.(信道的状态是时间戳小于s，且在接收进程拍摄快照后才接收的所有消息)</li>
+<li>The state of $C_{ij}$ is all messages sent along $C_{ij}$, whose timestamp is smaller than $s$ and which are received by $p_j$ after recording $LS_j$.(信道的状态是时间戳小于s，且在接收进程拍摄快照后才接收的所有消息)</li>
 </ul>
 </li>
 </ul>
@@ -334,10 +334,10 @@
 </ul>
 <h4 id="Correctness-1"><a href="#Correctness-1" class="headerlink" title="Correctness"></a>Correctness</h4><ul>
 <li>For any two processes $p_i$ and $p_j$, the following property is satisfied:<ul>
-<li>$send(m<em>{ij})\notin LS_i \Rightarrow rec(m</em>{ij})\notin LS<em>j$(消息$m</em>{ij}$不在进程$p<em>i$的快照$LS_i$中，能推断出接收消息$m</em>{ij}$也不在进程$p_j$的快照$LS_j$中)</li>
+<li>$send(m_{ij})\notin LS_i \Rightarrow rec(m_{ij})\notin LS_j$(消息$m_{ij}$不在进程$p_i$的快照$LS_i$中，能推断出接收消息$m_{ij}$也不在进程$p_j$的快照$LS_j$中)</li>
 <li>This is due to the causal ordering property of the underlying system as explained next<ul>
-<li>Let a message $m<em>{ij}$ be such that $rec(token_i)\rightarrow send(m</em>{ij})$($send(m_{ij})\notin LS_i$)</li>
-<li>Then $send(token<em>j)\rightarrow send(m</em>{ij})$ and the underlying causal ordering property ensures that $rec(token<em>j)$, at which instant process $p_j$ records $LS_j$, happens before $rec(m</em>{ij})$(进程$p<em>i$先发送$token_j$给进程$p_j$，然后才发送$m</em>{ij}$，所以进程$p<em>j$先收到$token_j$拍摄快照$LS_j$，然后才接收$m</em>{ij}$?)</li>
+<li>Let a message $m_{ij}$ be such that $rec(token_i)\rightarrow send(m_{ij})$($send(m_{ij})\notin LS_i$)</li>
+<li>Then $send(token_j)\rightarrow send(m_{ij})$ and the underlying causal ordering property ensures that $rec(token_j)$, at which instant process $p_j$ records $LS_j$, happens before $rec(m_{ij})$(进程$p_i$先发送$token_j$给进程$p_j$，然后才发送$m_{ij}$，所以进程$p_j$先收到$token_j$拍摄快照$LS_j$，然后才接收$m_{ij}$?)</li>
 <li>Thus, $m_{ij}$ whose send is not recorded in $LS_i$, is not recorded as received in $LS_j$</li>
 </ul>
 </li>
@@ -356,7 +356,7 @@
 </li>
 <li>When the algorithm terminates, the initiator determines the state of channels as follows:(判断算法终止)<ul>
 <li>The state of each channel from the initiator to each process is empty(从启动器到每个进程的每个信道都是空的，即没有消息在信道)<ul>
-<li>The state of channel from process $p_i$ to process $p_j$ is the set of messages whose sequence numbers are given by ${RECD_j[i]+1, …, SENT_i[j]}$(在两个进程之间信道的消息是根据发送和接收数组确定的，发送数组里有而接收数组里没有的则在信道)</li>
+<li>The state of channel from process $p_i$ to process $p_j$ is the set of messages whose sequence numbers are given by $\{RECD_j[i]+1, …, SENT_i[j]\}$(在两个进程之间信道的消息是根据发送和接收数组确定的，发送数组里有而接收数组里没有的则在信道)</li>
 </ul>
 </li>
 </ul>
@@ -381,30 +381,30 @@
 <li>进程在执行过程中保存的中间状态称为进程的本地检查点(local checkpoint)</li>
 <li>一致的快照由一组同时发生或可能同时发生的本地状态集合组成</li>
 <li>进程异步保存checkpoint，假设每个进程在执行前保存一个初始checkpoint，在执行完后保存一个虚拟checkpoint(virtual)<ul>
-<li>进程$p<em>p$第i个checkpoint表示为$C</em>{p, i}$</li>
+<li>进程$p_p$第i个checkpoint表示为$C_{p, i}$</li>
 <li>进程$p_p$的第i个checkpoint间隔(interval)包括它的第i-1个checkpoint和第i个checkpoint之间执行的所有计算(包括了第i-1个checkpoint期间的计算但不包括第i个checkpoint)</li>
 </ul>
 </li>
 <li>即使两个本地checkpoint没有存在因果路径，也可能不属于一致的全局快照</li>
 </ul>
 <h4 id="zigzag-path"><a href="#zigzag-path" class="headerlink" title="zigzag path"></a>zigzag path</h4><ul>
-<li><p>A zigzag path exists from a checkpoint $C<em>{x, i}$ to a checkpoint $C</em>{y, j}$ iff there exists messages $m_1, m_2, …, m_n(n\geq 1)$:</p>
+<li><p>A zigzag path exists from a checkpoint $C_{x, i}$ to a checkpoint $C_{y, j}$ iff there exists messages $m_1, m_2, …, m_n(n\geq 1)$:</p>
 <ul>
-<li>$m<em>1$ is sent by process $p_x$ after $C</em>{x, i}$(第一条消息由zigzag路径起点快照发送)</li>
-<li>If $m<em>k(1\leq k\leq n)$ is received by process $p_z$, then $m</em>{k+1}$ is sent by $p<em>z$ in the same or a later checkpoint interval(although $m</em>{k+1}$ may be sent before or after $m_k$ is received)(通常来讲是消息有顺序。但也允许进程在接收到因果路径中的前一个消息之前发送消息，只要在同一个checkpoint间隔。后发送的消息在后一个间隔则不需考虑上述情况)</li>
-<li>$m<em>n$ is received by process $p_y$ before $C</em>{y, j}$(最后一条消息由zigzag路径终点快照接收)</li>
+<li>$m_1$ is sent by process $p_x$ after $C_{x, i}$(第一条消息由zigzag路径起点快照发送)</li>
+<li>If $m_k(1\leq k\leq n)$ is received by process $p_z$, then $m_{k+1}$ is sent by $p_z$ in the same or a later checkpoint interval(although $m_{k+1}$ may be sent before or after $m_k$ is received)(通常来讲是消息有顺序。但也允许进程在接收到因果路径中的前一个消息之前发送消息，只要在同一个checkpoint间隔。后发送的消息在后一个间隔则不需考虑上述情况)</li>
+<li>$m_n$ is received by process $p_y$ before $C_{y, j}$(最后一条消息由zigzag路径终点快照接收)</li>
 <li>A zigzag path between two checkpoints is a causal path(因果路径)<ul>
 <li>A causal path exists from a checkpoint A to another checkpoint B iff there is chain of messages starting after A and ending before B such that each message is sent after the previous one in the chain is received(因果路径消息必须有序)</li>
 <li>a causal path is always a zigzag path, but a zigzag path need not be a causal path.</li>
 </ul>
 </li>
-<li>如下图的进程$p<em>1$的快照$C</em>{1,1}$和进程$p<em>2$的快照$C</em>{2,2}$存在因果路径，zigzag路径允许进程$p<em>2$在接收消息$m_3$之前发送消息$m_4$给进程$p_3$，由快照$C</em>{3,2}$记录。因此$C<em>{1,1}$和$C</em>{3,2}$之间存在zigzag path<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/zigzag-path.png" alt="img"></li>
+<li>如下图的进程$p_1$的快照$C_{1,1}$和进程$p_2$的快照$C_{2,2}$存在因果路径，zigzag路径允许进程$p_2$在接收消息$m_3$之前发送消息$m_4$给进程$p_3$，由快照$C_{3,2}$记录。因此$C_{1,1}$和$C_{3,2}$之间存在zigzag path<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/zigzag-path.png" alt="img"></li>
 </ul>
 </li>
 <li><p>特殊的zigzag path—— zigzag cycle</p>
 <ul>
 <li>A checkpoint $C$ is involved in a zigzag cycle iff there is a zigzag path from $C$ to itself(起点和终点都是自己的zigzag路径)</li>
-<li>如下图的进程$p<em>2$的快照$C</em>{2, 1}$，起始消息$m<em>2$给$p_1$，$p_1$在同一个checkpoint间隙早些时候发送消息$m_1$给$p_2$，终点也是$C</em>{2, 1}$</li>
+<li>如下图的进程$p_2$的快照$C_{2, 1}$，起始消息$m_2$给$p_1$，$p_1$在同一个checkpoint间隙早些时候发送消息$m_1$给$p_2$，终点也是$C_{2, 1}$</li>
 <li>a causal path never forms a cycle.(因果路径不存在环)<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E9%AB%98%E7%BA%A7%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/zigzag-cycle.png" alt="img"></li>
 </ul>
 </li>
@@ -443,15 +443,15 @@
 </li>
 <li>Although candidates for building a consistent snapshot from $S$ must lie in the Z-cone of $S$, not all checkpoints in the Z-cone can form a consistent snapshot with $S$. (在Z-cone里的检查点不一定能与$S$构成一致性的快照，但能与$S$构成一致性快照的检查点一定在Z-cone)<ul>
 <li>If a checkpoint in the Z-cone is involved in a Z-cycle, then it cannot be part of a consistent snapshot.(Z-cone里可能存在zigzag环)</li>
-<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$. Then, for each process $p<em>q$, the set $S</em>{useful}^q$ is defined as <ul>
-<li>$S<em>{useful}^q={C</em>{q, i} | (S\nrightarrow C<em>{q, i}\bigwedge(C</em>{q, i}\nrightarrow S)\bigwedge(C<em>{q, i}\nrightarrow C</em>{q, i})}$</li>
-<li>$\displaystyle S<em>{useful}=\bigcup_q S</em>{useful}^q$(各个进程可与$S$构成一致性快照的检查点的并集)</li>
+<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$. Then, for each process $p_q$, the set $S_{useful}^q$ is defined as <ul>
+<li>$S_{useful}^q=\{C_{q, i} | (S\nrightarrow C_{q, i}\bigwedge(C_{q, i}\nrightarrow S)\bigwedge(C_{q, i}\nrightarrow C_{q, i})\}$</li>
+<li>$\displaystyle S_{useful}=\bigcup_q S_{useful}^q$(各个进程可与$S$构成一致性快照的检查点的并集)</li>
 </ul>
 </li>
-<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$, let $C<em>{q, i}$ be any checkpoint of process $p_q$ such that $C</em>{q, i}\notin S$. Then $S\bigcup {C<em>{q, i}}$ can be extended to a consistent snapshot iff $C</em>{q, i}\in S<em>{useful}$($S</em>{useful}$是所有可以与$S$构成一致性快照的检查点)</li>
+<li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$, let $C_{q, i}$ be any checkpoint of process $p_q$ such that $C_{q, i}\notin S$. Then $S\bigcup \{C_{q, i}\}$ can be extended to a consistent snapshot iff $C_{q, i}\in S_{useful}$($S_{useful}$是所有可以与$S$构成一致性快照的检查点)</li>
 </ul>
 </li>
-<li>Although none of the checkpoints in $S<em>{useful}$ has a Z-path to or from any checkpoint in $S$, Z-paths may exist between members of $S</em>{useful}$($S_{useful}$里的检查点之间可能会存在Z-path)</li>
+<li>Although none of the checkpoints in $S_{useful}$ has a Z-path to or from any checkpoint in $S$, Z-paths may exist between members of $S_{useful}$($S_{useful}$里的检查点之间可能会存在Z-path)</li>
 <li>One final constraint is placed on the set $T$ we choose from $S_{useful}$ to build a consistent snapshot from $S$: checkpoints in $T$ must have no Z-paths between them. Furthermore, since $S\nrightarrow S$, at least one such $T$ must exist(即使只有一个元素)<ul>
 <li>Let $S$ be a set of checkpoints such that $S\nrightarrow S$ and let $T$ be any set of checkpoints such that $S\bigcap T=\empty$. Then $S\bigcup T$ is a consistent global snapshot iff <ul>
 <li>$T\subseteq S_{useful}$</li>
@@ -468,14 +468,14 @@
 <li>compute all consistent snapshots that include a given set a set of checkpoints $S$</li>
 </ul>
 <p>ComputeAllCgs($S$) {  // 计算一个完整的一致性快照<br>  $\quad$let $G=\empty$<br>  $\quad$if $S\nrightarrow S$ then<br>  $\quad<script type="math/tex">\quad$let `AllProcs` be the set of all processes not represented in $S$ // 在没有加入一致性快照的进程里选择
-  $\quad</script>\quad$<code>ComputeAllCgsForm</code>($S$, $AllProcs$)<br>  $\quad$return $G$<br>}<br>ComputeAllCgsForm($T$, $ProcSet$) {<br>  $\quad$if $(ProcSet=\empty)$ then   // 已经是完整的一致性快照了<br>  $\quad<script type="math/tex">\quad</script>G=G\bigcup{T}$<br>  $\quad$else //否则递归查找<br>  $\quad<script type="math/tex">\quad$let $p_q$ be any process in $ProcSet$
-  $\quad</script>\quad$for each checkpoint $C\in T_{useful}^q$ do  // 首先还是得保证检查点是可用的<br>  $\quad<script type="math/tex">\quad</script>\quad$<code>ComputeAllCgsForm</code>($T\bigcup{C}$, $ProcSet\setminus {p_q}$)<br>}</p>
+  $\quad</script>\quad$<code>ComputeAllCgsForm</code>($S$, $AllProcs$)<br>  $\quad$return $G$<br>}<br>ComputeAllCgsForm($T$, $ProcSet$) {<br>  $\quad$if $(ProcSet=\empty)$ then   // 已经是完整的一致性快照了<br>  $\quad<script type="math/tex">\quad</script>G=G\bigcup\{T\}$<br>  $\quad$else //否则递归查找<br>  $\quad<script type="math/tex">\quad$let $p_q$ be any process in $ProcSet$
+  $\quad</script>\quad$for each checkpoint $C\in T_{useful}^q$ do  // 首先还是得保证检查点是可用的<br>  $\quad<script type="math/tex">\quad</script>\quad$<code>ComputeAllCgsForm</code>($T\bigcup\{C\}$, $ProcSet\setminus \{p_q\}$)<br>}</p>
 <ul>
 <li>Let $S$ be a set of checkpoints and $G$ be the set returned by <code>ComputeAllCgs</code>. If $S\nrightarrow S$, then $T\in G$ iff $T$ is a consistent snapshot containing $S$. That is, $G$ contains exactly the consistent snapshots that contain $S$</li>
 </ul>
 <h4 id="R-graph-to-determine-the-existence-of-Z-paths-between-checkpoints"><a href="#R-graph-to-determine-the-existence-of-Z-paths-between-checkpoints" class="headerlink" title="R-graph to determine the existence of Z-paths between checkpoints"></a>R-graph to determine the existence of Z-paths between checkpoints</h4><ul>
 <li>Discuss a method for determining the existence of Z-paths between checkpoints in a distributed computation that has terminated or has stopped execution, using the rollback-dependency graph (R-graph).</li>
-<li>The rollback-dependency graph of a distributed computation is a directed graph $G=(V, E)$, where the vertices $V$ are the checkpoint of the distributed computation and an edge $(C<em>{p, i}, C</em>{q, j})$ from checkpoint $C<em>{p, i}$ to checkpoint $C</em>{q, j}$ belongs to $E$ if<ul>
+<li>The rollback-dependency graph of a distributed computation is a directed graph $G=(V, E)$, where the vertices $V$ are the checkpoint of the distributed computation and an edge $(C_{p, i}, C_{q, j})$ from checkpoint $C_{p, i}$ to checkpoint $C_{q, j}$ belongs to $E$ if<ul>
 <li>$p=q$ and $j=i+1$</li>
 <li>$p\neq q$ and a message $m$ sent from the $i^{th}$ checkpoint interval of $p_p$ is received by $p_q$ in its $j^{th}$ checkpoint interval($i, j\gt 0$)</li>
 <li>there is a path from $C$ to $D$ in the R-graph by $C\rightsquigarrow^{rd} D$, only denotes the existence of a path, does not specify any particular path</li>

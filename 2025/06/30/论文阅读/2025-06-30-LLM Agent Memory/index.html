@@ -161,14 +161,14 @@
 <p>Agent需解决由自然语言指令$q$指定的任务。其在由转移函数$T$定义的环境中执行操作。</p>
 <ul>
 <li>对于每个时间步$t_i$，环境状态$s_i$给出观察结果$o_i$，然后将其传递到模型$L$中。</li>
-<li>通过$L(q, M, o<em>i)\rightarrow a_i$生成动作$a_i$后，在环境中执行，于是得到环境转移$T(s_i, a_i)\rightarrow s</em>{i+1}$。</li>
+<li>通过$L(q, M, o_i)\rightarrow a_i$生成动作$a_i$后，在环境中执行，于是得到环境转移$T(s_i, a_i)\rightarrow s_{i+1}$。</li>
 <li>以上观察-行动的循环会一直迭代，直到模型预测停止动作$a_i=STOP$，或者达到任务终止条件(例如: 预定的最大步数)。</li>
 </ul>
 <p>每个完成的任务构成一次经验$e$，包含一条自然语言指令$q$和一个尝试解决任务的步骤轨迹$(P, O)$。</p>
 <ul>
-<li>每个步骤${p_i|p_i\in P}$包含从当前状态获得的Agent观察结果${o_i|o_i\in O}$。</li>
+<li>每个步骤$\{p_i|p_i\in P\}$包含从当前状态获得的Agent观察结果$\{o_i|o_i\in O\}$。</li>
 </ul>
-<p>目标是从过去或收集的经验集合$\mathcal{E}={e<em>i}</em>{i=1}^m$中，通过归纳模块$I$归纳出有用的工作流程$\mathcal{W}={w}$，即有$I(\mathcal{E})\rightarrow \mathcal{W}$。</p>
+<p>目标是从过去或收集的经验集合$\mathcal{E}=\{e_i\}_{i=1}^m$中，通过归纳模块$I$归纳出有用的工作流程$\mathcal{W}=\{w\}$，即有$I(\mathcal{E})\rightarrow \mathcal{W}$。</p>
 <p>然后会将归纳出的工作流程添加到Agent的记忆$M$中，作为后续任务解决的指导。即$M\bigcup \mathcal{W} \rightarrow M_w$</p>
 <h4 id="Workflow-Representation"><a href="#Workflow-Representation" class="headerlink" title="Workflow Representation"></a>Workflow Representation</h4><p><img src="" alt="img"></p>
 <p>Workflow由两个组件构成:</p>
@@ -181,11 +181,11 @@
 </ul>
 </li>
 </ul>
-<h4 id="Inducing-and-using-Workflow"><a href="#Inducing-and-using-Workflow" class="headerlink" title="Inducing and using Workflow"></a>Inducing and using Workflow</h4><p>AWM的核心是一个归纳模块$I$，从一个或多个过去的Agent经验$\mathcal{E}={e<em>i}</em>{i=1}^m$中归纳出一组工作流$\mathcal{W}$。</p>
+<h4 id="Inducing-and-using-Workflow"><a href="#Inducing-and-using-Workflow" class="headerlink" title="Inducing and using Workflow"></a>Inducing and using Workflow</h4><p>AWM的核心是一个归纳模块$I$，从一个或多个过去的Agent经验$\mathcal{E}=\{e_i\}_{i=1}^m$中归纳出一组工作流$\mathcal{W}$。</p>
 <ul>
-<li>每个经验$e=(q, P^e)$包含一个自然语言指令$q$和一个为了解决指令$q$由一系列步骤$P^e={p_1^e, …, p_n^e}$组成的动作轨迹$\mathcal{T}$。</li>
+<li>每个经验$e=(q, P^e)$包含一个自然语言指令$q$和一个为了解决指令$q$由一系列步骤$P^e=\{p_1^e, …, p_n^e\}$组成的动作轨迹$\mathcal{T}$。</li>
 </ul>
-<p>工作流的归纳模块通过接收经验$\mathcal{E}$并产生一组工作流$\mathcal{W}$来运作:$I(\mathcal{E})\rightarrow\mathcal{W}={w}={(d_j, P_j^d)}$</p>
+<p>工作流的归纳模块通过接收经验$\mathcal{E}$并产生一组工作流$\mathcal{W}$来运作:$I(\mathcal{E})\rightarrow\mathcal{W}=\{w\}=\{(d_j, P_j^d)\}$</p>
 <ul>
 <li>基于LLM的工作流归纳:<ul>
 <li>从一个或多个输入经验中提取公共子程序作为prompt输入LLM从而生成归纳$I$。</li>
@@ -200,8 +200,8 @@
 </li>
 <li>离线场景<ul>
 <li>当有额外的标准经验可用时(例如人工标注的数据或模型合成的数据)，采用离线模式运行，执行工作流归纳和利用两个独立的过程。<ul>
-<li>首先将所有的训练示例连接成一个prompt，并发送到LLM，以在训练时创建一组工作流: $I(\mathcal{E}<em>{train})\rightarrow \mathcal{W}</em>{offline}$。</li>
-<li>其次，AWM在推理时将所有归纳的工作流整合到Agent的记忆中，以解决测试指令。表示为$L(q, M+W<em>{offline}, o</em>{test<em>i})\rightarrow a</em>{test_i}$。</li>
+<li>首先将所有的训练示例连接成一个prompt，并发送到LLM，以在训练时创建一组工作流: $I(\mathcal{E}_{train})\rightarrow \mathcal{W}_{offline}$。</li>
+<li>其次，AWM在推理时将所有归纳的工作流整合到Agent的记忆中，以解决测试指令。表示为$L(q, M+W_{offline}, o_{test_i})\rightarrow a_{test_i}$。</li>
 <li>由于工作流在测试时推理之前被已经被完全归纳，因此Agent使用相同的工作流记忆$\mathcal{W}_{offline}$来解决每个测试。</li>
 </ul>
 </li>
@@ -209,8 +209,8 @@
 </li>
 <li>在线场景<ul>
 <li>没有额外的标准经验时，采用在线模式无监督运行。在这种环境中，只需处理测试的数据。在每次测试数据完成推理后，执行归纳整合，然后将经验利用到下一个测试数据的推理中。</li>
-<li>具体来说，Agent从默认记忆$M$开始，给定传递给Agent的第$t$个测试指令$q<em>t$，Agent尝试通过生成动作轨迹$(p_t1, p_t2, …)$解决任务，于是构成了经验$e_t=(q_t, {p_t})$。并采用一个基于LLM的评估模型输出一个二元标签$L</em>{eval}(e<em>t)\in{0, 1}$。该标签用于判断$e_t$是否成功解决了$q_t$。如果成功解决，则为1，将其转化为工作流$I(e_t)\rightarrow{w_t}$，并将${w_t}$添加到Agent的记忆中$M_t+{w_t}\rightarrow M</em>{t+1}$，用于辅助处理第$t+1$条指令。</li>
-<li>整个流程是通过迭代地预测动作并从流式测试指令中归纳工作流来继续这个记忆更新过程，直到所有测试都处理完毕。评估所有测试的预测动作轨迹${p_t}$的成功率，并报告平均分数。</li>
+<li>具体来说，Agent从默认记忆$M$开始，给定传递给Agent的第$t$个测试指令$q_t$，Agent尝试通过生成动作轨迹$(p_t1, p_t2, …)$解决任务，于是构成了经验$e_t=(q_t, \{p_t\})$。并采用一个基于LLM的评估模型输出一个二元标签$L_{eval}(e_t)\in\{0, 1\}$。该标签用于判断$e_t$是否成功解决了$q_t$。如果成功解决，则为1，将其转化为工作流$I(e_t)\rightarrow\{w_t\}$，并将$\{w_t\}$添加到Agent的记忆中$M_t+\{w_t\}\rightarrow M_{t+1}$，用于辅助处理第$t+1$条指令。</li>
+<li>整个流程是通过迭代地预测动作并从流式测试指令中归纳工作流来继续这个记忆更新过程，直到所有测试都处理完毕。评估所有测试的预测动作轨迹$\{p_t\}$的成功率，并报告平均分数。</li>
 </ul>
 </li>
 </ul>
