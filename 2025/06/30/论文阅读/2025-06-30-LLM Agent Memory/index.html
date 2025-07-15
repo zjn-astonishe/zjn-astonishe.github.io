@@ -7,7 +7,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png">
 <meta property="article:published_time" content="2025-06-30T08:03:23.000Z">
-<meta property="article:modified_time" content="2025-07-03T02:02:04.764Z">
+<meta property="article:modified_time" content="2025-07-15T06:09:48.346Z">
 <meta property="article:author" content="ZJN">
 <meta property="article:tag" content="论文阅读">
 <meta name="twitter:card" content="summary">
@@ -53,7 +53,7 @@
   isHome: false,
   isHighlightShrink: false,
   isToc: true,
-  postUpdate: '2025-07-03 10:02:04'
+  postUpdate: '2025-07-15 14:09:48'
 }</script><noscript><style type="text/css">
   #nav {
     opacity: 1
@@ -143,7 +143,7 @@
     }
     detectApple()
     })(window)</script><link rel="stylesheet" href="//at.alicdn.com/t/font_3207144_mqiyof22xva.css"><meta name="generator" content="Hexo 6.3.0"><link rel="alternate" href="/atom.xml" title="ZJN_BLOG" type="application/atom+xml">
-</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">56</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">25</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">LLM Agent Memory</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-30T08:03:23.000Z" title="发表于 2025-06-30 16:03:23">2025-06-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-03T02:02:04.764Z" title="更新于 2025-07-03 10:02:04">2025-07-03</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">1.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>6分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="LLM-Agent-Memory"><a href="#LLM-Agent-Memory" class="headerlink" title="LLM Agent Memory"></a>LLM Agent Memory</h1><h2 id="Agent-Workflow-Memory"><a href="#Agent-Workflow-Memory" class="headerlink" title="Agent Workflow Memory"></a>Agent Workflow Memory</h2><h3 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h3><p>Agent提取和学习在类似任务和环境中共享的可重用任务工作流，模仿人类从过去的成功和失败中学习经验指导未来的活动，随着时间的推移对任务上下文或环境发生变化进行适应。</p>
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data is-center"><div class="data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a></div><div class="data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a></div><div class="data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">25</div></a></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">ZJN_BLOG</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">LLM Agent Memory</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-06-30T08:03:23.000Z" title="发表于 2025-06-30 16:03:23">2025-06-30</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-07-15T06:09:48.346Z" title="更新于 2025-07-15 14:09:48">2025-07-15</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">15.1k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>46分钟</span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="LLM-Agent-Memory"><a href="#LLM-Agent-Memory" class="headerlink" title="LLM Agent Memory"></a>LLM Agent Memory</h1><h2 id="Agent-Workflow-Memory"><a href="#Agent-Workflow-Memory" class="headerlink" title="Agent Workflow Memory"></a>Agent Workflow Memory</h2><h3 id="Motivation"><a href="#Motivation" class="headerlink" title="Motivation"></a>Motivation</h3><p>Agent提取和学习在类似任务和环境中共享的可重用任务工作流，模仿人类从过去的成功和失败中学习经验指导未来的活动，随着时间的推移对任务上下文或环境发生变化进行适应。</p>
 <h3 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h3><p>AWM从一组基本的内置动作开始，并以流式方式解决新任务，不断地从手头的任务中归纳出工作流，例如，从最初的几个例子中学习“通过名称查找地点”这个动作。然后，AWM继续基于新的经验和先前获得的工作流来构建更复杂的工作流。例如，“通过名称查找地点”工作流一旦被归纳出来，就可以有效地充当子目标，以构建更复杂的“获取地点的邮政编码”工作流。这种持续学习机制会产生滚雪球效应，从而归纳和应用日益复杂的工作流。</p>
 <p>AWM可以在离线和在线两种场景中运行，分别对应有标注示例可用和无标注示例可用的情况。</p>
 <ul>
@@ -153,10 +153,10 @@
 </ul>
 </li>
 </ul>
-<h3 id="AWM建模"><a href="#AWM建模" class="headerlink" title="AWM建模"></a>AWM建模</h3><h4 id="Problem-Statement"><a href="#Problem-Statement" class="headerlink" title="Problem Statement"></a>Problem Statement</h4><p>考虑Agent是由大语言模型骨架$L$和记忆$M$组成。</p>
+<h3 id="AWM建模"><a href="#AWM建模" class="headerlink" title="AWM建模"></a>AWM建模</h3><h4 id="Problem-Statement"><a href="#Problem-Statement" class="headerlink" title="Problem Statement"></a>Problem Statement</h4><p>考虑Agent是由大语言模型骨架$L$和memory$M$组成。</p>
 <ul>
-<li>基础记忆是包含”CLICK”和”TYPE”等内置操作的文档。</li>
-<li>记忆作为系统prompt或主prompt上下文中的辅助信息。</li>
+<li>基础memory是包含”CLICK”和”TYPE”等内置操作的文档。</li>
+<li>memory作为系统prompt或主prompt上下文中的辅助信息。</li>
 </ul>
 <p>Agent需解决由自然语言指令$q$指定的任务。其在由转移函数$T$定义的环境中执行操作。</p>
 <ul>
@@ -169,8 +169,8 @@
 <li>每个步骤$\{p_i|p_i\in P\}$包含从当前状态获得的Agent观察结果$\{o_i|o_i\in O\}$。</li>
 </ul>
 <p>目标是从过去或收集的经验集合$\mathcal{E}=\{e_i\}_{i=1}^m$中，通过归纳模块$I$归纳出有用的工作流程$\mathcal{W}=\{w\}$，即有$I(\mathcal{E})\rightarrow \mathcal{W}$。</p>
-<p>然后会将归纳出的工作流程添加到Agent的记忆$M$中，作为后续任务解决的指导。即$M\bigcup \mathcal{W} \rightarrow M_w$</p>
-<h4 id="Workflow-Representation"><a href="#Workflow-Representation" class="headerlink" title="Workflow Representation"></a>Workflow Representation</h4><p><img src="" alt="img"></p>
+<p>然后会将归纳出的工作流程添加到Agent的memory$M$中，作为后续任务解决的指导。即$M\bigcup \mathcal{W} \rightarrow M_w$</p>
+<h4 id="Workflow-Representation"><a href="#Workflow-Representation" class="headerlink" title="Workflow Representation"></a>Workflow Representation</h4><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Memory/AWM%20pipeline.png?token=GHSAT0AAAAAADF5HO5LHKYGZ3PGQKIRR4PA2DV6BCQ" alt="img"></p>
 <p>Workflow由两个组件构成:</p>
 <ul>
 <li>Workflow的文本描述$d$。本质上是对Workflow的功能摘要，通过从经验指令$p$中启发式地提取或使用模型$L$总结。</li>
@@ -191,32 +191,451 @@
 <li>从一个或多个输入经验中提取公共子程序作为prompt输入LLM从而生成归纳$I$。</li>
 <li>与指定具体、重复性较低的任务指令(例如，“在Amazon上购买猫粮并送到我的地址”)不同，特意提示模型以更精细的粒度归纳工作流。<ul>
 <li>子任务“在Amazon上搜索产品”经常作为多个类似指令的一部分重新出现。</li>
-<li>同时，没有给出特定于示例的值(例如，“猫粮”)，而是通过抽象出特定于示例的上下文来增强工作流的通用性，即通过在工作流归纳提示中指定，将“猫粮”替换为更通用的名称“{product-name}”。这些工作流被分割(基于模型输出中的双行换行符，即换行后空一行)，并单独存储在工作流内存中。</li>
+<li>同时，没有给出特定于示例的值(例如，“猫粮”)，而是通过抽象出特定于示例的上下文来增强工作流的通用性，即通过在工作流归纳提示中指定，将“猫粮”替换为更通用的名称“{product-name}”。这些工作流被分割(基于模型输出中的双行换行符，即换行后空一行)，并单独存储在工作流memory中。</li>
 </ul>
 </li>
-<li>在工作流$\mathcal{W}$被归纳出来之后，会被整合到Agent的辅助记忆中，表示为$M+\mathcal{W}\rightarrow M_w$，其中$M$代表原始智能体的记忆，而$M_w$代表通过归纳工作流增强后的Agent记忆。<ul>
+<li>在工作流$\mathcal{W}$被归纳出来之后，会被整合到Agent的辅助memory中，表示为$M+\mathcal{W}\rightarrow M_w$，其中$M$代表原始智能体的memory，而$M_w$代表通过归纳工作流增强后的Agentmemory。<ul>
 <li>当下一次要解决给定的指令$q$时，Agent通过$L(q, M_w, o)=L(q, M+\mathcal{W}, o)\rightarrow a$产生一系列动作。</li>
 </ul>
 </li>
 <li>离线场景<ul>
 <li>当有额外的标准经验可用时(例如人工标注的数据或模型合成的数据)，采用离线模式运行，执行工作流归纳和利用两个独立的过程。<ul>
 <li>首先将所有的训练示例连接成一个prompt，并发送到LLM，以在训练时创建一组工作流: $I(\mathcal{E}_{train})\rightarrow \mathcal{W}_{offline}$。</li>
-<li>其次，AWM在推理时将所有归纳的工作流整合到Agent的记忆中，以解决测试指令。表示为$L(q, M+W_{offline}, o_{test_i})\rightarrow a_{test_i}$。</li>
-<li>由于工作流在测试时推理之前被已经被完全归纳，因此Agent使用相同的工作流记忆$\mathcal{W}_{offline}$来解决每个测试。</li>
+<li>其次，AWM在推理时将所有归纳的工作流整合到Agent的memory中，以解决测试指令。表示为$L(q, M+W_{offline}, o_{test_i})\rightarrow a_{test_i}$。</li>
+<li>由于工作流在测试时推理之前被已经被完全归纳，因此Agent使用相同的工作流memory$\mathcal{W}_{offline}$来解决每个测试。</li>
 </ul>
 </li>
 </ul>
 </li>
 <li>在线场景<ul>
 <li>没有额外的标准经验时，采用在线模式无监督运行。在这种环境中，只需处理测试的数据。在每次测试数据完成推理后，执行归纳整合，然后将经验利用到下一个测试数据的推理中。</li>
-<li>具体来说，Agent从默认记忆$M$开始，给定传递给Agent的第$t$个测试指令$q_t$，Agent尝试通过生成动作轨迹$(p_t1, p_t2, …)$解决任务，于是构成了经验$e_t=(q_t, \{p_t\})$。并采用一个基于LLM的评估模型输出一个二元标签$L_{eval}(e_t)\in\{0, 1\}$。该标签用于判断$e_t$是否成功解决了$q_t$。如果成功解决，则为1，将其转化为工作流$I(e_t)\rightarrow\{w_t\}$，并将$\{w_t\}$添加到Agent的记忆中$M_t+\{w_t\}\rightarrow M_{t+1}$，用于辅助处理第$t+1$条指令。</li>
-<li>整个流程是通过迭代地预测动作并从流式测试指令中归纳工作流来继续这个记忆更新过程，直到所有测试都处理完毕。评估所有测试的预测动作轨迹$\{p_t\}$的成功率，并报告平均分数。</li>
+<li>具体来说，Agent从默认memory$M$开始，给定传递给Agent的第$t$个测试指令$q_t$，Agent尝试通过生成动作轨迹$(p_t1, p_t2, …)$解决任务，于是构成了经验$e_t=(q_t, \{p_t\})$。并采用一个基于LLM的评估模型输出一个二元标签$L_{eval}(e_t)\in\{0, 1\}$。该标签用于判断$e_t$是否成功解决了$q_t$。如果成功解决，则为1，将其转化为工作流$I(e_t)\rightarrow\{w_t\}$，并将$\{w_t\}$添加到Agent的memory中$M_t+\{w_t\}\rightarrow M_{t+1}$，用于辅助处理第$t+1$条指令。</li>
+<li>整个流程是通过迭代地预测动作并从流式测试指令中归纳工作流来继续这个memory更新过程，直到所有测试都处理完毕。评估所有测试的预测动作轨迹$\{p_t\}$的成功率，并报告平均分数。</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
-<h2 id="MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents"><a href="#MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents" class="headerlink" title="MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents"></a>MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents</h2></article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-full"><a href="/2025/06/29/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-29-LLM%20Agent%20Serving/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">LLM Agent Serving</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Ray%20conclusion/" title="Ray conclusion"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-27</div><div class="title">Ray conclusion</div></div></a></div><div><a href="/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Sia/" title="Sia"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-27</div><div class="title">Sia</div></div></a></div><div><a href="/2025/06/09/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-09-Agentic%20Workflow/" title="Agentic Workflow"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-09</div><div class="title">Agentic Workflow</div></div></a></div><div><a href="/2025/06/29/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-29-LLM%20Agent%20Serving/" title="LLM Agent Serving"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-29</div><div class="title">LLM Agent Serving</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">56</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">25</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#LLM-Agent-Memory"><span class="toc-text">LLM Agent Memory</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-Workflow-Memory"><span class="toc-text">Agent Workflow Memory</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Motivation"><span class="toc-text">Motivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AWM%E5%BB%BA%E6%A8%A1"><span class="toc-text">AWM建模</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Problem-Statement"><span class="toc-text">Problem Statement</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Workflow-Representation"><span class="toc-text">Workflow Representation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Inducing-and-using-Workflow"><span class="toc-text">Inducing and using Workflow</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents"><span class="toc-text">MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/30/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-30-LLM%20Agent%20Memory/" title="LLM Agent Memory">LLM Agent Memory</a><time datetime="2025-06-30T08:03:23.000Z" title="发表于 2025-06-30 16:03:23">2025-06-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/29/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-29-LLM%20Agent%20Serving/" title="LLM Agent Serving">LLM Agent Serving</a><time datetime="2025-06-29T03:22:18.000Z" title="发表于 2025-06-29 11:22:18">2025-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/09/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-09-Agentic%20Workflow/" title="Agentic Workflow">Agentic Workflow</a><time datetime="2025-06-09T06:24:58.000Z" title="发表于 2025-06-09 14:24:58">2025-06-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/08/%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/2025-06-08-%E5%87%B8%E9%9B%86%E3%80%81%E5%87%B8%E5%87%BD%E6%95%B0%E4%B8%8E%E5%87%B8%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/" title="凸集、凸函数与凸优化问题">凸集、凸函数与凸优化问题</a><time datetime="2025-06-08T03:23:03.000Z" title="发表于 2025-06-08 11:23:03">2025-06-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/04/29/%E6%99%BA%E8%83%BD%E4%BD%93/2025-04-29-Hammer%E7%AC%94%E8%AE%B0/" title="Hammer笔记">Hammer笔记</a><time datetime="2025-04-29T11:33:05.000Z" title="发表于 2025-04-29 19:33:05">2025-04-29</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
+<h2 id="MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents"><a href="#MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents" class="headerlink" title="MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents"></a>MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents</h2><h2 id="MemOS-A-Memory-OS-for-AI-System"><a href="#MemOS-A-Memory-OS-for-AI-System" class="headerlink" title="MemOS: A Memory OS for AI System"></a>MemOS: A Memory OS for AI System</h2><h3 id="Motivation-1"><a href="#Motivation-1" class="headerlink" title="Motivation"></a>Motivation</h3><p>现有的大语言模型主要依赖于静态参数和短时效的上下文状态，缺乏明确的memory管理系统，阻碍了长文本推理、持续个性化和知识一致性的发展。</p>
+<p>虽然最近的研究引入了检索增强生成(Retrieval-Augmented Generation, RAG)在纯文本中引入了外部的知识，但仍然是一种无状态的解决方案，缺乏生命周期控制或对持久表示的集成。</p>
+<p>还有许多问题源于信息是如何随时间和上下文分布，需要能够管理跨越不同时间尺度和来源的异构知识的系统。</p>
+<p>未来的AGI系统的存在将在时间和空间上大大扩展，急需解决如何组织、存储和检索知识的问题。</p>
+<ul>
+<li>时间上: 模型将从无状态的、基于会话的工具转变为嵌入在长期运行的工作流程中的持久智能体。就像人类一样，需要积累交互历史，调整内部状态并推理扩展的上下文。</li>
+<li>空间上: LLMs正在演变为跨用户、平台和生态系统的基础智能层。无论部署在云服务中还是嵌入在企业系统中，都必须支持跨用户、角色和任务的一致性、适应性和个性化。</li>
+</ul>
+<p>非常需要能够连贯地管理和协调模型在时空上分布的信息的系统级机制，以便让LLM不仅能够理解世界，还能积累经验，保持memory和不断进化。</p>
+<h3 id="Introduction-1"><a href="#Introduction-1" class="headerlink" title="Introduction"></a>Introduction</h3><p>MemOS是一种将存储器视为可管理系统资源的存储器操作系统，统一了纯文本，基于激活和参数级存储器的表示、调度和演化，从而实现了具有成本效益的存储和检索。标志着大型模型发展的一个关键转变：从单纯的感知和生成到memory和进化。</p>
+<ul>
+<li>作为一个基本单元，一个MemCube封装了存储器内容和元数据，例如来源和版本控制。MemCube可以随时间推移进行组合、迁移和融合，从而实现存储器类型之间的灵活转换，并将检索与基于参数的学习联系起来。MemOS建立了一个以存储器为中心的系统框架，为LLM带来了可控性、可塑性和可进化性，为持续学习和个性化建模奠定基础。</li>
+<li>将存储建模为可调度和可演化的资源单元。模块化架构围绕存储的生命周期(生成、激活、融合、归档和过期)，由MemReader、MemScheduler、MemLifecycle、MemOperator等组件共同协调存储流、状态转换和访问控制。</li>
+<li>提供了一个抽象层和统一的Memory API。支持结构化存储、溯源标记、生命周期跟踪和细粒度的权限强制执行。</li>
+<li>三个核心功能:<ul>
+<li>可控性(Controllability): 提供memory单元的完整生命周期管理，从而能够统一调度memory的创建、激活、融合和销毁。多级权限控制和上下文感知的激活策略进行访问控制和操作审计。</li>
+<li>可塑性(Plasticity): 提供memory切片、标记、分层映射和上下文绑定的功能，允许开发者或系统根据推理目标构建高度适应性的memory视图，或者在角色转换期间动态更新memory关联。</li>
+<li>可进化性(Evolvability): 在不同memory类型之间实现无缝地动态转换和统一调度，这些memory类型包括参数memory(嵌入在模型权重中的知识)、激活memory(上下文推理状态)和平文本memory(结构化知识片段)。</li>
+</ul>
+</li>
+</ul>
+<p>主要应用于以下场景: </p>
+<ul>
+<li>长程依赖建模(Long-range Dependency Modeling): 随着任务和对话长度的增加，使得模型必须保持指令和状态一致性。但是Transformer存在缺陷:<ul>
+<li>有限的上下文窗口限制了输入的容量。</li>
+<li>二次注意力成本导致高计算开销。</li>
+<li>用户指令通常在长周期内与模型的行为分离。</li>
+</ul>
+</li>
+<li>自适应知识进化(Adapting to Knowledge Evolution): 现实世界的知识是不断发展的，静态参数阻止了对知识更新的及时反映。RAG缺乏统一的版本控制、出处或时间意识(无法废弃过时的知识，可能会有新旧冲突)。</li>
+<li>个性化和多角色支持(Personalization and Multi-role Support): 缺乏持久”memory痕迹”。每个会话结束后都会重置为空白状态，忽略了累积的偏好或风格。限制容量、访问不稳定、更新不透明、可编辑性不足。</li>
+<li>跨平台memory迁移和系统生态的多样性(Cross-platform Memory Migration and Ecosystem Diversity): 用户的memory需要能在不同上下文中保持不变。ChatGPT的memory无法迁移到Cursor中。</li>
+</ul>
+<h3 id="Memory-in-LLM"><a href="#Memory-in-LLM" class="headerlink" title="Memory in LLM"></a>Memory in LLM</h3><p>预计未来的LLM不再需要在每次推理时重新处理所有过去的信息，而是将决定保留、压缩、丢弃或优先处理哪些信息。在这种始终在线的范例中，memory成为一种必需品，而不是附加品，用于随着时间的推移保持连贯的行为和身份。这需要对大规模、多来源信息进行高效管理，并根据上下文动态调度memory。促使了分层memory层次结构的出现，类似于操作系统中的管理memory的方式，包括工作memory、长期存储和冷存储，由新近度、访问频率和重要性决定。跨用户和代理共享memory需要作用域、权限控制以及可迁移、可重用的表示。这些能力不仅对系统效率至关重要，而且对基于模型的知识演进的长期可持续性也至关重要。</p>
+<p>memory管理将由模型定义，而非人工定义。从硬编码管道(RAG)过渡到可学习的策略。未来的智能体将自主决定是否检索memory，将交互总结为可重用的规则、提取偏好或在不同的上下文中转移知识。本质上，模型必须承担起塑造自身memory架构和策略的责任。</p>
+<p>主流的LLM都缺乏显式和分层memory表示。依赖于隐式的参数memory，将知识编码在数十亿甚至数万亿的模型权重中。虽然泛化能力不错，但是存在更新成本高(重新训练或微调)、可解释性差、灵活性有限、灾难性遗忘等问题。</p>
+<p>检索增强生成(RAG)通过整合外部检索模块，允许模型在推理时动态访问最新信息，从而在无需更新参数的情况下实现增强。被惯犯部署在Copilots和企业搜索等系统中。从根本上来说仍然是一种”即时检索”和”瞬时组合”的管道，而不是一个集成的memory管理系统。因为缺乏诸如生命周期跟踪、版本控制和权限感知调度等核心memory管理功能，从而限制了其支持长期自适应知识系统的能力。难以维持一致性和长期适应性。</p>
+<h4 id="早期LLM中memory的分类"><a href="#早期LLM中memory的分类" class="headerlink" title="早期LLM中memory的分类"></a>早期LLM中memory的分类</h4><p>根据对象(personal or system)、形式(parametric or non-parametric)划分为: </p>
+<ul>
+<li>隐式的(implicit)<ul>
+<li>基于参数的(parameter-based, long-term)<ul>
+<li>经过训练得到，无论是预训练还是后训练(包括强化对齐(reinforcement alignment)和指令调优(instruction tuning))。但是需要从根本上重建模型内部知识分布和行为结构。也有显式引入memory: <ul>
+<li>CTRL在训练数据中包含控制代码，帮助模型在文本生成过程中自动关联上下文信息。</li>
+<li>Memory&amp;Reasoning微调模型将输出解耦为单独的memory和推理组件。</li>
+<li>SLayer识别模型中与memory相关的层，并在本地对其进行微调，以增强特定的知识表示。</li>
+<li>Titans提出动态memory机制，通过将历史信息编码到模型参数，并且训练一个可插拔的在线元模型(可以自适应地决定在实际使用中对特定数据采取保留或遗忘策略，从而提高跨分布偏移的泛化能力)。</li>
+</ul>
+</li>
+<li>Adaptor的方法，冻结核心模型参数，引入小的可训练的模块以快速适应新memory，对原始功能造成最小干扰。<ul>
+<li>LoRA将低秩Adaptor插入模型中，无需修改原始参数结构实现轻量级参数调整。</li>
+<li>PRAG将为特定文档或任务训练的LoRA自适应器模块视为”memory单元”，并在需要时才将所需单元合并到主模型中，从而能够快速访问专门知识。</li>
+<li>DyPRAG则引入了一个神经元生成器，直接将输入的文档映射到LoRA参数，显著降低显式memory存储的成本。</li>
+</ul>
+</li>
+<li>知识编辑(Editing): 对模型参数进行有针对性的干预。目的是为了针对特定输入引入新的知识或行为，同时尽可能保留模型现有的能力。目前大多数研究集中在编辑客观事实，对于语言风格、语义偏好、推理方向等更抽象的能力有所欠缺。局部的参数编辑可能会导致不良的全局行为变化。因此，编辑的精确性和现有能力的保留是关键的评估指标。<ul>
+<li>先定位后编辑(Locate-then-edit): 使用因果追踪定位目标知识的存储位置(对应的参数)。</li>
+<li>基于元学习的方法(Meta-learning-based): 使用超网络(super network)直接预测参数变化。</li>
+<li>基于Adaptor的编辑策略(Adaptor-based): 保留主干，额外增加新的参数？</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>基于KV缓存的(key-value cache-based, short-term)<ul>
+<li>存储先前处理过的token的key-value。在自回归生成期间能够持久访问历史memory。尽管用户无法直接操作这些缓存，但在推理过程中隐式地调节注意力和输出行为。该方面的优化工作主要集中在提高计算和memory效率。<ul>
+<li>低秩压缩和量化等技术被LESS和KVQuant采用。</li>
+<li>StreamingLLM和H2O基于注意力模式动态修剪不太相关的KV对。</li>
+<li>基于检索的memory激活，选择性访问缓存内容。</li>
+<li>vLLLM借鉴操作系统设计，实现PagedAttention(虚拟memory样式的页面缓存)减少冗余存储并改善KV访问。</li>
+<li>Memory$^3$将外部知识库编码为稀疏的KV对，注入到模型的自注意力层，实现推理过程中动态、非参数检索相关信息，有效将知识外部化并提高了memory的可控性。</li>
+<li>本文是提出分层memory架构推进结构化memory的概念，包括: 纯文本memory、激活memory和参数memory。并引入集成的检索和调度框架，实现显式控制、高效融合和动态激活。MemCube模块则进一步将语义片段组织成多维结构，实现基于query的聚合和多粒度激活。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>基于隐藏状态的(hidden state-based, short-term): 对应的是LLM逐层的中间激活状态，编码了模型对语义的理解和生成轨迹。<ul>
+<li>steering vectors是一种具有代表性的方法，已被应用于ACT、ITI和inferAligner，以减轻幻觉和增强事实一致性。通过计算具有对比语义属性的输入之间的激活差异形成具有方向意义的控制信号。将信号注入到其他输入的中间激活中，可以将生成导向特定的语义方向，而无需改变模型架构。<ul>
+<li>Self-Detoxifying, ActAdd, ICV, StyleVec, 以及 CAA 提出了无监督的对比方法。构建了语义相似但属性相反的输入对（例如，情感、立场、礼貌），以提取隐状态的差异并生成 steering vectors，从而实现自动化的、轻量级的信号推导。</li>
+<li>而且隐状态不仅对抽象语义有效，而且对LLM输出结构行为的调节也有效。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>显式的(explicit)<ul>
+<li>基于文本的(text-based, contextual)<ul>
+<li>短期memory主要存在于输入的上下文窗口中，即prompt和直接连接的历史对话，包括用户任务描述、交互历史和参考文档。管理显式短时memory的能力得到了显著提升，逐渐从静态配置演变为动态交互。从依赖静态文本输入的早期通用语言模型，到使用可学习的连续向量的参数化prompt技术，再到高级的指令跟随模型，以及InstructGPT风格的指令调整范式，表达和管理层显式短时memory的机制。但是显式短时memory受到上下文窗口长度的物理容量限制。在处理长篇文本或多轮对话时，模型经常会遇到早期内容被截断和memory衰退的问题，导致语义连贯性降低或关键信息丢失。</li>
+<li>长期memory强调对外部非参数化知识的持续访问。目前的重点是优化memory组织结构和检索策略(BM25, Dense Passage Retrieval(DPR)和混合检索方法)。”检索后生成”的方法在将检索到的内容整合到模型推理中时存在固有瓶颈。非参数语言模型(NPLM)如kNN-LMs，提出了一种神经语言模型(Transformers)与k近邻检索的线性融合。在每个预测步骤中，从memory中检索最匹配的上下文块，并影响混合到模型的输出分布中，以提高参考保真度。</li>
+<li>扁平memory结构表示能力有限，仅优化检索通常无法突破性能瓶颈。应该转向增强memory组织本身。传统的KV格式逐渐演变为更具层次性和关系性的结构(树结构、图结构)。不同的memory关系，引入了异构图和超图结构，统一建模和动态控制各种知识类型和复杂的语义链接。</li>
+<li>为了赋予LLM结构化、动态和持久的memory，Zep在GraphRAG的基础上增加了时间线建模，以跟踪memory随时间的演变。A-MEM借鉴了动态memory网络，以支持自动memory链接和语义更新，从而使得LLMmemory能够在多轮交互中演变。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>引入保留时间(retention duration)划分: </p>
+<ul>
+<li>瞬间(sensory)</li>
+<li>短期(short-term)</li>
+<li>长期(long-term)</li>
+</ul>
+<h4 id="类人memory的发展"><a href="#类人memory的发展" class="headerlink" title="类人memory的发展"></a>类人memory的发展</h4><p>从人类memory机制和知识管理方法中汲取灵感。早期阶段的重点是模拟人类memory的结构和功能机制。</p>
+<ul>
+<li>灵感来源于人类长期memory中”海马索引理论”的HippoRAG系列模型。<ul>
+<li>集成了LLM、知识图谱和Personalized PageRank算法，以模拟大脑皮层和海马体在memory中的作用，从而实现更加有效的知识整合和检索。</li>
+</ul>
+</li>
+<li>Memory$^3$则是将注意力机制中的KV-cache显式地作为模型的memory载体。提供了一种比参数存储或传统RAG成本更低的替代方案，显著降低了训练和推理的资源消耗。</li>
+<li>PGRAG模仿人类阅读时做笔记的行为，自动生成思维导图作为显式的长期memory，以增强组织性和持久性。</li>
+<li>SecondMe提出了一个以类人memory行为为中心的多层架构，强调以经验驱动的个性化检索。<ul>
+<li>L0: 保留原始数据保证完整性。</li>
+<li>L1: 通过结构化的自然语言，增强memory的组织性和可检索性。</li>
+<li>L2: 通过参数调整将用户偏好内在化，从而实现类似于人类的联想推理。</li>
+</ul>
+</li>
+<li>AutoGen引入了一个多智能体框架模拟人类的群体协作，形成了一个交互式智能体的对话生态系统。其中的每个智能体都有不同的角色，通过对话协作共享信息并完成复杂的任务(数学推理、信息检索、代码生成)。</li>
+</ul>
+<h4 id="基于工具的memory管理-Tool-based"><a href="#基于工具的memory管理-Tool-based" class="headerlink" title="基于工具的memory管理(Tool-based)"></a>基于工具的memory管理(Tool-based)</h4><p>将memory管理从隐式表示转向基于工具的接口，开始有memory编辑标准化框架出现，使得用户能够通过insert、modify和delete等操作动态更新模型的语义行为。</p>
+<ul>
+<li>EasyEdit提供统一的接口操作模型参数和隐藏状态，以进行细粒度的控制。</li>
+<li>Mem0通过引入提取-更新(extract-update)的工作流程维护外部的memory模块解决上下文窗口的瓶颈。后续还将有关会话的memory构造为图，以实现更丰富的语义建模和长期演化。<ul>
+<li>抽取-更新指的是从外部存储模块中提取信息，然后更新到模型中的工作流程。</li>
+</ul>
+</li>
+<li>Letta作为一个面向系统的尝试，从传统操作系统中汲取灵感，通过模块化上下文并引入函数式的分页来实现动态的memory访问。</li>
+</ul>
+<p>虽然对memory管理引入了基本的CRUD(Create, Read/Retrieve, Update, Delete)操作，但以上工作大部分都局限于接口级别的实用程序。缺乏对memory作为核心资源的系统建模和管理，不足以满足需要memory进化、协调或者保证其安全的任务。</p>
+<ul>
+<li>本质上是对隐式机制的修补。CRUD功能可以缓解短期的问题，但不足以解决注入memory演化、访问控制和版本管理等系统挑战。因为系统调用无法构建完整的操作系统，缺乏可持续和可扩展的管理架构。</li>
+</ul>
+<h4 id="系统级别的memory管理-Systematic-Memory-Governance"><a href="#系统级别的memory管理-Systematic-Memory-Governance" class="headerlink" title="系统级别的memory管理(Systematic Memory Governance)"></a>系统级别的memory管理(Systematic Memory Governance)</h4><p>也就是本文提出的MemOS，专为LLM设计的memory操作系统。将memory单元视为一等资源，并基于操作系统的设计原则引入了全面的管理机制，包括调度、分层、API抽象、权限控制和异常处理。与基于工具的阶段不同，MemOS不仅支持操作，还强调跨任务、会话和Agent的memory演化和集成。</p>
+<p>借助MemScheduler、Memory Layering和Memory Governance等核心模块，实现了异构memory类型统一调度和行为驱动的演化，从而构建了至关重要的长期认知结构。</p>
+<h3 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h3><ul>
+<li>memory作为系统资源: 从潜在的内部依赖关系中抽象出memory，使其成为一流的、可调度的和可管理的资源。构建跨越智能体、用户、应用程序和会话的memory路径，打破跨平台的“memory孤岛”，显著降低memory管理的复杂度，并提高memory访问的有效性和效率。</li>
+<li>进化作为核心能力: 在长期memory使用的过程中，实现持续学习、结构重组和任务转移。为模型和memory的构建共同进化基础设施，使得LLM能够根据不断变化的任务、环境和反馈进行自我调整和升级——实现真正可持续的、不断发展的智能体。</li>
+<li>管理作为安全的基础: 提供生命周期范围的memory管理机制，包括访问控制、版本控制、来源审核等。确保memory的可控性、可追溯性和可解释性，为安全、可信和合规的智能体系统奠定基础。</li>
+</ul>
+<h4 id="解决的问题和挑战"><a href="#解决的问题和挑战" class="headerlink" title="解决的问题和挑战"></a>解决的问题和挑战</h4><ul>
+<li>问题<ul>
+<li>知识被刚性地编码在参数中。</li>
+<li>上下文无法跨会话保存。</li>
+<li>个性化无法保存。</li>
+<li>知识更新的成本非常高。</li>
+</ul>
+</li>
+<li>挑战<ul>
+<li>在高度异构的环境中实现高效的知识交换。</li>
+<li>严格的管理，在最大化共享效用的同时，保护私人或敏感数据。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Mem-Training-范式"><a href="#Mem-Training-范式" class="headerlink" title="Mem-Training 范式"></a>Mem-Training 范式</h4><p>提出一种以memory为中心的训练策略——Mem-training范式。不是仅仅依赖零星的参数更新，而是通过显式的、可控的 memory units 驱动模型持续进化。与仅在pretraining和fine-tuning期间修改模型的传统的工作流程不同，Mem-training 允许模型在运行时收集、重构和传播知识，从而实现跨任务、时间范围和部署环境的自我调整。</p>
+<p>在这种范式中，“训练”不再局限于大规模语料库，而是通过与用户和环境的持续交互扩展到动态知识积累。重点从模型一次学习多少知识转变为是否可以将经验转化为结构化memory，并反复检索和重构它。实现了memory生成、调度、融合和更新的端到端功能。</p>
+<h4 id="从操作系统设计MemOS的模块"><a href="#从操作系统设计MemOS的模块" class="headerlink" title="从操作系统设计MemOS的模块"></a>从操作系统设计MemOS的模块</h4><p>MemOS通过LLM Core和MemScheduler协调推理和memory块的调度，通过Memory Layering和MemStore管理分层memory，通过MemAPI和Backend Adapter提供标准化的API抽象，通过Memory Governance实施安全和访问管理，并通过Memory Observability框架支持监控和异常检测。这些模块会协同工作，以使传统的资源管理原则适应LLM中不断变化的memory需求。</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Memory/MemOS%20Modules.png?token=GHSAT0AAAAAADF5HO5KHYVTEELMFEW2QO2U2DV6CBQ" alt="img"></p>
+<h3 id="Memory-Modeling-in-MemOS"><a href="#Memory-Modeling-in-MemOS" class="headerlink" title="Memory Modeling in MemOS"></a>Memory Modeling in MemOS</h3><h4 id="MemOS中memory的类型"><a href="#MemOS中memory的类型" class="headerlink" title="MemOS中memory的类型"></a>MemOS中memory的类型</h4><p>层级式memory的概念最初在Memory$^3$中提出，阐述了显式memory和隐式memory路径之间的区别，和相互的交互机制。</p>
+<p>MemOS划分为三种核心memory类型，反映了从感知到整合的完整语义演化轨迹。</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Memory/Types%20of%20memory.png?token=GHSAT0AAAAAADF5HO5KKVD3DSUW6K7UDA4O2DV6CNA" alt="img"></p>
+<ul>
+<li>纯文本memory(Plaintext Memory): 指的是通过外部接口访问的显式、动态检索的知识模块(均是可编辑、可追踪和可独立存储的)将检索到的段落文本、结构化图和prompt模板注入到模型的输入中，绕过参数容量和上下文窗口大小的限制。实现快速的知识更新、任务定制和用户个性化。<ul>
+<li>被封装在可调用的MemCubes中。MemCube具有生命周期控制、访问策略和版本跟踪的功能。支持图结构和多模态memory、上下文指纹识别和基于时间戳的加载。</li>
+<li>纯文本memory不仅仅是一个外部插件，还将其深度集成到推理循环中，从而能够与激活memory进行交互。其中高频的纯文本文本可以被转化为激活路径，从而实现知识的动态外部化和内部化。</li>
+<li>为了提高调度效率和长期可演化性，MemOS在由任务-概念-事实的路径组织的分层图结构中管理纯文本memory。将任务解析和语义相似性和主体感知策略相结合，实现结构化查询路由和优先级检索。支持冲突检测、去重、版本控制和遗忘策略，以保持memory质量和演化。</li>
+<li>该类型memory特别适用于事实密集型、个性化和多智能体的任务。</li>
+</ul>
+</li>
+<li>激活memory(Activation Memory): 由推理过程中生成的中间状态构成了模型的运行时语义感知。这些中间状态是短期的、动态的和隐式激活的。<ul>
+<li>KV-cache是中心结构。保留了上下文的KV表示，从而实现了高效的远程依赖建模和递归推理。通过缓存稳定的行为支持即时上下文响应和可重用的推理路径。</li>
+<li>还包括隐藏状态($h^l_i$)和注意力权重(a^l_{ij})。</li>
+<li>MemOS为激活memory提供统一的调度和生命周期管理，支持延迟加载、选择性冻结和优先级驱动的调整。<ul>
+<li>稳定且经常访问的KV模式将被缓存，形成低延迟的”即时memory路径”，实现快速回忆并最大限度地减少冗余解码。KVmemory已在多轮对话、代码辅助和运行时安全管理中被证明是有价值的。</li>
+<li>重复触发的策略行为可以被抽象成持久的memory结构(steering vectors, semantic templates)。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>参数memory(Parameter Memory): 编码在模型的固定权重中的知识和能力，是模型内长期语义知识的主要存储库。编码了语言结构、常识知识和一般语义的深层表征——通常是实例化为前馈权重矩阵(W_{lMLP})和注意力键值矩阵($W_l^K$, $W_l^V$)。<ul>
+<li>该类型memory适合以能力为中心的智能体(法律顾问、财务审计师、技术作家、摘要者)。它是在没有检索或明确上下文的情况下隐式激活。与频繁更新的纯文本和瞬时的激活memory相比，更好地满足长期、结构稳定的要求。为零样本推理、通用问答和语言生成奠定基础。但存在更新成本高、定制性有限和可解释性差的问题。</li>
+<li>在MemOS中，参数memory包括预先训练的语言和世界知识，并且可以通过轻量级的微调方法(LoRA, adapters)进行模块化增强。<ul>
+<li>将特定领域的知识提炼成参数块，作为能力模块进行加载(摘要专家、法律助手、风格生成器)。</li>
+<li>为解决更新问题等问题，将参数memory、纯文本memory和激活memory相互联系。例如频繁使用且结构稳定的纯文本可以被提炼成参数的形式，以提高嵌入的效率。过时的或者不一致的参数memory可以通过恢复为纯文本的方法进行回溯修正。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="MemCube"><a href="#MemCube" class="headerlink" title="MemCube"></a>MemCube</h4><p>LLM中的memory非常多样化，涵盖嵌入在模型参数中的长期知识、推理过程中产生的中间激活状态，以及外部注入的结构化知识片段(检索到的段落、知识图节点)。这些资源在来源、生命周期、表示和调度方法上差异很大，使得统一控制、演进和管理都成为一项系统性的挑战。为了协调跨异构memory类型的调度和演化，MemOS引入了MemCube作为memory资源的核心通用最小封装单元。它是一种统一的抽象，用于标准化memory表示、生命周期管理、跨模态融合和动态memory转换。</p>
+<ul>
+<li>灵感来源于Memory$^3$中提出的可控外部化。意图将其发展为适用于智能体构建的可组合和可调度的memory基质。</li>
+<li>作为MemOS的语义memory主干，实现了在推理过程中多种memory类型的无缝集成和转换。</li>
+<li>每个单元都具有标准接口、行为属性和管理策略。每个MemCube实例由两个组件组成:<br><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Memory/MemCube.png?token=GHSAT0AAAAAADF5HO5KCWW6UV7HOO5JAWQ22DV6BSA" alt="img"><ul>
+<li>包含语义内容的Memory Payload</li>
+<li>编码身份、控制和行为指标的Metadata(元数据): MemOS调度和管理的基础接口，也是长期系统演进、任务适应和安全控制的中心锚点。<ul>
+<li>描述性标识符: 定义了每个memory块的身份、分类和组织方式。大规模统一的memory调度依赖于对这些”语义指纹”的精确识别。<ul>
+<li>Timestamp(时间戳): 用于标识创建或上次更新的时间，用于进行生命周期建模。</li>
+<li>Origin Signature(原始签名): 用于识别memory的来源，无论是来自推理提取、用户输入、外部检索还是参数微调。</li>
+<li>Semantic Type(语义类型): 用于指定用途(任务prompt、事实、用户偏好)以支持语义组合。</li>
+</ul>
+</li>
+<li>管理属性: 提供了对memory访问、安全性和调度的系统控制。在动态的、多用户的、长期运行的系统中，默认的模型推理不足以实现强大的memory管理。MemOS为每个memory单元定义了一套全面的规则: <ul>
+<li>Access Control(访问控制): 读写权限和共享范围。</li>
+<li>Lifespan Policy(生命周期策略): TTL或衰减规则。</li>
+<li>Priority Level(优先级): 用于调度。</li>
+<li>Compliance &amp; Traceability(合规性和可追溯性): 敏感度标签、水印、日志。</li>
+</ul>
+</li>
+<li>行为使用指标: 反映了推理过程中的实时memory使用情况，从而实现”价值驱动”的调度、跨类型转换和自适应编排。使得MemOS能够感知memory的”价值”，从而为自适应调度、memory转换和知识演化奠定基础。<ul>
+<li>Access Patterns(访问模式): 例如效率和时效性，可以告知在推理的过程中存储器是”热”还是”冷”，用于调整缓存优先级(将高频的纯文本memory提升到快速访问层，以减少延迟)。</li>
+<li>Cross-Modality Memory Transformation(跨模态memory转换): <ul>
+<li>允许跨memory类型的动态转换。<ul>
+<li>纯文本$\Rightarrow$激活: 频繁使用的纯文本memory可以被预先转换为激活向量或注意力模板，以实现更快的解码。</li>
+<li>纯文本/激活$\Rightarrow$参数: 跨任务的稳定知识可以被提炼成参数模块，内化为高效的能力插件。</li>
+<li>参数$\Rightarrow$纯文本: 冷门或过时的参数可以被卸载到外部纯文本存储中，以增加灵活性并减少结构开销。</li>
+</ul>
+</li>
+<li>为了支持以上转换，引入了策略感知调度: <ul>
+<li>系统根据使用频率、上下文依赖关系和任务匹配，动态调整memory块的层级和格式，从而实现分层的memory演进。</li>
+<li>每个memory都会与上下文指纹(一种用于快速检索和任务对齐的轻量级的语义签名)相关联。</li>
+<li>版本链记录了每个memory的修改历史和派生沿袭，以实现版本控制、冲突解决和回滚。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="MemOS的架构"><a href="#MemOS的架构" class="headerlink" title="MemOS的架构"></a>MemOS的架构</h3><h4 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h4><p>MemOS采用模块化的三层架构，以支持对复杂任务的memory的高效调用、动态调度和合规管理。每一层都有不同的职责和协作接口——共同构建了一个统一的执行和管理框架，用于异构的memory类型，从而在复杂的任务中实现强大的智能体性能——从任务输入到执行调度再到管理和归档。标准的接口解耦允许快速迭代和可扩展性，为未来智能系统中的多模型、多任务和跨平台memory共享奠定了基础。</p>
+<p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Memory/MemOS%E6%9E%B6%E6%9E%84.png?token=GHSAT0AAAAAADF5HO5K4Z34QX4XHNREPEYU2DV6DKQ" alt="img"></p>
+<h5 id="memory接口层-Memory-Interface-Layer"><a href="#memory接口层-Memory-Interface-Layer" class="headerlink" title="memory接口层(Memory Interface Layer)"></a>memory接口层(Memory Interface Layer)</h5><p>memory接口层负责与用户或上游系统进行交互，是所有的memory操作的入口点。提供了一个标准化的memoryAPI套件，支持查询、写入、更新、传输和组合memory单元(memory units)。所有用户的请求都由接口层解析为特定的memory操作命令(memory manipulation commands)。</p>
+<ul>
+<li>内置的MemReader模块起着核心作用，将自然语言输入转换为结构化的memory操作链(memory operation chains)，提取时间的表达(time expressions)、任务的意图(task intents)、上下文的锚点(contextual anchors)和memory的范围(memroy scopes)。<ul>
+<li>给定一个类似的”总结我上个月的会议记录”的请求，MemReader会提取时间范围(上个月)、memory类型(会议记录)和输出目标(摘要)，并使用适当的窗口参数(window parameters)制定了一个带标签的MemoryQuery。</li>
+</ul>
+</li>
+<li>在多轮对话中，MemReader使用上下文来推断省略的细节，确保memory调用(memory invocation)的一致性。</li>
+<li>接口层还执行权限检查(permission checks)、参数封装(parameter encapsulation)和调用序列管理(call sequence management)，与MemGovernance模块协调，验证每个操作的合规性和可追溯性。</li>
+</ul>
+<h5 id="memory操作层-Memory-Operation-Layer"><a href="#memory操作层-Memory-Operation-Layer" class="headerlink" title="memory操作层(Memory Operation Layer)"></a>memory操作层(Memory Operation Layer)</h5><p>memory操作层是MemOS的控制中心，负责在推理过程中组织、规划和调度memory资源。其核心组件包括:</p>
+<ul>
+<li>MemOperator: 用于构建跨异构memory类型和上下文的标签系统、语义索引和基于图的拓扑结构，从而促进高效检索和上下文适应。</li>
+<li>MemScheduler: 根据任务意图和上下文，选择合适的memory类型(Plaintext, activation, parameter)，并动态规划调用顺序和集成策略，以优化低延迟和任务相关性。</li>
+<li>MemLifecycle: 跟踪每个memory单元的生命周期转换——创建、激活、过期和回收——以确保memory资源的可控性和新鲜度。</li>
+</ul>
+<p>在多轮QA或复杂对话过程中，memory操作层首先通过MemOperator检索相关memory(用户偏好、过去对话、外部结构化文档)，通过MemScheduler确定最佳的调用路径，并使用MemLifecycle更新memory的状态。从而使得memory称为一种动态的、上下文感知的资源，而不是静态的数据片段。</p>
+<h5 id="memory基础设施层-Memory-Infrastructure-Layer"><a href="#memory基础设施层-Memory-Infrastructure-Layer" class="headerlink" title="memory基础设施层(Memory Infrastructure Layer)"></a>memory基础设施层(Memory Infrastructure Layer)</h5><p>memory基础设施层负责处理memory数据的存储、安全、迁移和流动，作为可靠系统执行的基础。</p>
+<ul>
+<li>MemGovernance: 强制执行访问控制、保留策略、审计日志记录和敏感内容处理。</li>
+<li>MemVault: 管理多个memory存储库(用户特定的领域知识、共享管道)并提供标准化的访问接口。</li>
+<li>MemStore: 提供了一种发布-订阅机制(public-subscribe)，用于多个智能体之间的开放memory共享。<ul>
+<li>在组织QA系统中，本地更新的memory条目可以被验证并同步到中央memory枢纽，从而供授权用户使用。</li>
+</ul>
+</li>
+<li>MemLoader和MemDumper: 实现memory导入/导出和跨平台同步。</li>
+</ul>
+<h4 id="执行路径和交互流程"><a href="#执行路径和交互流程" class="headerlink" title="执行路径和交互流程"></a>执行路径和交互流程</h4><p><img src="https://raw.githubusercontent.com/zjn-astonishe/image/refs/heads/main/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/LLM%20Agent%20Memory/Overview%20of%20MemOS%20architecture%20and%20memory%20interaction%20flow.png?token=GHSAT0AAAAAADF5HO5K3XW24M3BGJU7POK62DV6DLQ" alt="img"></p>
+<h5 id="总览-1"><a href="#总览-1" class="headerlink" title="总览"></a>总览</h5><p>本节说明了从输入到解析、调度、注入和响应生成的完整memory处理闭环流程(输入解析、memory调度、状态管理、存储归档)，每个阶段都对应于协调的模块调用，其中MemoryCube作为跨层载体，用于结构化、可管理和可追溯的memory生命周期管理。</p>
+<ul>
+<li>提示输入(Prompt Input)和memoryAPI封装(Memory API Packaging)<ul>
+<li>系统执行始于用户发出的自然语言prompt或自动触发的任务。接口层通过内置的MemReader模块处理输入，识别任务意图、时间范围、主题实体和上下文锚点，以确定输入中是否涉及memory访问。如果是，MemReader会将prompt转换为结构化的MemoryCall，包括了调用者的ID、上下文范围、memory类型、访问意图和时间窗口。以上将被封装成一个标准化的Memory API请求，并传递到操作层进入memory检索和调度流程。</li>
+<li>在医疗保健场景中，当患者输入”请检索我去年的住院记录”时，MemReader会识别时间范围(去年)、主题标签(诊断记录)、上下文锚点(住院期间)和意图(历史查询)，并生成一个结构化的MemoryCall。</li>
+</ul>
+</li>
+<li>memory检索和组织(Retrieval and Organization)<ul>
+<li>操作层的MemOperator使用Memory API中的意图和上下文信息执行语义匹配并组织存储单元。构建特定于任务的索引(用户偏好、锚点、关键词向量)和存储图(时间链、实体关系、依赖关系)以过滤相关的候选对象。</li>
+<li>如果患者要求系统参考过去的病例进行诊断，则操作层会检索具有症状的关键词、治疗周期和相关医生笔记的memory块，以构建结构化的检索路径。</li>
+</ul>
+</li>
+<li>memory调度和激活<ul>
+<li>在确定候选集合后，MemScheduler使用诸如上下文相似性、访问频率、时间衰减和优先级标签等指标来优化memory的选择，动态地计算最佳的注入策略。在后续的预约中，系统会注入最近的诊断总结(激活memory)、诊断模板(参数memory)和生活方式建议(纯文本memory)，以确保集成且语义连贯的支持。</li>
+</ul>
+</li>
+<li>memory的生命周期建模以及状态转换<ul>
+<li>被调度的memory单元会传递到MemLifecycle模块以进行状态管理。每个memory条目基于访问模式、时间衰减和任务标签，经历五种状态的转换: <ul>
+<li>已生成: Generated</li>
+<li>已激活: Activated</li>
+<li>已合并: Merged</li>
+<li>已归档: Archived</li>
+<li>已过期: Expired</li>
+</ul>
+</li>
+<li>在医疗应用中，生成的药物建议从”Generated”状态开始，如果经常被访问，会变成”Activated”状态，在经过重复的用户确认后，会被”Merged”到常用的建议中。如果最终都未被使用，则会被“Archived”或”Expired”。</li>
+</ul>
+</li>
+<li>memory归档和访问管理<ul>
+<li>已演化的memory会被归档在MemVault中，并按用户、任务或上下文进行组织。归档可能由策略、用户命令或调度触发，保持经常访问的数据处于活动状态，而较少使用的数据则处于冷存储或长期存储状态。</li>
+<li>归档阶段还会调用MemGovernance进行权限封装和合规性检查。每个memory单元都被分配一组访问控制策略——例如访问控制列表(ACL)、生存时间(TTL)和条件激活策略(决定了其基于用户角色和任务上下文的可用性)</li>
+<li>治疗总结可能对护理团队完全可见，但对患者仅部分可见。经过编辑和添加水印后，可以注册到MemStore中，以便在各个机构之间共享。</li>
+</ul>
+</li>
+</ul>
+<h5 id="接口层"><a href="#接口层" class="headerlink" title="接口层"></a>接口层</h5><ul>
+<li>MemReader: 任何memory操作的第一步都是解释来自用户或系统任务的自然语言输入。MemReader充当memory级别推理的语义抽象模块，负责解析传入的prompt，提取关键的memory相关特征，例如任务意图、时间范围、实体焦点、memory类型和上下文锚点，并输出结构化的中间表示。中间表示会被封装为MemoryCall传递到下游，由操作层处理。MemReader还支持prompt重写、共指消解(统一同一物体的不同描述)和跨多轮交互的对话memory槽填充。既是意图识别器，也是memory协调器，确保系统向底层memory基础设施发出精确且可追溯的调用。</li>
+<li>Memory API: 接口层是构建于统一且可组合的Memory API之上，该API连接了上层任务与后端的memory操作。所有与memory相关的动作，包括创建、更新、检索和审计都通过标准化的API执行，以确保可扩展性、可组合性和管理。所有的API调用都使用MemoryCube作为其参数载体和响应格式，支持食物安全性、结构化的状态报告，并受MemGovernance(根据用户、角色、模型和任务强制执行访问控制)的管理。<ul>
+<li>Provenance API: 能够在创建或修改时将元数据嵌入到memory对象中，从而实现来源追踪。包括事件触发器、上下文状态、模型标识符和外部链接。每个memory都标有一个唯一的来源ID，该ID在其整个生命周期中保持不变。来源元数据支持可解释性、调试、访问控制和memory轨迹追溯。</li>
+<li>Update API: 支持诸如追加、合并或覆盖之类的修改操作。具有版本感知能力，允许快照和基于标签的差异写入。典型用例包括任务的结果记录、用户更正和细粒度的memory整合。当与MemLifecycle结合使用的时候，更新操作可以触发状态转换和索引刷新。</li>
+<li>LogQuery API: 允许以结构化的方式查询memory访问的日志和执行的跟踪记录。支持按时间戳、调用者身份、memory类型和操作类型进行过滤。对于调试、热点分析、审计和管理执行至关重要。<ul>
+<li>开发人员可以调查导致错误响应的memory使用情况，验证是否调用了特定的memory。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Memory Pipeline: 为了支持企业和多智能体的复杂工作流程，提供了一种流水线式的组合机制，用于链接memory的操作。<ul>
+<li>开发者或者智能体系统可以定义一系列的memory操作: retrieve$\rightarrow$augment$\rightarrow$update$\rightarrow$archive，并将其作为一个整体执行。</li>
+<li>每个流水线步骤都在一个共享的MemoryCube对象上运行，该对象携带输入和输出的状态、元数据和中间表示。<ul>
+<li>医疗助手可能会定义一个流水线，该流水线通过LogQuery检索病人过去的用药记录，通过Update添加医生最新的指示，用一个新的”provenance”条目标记memory，在诊断结束后将其归档。</li>
+</ul>
+</li>
+<li>流水线支持事务一致性、回滚和故障隔离。可以通过领域特定语言(DSL)以声明方式定义，也可通过变成方式构建。对于智能体编排，MemScheduler解释步骤之间的依赖关系并协调调度。流水线模板可以在智能体之间重用。<ul>
+<li>客户支持中用于生成后续行动，临床分诊中用于诊断跟踪。</li>
+</ul>
+</li>
+<li>启用组合式memory流，对更高层次的认知模式、特定于任务的知识塑造和可审计的memory工作流程进行建模。</li>
+</ul>
+</li>
+</ul>
+<h5 id="操作层"><a href="#操作层" class="headerlink" title="操作层"></a>操作层</h5><ul>
+<li>MemOperator: 高效的存储组织和精确的检索是实现智能行为生成、情境推理和知识重用的基础。该模块通过在逻辑上和语义上组织存储内容来实现这一目标。结合了基于标签的注释、基于图的链接和分层抽象，以支持多角度的存储建模。同时为混合检索提供统一的接口，为跨任务、模型和用户上下文的各种智能体提供服务。 <ul>
+<li>多视角memory构建: 采用三种互补机制组织memory。<ul>
+<li>灵活的标签系统允许每个memory单元都标有元数据(主题、来源、可信度和情感)，同时支持用户自定义和模型预测的标签。</li>
+<li>知识图谱结构将memory视为通过语义边连接的节点，从而实现跨memory项的可遍历关系。</li>
+<li>语义分层方案将memory分割为私有层、共享层和全局层，促进跨任务和角色的memory隔离和协调访问。</li>
+</ul>
+</li>
+<li>混合检索与动态分派: 支持结合了符号策略和语义策略的混合检索机制，可组合成复杂的查询表达式(标签过滤与语义排序结合)，以服务多轮对话、问答或知识整合等应用。<ul>
+<li>符号检索对标签、时间跨度、布尔条件和访问控制策略应用基于规则的过滤。</li>
+<li>语义检索使用基于嵌入的向量表示，通过相似性搜索识别上下文相关的memory单元。</li>
+</ul>
+</li>
+<li>流水线耦合和缓存策略: 检索得到的memory单元会作为执行流水线的输入向下传递，并与Memory API和Memory Cube模块紧密结合。为了最大限度减少延迟，采用本地索引缓存策略——频繁访问的memory会自动迁移到高速中间存储器。缓存失效由基于频率和上下文漂移的启发式方法管理。由MemScheduler模块以动态的、感知工作负载的方式管理刷新操作。</li>
+<li>任务对齐路由: 基于分层语义目标解析memory导航路径。用户输入被分解为”主题-概念-事实”，形成三层任务模式。由MemoryPathResolver组件指定检索策略，回答三个关键问题: 搜索什么、在哪里搜索、按什么顺序搜索。增强了可解释性、调度相关性和memory选择与任务意图之间的一致性。</li>
+</ul>
+</li>
+<li>MemScheduler: 作为中央memory调度器。不仅仅简单地检索存储的记忆，还需基于任务的语义、调用频率和内容稳定性，动态地转换并加载到运行时上下文中。依赖于MemCube中定义的三种memory类型(KV-Cache, 纯文本, 参数)，支持分类、转换、分层调度以实现自适应、高性能的内存操作。<ul>
+<li>感知类型的转换和加载机制(Type-Aware): <ul>
+<li>在调度期间，MemScheduler会分析任务语义、窗口大小和资源约束，以确定最合适的内存类型。<ul>
+<li>稳定、频繁访问的内容会被转换为激活记忆(Activation memory)用于KV缓存，从而最大限度地减少预填充的延迟。适合多轮对话类一致性要求高的任务。</li>
+<li>抽象的规则和可重用的模式(嵌入到模型权重中)会被编码为参数记忆(Parameter memory)。适合程序性或专家驱动的流程。</li>
+<li>时间敏感或会话特定的知识被保留为纯文本记忆(Plaintext)，作为原始文本插入到prompt中。适合根据需求查询事实的任务。</li>
+</ul>
+</li>
+<li>所有的调度决策都会记录到MemCube，并与MemOperator的结构协调，以保持可追溯性和可解释性。</li>
+</ul>
+</li>
+<li>跨类型转换与迁移(Cross-Type Conversion and Migration):<ul>
+<li>保持长期性能和自适应的memory，支持跨类型的memory迁移。多个会话中经常被调用的纯文本记忆可以被迁移到激活记忆(KV-Cache)。重复使用的稳定模板可以被提炼成参数记忆。利用率不足的激活记忆可以被降级为纯文本记忆并归档到冷存储中(硬盘)。确保memory单元演化成最佳的调用形式，同时节省系统的资源。</li>
+</ul>
+</li>
+<li>执行路径整合与管理(Execution Path Integration and Governance): <ul>
+<li>与上游的MemReader、Memory API集成，解析结构化调用和语义目标。下游与模型的执行路径协作，确定如何以及在何处注入memory。调度逻辑会根据任务的类型、模型负载、缓存命中率和访问历史记录进行实时优化。所有的调度操作均有MemGovernance管理，强制执行用户角色边界、速率限制和生命周期策略。确保了跨用户、模型和任务的memory的适当隔离和安全使用，同时保持每次memory交互的可审核记录。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>MemLifecycle: 每个memory对象都被视为一个具有进化状态的的动态实体，由该模块集中管理。系统将memory建模为有限状态机，在四种关键状态之间循环: 生成态(Generated), 激活态(Activated), Merged(合并态), Archived(归档态)。支持语义进化、动态memory管理以及存储层上稳定、可控的资源调度。<ul>
+<li>状态建模与进化逻辑(State Modeling and Evolution Logic): 状态转换既可以由用户操作显式发起，也可以由系统启发式方法隐式驱动。<ul>
+<li>智能会议助手中，由系统自动生成的摘要标记为生成态。</li>
+<li>如果摘要在后续任务中被引用，转换为激活态。</li>
+<li>用户添加补充数据，或者系统检测到与历史记录中的某个memory语义重叠时，将被合并到一个新的版本，并标记为合并态。</li>
+<li>如果摘要长时间没有被访问，降级为归档态，并被转移到冷存储(硬盘)。</li>
+</ul>
+</li>
+<li>时间与冻结机制(Time Machine and Freezing Mechanism): 为了确保长期一致性和可恢复性引入。<ul>
+<li>对memory的状态进行快照，以支持回滚。将已归档或合并的memory恢复到特定版本，从而重新在推理和上下文注入中使用。对于遗忘、撤回和反事实模拟至关重要。<ul>
+<li>在一个策略协作平台，用户可以解档旧条目以执行”假设分析”模拟，不会影响规范的冻结版本及其审计追踪。</li>
+</ul>
+</li>
+<li>支持冻结机制，例如对于法律协议或标准指南，禁止对这些memory进行更新，保留完整的修改历史以用于审计。</li>
+</ul>
+</li>
+<li>调度与存储整合策略(Scheduling and Storage Integration Strategy): <ul>
+<li>memory的生命周期状态直接影响调度的优先级和存储分配策略。<ul>
+<li>激活态优先缓存在本地内存或能被快速访问的MemoryCube实例中，确保低延迟检索。</li>
+<li>归档态或冻结态卸载到MemVault(注重持久性而非速度的冷存储层)。</li>
+</ul>
+</li>
+<li>基于生命周期规则，系统可以批量触发诸如清理、压缩或迁移的操作，以平衡调用的可用性与资源的高效利用率。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="基础设施层"><a href="#基础设施层" class="headerlink" title="基础设施层"></a>基础设施层</h5><ul>
+<li>MemGovernance: 核心模块，负责memory的访问控制、合规性执行和确保可审计性、可解释性、安全性。<ul>
+<li>建立了一个三元权限模型，涉及用户的身份、memory对象和调用上下文。支持私有、共享和只读的访问策略。每个memory请求都要经过身份验证和上下文验证，以防止未经授权的访问(医生才能访问患者诊断记录)。</li>
+<li>管理memory的生命周期策略，例如生存时间(TTL)强制执行和基于访问频率的垃圾回收或非活动项归档。</li>
+<li>跟踪memory的使用热度，监控高流量的memory段。</li>
+<li>隐私控制子系统进行敏感内容检测、自动编辑和访问日志记录，确保个人和行为数据的安全。</li>
+<li>所有的memory对象都带有完整的来源元数据，包括创建来源、调用继承和突发日志。生成的内容可以进行语义水印和标记行为指纹，从而在多平台场景中进行归属和版权追踪。</li>
+<li>还公开了审计的接口，用于与企业的合规性系统集成，支持到处访问日志和权限修订报告。主要是应对医疗保健和金融等高风险环境中的法律遵从性。</li>
+</ul>
+</li>
+<li>MemVault: 中央memory存储和路由基础设施，负责管理和服务与各种类型的memory。<ul>
+<li>memory被组织成命名空间: 用户私有存储、专家知识库、行业共享存储库、上下文内存池、流水线对齐缓存。每个memory都被分配了一个专用的命名空间和路径结构，支持高效的查找和访问控制。</li>
+<li>为了支持异构后端，通过同一的MemoryAdapter抽象与vector stores、relational databases和blob storage接口，允许在查询、写入和同步memory时保持API级别的一致性。存储可以配置为只读缓存或可写存储库，具体取决于延迟或学习的目标。</li>
+<li>运行时，MemVault和MemScheduler、MemLifecycle协同工作，根据访问历史、上下文相关性和memory状态动态加载memory，支持基于标签、语义和全文的加载模式，并触发热memory到快速存储或冷数据到归档区域的迁移。</li>
+<li>对于多模型协作、领域级知识融合以及多轮对话中的一致性至关重要，构成了可扩展智能系统的知识主干。</li>
+</ul>
+</li>
+<li>MemLoader &amp; MemDumper: 构成了跨平台memory迁移的双向通道。<ul>
+<li>支持注入MemoryCube等结构化单元的注入、导出和同步。对于系统切换、边缘-云集成以及跨分布式智能体的知识连续性至关重要。</li>
+<li>采样过程中，MemLoader接收来自本地缓存、第三方系统或存档的memory，并将其映射到目标存储，自动填充来源元数据、标签和生命周期状态，确保管理就绪。</li>
+<li>MemDumper以可移植格式导出选定的memory，包括权限元数据、编辑字段和访问日志。</li>
+<li>MemLoader和MemDumper都支持定期和事件驱动的更新，例如在标签激活时自动导出。</li>
+<li>迁移过程由MemGovernance管理，以验证策略、跟踪操作和隔离敏感数据，例如移动设备将患者诊断日志导出到云端，远程智能体稍后会加载这些日志以保留任务的上下文。</li>
+</ul>
+</li>
+<li>MemStore: 作为开放访问接口，支持对memory单元进行受控的发布、订阅和分发。支持模型、机构甚至行业范围内的网络之间进行memory交换。<ul>
+<li>用户可以将memory声明为可发布的(published)，并定义可见性、使用条件和访问控制规则。每个共享单元都带有唯一的ID和来源元数据。MemGovernance确保在传播过程中进行掩码、水印和策略验证。支持memory交换的push和pull模型。</li>
+<li>消费者可以使用标签tag或语义过滤器(semantic filter)定义订阅，系统会主动传递匹配的更新。获得授权的memory资产可以执行合约约束的访问频率和过期策略。所有的访问都会记录调用的轨迹，以支持后续的审计和问责。<ul>
+<li>医院可以发布经过脱敏处理的诊断记录，供远程分诊智能体使用，并且每次调用都会针对上下文和来源进行验证。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/">论文阅读</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2025/06/29/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-29-LLM%20Agent%20Serving/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">LLM Agent Serving</div></div></a></div><div class="next-post pull-right"><a href="/2025/07/08/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-07-08-Dynamic%20Early%20Exit/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Dynamic Early Exit</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Ray%20conclusion/" title="Ray conclusion"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-27</div><div class="title">Ray conclusion</div></div></a></div><div><a href="/2024/10/27/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2024-10-27-Sia/" title="Sia"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-10-27</div><div class="title">Sia</div></div></a></div><div><a href="/2025/06/09/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-09-Agentic%20Workflow/" title="Agentic Workflow"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-09</div><div class="title">Agentic Workflow</div></div></a></div><div><a href="/2025/06/29/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-29-LLM%20Agent%20Serving/" title="LLM Agent Serving"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-06-29</div><div class="title">LLM Agent Serving</div></div></a></div><div><a href="/2025/07/08/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-07-08-Dynamic%20Early%20Exit/" title="Dynamic Early Exit"><img class="cover" src="https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2025-07-08</div><div class="title">Dynamic Early Exit</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">ZJN</div><div class="author-info__description"></div></div><div class="card-info-data is-center"><div class="card-info-data-item"><a href="/archives/"><div class="headline">文章</div><div class="length-num">57</div></a></div><div class="card-info-data-item"><a href="/tags/"><div class="headline">标签</div><div class="length-num">29</div></a></div><div class="card-info-data-item"><a href="/categories/"><div class="headline">分类</div><div class="length-num">25</div></a></div></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/zjn-astonishe"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="/atom.xml" target="_blank" title="RSS链接"><i class="iconfont icon-rss card_icon"></i></a><a class="social-icon" href="https://github.com/zjn-astonishe" target="_blank" title="Github"><i class="iconfont icon-github crad_icon"></i></a><a class="social-icon" href="https://gitee.com/zhang-jianning/" target="_blank" title="Gitee"><i class="iconfont icon-gitee2 card_icon"></i></a><a class="social-icon" href="tencent://AddContact/?fromId=45&amp;fromSubId=1&amp;subcmd=all&amp;uin=627561610&amp;website=www.oicqzone.com" target="_blank" title=""><i class="iconfont icon-QQ-circle-fill card_icon"></i></a><a class="social-icon" href="mailto:627561610@qq.com" target="_blank" title="Email"><i class="iconfont icon-email-fill card_icon"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#LLM-Agent-Memory"><span class="toc-text">LLM Agent Memory</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Agent-Workflow-Memory"><span class="toc-text">Agent Workflow Memory</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Motivation"><span class="toc-text">Motivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Introduction"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#AWM%E5%BB%BA%E6%A8%A1"><span class="toc-text">AWM建模</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Problem-Statement"><span class="toc-text">Problem Statement</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Workflow-Representation"><span class="toc-text">Workflow Representation</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Inducing-and-using-Workflow"><span class="toc-text">Inducing and using Workflow</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MEM1-Learning-to-Synergize-Memory-and-Reasoning-for-Efficient-Long-Horizon-Agents"><span class="toc-text">MEM1: Learning to Synergize Memory and Reasoning for Efficient Long-Horizon Agents</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MemOS-A-Memory-OS-for-AI-System"><span class="toc-text">MemOS: A Memory OS for AI System</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Motivation-1"><span class="toc-text">Motivation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Introduction-1"><span class="toc-text">Introduction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Memory-in-LLM"><span class="toc-text">Memory in LLM</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%97%A9%E6%9C%9FLLM%E4%B8%ADmemory%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-text">早期LLM中memory的分类</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B1%BB%E4%BA%BAmemory%E7%9A%84%E5%8F%91%E5%B1%95"><span class="toc-text">类人memory的发展</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%9F%BA%E4%BA%8E%E5%B7%A5%E5%85%B7%E7%9A%84memory%E7%AE%A1%E7%90%86-Tool-based"><span class="toc-text">基于工具的memory管理(Tool-based)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%B3%BB%E7%BB%9F%E7%BA%A7%E5%88%AB%E7%9A%84memory%E7%AE%A1%E7%90%86-Systematic-Memory-Governance"><span class="toc-text">系统级别的memory管理(Systematic Memory Governance)</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Method"><span class="toc-text">Method</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E7%9A%84%E9%97%AE%E9%A2%98%E5%92%8C%E6%8C%91%E6%88%98"><span class="toc-text">解决的问题和挑战</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mem-Training-%E8%8C%83%E5%BC%8F"><span class="toc-text">Mem-Training 范式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%8E%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1MemOS%E7%9A%84%E6%A8%A1%E5%9D%97"><span class="toc-text">从操作系统设计MemOS的模块</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Memory-Modeling-in-MemOS"><span class="toc-text">Memory Modeling in MemOS</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MemOS%E4%B8%ADmemory%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="toc-text">MemOS中memory的类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MemCube"><span class="toc-text">MemCube</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MemOS%E7%9A%84%E6%9E%B6%E6%9E%84"><span class="toc-text">MemOS的架构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%80%BB%E8%A7%88"><span class="toc-text">总览</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#memory%E6%8E%A5%E5%8F%A3%E5%B1%82-Memory-Interface-Layer"><span class="toc-text">memory接口层(Memory Interface Layer)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#memory%E6%93%8D%E4%BD%9C%E5%B1%82-Memory-Operation-Layer"><span class="toc-text">memory操作层(Memory Operation Layer)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#memory%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E5%B1%82-Memory-Infrastructure-Layer"><span class="toc-text">memory基础设施层(Memory Infrastructure Layer)</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%89%A7%E8%A1%8C%E8%B7%AF%E5%BE%84%E5%92%8C%E4%BA%A4%E4%BA%92%E6%B5%81%E7%A8%8B"><span class="toc-text">执行路径和交互流程</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%80%BB%E8%A7%88-1"><span class="toc-text">总览</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%8E%A5%E5%8F%A3%E5%B1%82"><span class="toc-text">接口层</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E5%B1%82"><span class="toc-text">操作层</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%BE%E6%96%BD%E5%B1%82"><span class="toc-text">基础设施层</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/07/08/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-07-08-Dynamic%20Early%20Exit/" title="Dynamic Early Exit">Dynamic Early Exit</a><time datetime="2025-07-08T02:57:31.000Z" title="发表于 2025-07-08 10:57:31">2025-07-08</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/30/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-30-LLM%20Agent%20Memory/" title="LLM Agent Memory">LLM Agent Memory</a><time datetime="2025-06-30T08:03:23.000Z" title="发表于 2025-06-30 16:03:23">2025-06-30</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/29/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-29-LLM%20Agent%20Serving/" title="LLM Agent Serving">LLM Agent Serving</a><time datetime="2025-06-29T03:22:18.000Z" title="发表于 2025-06-29 11:22:18">2025-06-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/09/%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB/2025-06-09-Agentic%20Workflow/" title="Agentic Workflow">Agentic Workflow</a><time datetime="2025-06-09T06:24:58.000Z" title="发表于 2025-06-09 14:24:58">2025-06-09</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/06/08/%E6%9C%80%E4%BC%98%E5%8C%96%E7%90%86%E8%AE%BA/2025-06-08-%E5%87%B8%E9%9B%86%E3%80%81%E5%87%B8%E5%87%BD%E6%95%B0%E4%B8%8E%E5%87%B8%E4%BC%98%E5%8C%96%E9%97%AE%E9%A2%98/" title="凸集、凸函数与凸优化问题">凸集、凸函数与凸优化问题</a><time datetime="2025-06-08T03:23:03.000Z" title="发表于 2025-06-08 11:23:03">2025-06-08</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/zjn-astonishe/cdn@1.3.0/picture/7.png')"><div id="footer-wrap"><div class="copyright">&copy;2022 - 2025 By ZJN</div><div class="footer_custom_text">Hi, welcome to my <a href="https://zjn-astonishe.github.io/">blog</a>!</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">簡</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">本地搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar/dist/snackbar.min.js"></script><script>function panguFn () {
   if (typeof pangu === 'object') pangu.autoSpacingPage()
   else {
     getScript('https://cdn.jsdelivr.net/npm/pangu/dist/browser/pangu.min.js')
